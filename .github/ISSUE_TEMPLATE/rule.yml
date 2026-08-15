@@ -1,0 +1,35 @@
+name: New rule or adapter
+description: Propose a compliance rule or an identity adapter
+labels: [rule]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Rules are the intended extension point and need no permission — you can write and deploy one
+        without us. Open this if you would like it in the shared library.
+  - type: input
+    id: regime
+    attributes:
+      label: Regime or jurisdiction
+      placeholder: Switzerland — FINMA qualified investor
+    validations: { required: true }
+  - type: textarea
+    id: check
+    attributes:
+      label: What the rule checks
+      description: Which claim keys does it read, and what makes it pass or fail?
+    validations: { required: true }
+  - type: textarea
+    id: claims
+    attributes:
+      label: New claim keys required
+      placeholder: ch.finma.qualified
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      options:
+        - label: The check is pure — reads only, never writes
+          required: true
+        - label: It returns `(false, reason)` rather than reverting for an ordinary "no"
+          required: true

@@ -296,11 +296,14 @@ def main():
             print(f"  skip (missing): {rel}")
             continue
         md = path.read_text(encoding="utf-8")
-        m = re.match(r"^(\d{2})-", Path(rel).name)
-        sec = m.group(1) if m else "readme"
+        name = Path(rel).name
+        m = re.match(r"^(\d{2})-", name)
+        sec = m.group(1) if m else Path(name).stem.lower()
         raw = title_of(md, rel)
         if sec == "readme":
             label = "Introduction & index"
+        elif sec == "author":
+            label = "The author"
         else:
             label = raw.split("—", 1)[1].strip() if "—" in raw else raw
         toc.append((sec, label))
@@ -310,7 +313,7 @@ def main():
         print(f"  {rel}  →  #sec-{sec}")
 
     nav = "\n".join(
-        f'<a href="#sec-{s}"><span class="n">{"—" if s=="readme" else s}</span>{html.escape(t)}</a>'
+        f'<a href="#sec-{s}"><span class="n">{s if s.isdigit() else "—"}</span>{html.escape(t)}</a>'
         for s, t in toc
     )
 

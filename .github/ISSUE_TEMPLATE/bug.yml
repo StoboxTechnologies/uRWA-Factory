@@ -1,0 +1,32 @@
+name: Bug report
+description: Something in a tagged release behaves incorrectly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Only tagged releases are supported. `main` moves and is not.
+        For vulnerabilities, follow the security policy instead — do not open a public issue.
+  - type: input
+    id: version
+    attributes:
+      label: Release tag
+      placeholder: v0.1.0
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen
+    validations: { required: true }
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happens instead
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: A failing test is the fastest route to a fix.
+      render: solidity
+    validations: { required: true }

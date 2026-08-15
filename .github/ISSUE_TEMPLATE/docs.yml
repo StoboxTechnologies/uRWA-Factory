@@ -1,0 +1,19 @@
+name: Documentation
+description: Something is wrong, unclear or missing in the specification
+labels: [documentation]
+body:
+  - type: input
+    id: doc
+    attributes:
+      label: Which document
+      placeholder: docs/09-identity-did.md
+    validations: { required: true }
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or unclear
+    validations: { required: true }
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording

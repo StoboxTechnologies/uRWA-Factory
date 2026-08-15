@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/StoboxTechnologies/uRWA-Factory/security/policy
+    about: Do not open a public issue. Follow the security policy.
+  - name: Configuration or integration help
+    url: https://stobox.io
+    about: Deployment configuration is commercial support, not a repository issue.
+  - name: Documentation site
+    url: https://stoboxtechnologies.github.io/uRWA-Factory/
+    about: The full specification, rendered as one page.

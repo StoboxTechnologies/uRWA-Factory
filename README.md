@@ -1,82 +1,125 @@
+<div align="center">
+
 # uRWA Factory
 
-Open-source factory for compliant real-world-asset security tokens, built on
-[ERC-7943 (uRWA)](https://eips.ethereum.org/EIPS/eip-7943).
+**Open-source factory for compliant real-world-asset security tokens, built on ERC-7943.**
 
-Anyone can deploy their own factory and issue tokens with no dependency on Stobox. Stobox operates one
-instance, charges an STBU fee on it, and offers a proprietary attestation service — the Asset Passport
-— on top. **The contracts are free; the attestation is the product.**
+[![Licence: MIT](https://img.shields.io/badge/Licence-MIT-166B5C.svg)](LICENSE)
+[![Standard: ERC-7943](https://img.shields.io/badge/Standard-ERC--7943-166B5C.svg)](https://eips.ethereum.org/EIPS/eip-7943)
+[![Interface: 0x3edbb4c4](https://img.shields.io/badge/Interface-0x3edbb4c4-4A5C58.svg)](docs/15-standards.md)
+[![Chain: Base](https://img.shields.io/badge/Chain-Base-4A5C58.svg)](docs/16-deployment.md)
+[![Status: Specification](https://img.shields.io/badge/Status-Specification-8A5712.svg)](docs/20-development-plan.md)
 
-| | |
-|---|---|
-| **Licence** | MIT |
-| **Chain** | Base (primary) · Arbitrum One (secondary) |
-| **Language** | Solidity 0.8.28 |
-| **Toolchain** | Foundry |
-| **Token standard** | ERC-20 + ERC-7943 fungible (`0x3edbb4c4`) |
-| **Architecture** | Diamond, EIP-2535 |
-| **Status** | **Specification — no implementation yet** |
+**[📖 Documentation site](https://stoboxtechnologies.github.io/uRWA-Factory/)** ·
+[Why this exists](docs/00-why-this-exists.md) ·
+[Architecture](docs/02-architecture.md) ·
+[Function reference](docs/07-functions.md) ·
+[Author](docs/AUTHOR.md)
+
+</div>
+
+---
+
+A security token has to answer one question, correctly, on every transfer, forever:
+
+> **May this specific person hold this specific asset, right now, in this amount?**
+
+An ordinary ERC-20 cannot answer it. This repository is a complete, free implementation that can.
+
+Anyone can deploy their own factory and issue tokens with **no dependency on Stobox**. Stobox
+Technologies operates one instance and sells an attestation service on top. **The contracts are free;
+the attestation is the product.**
 
 ## The idea in three sentences
 
 1. **The standard is open.** A token that refuses transfers to anyone who may not hold it.
 2. **The factory is open.** One transaction deploys that token, its treasury and its rules.
-3. **The attestation is ours.** The Asset Passport records what the asset actually is, signed by
-   independent attestors. That is the paid service.
+3. **The attestation is a service.** The Asset Passport records what the asset actually is, signed by
+   independent attestors.
 
-## Why it is built this way
+## Architecture in one table
 
-Three planes with different mutability rules:
+Three planes with different rules about what may change:
 
-| Plane | Contains | Mutability | Delivers |
+| Plane | Contains | Can it change? | Gives you |
 |---|---|---|---|
-| **Ledger** | Balances, supply, ERC-20 entry points | Immutable — enforced by code | Resilience |
-| **Policy** | Compliance facet, policy set, rules | Replaceable in one transaction | Agility |
-| **Claims** | Identity claims, namespaced keys | Extensible without upgrade | Customization |
+| **Ledger** | Balances, supply, ERC-20 entry points | **Never** — enforced by code, not policy | Resilience |
+| **Policy** | Compliance facet, policy set, rules | **Freely** — one transaction, no migration | Agility |
+| **Claims** | Identity claims, namespaced keys | **Extensibly** — anyone adds new types | Customization |
 
-A policy bug can stop transfers. It can never corrupt supply. That single boundary is the whole
-architecture, and it is already enforced by the STV3 base this work builds on.
+**A compliance bug can stop trading. It can never corrupt supply.** That single boundary is the whole
+architecture — and it is already enforced by the STV3 base this work builds on, where `LibDiamond`
+refuses to replace or remove any selector registered against the diamond itself.
+
+Every transfer passes one pipeline:
+
+```
+paused? → both trusted? → canSend(from)? → canReceive(to)? → enough unfrozen? → rules pass? → execute
+```
 
 ## Documentation
 
-| # | Document | Covers |
+Everything is in [`docs/`](docs/), and rendered as a single page at the
+**[documentation site](https://stoboxtechnologies.github.io/uRWA-Factory/)**.
+
+<table>
+<tr><td valign="top" width="50%">
+
+**Start here**
+
+| # | Document |
+|---|---|
+| 00 | [Why this exists](docs/00-why-this-exists.md) |
+| 01 | [Overview](docs/01-overview.md) |
+| 02 | [Architecture](docs/02-architecture.md) |
+| 03 | [Contracts](docs/03-contracts.md) |
+| 04 | [Storage](docs/04-storage.md) |
+| 05 | [Roles](docs/05-roles.md) |
+| 06 | [States](docs/06-states.md) |
+| 07 | [Function reference](docs/07-functions.md) |
+| 08 | [Compliance pipeline](docs/08-compliance-pipeline.md) |
+| 09 | [Identity and DID](docs/09-identity-did.md) |
+| 10 | [Rules](docs/10-rules.md) |
+| 11 | [Asset Passport](docs/11-passport.md) |
+
+</td><td valign="top" width="50%">
+
+**Going deeper**
+
+| # | Document |
+|---|---|
+| 12 | [Offerings](docs/12-offering.md) |
+| 13 | [Treasury](docs/13-treasury.md) |
+| 14 | [Events and errors](docs/14-events-errors.md) |
+| 15 | [Standards](docs/15-standards.md) |
+| 16 | [Deployment](docs/16-deployment.md) |
+| 17 | [Security](docs/17-security.md) |
+| 18 | [Glossary](docs/18-glossary.md) |
+| 19 | [Open boundary](docs/19-open-boundary.md) |
+| 20 | [Development plan](docs/20-development-plan.md) |
+| 21 | [Interface specification](docs/21-interface-specification.md) |
+| 22 | [Agents and settlement](docs/22-agents-and-settlement.md) |
+| 23 | [Testing plan](docs/23-testing-plan.md) |
+
+</td></tr>
+</table>
+
+## Status
+
+**Specification stage. No implementation yet.** The design is complete and reviewable; Phase 0 — the
+compiling interface package — is next. See the [development plan](docs/20-development-plan.md).
+
+| Phase | Delivers | State |
 |---|---|---|
-| 00 | [Why this exists](docs/00-why-this-exists.md) | The problem, what Stobox provides, why the factory is free |
-| 01 | [Overview](docs/01-overview.md) | What this is, who it is for, what it does not do |
-| 02 | [Architecture](docs/02-architecture.md) | The three planes and why the boundaries fall there |
-| 03 | [Contracts](docs/03-contracts.md) | Every contract and sub-contract |
-| 04 | [Storage](docs/04-storage.md) | Every struct and variable |
-| 05 | [Roles](docs/05-roles.md) | Every role and the full permission matrix |
-| 06 | [States](docs/06-states.md) | All thirteen state machines |
-| 07 | [Function reference](docs/07-functions.md) | Every signature, mutability and access rule |
-| 08 | [Compliance pipeline](docs/08-compliance-pipeline.md) | How a transfer is validated |
-| 09 | [Identity and DID](docs/09-identity-did.md) | Adapters, claim schema, the revert trap |
-| 10 | [Rules](docs/10-rules.md) | Rule engine, library and presets |
-| 11 | [Asset Passport](docs/11-passport.md) | Snapshots, disclosure, the handshake |
-| 12 | [Offerings](docs/12-offering.md) | Primary sales, refunds, allocations |
-| 13 | [Treasury](docs/13-treasury.md) | Custody of supply and payments |
-| 14 | [Events and errors](docs/14-events-errors.md) | Complete catalogue |
-| 15 | [Standards](docs/15-standards.md) | Every standard and conformance detail |
-| 16 | [Deployment](docs/16-deployment.md) | Sequence, parameters, checklist |
-| 17 | [Security](docs/17-security.md) | Threat model, failure modes, invariants |
-| 18 | [Glossary](docs/18-glossary.md) | Terms |
-| 19 | [Open boundary](docs/19-open-boundary.md) | Exactly what is published and what is not |
-| 20 | [Development plan](docs/20-development-plan.md) | Six phases with exit criteria |
-| 21 | [Interface specification](docs/21-interface-specification.md) | Wallet connection and all four surfaces |
-| 22 | [Agents and settlement](docs/22-agents-and-settlement.md) | Agent mandates and atomic DvP |
-| 23 | [Testing plan](docs/23-testing-plan.md) | Layers, invariants, coverage, CI |
+| 0 | Interface package, storage layout frozen | Next |
+| 1 | Core token, factory, conformance kit | Planned |
+| 2 | Policy engine, rule library, DID adapter | Planned |
+| 3 | Treasury, offerings, agent authority, atomic DvP | Planned |
+| 4 | Passport, proofs, verifier library | Planned |
+| 5 | Interfaces and SDK | Planned |
+| 6 | Audit, then mainnet | Planned |
 
-A single-page HTML build of everything is at
-[`urwa-documentation.html`](urwa-documentation.html), generated from the Markdown so the two cannot
-diverge.
-
-## Build
-
-```bash
-forge build
-forge test
-python3 build-docs.py     # regenerates urwa-documentation.html from README.md + docs/*.md
-```
+**No mainnet issuance until an audit clears.**
 
 ## What is open, and what is not
 
@@ -91,15 +134,51 @@ python3 build-docs.py     # regenerates urwa-documentation.html from README.md +
 | Agent authority and atomic DvP | |
 | ERC-7943 conformance kit | |
 
-The credibility test is a build step, not a promise: CI deploys the whole stack to a clean chain with
-no Stobox contract present and runs an end-to-end sale on every commit. See
+The credibility test is a build step, not a promise: **CI deploys the whole stack to a clean chain with
+no Stobox contract present and runs an end-to-end sale on every commit.** If that fails, the
+open-source claim has broken and the build stops. Details in
 [19 — Open boundary](docs/19-open-boundary.md).
+
+## Build
+
+```bash
+forge build                 # once the interface package lands
+forge test
+python3 build-docs.py       # regenerates the documentation site
+```
+
+## Author
+
+### Gene Deyev
+
+**Founder & CEO, [Stobox Technologies](https://stobox.io)** — [full profile →](docs/AUTHOR.md)
+
+[Profile](https://stobox.io/team/gene-deyev) ·
+[GitHub](https://github.com/genedeyev) ·
+[Email](mailto:gd@stoboxplatform.com) ·
+[Stobox](https://stobox.io)
+
+Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and
+co-author of one of the earliest practitioner guides to security token offerings, registered with the
+U.S. Copyright Office in 2019. Public backer of ERC-7943.
+
+This project is released in a **personal capacity**. Copyright is held personally; the repository is
+hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of
+this software among others — it operates one factory instance and sells the attestation service that
+sits on top, and neither is required to use anything here.
+
+The affiliation is disclosed because you should know who wrote your compliance layer and what their
+interests are.
 
 ## Contributing
 
-Development is done by Stobox. Releases are published; forks are welcome. Issues are accepted with no
-promised response time, and there is no roadmap vote. See [SUPPORT.md](SUPPORT.md) and
-[CONTRIBUTING.md](CONTRIBUTING.md).
+Development is done by Stobox. Releases are published; **forks are welcome and expected.** Issues are
+accepted with no promised response time, and there is no roadmap vote — stated plainly because the
+complaint about "open source in name only" comes from unstated expectations rather than from their
+absence.
+
+Rules are the intended extension point and need no permission from anyone. See
+[CONTRIBUTING.md](CONTRIBUTING.md) and [SUPPORT.md](SUPPORT.md).
 
 ## Security
 
@@ -111,22 +190,8 @@ MIT — see [LICENSE](LICENSE). The licence grants rights to the code, not to th
 that it *passes the uRWA conformance suite*; it may not describe itself as built or certified by
 Stobox. See [NOTICE](NOTICE).
 
-## Author
-
-**Gene Deyev** — Founder and CEO of [Stobox Technologies](https://stobox.io).
-
-This project is released in a **personal capacity** and is not a Stobox product. Copyright is held
-personally; the repository is hosted under the Stobox organisation for continuity, not ownership.
-Stobox Technologies is one user of this software among others — it operates one factory instance and
-offers a paid attestation service on top, and neither is required to use anything here.
-
-The affiliation is disclosed because you should know who wrote your compliance layer and what their
-interests are. See [AUTHORS](AUTHORS), [NOTICE](NOTICE) and
-[00 — Why this exists](docs/00-why-this-exists.md).
-
 ## Disclaimer
 
-This project supplies mechanisms and templates. This project supplies mechanisms and templates.
-Which rules apply to a given asset, and the
+This project supplies mechanisms and templates. Which rules apply to a given asset, and the
 consequences of that choice, are the issuer's decision. Nothing here is legal, financial or investment
 advice.

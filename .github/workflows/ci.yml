@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  docs-in-sync:
+    name: Documentation is in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Rebuild documentation
+        run: python3 build-docs.py
+
+      - name: Fail if the committed build is stale
+        run: |
+          if ! git diff --quiet -- urwa-documentation.html; then
+            echo "::error::urwa-documentation.html is stale. Run 'python3 build-docs.py' and commit the result."
+            git diff --stat -- urwa-documentation.html
+            exit 1
+          fi
+
+      - name: Check for broken in-page anchors
+        run: |
+          python3 - <<'PY'
+          import re, pathlib, sys
+          h = pathlib.Path('urwa-documentation.html').read_text()
+          ids = set(re.findall(r'id="([\w-]+)"', h))
+          links = set(re.findall(r'href="#([\w-]+)"', h))
+          broken = sorted(links - ids)
+          if broken:
+              print(f"::error::broken in-page anchors: {broken}")
+              sys.exit(1)
+          print(f"{len(links)} in-page links, none broken")
+          PY
+
+  open-boundary:
+    name: Open boundary holds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: No Stobox contract addresses in source
+        run: |
+          if grep -rniE '0x(096d75d0|b05cf4f6|25e60361|85a3eae3|1cb9bd2c|998a0bea|e0c0f44a)' \
+              --include='*.sol' --include='*.ts' --include='*.js' src/ test/ script/ 2>/dev/null; then
+            echo "::error::a known Stobox contract address appears in source"
+            exit 1
+          fi
+          echo "no Stobox addresses in source"
+
+      - name: No STBU reference in source
+        run: |
+          if grep -rniE '\bSTBU\b' --include='*.sol' src/ test/ script/ 2>/dev/null; then
+            echo "::error::STBU referenced in contract source; the open distribution must not know about it"
+            exit 1
+          fi
+          echo "no STBU reference in source"
+
+  # Added in Phase 0, once the interface package lands.
+  # forge-build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with: { submodules: recursive }
+  #     - uses: foundry-rs/foundry-toolchain@v1
+  #     - run: forge build --sizes
+  #     - run: forge test -vvv
+  #     - run: forge test --match-test invariant_
