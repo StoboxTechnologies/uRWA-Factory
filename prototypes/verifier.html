@@ -1,29 +1,20 @@
 <title>uRWA — Public Verifier</title>
 <style>
   :root{
-    --ground:#EEF2F1;--surface:#FFFFFF;--sunk:#E4EAE8;--raised:#FBFCFC;
-    --ink:#0F1E1C;--ink-2:#33443F;--muted:#4A5C58;--faint:#5C6E6A;
-    --rule:#D4DEDB;--rule-strong:#A9BAB6;
-    --accent:#166B5C;--accent-2:#0E4C41;--accent-wash:#DEECE7;--accent-edge:#9CC6BB;
-    --warn:#8A5712;--warn-wash:#F7EEDD;--warn-edge:#DCC08A;
-    --crit:#8E2F39;--crit-wash:#F8E7E8;--crit-edge:#DDAFB3;
-    --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-    --mono:ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;--r:3px;
+    --ground:#FAFAFC;--surface:#FFFFFF;--raised:#FFFFFF;--sunk:#F4F5F9;
+    --ink:#0E1017;--ink-2:#3A4050;--muted:#666E80;--faint:#949BAB;
+    --rule:#EFF1F6;--rule-strong:#E2E5EE;
+    --accent:#4338CA;--accent-2:#312BA0;--accent-wash:#F0F1FE;--accent-edge:#CFD2F9;
+    --ok:#0B7A5B;
+    --warn:#8A5B10;--warn-wash:#FDF4E6;--warn-edge:#F0DCB6;
+    --crit:#B3261E;--crit-wash:#FDEDEB;--crit-edge:#F4C9C5;
+    --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --display:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','JetBrains Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+    --r:10px;--r-lg:14px;--r-pill:999px;
+    --sh:0 1px 2px rgba(14,16,23,.05),0 1px 3px rgba(14,16,23,.03);
+    --sh-lg:0 2px 4px rgba(14,16,23,.04),0 12px 32px rgba(14,16,23,.06);
   }
-  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-    --ground:#0A1312;--surface:#111E1B;--sunk:#182B27;--raised:#162622;
-    --ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;
-    --rule:#233734;--rule-strong:#3B534E;
-    --accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#14312B;--accent-edge:#2C5A50;
-    --warn:#D3A054;--warn-wash:#2C2313;--warn-edge:#57432A;
-    --crit:#E08C93;--crit-wash:#31191C;--crit-edge:#5A3135;}}
-  :root[data-theme="dark"]{
-    --ground:#0A1312;--surface:#111E1B;--sunk:#182B27;--raised:#162622;
-    --ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;
-    --rule:#233734;--rule-strong:#3B534E;
-    --accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#14312B;--accent-edge:#2C5A50;
-    --warn:#D3A054;--warn-wash:#2C2313;--warn-edge:#57432A;
-    --crit:#E08C93;--crit-wash:#31191C;--crit-edge:#5A3135;}
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
   button{font:inherit;color:inherit;cursor:pointer}input{font:inherit;color:inherit}
@@ -40,8 +31,6 @@
   .btn{border:1px solid var(--rule-strong);background:var(--surface);border-radius:var(--r);padding:9px 16px;font-size:13.5px;font-weight:550}
   .btn:hover{background:var(--sunk)}
   .btn.p{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-  :root[data-theme="dark"] .btn.p,:root:not([data-theme="light"]) .btn.p{color:#06110F}
-  @media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn.p{color:#fff}}
   .btn.s{padding:6px 11px;font-size:12.5px}
   .ex{font-size:12px;color:var(--faint);margin-top:9px}
   .ex button{border:0;background:none;color:var(--accent);font-family:var(--mono);font-size:12px;padding:0;text-decoration:underline;text-underline-offset:2px}
@@ -81,8 +70,6 @@
   .sg:last-child{border-bottom:0}
   .sg .i{width:17px;height:17px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;margin-top:2px;border:1.5px solid var(--rule-strong);color:var(--faint)}
   .sg.ok .i{background:var(--accent);border-color:var(--accent);color:#fff}
-  :root[data-theme="dark"] .sg.ok .i,:root:not([data-theme="light"]) .sg.ok .i{color:#06110F}
-  @media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .sg.ok .i{color:#fff}}
   .sg.no .i{background:var(--crit);border-color:var(--crit);color:#fff}
   .sg.skip{opacity:.4}
   .sg .r{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint);text-align:right}
@@ -98,6 +85,22 @@
   .att .who{font-weight:600;min-width:96px}
   .att .when{color:var(--faint);font-size:12px;margin-left:auto;text-align:right;font-family:var(--mono)}
   .hide{display:none!important}
+
+  /* --- light theme: shape and depth --- */
+  .btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary{border-radius:var(--r-pill);box-shadow:none;transition:background .14s,border-color .14s}
+  .btn.p,.btn.primary{color:#fff;box-shadow:var(--sh)}
+  .btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
+  .card,.figbox,.note,.k,.addrcard,.nextitem,.wal,.opt,.tscroll,pre{border-radius:var(--r-lg)}
+  .card,.figbox,.k,.addrcard{box-shadow:var(--sh);border-color:var(--rule)}
+  .inp,input.inp,input,select{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none}
+  .inp:focus,input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-wash)}
+  .pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
+  .bar,.bar div{border-radius:0}
+  .bar{border-radius:var(--r-pill);overflow:hidden}
+  table{border-color:var(--rule)}
+  th,td{border-color:var(--rule)}
+  .step .num,.prog .ic,.stg .i,.sg .i,.opt .mark{border-radius:var(--r-pill)}
+  a:focus-visible,button:focus-visible,input:focus-visible,.step:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r)}
 </style>
 
 <div class="banner">Prototype — reads are simulated. No account, no wallet, no permission is needed to use a verifier like this.</div>

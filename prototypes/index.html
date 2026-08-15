@@ -1,16 +1,21 @@
 <title>uRWA Factory — Prototypes</title>
 <style>
-:root{--ground:#F1F4F3;--surface:#FFFFFF;--ink:#0F1E1C;--ink-2:#33443F;--muted:#4A5C58;--faint:#5C6E6A;
---rule:#D2DCD9;--rule-strong:#A9BAB6;--accent:#166B5C;--accent-2:#0E4C41;--accent-wash:#DEECE7;--accent-edge:#9CC6BB;
---display:'Iowan Old Style','Charter','Palatino Linotype',Palatino,Georgia,serif;
---body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
---mono:ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#0B1513;--surface:#111E1B;--ink:#E4EDEA;
---ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;--rule:#253936;--rule-strong:#3B534E;--accent:#57B9A3;
---accent-2:#87D3C0;--accent-wash:#15322C;--accent-edge:#2C5A50}}
-:root[data-theme="dark"]{--ground:#0B1513;--surface:#111E1B;--ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;
---faint:#839893;--rule:#253936;--rule-strong:#3B534E;--accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#15322C;--accent-edge:#2C5A50}
-*{box-sizing:border-box}
+:root{
+    --ground:#FAFAFC;--surface:#FFFFFF;--raised:#FFFFFF;--sunk:#F4F5F9;
+    --ink:#0E1017;--ink-2:#3A4050;--muted:#666E80;--faint:#949BAB;
+    --rule:#EFF1F6;--rule-strong:#E2E5EE;
+    --accent:#4338CA;--accent-2:#312BA0;--accent-wash:#F0F1FE;--accent-edge:#CFD2F9;
+    --ok:#0B7A5B;
+    --warn:#8A5B10;--warn-wash:#FDF4E6;--warn-edge:#F0DCB6;
+    --crit:#B3261E;--crit-wash:#FDEDEB;--crit-edge:#F4C9C5;
+    --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --display:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','JetBrains Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+    --r:10px;--r-lg:14px;--r-pill:999px;
+    --sh:0 1px 2px rgba(14,16,23,.05),0 1px 3px rgba(14,16,23,.03);
+    --sh-lg:0 2px 4px rgba(14,16,23,.04),0 12px 32px rgba(14,16,23,.06);
+  }
+  *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
 .w{max-width:820px;margin:0 auto;padding:clamp(30px,6vw,72px) clamp(18px,4vw,34px) 80px}
 h1{font-family:var(--display);font-weight:600;font-size:clamp(30px,5vw,44px);line-height:1.05;letter-spacing:-.018em;margin:0 0 12px}
@@ -29,6 +34,22 @@ a.card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .note b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
 footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--rule);font-size:13px;color:var(--faint)}
 footer a{color:var(--accent)}
+
+  /* --- light theme: shape and depth --- */
+  .btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary{border-radius:var(--r-pill);box-shadow:none;transition:background .14s,border-color .14s}
+  .btn.p,.btn.primary{color:#fff;box-shadow:var(--sh)}
+  .btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
+  .card,.figbox,.note,.k,.addrcard,.nextitem,.wal,.opt,.tscroll,pre{border-radius:var(--r-lg)}
+  .card,.figbox,.k,.addrcard{box-shadow:var(--sh);border-color:var(--rule)}
+  .inp,input.inp,input,select{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none}
+  .inp:focus,input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-wash)}
+  .pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
+  .bar,.bar div{border-radius:0}
+  .bar{border-radius:var(--r-pill);overflow:hidden}
+  table{border-color:var(--rule)}
+  th,td{border-color:var(--rule)}
+  .step .num,.prog .ic,.stg .i,.sg .i,.opt .mark{border-radius:var(--r-pill)}
+  a:focus-visible,button:focus-visible,input:focus-visible,.step:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r)}
 </style>
 <div class="w">
 <h1>Prototypes</h1>

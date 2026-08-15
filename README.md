@@ -101,6 +101,8 @@ Everything is in [`docs/`](docs/), and rendered as a single page at the
 | 21 | [Interface specification](docs/21-interface-specification.md) |
 | 22 | [Agents and settlement](docs/22-agents-and-settlement.md) |
 | 23 | [Testing plan](docs/23-testing-plan.md) |
+| 24 | [Work registry](docs/24-work-registry.md) |
+| 25 | [Design system](docs/25-design-system.md) |
 
 </td></tr>
 </table>
@@ -111,7 +113,7 @@ All four surfaces at **[the prototypes index](https://stoboxtechnologies.github.
 
 ## Status
 
-**Specification stage. No implementation yet.** The full work breakdown — 78 items with dependencies, handoff contracts and review gates — is in the [work registry](docs/24-work-registry.md). The design is complete and reviewable; Phase 0 — the
+**Specification stage. No implementation yet.** The full work breakdown — 79 items with dependencies, handoff contracts and review gates — is in the [work registry](docs/24-work-registry.md). The design is complete and reviewable; Phase 0 — the
 compiling interface package — is next. See the [development plan](docs/20-development-plan.md).
 
 | Phase | Delivers | State |
