@@ -66,13 +66,23 @@ jobs:
           fi
           echo "no STBU reference in source"
 
-  # Added in Phase 0, once the interface package lands.
-  # forge-build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with: { submodules: recursive }
-  #     - uses: foundry-rs/foundry-toolchain@v1
-  #     - run: forge build --sizes
-  #     - run: forge test -vvv
-  #     - run: forge test --match-test invariant_
+  forge:
+    name: Contracts build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: foundry-rs/foundry-toolchain@v1
+
+      # lib/ is gitignored, so dependencies are fetched rather than vendored.
+      - name: Install dependencies
+        run: forge install foundry-rs/forge-std --no-git
+
+      - name: Build
+        run: forge build --sizes
+
+      - name: Test
+        run: forge test -vv
+
+      # Phase 1 onward. Listed now so the job exists before the tests do.
+      # - run: forge test --match-test invariant_
+      # - run: forge coverage --report summary

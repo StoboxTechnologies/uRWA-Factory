@@ -93,12 +93,11 @@ Every step above is specified. **None of it is built yet** — see the status se
 | **Diagrams** | 17, generated from source and checked in CI |
 | **Prototypes** | Four surfaces, clickable, wired to nothing |
 | **Verification** | 37 automated checks, each proven to fail on its own broken input |
-| **Solidity** | **None.** Phase 0 is next |
+| **Solidity** | Phase 0 done — interfaces, storage layout, events and errors compile; 6 tests pass |
 | **Audit** | Booked after the core, before any real issuance |
 | **Mainnet** | Not until the audit clears |
 
-This is unusual enough to state plainly: **the design is finished and the code is not started.** That
-order is deliberate. The storage layout of a diamond cannot be revised once facets hold live balances,
+The order is deliberate: the specification was finished before any implementation began. The storage layout of a diamond cannot be revised once facets hold live balances,
 and the compliance semantics cannot be revised once someone's transfer has been refused on them.
 
 ## What is open and what is not

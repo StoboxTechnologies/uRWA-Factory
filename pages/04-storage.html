@@ -420,7 +420,8 @@ bytes32 constant COMPLIANCE_SLOT = keccak256(&quot;urwa.storage.compliance.v1&qu
 bytes32 constant FREEZE_SLOT     = keccak256(&quot;urwa.storage.freeze.v1&quot;);
 bytes32 constant LOCKUP_SLOT     = keccak256(&quot;urwa.storage.lockup.v1&quot;);
 bytes32 constant MONETARY_SLOT   = keccak256(&quot;urwa.storage.monetary.v1&quot;);
-bytes32 constant ROLES_SLOT      = keccak256(&quot;urwa.storage.roles.v1&quot;);</pre>
+bytes32 constant ROLES_SLOT      = keccak256(&quot;urwa.storage.roles.v1&quot;);
+bytes32 constant UPGRADE_SLOT    = keccak256(&quot;urwa.storage.upgrade.v1&quot;);</pre>
 <h3 id="04-corestorage-ledger-plane">CoreStorage — ledger plane</h3>
 <p>Written only by the immutable ERC-20 core. No facet may write these fields.</p>
 <pre>struct CoreStorage {
@@ -442,7 +443,9 @@ bytes32 constant ROLES_SLOT      = keccak256(&quot;urwa.storage.roles.v1&quot;);
     mapping(address =&gt; bool)   trusted;
     mapping(address =&gt; string) trustReason;
     address[] trustList;
-    bool    paused;
+    bool    paused;                               // global; halts everything
+    mapping(address =&gt; bool)   addressPaused;     // one address, both directions
+    mapping(address =&gt; string) addressPauseReason;
     uint256 holderCount;                          // addresses with balance &gt; 0
     mapping(bytes32 =&gt; uint256) subjectBalance;   // subject =&gt; total across all wallets
     mapping(bytes32 =&gt; bool)    subjectIsHolder;
@@ -453,6 +456,14 @@ bytes32 constant ROLES_SLOT      = keccak256(&quot;urwa.storage.roles.v1&quot;);
 <p>Holder caps must count <strong>subjects</strong>, not addresses. One investor with three wallets otherwise defeats a Reg D 2000-holder limit while every dashboard reports green.</p>
 <p>This cannot be retrofitted. Once balances exist you cannot determine retroactively which past addresses shared an owner, so the counters would start from a wrong baseline permanently.</p>
 <p>Addresses with no identity subject (<code>subjectOf</code> returns zero) are counted individually under a synthetic subject derived from the address, so the count never under-reports.</p>
+<h3 id="04-upgradestorage-the-delay-the-issuer-chose">UpgradeStorage — the delay the issuer chose</h3>
+<pre>struct UpgradeStorage {
+    uint64  delay;                                // 0 = immediate
+    mapping(bytes32 =&gt; uint64) scheduledAt;       // cut hash =&gt; when it may execute
+}</pre>
+<p>Separate from <code>RolesStorage</code> because the delay is a property of the <strong>instrument</strong>, not of who holds a role: it is read by the public verifier, and a holder should be able to learn it without inspecting role assignments.</p>
+<p><code>scheduledAt</code> is keyed by the hash of the pending cut, so a scheduled upgrade is publicly inspectable before it lands. A delay of <code>0</code> skips scheduling entirely rather than scheduling for now — the two would otherwise differ by one block, which is exactly the kind of near-equality that produces bugs.</p>
+<p>Only the code-changing class is delayed. Freeze, pause, lockup and the forced operations never are, because a delay on the emergency response defeats the reason those roles exist. See <a href="05-roles.html">05</a>.</p>
 <h3 id="04-freezestorage">FreezeStorage</h3>
 <pre>struct FreezeStorage {
     mapping(address =&gt; uint256) adminFrozen;   // indefinite, set by compliance
@@ -538,7 +549,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 <aside class="rail" aria-label="Section reference">
-<div class="railsec" data-sec="sec-04"><p class="railt">On this page</p><a href="#04-discipline">Discipline</a><a href="#04-corestorage-ledger-plane">CoreStorage — ledger plane</a><a href="#04-compliancestorage-policy-plane">ComplianceStorage — policy plane</a><a href="#04-freezestorage">FreezeStorage</a><a href="#04-lockupstorage">LockupStorage</a><a href="#04-monetarystorage">MonetaryStorage</a><a href="#04-rolesstorage">RolesStorage</a><a href="#04-passport-storage">Passport storage</a><a href="#04-storage-invariants">Storage invariants</a><p class="railt s">Related</p><a href="03-contracts.html">03 — Contracts</a><a href="06-states.html">06 — States</a><a href="17-security.html">17 — Security</a></div>
+<div class="railsec" data-sec="sec-04"><p class="railt">On this page</p><a href="#04-discipline">Discipline</a><a href="#04-corestorage-ledger-plane">CoreStorage — ledger plane</a><a href="#04-compliancestorage-policy-plane">ComplianceStorage — policy plane</a><a href="#04-upgradestorage-the-delay-the-issuer-chose">UpgradeStorage — the delay the issuer chose</a><a href="#04-freezestorage">FreezeStorage</a><a href="#04-lockupstorage">LockupStorage</a><a href="#04-monetarystorage">MonetaryStorage</a><a href="#04-rolesstorage">RolesStorage</a><a href="#04-passport-storage">Passport storage</a><a href="#04-storage-invariants">Storage invariants</a><p class="railt s">Related</p><a href="03-contracts.html">03 — Contracts</a><a href="06-states.html">06 — States</a><a href="17-security.html">17 — Security</a></div>
 <div class="railfix">
 <p class="railt s">Reference</p>
 <a href="../prototypes/">Prototypes</a>
@@ -606,4 +617,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 25ed6b0207cd2bc94e74c791f4d13b153766de066f28adbd39f9b83636988705 -->
+<!-- source-digest: 6a6bfa1c028400387550dbe507e0cec7acc27859a091685818f8c29b3106a568 -->

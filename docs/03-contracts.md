@@ -24,7 +24,7 @@ Facets share the token's storage through `delegatecall`. Each owns one namespace
 | Facet | Responsibility | Storage owned | In default package |
 |---|---|---|---|
 | *(diamond core)* | ERC-20 accounting, fallback router, ERC-2612 permit | `CoreStorage` | Always — immutable |
-| `DiamondCutFacet` | Add, replace and remove facets | — | Yes |
+| `DiamondCutFacet` | Add, replace and remove facets; enforces the upgrade delay | `UpgradeStorage` | Yes |
 | `DiamondLoupeFacet` | Introspection, ERC-165 | — | Yes |
 | `ComplianceFacet` | The transfer hook; ERC-7943 views; trust list; pause | `ComplianceStorage` | Yes |
 | `FreezeFacet` | Admin freeze, composed frozen total | `FreezeStorage` | Yes |

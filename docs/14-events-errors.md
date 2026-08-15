@@ -40,10 +40,19 @@ event Distrusted(address indexed account, string reason);
 event PolicySetChanged(address indexed previous, address indexed current);
 event IdentityRegistryChanged(address indexed previous, address indexed current);
 event RuleFailed(address indexed rule, address from, address to, string reason);
-event Paused(address indexed by);
+event Paused(address indexed by, string reason);
 event Unpaused(address indexed by);
+event AddressPaused(address indexed account, address indexed by, string reason);
+event AddressUnpaused(address indexed account, address indexed by);
 event SubjectHolderCountChanged(uint256 newCount);
 ```
+
+`AddressPaused` halts one address in **both** directions and is distinct from `Frozen`, which
+restricts sending only and takes an amount. The reason is mandatory on the same principle as the
+trust list: an unexplained restriction is indistinguishable from an attack on a holder.
+
+`Paused` carries a reason for the same reason. A global halt is the most disruptive action available
+to a compliance officer, and a log entry that does not say why is of no use to the holder reading it.
 
 `RuleFailed` is emitted when a rule reverts or exceeds its gas ceiling — even if the group ultimately
 passes via another rule. It is the operational signal that a third-party rule is misbehaving.
@@ -96,6 +105,32 @@ event ForcedOperation(
 Emitted in addition to the canonical ERC-7943 and ERC-20 events, never instead of them.
 
 ---
+
+## Upgrades
+
+```solidity
+event UpgradeDelaySet(uint64 delay);
+event UpgradeScheduled(bytes32 indexed cutHash, uint64 executableAt);
+event UpgradeExecuted(bytes32 indexed cutHash);
+event UpgradeCancelled(bytes32 indexed cutHash);
+```
+
+Where the issuer configured a delay, a cut is scheduled before it lands and the schedule is public.
+That is the point of the delay: a holder who disagrees with a pending change has the window to act on
+it. With `delay == 0` no scheduling event is emitted, because nothing was scheduled.
+
+## Agents and settlement
+
+```solidity
+event MandateGranted(bytes32 indexed mandateId, address indexed principal, address indexed agent);
+event MandateRevoked(bytes32 indexed mandateId);
+event AgentActed(
+    bytes32 indexed mandateId, address indexed agent, address indexed principal, bytes4 selector, uint256 amount
+);
+```
+
+`AgentActed` names the **principal** as well as the agent, because the accountable party for an
+automated action is the person who granted the mandate, not the software that executed it.
 
 ## Factory
 

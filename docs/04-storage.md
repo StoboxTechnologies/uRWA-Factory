@@ -16,6 +16,7 @@ bytes32 constant FREEZE_SLOT     = keccak256("urwa.storage.freeze.v1");
 bytes32 constant LOCKUP_SLOT     = keccak256("urwa.storage.lockup.v1");
 bytes32 constant MONETARY_SLOT   = keccak256("urwa.storage.monetary.v1");
 bytes32 constant ROLES_SLOT      = keccak256("urwa.storage.roles.v1");
+bytes32 constant UPGRADE_SLOT    = keccak256("urwa.storage.upgrade.v1");
 ```
 
 ## CoreStorage — ledger plane
@@ -55,7 +56,9 @@ struct ComplianceStorage {
     mapping(address => bool)   trusted;
     mapping(address => string) trustReason;
     address[] trustList;
-    bool    paused;
+    bool    paused;                               // global; halts everything
+    mapping(address => bool)   addressPaused;     // one address, both directions
+    mapping(address => string) addressPauseReason;
     uint256 holderCount;                          // addresses with balance > 0
     mapping(bytes32 => uint256) subjectBalance;   // subject => total across all wallets
     mapping(bytes32 => bool)    subjectIsHolder;
@@ -86,6 +89,27 @@ addresses shared an owner, so the counters would start from a wrong baseline per
 
 Addresses with no identity subject (`subjectOf` returns zero) are counted individually under a
 synthetic subject derived from the address, so the count never under-reports.
+
+## UpgradeStorage — the delay the issuer chose
+
+```solidity
+struct UpgradeStorage {
+    uint64  delay;                                // 0 = immediate
+    mapping(bytes32 => uint64) scheduledAt;       // cut hash => when it may execute
+}
+```
+
+Separate from `RolesStorage` because the delay is a property of the **instrument**, not of who holds a
+role: it is read by the public verifier, and a holder should be able to learn it without inspecting
+role assignments.
+
+`scheduledAt` is keyed by the hash of the pending cut, so a scheduled upgrade is publicly inspectable
+before it lands. A delay of `0` skips scheduling entirely rather than scheduling for now — the two
+would otherwise differ by one block, which is exactly the kind of near-equality that produces bugs.
+
+Only the code-changing class is delayed. Freeze, pause, lockup and the forced operations never are,
+because a delay on the emergency response defeats the reason those roles exist. See
+[05](05-roles.md#timelock-policy).
 
 ## FreezeStorage
 

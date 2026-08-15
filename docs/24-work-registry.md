@@ -35,10 +35,10 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| IF-01 | All interfaces as compiling Solidity with NatSpec | **Ready** | SP-02 | 1 |
-| IF-02 | Storage structs and namespaced slot constants | **Ready** | SP-01 | 0.5 |
-| IF-03 | Event and error catalogue as Solidity | **Ready** | SP-02 | 0.5 |
-| IF-04 | Foundry skeleton, remappings, formatting, CI wiring | **Ready** | — | 0.5 |
+| IF-01 | All interfaces as compiling Solidity with NatSpec | **Done** | SP-02 | — |
+| IF-02 | Storage structs and namespaced slot constants | **Done** | SP-01 | — |
+| IF-03 | Event and error catalogue as Solidity | **Done** | SP-02 | — |
+| IF-04 | Foundry skeleton, remappings, formatting, CI wiring | **Done** | — | — |
 
 > **Gate.** Nothing in CO, PO or PA starts until `IF-02` is merged. The storage layout is the one
 > decision that cannot be revised once facets exist.

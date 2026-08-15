@@ -431,9 +431,13 @@ event Distrusted(address indexed account, string reason);
 event PolicySetChanged(address indexed previous, address indexed current);
 event IdentityRegistryChanged(address indexed previous, address indexed current);
 event RuleFailed(address indexed rule, address from, address to, string reason);
-event Paused(address indexed by);
+event Paused(address indexed by, string reason);
 event Unpaused(address indexed by);
+event AddressPaused(address indexed account, address indexed by, string reason);
+event AddressUnpaused(address indexed account, address indexed by);
 event SubjectHolderCountChanged(uint256 newCount);</pre>
+<p><code>AddressPaused</code> halts one address in <strong>both</strong> directions and is distinct from <code>Frozen</code>, which restricts sending only and takes an amount. The reason is mandatory on the same principle as the trust list: an unexplained restriction is indistinguishable from an attack on a holder.</p>
+<p><code>Paused</code> carries a reason for the same reason. A global halt is the most disruptive action available to a compliance officer, and a log entry that does not say why is of no use to the holder reading it.</p>
 <p><code>RuleFailed</code> is emitted when a rule reverts or exceeds its gas ceiling — even if the group ultimately passes via another rule. It is the operational signal that a third-party rule is misbehaving.</p>
 <p>Together with the refusal errors, <code>RuleFailed</code> gives <strong>blocked compliance transfers per period</strong> as a countable log rather than a manually entered figure.</p>
 <h3 id="14-freeze-and-lockup">Freeze and lockup</h3>
@@ -461,6 +465,19 @@ event RoleRevoked(bytes32 indexed role, address indexed account, address indexed
 );</pre>
 <p>Emitted in addition to the canonical ERC-7943 and ERC-20 events, never instead of them.</p>
 <hr class="soft">
+<h3 id="14-upgrades">Upgrades</h3>
+<pre>event UpgradeDelaySet(uint64 delay);
+event UpgradeScheduled(bytes32 indexed cutHash, uint64 executableAt);
+event UpgradeExecuted(bytes32 indexed cutHash);
+event UpgradeCancelled(bytes32 indexed cutHash);</pre>
+<p>Where the issuer configured a delay, a cut is scheduled before it lands and the schedule is public. That is the point of the delay: a holder who disagrees with a pending change has the window to act on it. With <code>delay == 0</code> no scheduling event is emitted, because nothing was scheduled.</p>
+<h3 id="14-agents-and-settlement">Agents and settlement</h3>
+<pre>event MandateGranted(bytes32 indexed mandateId, address indexed principal, address indexed agent);
+event MandateRevoked(bytes32 indexed mandateId);
+event AgentActed(
+    bytes32 indexed mandateId, address indexed agent, address indexed principal, bytes4 selector, uint256 amount
+);</pre>
+<p><code>AgentActed</code> names the <strong>principal</strong> as well as the agent, because the accountable party for an automated action is the person who granted the mandate, not the software that executed it.</p>
 <h3 id="14-factory">Factory</h3>
 <pre>event TokenCreated(
     address indexed token,
@@ -557,7 +574,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 <aside class="rail" aria-label="Section reference">
-<div class="railsec" data-sec="sec-14"><p class="railt">On this page</p><a href="#14-design-rule">Design rule</a><a href="#14-erc-7943-canonical">ERC-7943 canonical</a><a href="#14-erc-20-canonical">ERC-20 canonical</a><a href="#14-compliance">Compliance</a><a href="#14-freeze-and-lockup">Freeze and lockup</a><a href="#14-monetary">Monetary</a><a href="#14-roles">Roles</a><a href="#14-emergency">Emergency</a><a href="#14-factory">Factory</a><a href="#14-passport">Passport</a><a href="#14-offering">Offering</a><a href="#14-treasury">Treasury</a><a href="#14-errors">Errors</a><a href="#14-reconstruction-guarantees">Reconstruction guarantees</a><p class="railt s">Related</p><a href="07-functions.html">07 — Function reference</a><a href="08-compliance-pipeline.html">08 — Compliance pipeline</a></div>
+<div class="railsec" data-sec="sec-14"><p class="railt">On this page</p><a href="#14-design-rule">Design rule</a><a href="#14-erc-7943-canonical">ERC-7943 canonical</a><a href="#14-erc-20-canonical">ERC-20 canonical</a><a href="#14-compliance">Compliance</a><a href="#14-freeze-and-lockup">Freeze and lockup</a><a href="#14-monetary">Monetary</a><a href="#14-roles">Roles</a><a href="#14-emergency">Emergency</a><a href="#14-upgrades">Upgrades</a><a href="#14-agents-and-settlement">Agents and settlement</a><a href="#14-factory">Factory</a><a href="#14-passport">Passport</a><a href="#14-offering">Offering</a><a href="#14-treasury">Treasury</a><a href="#14-errors">Errors</a><a href="#14-reconstruction-guarantees">Reconstruction guarantees</a><p class="railt s">Related</p><a href="07-functions.html">07 — Function reference</a><a href="08-compliance-pipeline.html">08 — Compliance pipeline</a></div>
 <div class="railfix">
 <p class="railt s">Reference</p>
 <a href="../prototypes/">Prototypes</a>
@@ -625,4 +642,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 25ed6b0207cd2bc94e74c791f4d13b153766de066f28adbd39f9b83636988705 -->
+<!-- source-digest: 6a6bfa1c028400387550dbe507e0cec7acc27859a091685818f8c29b3106a568 -->
