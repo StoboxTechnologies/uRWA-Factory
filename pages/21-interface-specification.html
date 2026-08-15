@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>21 — Interface specification — uRWA Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<base href=".">
+<style>/* uRWA Factory — the design system. One file, every surface.
+   ==========================================================================
+   This is the only place colour, type, shape and depth are decided. No page
+   declares its own tokens, and no page restates a rule that lives here; a page
+   adds only what is true of that page alone.
+
+   A new page needs exactly one line in its head:
+
+       <link rel="stylesheet" href="theme.css">        (repository root)
+       <link rel="stylesheet" href="../theme.css">     (prototypes/)
+
+   and inherits the whole system — fonts included, imported below.
+
+   The documentation build inlines this file verbatim, so
+   urwa-documentation.html stays one self-contained artefact from one source.
+
+   Documented in docs/25-design-system.md. Verified by verify.py L0.12.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── tokens ─────────────────────────────────────────────────────────────── */
+
+:root{
+  /* ground and surfaces */
+  --ground:#F5F5F7;
+  --surface:#FFFFFF;
+  --raised:#FFFFFF;
+  --sunk:#F0F2F8;
+  --dark:#0C0C0F;
+
+  /* ink */
+  --ink:#1D1D1F;
+  --ink-2:#3C3C43;
+  --muted:#57575B;
+  --faint:#6E6E73;
+
+  /* lines — hairlines, never structure */
+  --rule:#E2E4E9;
+  --rule-strong:#D2D5DB;
+
+  /* emphasis — black carries the primary action */
+  --accent:#0C0C0F;
+  --accent-2:#1D1D1F;
+  --accent-wash:#F5F5F7;
+  --accent-edge:#E2E4E9;
+
+  /* the one hue — a single spot colour, used sparingly */
+  --spot:#22D3EE;
+  --spot-2:#0EBDD9;
+  --spot-ink:#0C2E33;
+  --spot-text:#0E7490;
+  --spot-wash:rgba(34,211,238,.22);
+  --spot-edge:#A5E9F4;
+
+  /* status */
+  --ok:#0F7A5F;
+  --ok-wash:#E9F8F3;
+  --ok-edge:#B6E5D6;
+  --warn:#B45309;
+  --warn-wash:#FEF6E7;
+  --warn-edge:#F3DDB2;
+  --crit:#B42318;
+  --crit-wash:#FEF1EF;
+  --crit-edge:#F5CFCA;
+
+  /* type */
+  --body:-apple-system,system-ui,'SF Pro Display','SF Pro Text','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --display:-apple-system,system-ui,'SF Pro Display','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+
+  /* shape */
+  --r:10px;
+  --r-md:12px;
+  --r-lg:20px;
+  --r-pill:980px;
+
+  /* depth — soft and far, never a hard edge */
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --sh-lg:0 8px 20px -4px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.05);
+  --sh-card:0 10px 30px -24px rgba(0,0,0,.3);
+  --sh-focus:0 0 0 3px rgba(34,211,238,.45);
+}
+
+/* ── base ───────────────────────────────────────────────────────────────── */
+
+*{box-sizing:border-box}
+
+/* Every surface paints its own ground and ink, so the page holds on any host
+   background rather than inheriting one. A page overrides only size and leading. */
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+
+h1,h2,h3,h4{font-family:var(--display);font-weight:700}
+h1{letter-spacing:-.03em;line-height:1.06}
+
+a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+
+/* Focus is a black outline first — the spot colour alone does not carry
+   enough contrast to announce focus by itself. */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);box-shadow:var(--sh-focus)}
+
+/* ── controls ───────────────────────────────────────────────────────────── */
+
+.btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary,.btn.spot{
+  border-radius:var(--r-pill);font-weight:600;box-shadow:none;
+  transition:background .18s,border-color .18s,color .18s,transform .12s}
+.btn{background:var(--surface);border-color:var(--rule-strong);color:var(--ink)}
+.btn:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.btn.p,.btn.primary{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#FFFFFF}
+.btn.spot{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:700}
+.btn.spot:hover{background:var(--spot-2);border-color:var(--spot-2);color:var(--spot-ink)}
+.btn.d{border-color:var(--crit-edge);color:var(--crit);background:var(--surface)}
+.btn.d:hover{background:var(--crit-wash)}
+.btn:active:not([disabled]){transform:translateY(1px)}
+
+.inp,input.inp,input,select,textarea{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
+.inp:focus,input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:var(--sh-focus)}
+
+/* ── containers ─────────────────────────────────────────────────────────── */
+
+.card,.figbox,.k,.addrcard,.tscroll{border-radius:var(--r-lg)}
+.note,.nextitem,.wal,.opt,pre{border-radius:var(--r-md)}
+.card,.figbox,.k,.addrcard{box-shadow:var(--sh-card);border-color:var(--rule)}
+.pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
+.bar{border-radius:var(--r-pill);overflow:hidden}
+.bar div{border-radius:0}
+table,th,td{border-color:var(--rule)}
+
+/* ── marks ──────────────────────────────────────────────────────────────── */
+
+/* Aqua marks emphasis and nothing else. Status is green, ochre or oxblood,
+   and always carries a word or a symbol as well as its colour. */
+.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.banner{background:var(--spot-wash);border-bottom:1px solid var(--spot-edge);color:var(--accent)}
+.tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+/* "You are here" is one mark everywhere: an aqua wash, an aqua ring, and
+   heavier text — never colour on its own. */
+.nb.on{background:var(--spot-wash);color:var(--accent);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.nb.on .b{color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--spot-wash)}
+
+.step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.stg.n .i,.sg.no .i{background:var(--crit);border-color:var(--crit);color:#FFFFFF}
+
+.st.ok{color:var(--ok)}
+.st.ok::before{background:var(--ok)}
+.pill.ok{background:var(--ok-wash);border-color:var(--ok-edge);color:var(--ok)}
+.el.y .m{color:var(--ok)}
+.wal.ok{border-color:var(--ok-edge);background:var(--ok-wash)}
+.wal.ok .dot{background:var(--ok)}
+.wallet.ok .dot{background:var(--ok)}
+
+/* ── site navigation ────────────────────────────────────────────────────── */
+
+.sitenav{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:10px 22px;
+  border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  font-size:13px;position:sticky;top:0;z-index:200}
+.sitenav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:var(--r-pill);
+  font-weight:500;transition:background .18s,color .18s;white-space:nowrap}
+.sitenav a:hover{color:var(--ink);background:var(--sunk);text-decoration:none}
+.sitenav a[aria-current="page"]{color:var(--accent);background:var(--spot-wash);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.sitenav .home{font-weight:700;font-size:15px;letter-spacing:-.02em;color:var(--ink);padding-left:0}
+.sitenav .home:hover{background:none;color:var(--ink)}
+.sitenav .div{width:1px;height:15px;background:var(--rule);margin:0 8px;flex:none}
+.sitenav .push{margin-left:auto;background:var(--accent);color:#FFFFFF;font-weight:600}
+.sitenav .push:hover{background:var(--accent-2);color:#FFFFFF}
+
+@media(max-width:720px){
+  .sitenav{position:static;padding:6px 12px}
+  .sitenav a{padding:13px 14px}
+  .sitenav .push{margin-left:0}
+}
+
+/* ── motion ─────────────────────────────────────────────────────────────── */
+
+/* Movement here is decoration; colour and border still report every state,
+   so removing the movement removes nothing a reader needs. */
+@media(prefers-reduced-motion:reduce){
+  a.card:hover,.btn:active:not([disabled]),.startat a:active{transform:none!important}
+}
+
+/* landing cards and page-to-page navigation */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:10px;margin:8px 0 30px}
+.cards .card{display:flex;align-items:baseline;gap:11px;padding:14px 16px;border:1px solid var(--rule);
+  border-radius:var(--r-lg);background:var(--surface);text-decoration:none;transition:border-color .14s,background .14s}
+.cards .card:hover{border-color:var(--rule-strong);background:var(--ground)}
+.cards .card .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none}
+.cards .card .l{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.allnote{font-size:14px;color:var(--muted);padding-top:20px;border-top:1px solid var(--rule)}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:44px 0 8px;
+  padding-top:22px;border-top:1px solid var(--rule)}
+.pnav .pn{font-size:14px;color:var(--muted);text-decoration:none;padding:9px 14px;
+  border:1px solid var(--rule);border-radius:var(--r-pill);transition:border-color .14s,color .14s}
+.pnav .pn:hover{color:var(--ink);border-color:var(--rule-strong)}
+.pnav .pn.n{margin-left:auto}
+nav.toc a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+nav.toc a.home{font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--rule);border-radius:0}
+
+/* Page styles for the documentation site. Tokens, controls, containers, marks
+   and the site navigation come from theme.css, which is inlined above this
+   block at build time — never restate them here. */
+body{font-size:17.5px;line-height:1.7}
+/* the bar's brand lines up with the contents heading below it */
+nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
+.shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
+@media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
+nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
+nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
+figure.dg{margin:34px 0;padding:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+figure.dg svg{display:block;width:100%;height:auto;max-width:100%}
+figure.dg figcaption{font-size:13.5px;line-height:1.6;color:var(--muted);padding:13px 20px 15px;border-top:1px solid var(--rule);background:var(--ground)}
+figure.dg figcaption strong{color:var(--ink-2);font-weight:600}
+p.missing{color:var(--crit);font-family:var(--mono);font-size:13px}
+nav.toc a{display:block;font-size:14.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:var(--r-pill);transition:background .18s,color .18s}
+nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a[aria-current="true"]{color:var(--accent);background:var(--spot-wash);font-weight:600;box-shadow:inset 0 0 0 1px var(--spot-edge)}
+nav.toc a[aria-current="true"] .n{color:var(--accent)}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+aside.rail{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
+aside.rail .railt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+aside.rail .railt.s{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+aside.rail a{display:block;font-size:13.5px;line-height:1.45;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .18s,color .18s}
+aside.rail a:hover{color:var(--ink);background:var(--sunk)}
+aside.rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+aside.rail .railsec{display:none}
+aside.rail .railsec.on{display:block}
+aside.rail .empty{font-size:13px;color:var(--faint);margin:0;padding:0 10px}
+.relmob{display:none}
+header.mast{border-bottom:1px solid var(--rule);padding-bottom:38px;margin-bottom:10px}
+header.mast h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,7vw,84px);line-height:1.02;letter-spacing:-.038em;margin:0 0 18px;text-wrap:balance}
+header.mast p{color:var(--muted);max-width:58ch;margin:0 0 28px;font-size:23px;line-height:1.45;letter-spacing:-.015em}
+header.mast .meta{display:flex;flex-wrap:wrap;gap:8px}
+header.mast .meta span{font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-pill);padding:6px 15px}
+header.mast .meta b{color:var(--ink);font-weight:600;margin-right:6px}
+header.mast .meta span:first-child{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+header.mast .meta span:first-child b{color:var(--spot-ink)}
+article{min-width:0}
+@media(min-width:1181px){article h3[id$="-related-documents"],article h3[id$="-related-documents"]+ul,article h3[id$="-related"],article h3[id$="-related"]+ul{display:none}}
+.hero{border-bottom:1px solid var(--rule);padding-bottom:48px;margin-bottom:8px}
+.hero .q{font-size:clamp(24px,2.8vw,34px);line-height:1.2;font-weight:700;letter-spacing:-.032em;margin:0 0 30px;max-width:22ch;text-wrap:balance}
+.hero .q em{font-style:normal;color:var(--muted);display:block;font-size:17.5px;font-weight:400;line-height:1.6;margin-top:20px;letter-spacing:-.005em;max-width:62ch}
+.wxy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 30px}
+.wxy>div{padding:24px 26px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+@media(max-width:640px){.wxy{grid-template-columns:1fr}}
+.wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
+.wxy strong,.wxy b{color:var(--ink)}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
+.author .b{flex:1;min-width:240px}
+.author .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.022em;margin:0 0 2px}
+.author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
+.author .bio{font-size:14.5px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+.author .lk{display:flex;gap:8px;flex-wrap:wrap}
+.author .lk a{font-size:13.5px;font-weight:500;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:7px 16px;color:var(--ink);transition:background .18s,border-color .18s}
+.author .lk a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.startat a{font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:9px 20px;color:var(--ink);background:var(--surface);transition:background .18s,border-color .18s,transform .12s}
+.startat a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat a:active{transform:translateY(1px)}
+.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
+.startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
+section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
+section.doc:first-of-type{margin-top:44px}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
+h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
+h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:86px}
+h5{font-weight:700;font-size:12.5px;margin:26px 0 8px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;scroll-margin-top:86px}
+p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
+article{--measure:74ch}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh-card)}
+pre code{background:none;padding:0;font-size:inherit}
+ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
+li{margin-bottom:9px}
+li::marker{color:var(--faint)}
+ul.task{list-style:none;padding-left:2px}
+ul.task .box{font-family:var(--mono);color:var(--ink);margin-right:9px}
+blockquote{border:1px solid var(--rule);background:var(--surface);padding:18px 22px;margin:0 0 22px;border-radius:var(--r-md);max-width:74ch;box-shadow:var(--sh-card)}
+blockquote p{margin:0 0 14px;max-width:none}
+blockquote p:last-child{margin:0}
+.tscroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:520px}
+th{color:var(--faint);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:14px 16px 11px;border-bottom:1px solid var(--rule);vertical-align:bottom}
+td{padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:600}
+details.faq{border:1px solid var(--rule);border-radius:var(--r-md);background:var(--surface);margin:0 0 8px;box-shadow:var(--sh-card)}
+details.faq>summary{cursor:pointer;list-style:none;padding:15px 52px 15px 20px;font-family:var(--display);font-size:16.5px;font-weight:600;letter-spacing:-.016em;position:relative;border-radius:var(--r-md)}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq>summary::after{content:"";position:absolute;right:20px;top:50%;width:9px;height:9px;margin-top:-6px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .18s}
+details.faq[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+details.faq>summary:hover{background:var(--sunk)}
+details.faq>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+details.faq[open]>summary{border-bottom:1px solid var(--rule);border-radius:var(--r-md) var(--r-md) 0 0}
+details.faq p{margin:0;padding:16px 20px 18px;font-size:16px;color:var(--ink-2);max-width:74ch}
+@media(prefers-reduced-motion:reduce){details.faq>summary::after{transition:none}}
+hr.soft{border:0;border-top:1px solid var(--rule);margin:32px 0}
+footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:14px;color:var(--faint)}
+footer p{max-width:76ch;margin:0 0 8px}
+@media(prefers-reduced-motion:reduce){.startat a:active{transform:none}}
+</style>
+<nav class="sitenav" aria-label="Documentation">
+<a class="home" href="#top">uRWA Factory</a>
+<span class="div"></span>
+<a href="00-why-this-exists.html">Start</a>
+<a href="04-storage.html">Mechanics</a>
+<a href="15-standards.html">Standards</a>
+<a href="21-interface-specification.html">Interfaces</a>
+<a href="27-model-inventory.html">Models</a>
+<a href="32-faq.html">FAQ</a>
+<a href="author.html">Author</a>
+<span class="div"></span>
+<a href="../prototypes/index.html">Prototypes</a>
+<a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
+</nav>
+<div class="shell" id="top">
+<nav class="toc" aria-label="Contents">
+<p class="t">Contents</p>
+<a class="home" href="../index.html"><span class="n">↑</span>All documentation</a>
+<a href="00-why-this-exists.html"><span class="n">00</span>Why this exists</a>
+<a href="01-overview.html"><span class="n">01</span>Overview</a>
+<a href="02-architecture.html"><span class="n">02</span>Architecture</a>
+<a href="03-contracts.html"><span class="n">03</span>Contracts</a>
+<a href="04-storage.html"><span class="n">04</span>Storage</a>
+<a href="05-roles.html"><span class="n">05</span>Roles and permissions</a>
+<a href="06-states.html"><span class="n">06</span>States</a>
+<a href="07-functions.html"><span class="n">07</span>Function reference</a>
+<a href="08-compliance-pipeline.html"><span class="n">08</span>Compliance pipeline</a>
+<a href="09-identity-did.html"><span class="n">09</span>Identity and DID</a>
+<a href="10-rules.html"><span class="n">10</span>Rules</a>
+<a href="11-passport.html"><span class="n">11</span>Asset Passport</a>
+<a href="12-offering.html"><span class="n">12</span>Offerings</a>
+<a href="13-treasury.html"><span class="n">13</span>Treasury</a>
+<a href="14-events-errors.html"><span class="n">14</span>Events and errors</a>
+<a href="15-standards.html"><span class="n">15</span>Standards</a>
+<a href="16-deployment.html"><span class="n">16</span>Deployment</a>
+<a href="17-security.html"><span class="n">17</span>Security</a>
+<a href="18-glossary.html"><span class="n">18</span>Glossary</a>
+<a href="19-open-boundary.html"><span class="n">19</span>The open boundary</a>
+<a href="20-development-plan.html"><span class="n">20</span>Development plan</a>
+<a href="21-interface-specification.html" aria-current="page"><span class="n">21</span>Interface specification</a>
+<a href="22-agents-and-settlement.html"><span class="n">22</span>Agents and settlement</a>
+<a href="23-testing-plan.html"><span class="n">23</span>Testing plan</a>
+<a href="24-work-registry.html"><span class="n">24</span>Work registry</a>
+<a href="25-design-system.html"><span class="n">25</span>Design system</a>
+<a href="26-handoff.html"><span class="n">26</span>Handoff: specification to build</a>
+<a href="27-model-inventory.html"><span class="n">27</span>Model inventory and artifact register</a>
+<a href="28-product-model.html"><span class="n">28</span>Product model</a>
+<a href="29-data-model.html"><span class="n">29</span>Data model</a>
+<a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
+<a href="31-verification.html"><span class="n">31</span>Verification framework</a>
+<a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
+<a href="author.html"><span class="n">—</span>The author</a>
+<p class="t s">Surfaces</p>
+<a href="../prototypes/"><span class="n">—</span>All prototypes</a>
+<a href="../prototypes/deploy-console.html"><span class="n">—</span>Deploy console</a>
+<a href="../prototypes/token-console.html"><span class="n">—</span>Token console</a>
+<a href="../prototypes/verifier.html"><span class="n">—</span>Public verifier</a>
+<a href="../prototypes/investor.html"><span class="n">—</span>Investor page</a>
+<p class="t s">Repository</p>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory"><span class="n">—</span>Source on GitHub</a>
+<a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
+</nav>
+<article>
+<header class="mast">
+<h1>uRWA Factory</h1>
+<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
+<div class="meta">
+<span><b>Status</b> Specification · no code yet</span>
+<span><b>Licence</b> MIT</span>
+<span><b>Chain</b> Base</span>
+<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
+</div>
+</header>
+
+<div class="hero">
+
+<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
+<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
+
+<div class="wxy">
+<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
+<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
+<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
+<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
+</div>
+
+<div class="author">
+<div class="ini">GD</div>
+<div class="b">
+<p class="nm">Gene Deyev</p>
+<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
+<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
+<div class="lk">
+<a href="https://stobox.io/team/gene-deyev">Profile</a>
+<a href="https://github.com/genedeyev">GitHub</a>
+<a href="mailto:gd@stoboxplatform.com">Email</a>
+<a href="https://stobox.io">Stobox</a>
+</div>
+</div>
+</div>
+
+<div class="startat">
+<a class="k" href="00-why-this-exists.html">Why this exists</a>
+<a href="02-architecture.html">Architecture</a>
+<a href="07-functions.html">Function reference</a>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
+</div>
+
+</div>
+
+<section class="doc" id="doc-21"><h2 id="sec-21">21 — Interface specification</h2>
+<p>Five screens and two non-screen surfaces, over one shared connection layer. Wireframes are deliberately low-fidelity: this specifies structure, data and state, not visual design.</p>
+<h3 id="21-surfaces">Surfaces</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Surface</th><th style="text-align:left">Audience</th><th style="text-align:left">Auth</th><th style="text-align:left">Public</th><th style="text-align:left">Specified in</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Public verifier</strong></td><td style="text-align:left">Anyone — exchanges, custodians, journalists, agents</td><td style="text-align:left">None</td><td style="text-align:left">✅</td><td style="text-align:left">Surface 1</td></tr><tr><td style="text-align:left"><strong>Investor page</strong></td><td style="text-align:left">Holders and prospective investors</td><td style="text-align:left">Wallet</td><td style="text-align:left">✅ per token</td><td style="text-align:left">Surface 2</td></tr><tr><td style="text-align:left"><strong>Deploy console</strong></td><td style="text-align:left">The issuing company, at creation</td><td style="text-align:left">Wallet</td><td style="text-align:left">❌</td><td style="text-align:left">Surface 3, deploy flow</td></tr><tr><td style="text-align:left"><strong>Token console</strong></td><td style="text-align:left">The issuing company, thereafter</td><td style="text-align:left">Wallet + role</td><td style="text-align:left">❌</td><td style="text-align:left">Surface 3, all other views</td></tr><tr><td style="text-align:left"><strong>Compliance console</strong></td><td style="text-align:left">Compliance officer</td><td style="text-align:left">Wallet + role</td><td style="text-align:left">❌</td><td style="text-align:left">Surface 4</td></tr><tr><td style="text-align:left"><strong>SDK</strong></td><td style="text-align:left">Integrators and agents</td><td style="text-align:left">None to read</td><td style="text-align:left">✅</td><td style="text-align:left">Not a screen — <a href="30-interaction-model.html">30</a></td></tr><tr><td style="text-align:left"><strong>Repository</strong></td><td style="text-align:left">Forkers</td><td style="text-align:left">None</td><td style="text-align:left">✅</td><td style="text-align:left">Not a screen — <a href="19-open-boundary.html">19</a></td></tr></tbody></table></div>
+<p>Surface 3 below covers the <strong>deploy console</strong> and the <strong>token console</strong> together, because they share one shell and one navigation; the deploy flow is the console&#x27;s first-run path. They are separate surfaces in <a href="28-product-model.html">28</a> because they serve different jobs at different times, and ship as separate prototypes.</p>
+<p>Every surface reads the same contracts. None require a Stobox account — a fork&#x27;s operators use the same interfaces against their own deployment.</p>
+<hr class="soft">
+<h3 id="21-the-connection-layer">The connection layer</h3>
+<p>Wallet connection is not enough. In this system a wallet must resolve to an <strong>identity subject</strong> with valid claims. The interface must make that distinction visible at all times, because it is the single thing users misunderstand.</p>
+<h4 id="21-connection-states">Connection states</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">State</th><th style="text-align:left">Shown as</th><th style="text-align:left">Primary action</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Disconnected</strong></td><td style="text-align:left">Neutral</td><td style="text-align:left">Connect wallet</td></tr><tr><td style="text-align:left"><strong>Wrong network</strong></td><td style="text-align:left">Warning</td><td style="text-align:left">Switch to Base</td></tr><tr><td style="text-align:left"><strong>Connected, no identity</strong></td><td style="text-align:left">Warning</td><td style="text-align:left">&quot;This wallet is not verified&quot; → how to get verified</td></tr><tr><td style="text-align:left"><strong>Connected, identity expired</strong></td><td style="text-align:left">Warning</td><td style="text-align:left">&quot;Verification expired on {date}&quot; → renew</td></tr><tr><td style="text-align:left"><strong>Connected, identity blocked</strong></td><td style="text-align:left">Critical</td><td style="text-align:left">&quot;This wallet is blocked&quot; → contact issuer</td></tr><tr><td style="text-align:left"><strong>Connected, wallet deactivated</strong></td><td style="text-align:left">Warning</td><td style="text-align:left">&quot;This wallet was deactivated. Your other wallets still work.&quot;</td></tr><tr><td style="text-align:left"><strong>Connected, verified</strong></td><td style="text-align:left">Positive</td><td style="text-align:left">Proceed</td></tr></tbody></table></div>
+<pre>┌──────────────────────────────────────────────────────────┐
+│  ●  0x4b2f…9c1a          Verified · Base                 │
+│     Subject 0x8e…42 · 3 wallets · expires 12 Mar 2027    │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│  ▲  0x4b2f…9c1a          Not verified · Base             │
+│     This wallet has no identity record. You can view     │
+│     everything here, but cannot hold or receive tokens.  │
+│     [ How to get verified ]                              │
+└──────────────────────────────────────────────────────────┘</pre>
+<p><strong>Rule:</strong> never block reading. An unverified wallet sees everything a verified one sees; only actions are gated. Hiding information from unverified users teaches them nothing and looks like a failure.</p>
+<h4 id="21-contract-calls">Contract calls</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">State resolved from</th><th style="text-align:left">Call</th></tr></thead><tbody><tr><td style="text-align:left">Subject</td><td style="text-align:left"><code>identityRegistry.subjectOf(wallet)</code></td></tr><tr><td style="text-align:left">Active</td><td style="text-align:left"><code>identityRegistry.isActive(wallet)</code></td></tr><tr><td style="text-align:left">Claims</td><td style="text-align:left"><code>identityRegistry.claim(subject, key)</code> per displayed key</td></tr><tr><td style="text-align:left">Wallets</td><td style="text-align:left"><code>getLinker</code> / adapter-specific</td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="21-surface-1-public-verifier">Surface 1 — Public verifier</h3>
+<p>No wallet required. The surface that makes the system credible to people who do not trust us.</p>
+<pre>┌────────────────────────────────────────────────────────────────┐
+│  Verify a uRWA token                                           │
+│  ┌──────────────────────────────────────────────┐  ┌────────┐  │
+│  │ 0x…  token address                           │  │ Check  │  │
+│  └──────────────────────────────────────────────┘  └────────┘  │
+├────────────────────────────────────────────────────────────────┤
+│  MANHATTAN OFFICE TOWER · MOTT                Base · verified  │
+│                                                                │
+│  Standard      ERC-20 · ERC-7943  0x3edbb4c4        ✔ conforms │
+│  Supply        2,400,000 / 10,000,000 max                      │
+│  Holders       412 subjects · term top-10 34%                  │
+│  Status        Active · not paused                             │
+│                                                                │
+│  COMPLIANCE RULES                                              │
+│  ├ Valid identity required                                     │
+│  ├ Jurisdiction: US excluded                                   │
+│  ├ Accredited or professional investors only                   │
+│  ├ Maximum 2,000 holders                                       │
+│  └ 12-month hold period                                        │
+│                                                                │
+│  ISSUANCE                                                      │
+│  Factory        Stobox canonical      ✔ isFactoryIssued        │
+│  Passport       0x9f3c…a71e           ✔ confirmed both sides   │
+│  Last snapshot  11 days ago · v14                    ✔ current │
+│                                                                │
+│  ATTESTATIONS                          values not disclosed    │
+│  ├ Reserves      Deloitte      11 d ago   valid 90 d           │
+│  ├ Valuation     CBRE          34 d ago   valid 12 mo          │
+│  └ Audit         Hacken        6 mo ago   valid 18 mo          │
+│                                                                │
+│  ┌──────────────────────┐  ┌──────────────────────┐            │
+│  │ Simulate a transfer  │  │ Verify a proof       │            │
+│  └──────────────────────┘  └──────────────────────┘            │
+└────────────────────────────────────────────────────────────────┘</pre>
+<h4 id="21-four-facts-the-verifier-must-always-show">Four facts the verifier must always show</h4>
+<p>Each is a property a holder would otherwise have to read from storage, and each materially changes what the instrument is.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Fact</th><th style="text-align:left">Read from</th><th style="text-align:left">Shown as</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Upgrade delay</strong></td><td style="text-align:left"><code>upgradeDelay()</code></td><td style="text-align:left">&quot;Upgrades take effect after 7 days&quot; or &quot;Upgrades take effect immediately&quot;</td></tr><tr><td style="text-align:left"><strong>Emergency facet</strong></td><td style="text-align:left"><code>facetAddress(forcedTransfer.selector)</code></td><td style="text-align:left">&quot;Seizure is possible&quot; or &quot;Seizure is impossible — the facet is not installed&quot;</td></tr><tr><td style="text-align:left"><strong>Fee</strong></td><td style="text-align:left"><code>fee()</code>, <code>feeToken()</code></td><td style="text-align:left">&quot;No fee&quot; or the exact amount and token</td></tr><tr><td style="text-align:left"><strong>Passport</strong></td><td style="text-align:left"><code>isConfirmed(passportId, token)</code></td><td style="text-align:left">Confirmed · declared but unconfirmed · <strong>not attached</strong></td></tr></tbody></table></div>
+<p><strong>&quot;Not attached&quot; is stated neutrally, with no warning styling.</strong> A token without a passport is not defective; the passport is descriptive, never dispositive. Marking unattested tokens as suspect would turn an open instrument into a funnel for our proprietary service, and every claim this project makes about the boundary would be worth less.</p>
+<p>&quot;Declared but unconfirmed&quot; <strong>is</strong> flagged, because that is what a forgery looks like — someone pointing a token at a passport that has not agreed.</p>
+<h4 id="21-transfer-simulator">Transfer simulator</h4>
+<p>The most useful thing on the page. Enter two addresses and an amount; get the answer before anyone signs anything.</p>
+<pre>┌────────────────────────────────────────────────────────────────┐
+│  From  0x4b2f…9c1a      To  0x77a0…2b31      Amount  5,000     │
+│                                                                │
+│  ✕  This transfer would fail                                   │
+│                                                                │
+│     Stage 6 — compliance rules                                 │
+│     Rule    JurisdictionDeny  0x5c…d9                          │
+│     Reason  &quot;jurisdiction excluded&quot;                            │
+│                                                                │
+│     ✔ not paused   ✔ sender may send   ✔ recipient may receive │
+│     ✔ 5,000 of 8,200 unfrozen           ✕ rules                │
+└────────────────────────────────────────────────────────────────┘</pre>
+<p>Backed by <code>whyBlocked(from, to, amount)</code> — one call returns stage, rule and reason. The stage list is rendered from <a href="06-states.html">06</a>.</p>
+<h4 id="21-proof-verifier">Proof verifier</h4>
+<p>Paste a disclosed value, its salt and Merkle path; the page verifies against the anchored root using the same library a contract would. No account, no Stobox call.</p>
+<hr class="soft">
+<h3 id="21-surface-2-investor-page">Surface 2 — Investor page</h3>
+<p>Public per token, personalised when a wallet connects.</p>
+<pre>┌────────────────────────────────────────────────────────────────┐
+│  MANHATTAN OFFICE TOWER              [ ● 0x4b2f…  Verified ]   │
+├────────────────────────────────────────────────────────────────┤
+│  YOUR POSITION                                                 │
+│                                                                │
+│      8,200 MOTT                                                │
+│      ├────────────────────────────┬──────────┬──────────┐      │
+│      │  transferable 5,300        │ Jun 1,900│ Dec 1,000│      │
+│      └────────────────────────────┴──────────┴──────────┘      │
+│      Locked amounts unlock automatically on the dates shown.   │
+│                                                                │
+│  ┌──────────┐ ┌──────────┐ ┌──────────────┐                    │
+│  │ Transfer │ │  Buy     │ │ View passport│                    │
+│  └──────────┘ └──────────┘ └──────────────┘                    │
+├────────────────────────────────────────────────────────────────┤
+│  ELIGIBILITY                                                   │
+│  ✔ Identity verified        expires 12 Mar 2027                │
+│  ✔ Jurisdiction  Germany    permitted                          │
+│  ✔ Professional client      MiFID II                           │
+│  ✔ Sanctions screening      cleared 3 days ago                 │
+├────────────────────────────────────────────────────────────────┤
+│  THE ASSET                                                     │
+│  Class    Real estate · commercial                             │
+│  Regime   MiFID II · professional investors                    │
+│  Passport 0x9f3c…a71e   snapshot 11 days ago                   │
+│  Reserves attested by Deloitte, 11 days ago                    │
+└────────────────────────────────────────────────────────────────┘</pre>
+<h4 id="21-transfer-flow-pre-flight-is-mandatory">Transfer flow — pre-flight is mandatory</h4>
+<pre>  amount + recipient
+        │
+        ▼
+  canTransfer() ── false ──▶ show whyBlocked reason, no signature requested
+        │ true
+        ▼
+  confirm ──▶ sign ──▶ pending ──▶ confirmed</pre>
+<p><strong>Never request a signature for a transaction that will revert.</strong> The contract can answer the question for free; asking the user to pay gas to discover a compliance failure is a design defect.</p>
+<h4 id="21-buy-flow">Buy flow</h4>
+<pre>  1. Eligibility     rules evaluated, result shown before anything else
+  2. Amount          min / max, allocation remaining, tier price
+  3. Payment         choose token, approve or permit
+  4. Review          cost, tokens, lockup end date, fees
+  5. Sign
+  6. Confirmation    tokens received, lockup shown on the position bar</pre>
+<p>Step 1 comes first deliberately. An investor who cannot participate learns it before entering an amount, not after approving a payment token.</p>
+<hr class="soft">
+<h3 id="21-surface-3-deploy-console-and-token-console">Surface 3 — Deploy console and token console</h3>
+<pre>┌──────────┬─────────────────────────────────────────────────────┐
+│ MOTT     │  OVERVIEW                                           │
+│          │                                                     │
+│ Overview │  Supply     2,400,000 issued · 10,000,000 cap       │
+│ Holders  │  Treasury   1,100,000 held · 400,000 reserved       │
+│ Offering │  Holders    412 subjects · 486 wallets              │
+│ Rules    │  Offering   Series A · active · 68% of soft cap     │
+│ Roles    │                                                     │
+│ Passport │  ⚠ 3 transfers blocked in the last 7 days           │
+│          │    2 × jurisdiction · 1 × hold period               │
+│ ──────── │                                                     │
+│ Deploy   │  ┌────────┐ ┌──────────┐ ┌───────────────┐          │
+│ new      │  │ Issue  │ │ Distribute│ │ New offering │          │
+│          │  └────────┘ └──────────┘ └───────────────┘          │
+└──────────┴─────────────────────────────────────────────────────┘</pre>
+<h4 id="21-deploy-flow">Deploy flow</h4>
+<p>Eight steps, mapping directly onto <code>TokenParams</code>.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Step</th><th style="text-align:left">Fields</th><th style="text-align:left">Warning shown</th></tr></thead><tbody><tr><td style="text-align:left">1 Identity</td><td style="text-align:left">name, symbol, decimals</td><td style="text-align:left">Cannot be changed after deployment</td></tr><tr><td style="text-align:left">2 Supply</td><td style="text-align:left">max supply, <strong>lock the cap</strong></td><td style="text-align:left">Locking is irreversible</td></tr><tr><td style="text-align:left">3 Regime</td><td style="text-align:left">preset from <a href="10-rules.html">10</a></td><td style="text-align:left">Determines who may invest; no EU securities preset ships</td></tr><tr><td style="text-align:left">4 Identity source</td><td style="text-align:left">allowlist, EAS, StoboxDID</td><td style="text-align:left">Determines what rules can check</td></tr><tr><td style="text-align:left">5 Roles</td><td style="text-align:left">four addresses</td><td style="text-align:left">Warn if any two are the same wallet</td></tr><tr><td style="text-align:left">6 Upgrade delay</td><td style="text-align:left">timelock in days, <code>0</code> for none</td><td style="text-align:left">Both answers are shown in the public verifier</td></tr><tr><td style="text-align:left">7 Emergency facet</td><td style="text-align:left">install or not — <strong>no default</strong></td><td style="text-align:left">Installing grants seizure, minting and burning; not installing makes them impossible</td></tr><tr><td style="text-align:left">8 Review</td><td style="text-align:left">full summary, estimated gas</td><td style="text-align:left">Final</td></tr></tbody></table></div>
+<p><strong>Steps 6 and 7 have no pre-selected answer.</strong> Every other step has a sensible default; these two do not, because each is a governance decision an issuer must make knowingly. A pre-ticked emergency facet would be installed by everyone who clicked through, and a pre-filled delay would be accepted as advice the tool is not in a position to give.</p>
+<p>Step 5 must warn — not block — when <code>SUPPLY_OPERATOR</code> equals <code>COMPLIANCE_OFFICER</code>, because together they can mint and freeze, which removes the check each provides on the other.</p>
+<h4 id="21-holders">Holders</h4>
+<p>Grouped <strong>by subject</strong>, expandable to wallets. This is the view that makes the subject-vs-address distinction concrete for the issuer.</p>
+<pre>  Subject 0x8e…42    Germany · professional     12,400   3 wallets ▾
+    0x4b2f…9c1a        8,200      5,300 free
+    0x77a0…2b31        3,100      3,100 free
+    0x91cc…04de        1,100          0 free   Dec lockup</pre>
+<h4 id="21-rules">Rules</h4>
+<p>Read-only display of the live policy set in plain language, with the contract address of each rule and a link to its source. A &quot;simulate change&quot; action shows how many current holders a proposed rule set would newly block — <strong>before</strong> it is applied. Applying is <code>UPGRADE_ADMIN</code> and timelocked.</p>
+<hr class="soft">
+<h3 id="21-surface-4-compliance-console">Surface 4 — Compliance console</h3>
+<p>Separate application, separate role, separate audit trail. Every action requires a reason.</p>
+<pre>┌────────────────────────────────────────────────────────────────┐
+│  COMPLIANCE — MOTT                            ● 0x33f1…  CO    │
+├────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────┐  Token active · not paused               │
+│  │  PAUSE TOKEN     │  Halts all transfers immediately.        │
+│  └──────────────────┘  Reason required.                        │
+├────────────────────────────────────────────────────────────────┤
+│  BLOCKED TRANSFERS — last 30 days                       14     │
+│  ├ 8   jurisdiction excluded                                   │
+│  ├ 4   hold period not elapsed                                 │
+│  ├ 1   sanctions screening stale                               │
+│  └ 1   RuleFailed — MaxHolders 0x2a…f0 reverted        ⚠       │
+│                                                                │
+│  The last row is an operational fault, not a policy outcome.   │
+├────────────────────────────────────────────────────────────────┤
+│  ACTIONS                                                       │
+│  Freeze tokens        account, amount, reason                  │
+│  Add lockup           account, amount, unlock date, note       │
+│  Forced transfer      from, to, amount, reason  ⚠ if installed │
+└────────────────────────────────────────────────────────────────┘</pre>
+<p>Forced operations require a typed confirmation of the reason, show the destination&#x27;s eligibility before executing, and warn explicitly that the action is permanent and publicly logged.</p>
+<p><code>RuleFailed</code> events are surfaced separately from ordinary refusals. A reverting rule is a bug in someone&#x27;s contract, not a compliance decision, and conflating the two hides real faults.</p>
+<hr class="soft">
+<h3 id="21-component-inventory">Component inventory</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Component</th><th style="text-align:left">Used by</th><th style="text-align:left">Notes</th></tr></thead><tbody><tr><td style="text-align:left"><code>WalletBadge</code></td><td style="text-align:left">all</td><td style="text-align:left">Seven connection states</td></tr><tr><td style="text-align:left"><code>EligibilityPanel</code></td><td style="text-align:left">investor, verifier</td><td style="text-align:left">One row per claim, with expiry</td></tr><tr><td style="text-align:left"><code>BalanceBar</code></td><td style="text-align:left">investor, issuer</td><td style="text-align:left">Free vs locked segments with unlock dates</td></tr><tr><td style="text-align:left"><code>RuleList</code></td><td style="text-align:left">all</td><td style="text-align:left">Plain language plus contract address</td></tr><tr><td style="text-align:left"><code>TransferPreflight</code></td><td style="text-align:left">investor, verifier</td><td style="text-align:left">Wraps <code>whyBlocked</code></td></tr><tr><td style="text-align:left"><code>AttestationList</code></td><td style="text-align:left">verifier, investor</td><td style="text-align:left">Metadata only, never values</td></tr><tr><td style="text-align:left"><code>SnapshotFreshness</code></td><td style="text-align:left">verifier, issuer</td><td style="text-align:left">Age plus stale flag from the contract</td></tr><tr><td style="text-align:left"><code>ReasonDialog</code></td><td style="text-align:left">compliance, issuer</td><td style="text-align:left">Mandatory reason before any privileged write</td></tr><tr><td style="text-align:left"><code>TxState</code></td><td style="text-align:left">all</td><td style="text-align:left">idle → simulating → awaiting signature → pending → confirmed / failed</td></tr><tr><td style="text-align:left"><code>AddressChip</code></td><td style="text-align:left">all</td><td style="text-align:left">Truncated, copyable, explorer link, ENS if present</td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="21-global-states">Global states</h3>
+<p>Every surface handles all of these. A screen is not done until each renders deliberately.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">State</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Loading</strong></td><td style="text-align:left">Skeletons matching final layout — never a spinner over a blank page</td></tr><tr><td style="text-align:left"><strong>Empty</strong></td><td style="text-align:left">Explain what will appear and the action that creates it</td></tr><tr><td style="text-align:left"><strong>Error — RPC</strong></td><td style="text-align:left">&quot;Cannot reach the network&quot;, retry, never a raw error object</td></tr><tr><td style="text-align:left"><strong>Error — revert</strong></td><td style="text-align:left">Decode ERC-7943 errors into the same language as <code>whyBlocked</code></td></tr><tr><td style="text-align:left"><strong>Wrong network</strong></td><td style="text-align:left">Blocking banner with a switch action</td></tr><tr><td style="text-align:left"><strong>Not connected</strong></td><td style="text-align:left">Everything readable; actions replaced with Connect</td></tr><tr><td style="text-align:left"><strong>No identity</strong></td><td style="text-align:left">Actions disabled with an explanation and a route to verification</td></tr><tr><td style="text-align:left"><strong>Paused</strong></td><td style="text-align:left">Persistent banner on every surface for that token</td></tr><tr><td style="text-align:left"><strong>Stale snapshot</strong></td><td style="text-align:left">Passport data marked stale wherever it appears</td></tr><tr><td style="text-align:left"><strong>Pending transaction</strong></td><td style="text-align:left">Optimistic state with the hash, and an explorer link</td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="21-error-language">Error language</h3>
+<p>Contract errors are decoded into one sentence naming the problem and the next step. Never show a selector.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Error</th><th style="text-align:left">Shown as</th></tr></thead><tbody><tr><td style="text-align:left"><code>ERC7943CannotSend</code></td><td style="text-align:left">&quot;This wallet is not verified, so it cannot send tokens.&quot;</td></tr><tr><td style="text-align:left"><code>ERC7943CannotReceive</code></td><td style="text-align:left">&quot;The recipient is not verified and cannot receive this token.&quot;</td></tr><tr><td style="text-align:left"><code>ERC7943InsufficientUnfrozenBalance</code></td><td style="text-align:left">&quot;5,000 requested, 3,300 available. 1,900 unlocks on 1 June.&quot;</td></tr><tr><td style="text-align:left"><code>ERC7943CannotTransfer</code></td><td style="text-align:left">The rule&#x27;s own <code>reason</code>, verbatim.</td></tr><tr><td style="text-align:left"><code>ProtocolPaused</code></td><td style="text-align:left">&quot;Transfers are paused by the issuer.&quot;</td></tr><tr><td style="text-align:left"><code>AllocationExceeded</code></td><td style="text-align:left">&quot;Your allocation for this offering is 10,000; you have used 8,500.&quot;</td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="21-technical-notes">Technical notes</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Concern</th><th style="text-align:left">Approach</th></tr></thead><tbody><tr><td style="text-align:left">Reads</td><td style="text-align:left">Direct RPC with multicall batching. No indexer required for correctness — the chain is the source.</td></tr><tr><td style="text-align:left">History</td><td style="text-align:left">Event logs; an indexer is a performance optimisation, never a dependency.</td></tr><tr><td style="text-align:left">Wallets</td><td style="text-align:left">EIP-6963 discovery, WalletConnect, plus ERC-4337 smart accounts</td></tr><tr><td style="text-align:left">Approvals</td><td style="text-align:left">ERC-2612 permit where the payment token supports it, saving a transaction</td></tr><tr><td style="text-align:left">Accessibility</td><td style="text-align:left">WCAG 2.1 AA. Never encode state in colour alone — freeze, pause and eligibility all carry text or icon</td></tr><tr><td style="text-align:left">i18n</td><td style="text-align:left">English and Ukrainian at launch; all contract-derived strings pass through the dictionary</td></tr><tr><td style="text-align:left">Responsive</td><td style="text-align:left">Investor page and verifier are mobile-first; the consoles are desktop-first</td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="21-related-documents">Related documents</h3>
+<ul>
+<li><a href="06-states.html">06 — States</a></li>
+<li><a href="07-functions.html">07 — Function reference</a></li>
+<li><a href="20-development-plan.html">20 — Development plan</a></li>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="20-development-plan.html">← Development plan</a><a class="pn n" href="22-agents-and-settlement.html">Agents and settlement →</a></nav></section>
+<footer>
+<p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
+Edit the Markdown, not this file.</p>
+<p>Stobox is a software and infrastructure provider. This documentation describes product
+architecture and is not legal, financial or investment advice.</p>
+</footer>
+</article>
+<aside class="rail" aria-label="Section reference">
+<div class="railsec" data-sec="sec-21"><p class="railt">On this page</p><a href="#21-surfaces">Surfaces</a><a href="#21-the-connection-layer">The connection layer</a><a href="#21-surface-1-public-verifier">Surface 1 — Public verifier</a><a href="#21-surface-2-investor-page">Surface 2 — Investor page</a><a href="#21-surface-3-deploy-console-and-token-console">Surface 3 — Deploy console and token console</a><a href="#21-surface-4-compliance-console">Surface 4 — Compliance console</a><a href="#21-component-inventory">Component inventory</a><a href="#21-global-states">Global states</a><a href="#21-error-language">Error language</a><a href="#21-technical-notes">Technical notes</a><p class="railt s">Related</p><a href="06-states.html">06 — States</a><a href="07-functions.html">07 — Function reference</a><a href="20-development-plan.html">20 — Development plan</a></div>
+<div class="railfix">
+<p class="railt s">Reference</p>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Source on GitHub</a>
+<a href="https://eips.ethereum.org/EIPS/eip-7943">ERC-7943 on eips.ethereum.org</a>
+<a href="../LICENSE">Licence — MIT</a>
+</div>
+</aside>
+</div>
+<script>
+(() => {
+  const nav = document.querySelector("nav.toc");
+  const secs = [...document.querySelectorAll("section.doc")];
+  if (!nav || !secs.length) return;
+
+  const links = new Map();
+  document.querySelectorAll('nav.toc a[href^="#sec-"]').forEach(a =>
+    links.set(a.getAttribute("href").slice(1), a));
+
+  let current = null;
+  const mark = id => {
+    if (id === current) return;
+    const prev = links.get(current);
+    if (prev) prev.removeAttribute("aria-current");
+    document.querySelectorAll("aside.rail .railsec.on").forEach(b => b.classList.remove("on"));
+    const block = document.querySelector('aside.rail .railsec[data-sec="' + id + '"]');
+    if (block) block.classList.add("on");
+    const next = links.get(id);
+    if (next) {
+      next.setAttribute("aria-current", "true");
+      // Keep the mark inside the contents list without scrolling the page.
+      const r = next.getBoundingClientRect(), n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+    }
+    current = id;
+  };
+
+  // The section whose top has passed a line a quarter down the viewport is the
+  // one being read. Plain geometry: no observer, no dependency, and it settles
+  // correctly on load, on resize, and after a jump to an anchor.
+  const pick = () => {
+    const line = window.innerHeight * 0.25;
+    let id = secs[0].id;
+    for (const sec of secs) {
+      if (sec.getBoundingClientRect().top > line) break;
+      id = sec.id;
+    }
+    mark("sec-" + id.replace("doc-", ""));
+  };
+
+  const frame = window.requestAnimationFrame || (fn => setTimeout(fn, 16));
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    frame(() => { queued = false; pick(); });
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  addEventListener("hashchange", onScroll);
+
+  // A click moves the mark at once, before the scroll settles.
+  links.forEach((a, id) => a.addEventListener("click", () => mark(id)));
+
+  pick();
+})();
+</script>
+<!-- source-digest: 8d55bc03834c551232f3d706aa41aa2bc5b855b967fcfe67dcb4b89013a94c13 -->

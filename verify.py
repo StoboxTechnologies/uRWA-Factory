@@ -24,7 +24,9 @@ from xml.etree import ElementTree
 ROOT = Path(__file__).parent
 DOCS = ROOT / "docs"
 PROTO = ROOT / "prototypes"
-HTML = ROOT / "urwa-documentation.html"
+HTML = ROOT / "index.html"
+ALL = ROOT / "all.html"
+PAGES = ROOT / "pages"
 README = ROOT / "README.md"
 
 RESET, BOLD, RED, GREEN, DIM = "\033[0m", "\033[1m", "\033[31m", "\033[32m", "\033[2m"
@@ -68,7 +70,12 @@ class Corpus:
         self.proto = {p.name: p.read_text(encoding="utf-8") for p in sorted(PROTO.glob("*.html"))}
         self.diagrams = {p.name: p.read_text(encoding="utf-8")
                          for p in sorted((DOCS / "diagrams").glob("*.svg"))}
-        self.html_exists = HTML.exists()
+        self.all = ALL.read_text(encoding="utf-8") if ALL.exists() else ""
+        self.pages = {p.name: p.read_text(encoding="utf-8") for p in sorted(PAGES.glob("*.html"))}
+        # Every built surface, for the checks that must hold on all of them.
+        self.built = {"index.html": self.html, "all.html": self.all}
+        self.built.update({f"pages/{n}": v for n, v in self.pages.items()})
+        self.html_exists = HTML.exists() and ALL.exists()
         # Content, not timestamps: a fresh git checkout gives every file the
         # same mtime, so an mtime comparison would be meaningless in CI.
         h = hashlib.sha256()
@@ -186,22 +193,25 @@ def _(c):
 @check("L0.5", 0, "The built HTML has no broken in-page anchors")
 def _(c):
     if not c.html_exists:
-        return ["urwa-documentation.html has not been built"]
-    ids = set(re.findall(r'id="([\w-]+)"', c.html))
-    broken = set(re.findall(r'href="#([\w-]+)"', c.html)) - ids
-    return [f"anchor #{a} has no target" for a in sorted(broken)]
+        return ["index.html has not been built"]
+    out = []
+    for name, page in c.built.items():
+        ids = set(re.findall(r'id="([\w-]+)"', page))
+        for a in sorted(set(re.findall(r'href="#([\w-]+)"', page)) - ids):
+            out.append(f"{name}: anchor #{a} has no target")
+    return out
 
 
 @breaks("L0.5")
 def _(c):
-    c.html += '<a href="#sec-does-not-exist">x</a>'
+    c.built["index.html"] += '<a href="#sec-does-not-exist">x</a>'
     return c
 
 
 @check("L0.6", 0, "The built HTML is not stale relative to the sources")
 def _(c):
     if not c.html_exists:
-        return ["urwa-documentation.html has not been built"]
+        return ["index.html has not been built"]
     if c.built_digest is None:
         return ["the built HTML carries no source digest — rebuild with build-docs.py"]
     if c.built_digest != c.source_digest:
@@ -220,20 +230,21 @@ def _(c):
     # Code spans hold deliberate literal examples — including this check's own
     # description in doc 31, which contains `![` and `](`. Scanning them would
     # make the check fire on its own documentation.
-    prose = re.sub(r"<code>.*?</code>", "", c.html, flags=re.S)
     out = []
-    if "&lt;div" in prose or "&lt;table" in prose:
-        out.append("escaped raw HTML block tags appear as visible text")
-    if re.search(r"!\[[^\]]*\]\(", prose):
-        out.append("unrendered image syntax appears in the HTML")
-    if re.search(r"[^!]\]\([^)]*\.md\)", prose):
-        out.append("unrendered Markdown link appears in the HTML")
+    for name, page in c.built.items():
+        prose = re.sub(r"<code>.*?</code>", "", page, flags=re.S)
+        if "&lt;div" in prose or "&lt;table" in prose:
+            out.append(f"{name}: escaped raw HTML block tags appear as visible text")
+        if re.search(r"!\[[^\]]*\]\(", prose):
+            out.append(f"{name}: unrendered image syntax")
+        if re.search(r"[^!]\]\([^)]*\.md\)", prose):
+            out.append(f"{name}: unrendered Markdown link")
     return out
 
 
 @breaks("L0.7")
 def _(c):
-    c.html += "&lt;div align=&quot;center&quot;&gt;"
+    c.built["index.html"] += "&lt;div align=&quot;center&quot;&gt;"
     return c
 
 
@@ -241,15 +252,16 @@ def _(c):
 def _(c):
     out = []
     for tag in ("h2", "h3", "h4", "table", "pre", "ul", "ol", "li", "td", "th", "section", "code"):
-        opened, closed = len(re.findall(rf"<{tag}\b", c.html)), c.html.count(f"</{tag}>")
-        if opened != closed:
-            out.append(f"<{tag}> opened {opened} times, closed {closed}")
+        for name, page in c.built.items():
+            opened, closed = len(re.findall(rf"<{tag}\b", page)), page.count(f"</{tag}>")
+            if opened != closed:
+                out.append(f"{name}: <{tag}> opened {opened} times, closed {closed}")
     return out
 
 
 @breaks("L0.8")
 def _(c):
-    c.html += "<table><tr><td>unclosed"
+    c.built["index.html"] += "<table><tr><td>unclosed"
     return c
 
 
@@ -259,7 +271,7 @@ def _(c):
         return ["no prototype pages found"]
     out = []
     for name, text in c.proto.items():
-        if 'href="../"' not in text:
+        if 'href="../index.html"' not in text:
             out.append(f"prototypes/{name} does not link back to the documentation")
         missing = [s for s in c.proto if s != name and f'href="{s}"' not in text]
         if missing:
@@ -279,10 +291,36 @@ def _(c):
     return c
 
 
+@check("L0.13", 0, "Every document has a page, and the site is navigable between them")
+def _(c):
+    if not c.pages:
+        return ["no per-document pages were built"]
+    expected = {n[:-3] + ".html" for n in c.numbered()} | {"author.html"}
+    built = set(c.pages)
+    out = [f"{n} has no page" for n in sorted(expected - built)]
+    out += [f"pages/{n} corresponds to no document" for n in sorted(built - expected)]
+    for name, page in c.pages.items():
+        if f'href="pages/{name}"' not in c.html:
+            out.append(f"the landing page does not link pages/{name}")
+        if 'href="../index.html"' not in page:
+            out.append(f"pages/{name} does not link back to the landing page")
+        if 'class="pnav"' not in page:
+            out.append(f"pages/{name} has no adjacent-document navigation")
+    if 'href="all.html"' not in c.html:
+        out.append("the landing page does not link the combined documentation")
+    return out
+
+
+@breaks("L0.13")
+def _(c):
+    c.pages.pop(next(iter(sorted(c.pages))))
+    return c
+
+
 @check("L0.10", 0, "Every page declares its character set and viewport")
 def _(c):
     out = []
-    for name, text in list(c.proto.items()) + [("urwa-documentation.html", c.html)]:
+    for name, text in list(c.proto.items()) + [("index.html", c.html)]:
         head = text[:600]
         if 'charset="utf-8"' not in head.lower():
             out.append(f"{name} declares no character set — em dashes render as mojibake")
@@ -405,7 +443,7 @@ def _(c):
             out.append(f"prototypes/{name} loads its own web font; theme.css imports it")
     # The built page is one artefact, so it inlines the file rather than linking it.
     if c.html_exists and "--spot:#22D3EE" not in c.html:
-        out.append("urwa-documentation.html does not carry the design tokens")
+        out.append("index.html does not carry the design tokens")
     return out
 
 

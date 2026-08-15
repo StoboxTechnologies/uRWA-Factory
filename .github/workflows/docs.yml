@@ -30,7 +30,9 @@ jobs:
       - name: Assemble site
         run: |
           mkdir -p _site
-          cp urwa-documentation.html _site/index.html
+          cp index.html _site/index.html
+          cp all.html _site/all.html        # the combined corpus, for search and print
+          cp -r pages _site/pages           # one page per document
           cp -r docs _site/docs
           cp -r prototypes _site/prototypes
           cp theme.css _site/theme.css   # the prototypes link ../theme.css

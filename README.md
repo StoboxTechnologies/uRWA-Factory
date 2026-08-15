@@ -60,8 +60,9 @@ paused? → both trusted? → canSend(from)? → canReceive(to)? → enough unfr
 
 ## Documentation
 
-Everything is in [`docs/`](docs/), and rendered as a single page at the
-**[documentation site](https://stoboxtechnologies.github.io/uRWA-Factory/)**.
+Everything is in [`docs/`](docs/), rendered one page per document at the
+**[documentation site](https://stoboxtechnologies.github.io/uRWA-Factory/)** — with the whole corpus
+on [a single page](https://stoboxtechnologies.github.io/uRWA-Factory/all.html) for searching and printing.
 
 <table>
 <tr><td valign="top" width="50%">
@@ -159,11 +160,11 @@ open-source claim has broken and the build stops. Details in
 forge build                 # once the interface package lands
 forge test
 python3 build-docs.py       # regenerates the documentation site
-python3 verify.py           # 35 checks across structure, documents and models
-python3 verify.py --self-test   # proves those 35 checks can still fail
+python3 verify.py           # 36 checks across structure, documents and models
+python3 verify.py --self-test   # proves those 36 checks can still fail
 ```
 
-The [verification framework](docs/31-verification.md) has six levels. Thirty-five checks run today;
+The [verification framework](docs/31-verification.md) has six levels. Thirty-six checks run today;
 the rest arrive with the code they test. The last level checks the checks: every one ships with a
 deliberately broken fixture, and any check that passes its own broken input is reported dead rather
 than counted as a pass. It found six on its first run.

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>07 — Function reference — uRWA Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<base href=".">
+<style>/* uRWA Factory — the design system. One file, every surface.
+   ==========================================================================
+   This is the only place colour, type, shape and depth are decided. No page
+   declares its own tokens, and no page restates a rule that lives here; a page
+   adds only what is true of that page alone.
+
+   A new page needs exactly one line in its head:
+
+       <link rel="stylesheet" href="theme.css">        (repository root)
+       <link rel="stylesheet" href="../theme.css">     (prototypes/)
+
+   and inherits the whole system — fonts included, imported below.
+
+   The documentation build inlines this file verbatim, so
+   urwa-documentation.html stays one self-contained artefact from one source.
+
+   Documented in docs/25-design-system.md. Verified by verify.py L0.12.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── tokens ─────────────────────────────────────────────────────────────── */
+
+:root{
+  /* ground and surfaces */
+  --ground:#F5F5F7;
+  --surface:#FFFFFF;
+  --raised:#FFFFFF;
+  --sunk:#F0F2F8;
+  --dark:#0C0C0F;
+
+  /* ink */
+  --ink:#1D1D1F;
+  --ink-2:#3C3C43;
+  --muted:#57575B;
+  --faint:#6E6E73;
+
+  /* lines — hairlines, never structure */
+  --rule:#E2E4E9;
+  --rule-strong:#D2D5DB;
+
+  /* emphasis — black carries the primary action */
+  --accent:#0C0C0F;
+  --accent-2:#1D1D1F;
+  --accent-wash:#F5F5F7;
+  --accent-edge:#E2E4E9;
+
+  /* the one hue — a single spot colour, used sparingly */
+  --spot:#22D3EE;
+  --spot-2:#0EBDD9;
+  --spot-ink:#0C2E33;
+  --spot-text:#0E7490;
+  --spot-wash:rgba(34,211,238,.22);
+  --spot-edge:#A5E9F4;
+
+  /* status */
+  --ok:#0F7A5F;
+  --ok-wash:#E9F8F3;
+  --ok-edge:#B6E5D6;
+  --warn:#B45309;
+  --warn-wash:#FEF6E7;
+  --warn-edge:#F3DDB2;
+  --crit:#B42318;
+  --crit-wash:#FEF1EF;
+  --crit-edge:#F5CFCA;
+
+  /* type */
+  --body:-apple-system,system-ui,'SF Pro Display','SF Pro Text','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --display:-apple-system,system-ui,'SF Pro Display','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+
+  /* shape */
+  --r:10px;
+  --r-md:12px;
+  --r-lg:20px;
+  --r-pill:980px;
+
+  /* depth — soft and far, never a hard edge */
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --sh-lg:0 8px 20px -4px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.05);
+  --sh-card:0 10px 30px -24px rgba(0,0,0,.3);
+  --sh-focus:0 0 0 3px rgba(34,211,238,.45);
+}
+
+/* ── base ───────────────────────────────────────────────────────────────── */
+
+*{box-sizing:border-box}
+
+/* Every surface paints its own ground and ink, so the page holds on any host
+   background rather than inheriting one. A page overrides only size and leading. */
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+
+h1,h2,h3,h4{font-family:var(--display);font-weight:700}
+h1{letter-spacing:-.03em;line-height:1.06}
+
+a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+
+/* Focus is a black outline first — the spot colour alone does not carry
+   enough contrast to announce focus by itself. */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);box-shadow:var(--sh-focus)}
+
+/* ── controls ───────────────────────────────────────────────────────────── */
+
+.btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary,.btn.spot{
+  border-radius:var(--r-pill);font-weight:600;box-shadow:none;
+  transition:background .18s,border-color .18s,color .18s,transform .12s}
+.btn{background:var(--surface);border-color:var(--rule-strong);color:var(--ink)}
+.btn:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.btn.p,.btn.primary{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#FFFFFF}
+.btn.spot{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:700}
+.btn.spot:hover{background:var(--spot-2);border-color:var(--spot-2);color:var(--spot-ink)}
+.btn.d{border-color:var(--crit-edge);color:var(--crit);background:var(--surface)}
+.btn.d:hover{background:var(--crit-wash)}
+.btn:active:not([disabled]){transform:translateY(1px)}
+
+.inp,input.inp,input,select,textarea{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
+.inp:focus,input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:var(--sh-focus)}
+
+/* ── containers ─────────────────────────────────────────────────────────── */
+
+.card,.figbox,.k,.addrcard,.tscroll{border-radius:var(--r-lg)}
+.note,.nextitem,.wal,.opt,pre{border-radius:var(--r-md)}
+.card,.figbox,.k,.addrcard{box-shadow:var(--sh-card);border-color:var(--rule)}
+.pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
+.bar{border-radius:var(--r-pill);overflow:hidden}
+.bar div{border-radius:0}
+table,th,td{border-color:var(--rule)}
+
+/* ── marks ──────────────────────────────────────────────────────────────── */
+
+/* Aqua marks emphasis and nothing else. Status is green, ochre or oxblood,
+   and always carries a word or a symbol as well as its colour. */
+.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.banner{background:var(--spot-wash);border-bottom:1px solid var(--spot-edge);color:var(--accent)}
+.tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+/* "You are here" is one mark everywhere: an aqua wash, an aqua ring, and
+   heavier text — never colour on its own. */
+.nb.on{background:var(--spot-wash);color:var(--accent);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.nb.on .b{color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--spot-wash)}
+
+.step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.stg.n .i,.sg.no .i{background:var(--crit);border-color:var(--crit);color:#FFFFFF}
+
+.st.ok{color:var(--ok)}
+.st.ok::before{background:var(--ok)}
+.pill.ok{background:var(--ok-wash);border-color:var(--ok-edge);color:var(--ok)}
+.el.y .m{color:var(--ok)}
+.wal.ok{border-color:var(--ok-edge);background:var(--ok-wash)}
+.wal.ok .dot{background:var(--ok)}
+.wallet.ok .dot{background:var(--ok)}
+
+/* ── site navigation ────────────────────────────────────────────────────── */
+
+.sitenav{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:10px 22px;
+  border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  font-size:13px;position:sticky;top:0;z-index:200}
+.sitenav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:var(--r-pill);
+  font-weight:500;transition:background .18s,color .18s;white-space:nowrap}
+.sitenav a:hover{color:var(--ink);background:var(--sunk);text-decoration:none}
+.sitenav a[aria-current="page"]{color:var(--accent);background:var(--spot-wash);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.sitenav .home{font-weight:700;font-size:15px;letter-spacing:-.02em;color:var(--ink);padding-left:0}
+.sitenav .home:hover{background:none;color:var(--ink)}
+.sitenav .div{width:1px;height:15px;background:var(--rule);margin:0 8px;flex:none}
+.sitenav .push{margin-left:auto;background:var(--accent);color:#FFFFFF;font-weight:600}
+.sitenav .push:hover{background:var(--accent-2);color:#FFFFFF}
+
+@media(max-width:720px){
+  .sitenav{position:static;padding:6px 12px}
+  .sitenav a{padding:13px 14px}
+  .sitenav .push{margin-left:0}
+}
+
+/* ── motion ─────────────────────────────────────────────────────────────── */
+
+/* Movement here is decoration; colour and border still report every state,
+   so removing the movement removes nothing a reader needs. */
+@media(prefers-reduced-motion:reduce){
+  a.card:hover,.btn:active:not([disabled]),.startat a:active{transform:none!important}
+}
+
+/* landing cards and page-to-page navigation */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:10px;margin:8px 0 30px}
+.cards .card{display:flex;align-items:baseline;gap:11px;padding:14px 16px;border:1px solid var(--rule);
+  border-radius:var(--r-lg);background:var(--surface);text-decoration:none;transition:border-color .14s,background .14s}
+.cards .card:hover{border-color:var(--rule-strong);background:var(--ground)}
+.cards .card .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none}
+.cards .card .l{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.allnote{font-size:14px;color:var(--muted);padding-top:20px;border-top:1px solid var(--rule)}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:44px 0 8px;
+  padding-top:22px;border-top:1px solid var(--rule)}
+.pnav .pn{font-size:14px;color:var(--muted);text-decoration:none;padding:9px 14px;
+  border:1px solid var(--rule);border-radius:var(--r-pill);transition:border-color .14s,color .14s}
+.pnav .pn:hover{color:var(--ink);border-color:var(--rule-strong)}
+.pnav .pn.n{margin-left:auto}
+nav.toc a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+nav.toc a.home{font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--rule);border-radius:0}
+
+/* Page styles for the documentation site. Tokens, controls, containers, marks
+   and the site navigation come from theme.css, which is inlined above this
+   block at build time — never restate them here. */
+body{font-size:17.5px;line-height:1.7}
+/* the bar's brand lines up with the contents heading below it */
+nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
+.shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
+@media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
+nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
+nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
+figure.dg{margin:34px 0;padding:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+figure.dg svg{display:block;width:100%;height:auto;max-width:100%}
+figure.dg figcaption{font-size:13.5px;line-height:1.6;color:var(--muted);padding:13px 20px 15px;border-top:1px solid var(--rule);background:var(--ground)}
+figure.dg figcaption strong{color:var(--ink-2);font-weight:600}
+p.missing{color:var(--crit);font-family:var(--mono);font-size:13px}
+nav.toc a{display:block;font-size:14.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:var(--r-pill);transition:background .18s,color .18s}
+nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a[aria-current="true"]{color:var(--accent);background:var(--spot-wash);font-weight:600;box-shadow:inset 0 0 0 1px var(--spot-edge)}
+nav.toc a[aria-current="true"] .n{color:var(--accent)}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+aside.rail{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
+aside.rail .railt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+aside.rail .railt.s{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+aside.rail a{display:block;font-size:13.5px;line-height:1.45;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .18s,color .18s}
+aside.rail a:hover{color:var(--ink);background:var(--sunk)}
+aside.rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+aside.rail .railsec{display:none}
+aside.rail .railsec.on{display:block}
+aside.rail .empty{font-size:13px;color:var(--faint);margin:0;padding:0 10px}
+.relmob{display:none}
+header.mast{border-bottom:1px solid var(--rule);padding-bottom:38px;margin-bottom:10px}
+header.mast h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,7vw,84px);line-height:1.02;letter-spacing:-.038em;margin:0 0 18px;text-wrap:balance}
+header.mast p{color:var(--muted);max-width:58ch;margin:0 0 28px;font-size:23px;line-height:1.45;letter-spacing:-.015em}
+header.mast .meta{display:flex;flex-wrap:wrap;gap:8px}
+header.mast .meta span{font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-pill);padding:6px 15px}
+header.mast .meta b{color:var(--ink);font-weight:600;margin-right:6px}
+header.mast .meta span:first-child{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+header.mast .meta span:first-child b{color:var(--spot-ink)}
+article{min-width:0}
+@media(min-width:1181px){article h3[id$="-related-documents"],article h3[id$="-related-documents"]+ul,article h3[id$="-related"],article h3[id$="-related"]+ul{display:none}}
+.hero{border-bottom:1px solid var(--rule);padding-bottom:48px;margin-bottom:8px}
+.hero .q{font-size:clamp(24px,2.8vw,34px);line-height:1.2;font-weight:700;letter-spacing:-.032em;margin:0 0 30px;max-width:22ch;text-wrap:balance}
+.hero .q em{font-style:normal;color:var(--muted);display:block;font-size:17.5px;font-weight:400;line-height:1.6;margin-top:20px;letter-spacing:-.005em;max-width:62ch}
+.wxy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 30px}
+.wxy>div{padding:24px 26px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+@media(max-width:640px){.wxy{grid-template-columns:1fr}}
+.wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
+.wxy strong,.wxy b{color:var(--ink)}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
+.author .b{flex:1;min-width:240px}
+.author .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.022em;margin:0 0 2px}
+.author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
+.author .bio{font-size:14.5px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+.author .lk{display:flex;gap:8px;flex-wrap:wrap}
+.author .lk a{font-size:13.5px;font-weight:500;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:7px 16px;color:var(--ink);transition:background .18s,border-color .18s}
+.author .lk a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.startat a{font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:9px 20px;color:var(--ink);background:var(--surface);transition:background .18s,border-color .18s,transform .12s}
+.startat a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat a:active{transform:translateY(1px)}
+.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
+.startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
+section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
+section.doc:first-of-type{margin-top:44px}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
+h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
+h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:86px}
+h5{font-weight:700;font-size:12.5px;margin:26px 0 8px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;scroll-margin-top:86px}
+p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
+article{--measure:74ch}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh-card)}
+pre code{background:none;padding:0;font-size:inherit}
+ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
+li{margin-bottom:9px}
+li::marker{color:var(--faint)}
+ul.task{list-style:none;padding-left:2px}
+ul.task .box{font-family:var(--mono);color:var(--ink);margin-right:9px}
+blockquote{border:1px solid var(--rule);background:var(--surface);padding:18px 22px;margin:0 0 22px;border-radius:var(--r-md);max-width:74ch;box-shadow:var(--sh-card)}
+blockquote p{margin:0 0 14px;max-width:none}
+blockquote p:last-child{margin:0}
+.tscroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:520px}
+th{color:var(--faint);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:14px 16px 11px;border-bottom:1px solid var(--rule);vertical-align:bottom}
+td{padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:600}
+details.faq{border:1px solid var(--rule);border-radius:var(--r-md);background:var(--surface);margin:0 0 8px;box-shadow:var(--sh-card)}
+details.faq>summary{cursor:pointer;list-style:none;padding:15px 52px 15px 20px;font-family:var(--display);font-size:16.5px;font-weight:600;letter-spacing:-.016em;position:relative;border-radius:var(--r-md)}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq>summary::after{content:"";position:absolute;right:20px;top:50%;width:9px;height:9px;margin-top:-6px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .18s}
+details.faq[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+details.faq>summary:hover{background:var(--sunk)}
+details.faq>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+details.faq[open]>summary{border-bottom:1px solid var(--rule);border-radius:var(--r-md) var(--r-md) 0 0}
+details.faq p{margin:0;padding:16px 20px 18px;font-size:16px;color:var(--ink-2);max-width:74ch}
+@media(prefers-reduced-motion:reduce){details.faq>summary::after{transition:none}}
+hr.soft{border:0;border-top:1px solid var(--rule);margin:32px 0}
+footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:14px;color:var(--faint)}
+footer p{max-width:76ch;margin:0 0 8px}
+@media(prefers-reduced-motion:reduce){.startat a:active{transform:none}}
+</style>
+<nav class="sitenav" aria-label="Documentation">
+<a class="home" href="#top">uRWA Factory</a>
+<span class="div"></span>
+<a href="00-why-this-exists.html">Start</a>
+<a href="04-storage.html">Mechanics</a>
+<a href="15-standards.html">Standards</a>
+<a href="21-interface-specification.html">Interfaces</a>
+<a href="27-model-inventory.html">Models</a>
+<a href="32-faq.html">FAQ</a>
+<a href="author.html">Author</a>
+<span class="div"></span>
+<a href="../prototypes/index.html">Prototypes</a>
+<a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
+</nav>
+<div class="shell" id="top">
+<nav class="toc" aria-label="Contents">
+<p class="t">Contents</p>
+<a class="home" href="../index.html"><span class="n">↑</span>All documentation</a>
+<a href="00-why-this-exists.html"><span class="n">00</span>Why this exists</a>
+<a href="01-overview.html"><span class="n">01</span>Overview</a>
+<a href="02-architecture.html"><span class="n">02</span>Architecture</a>
+<a href="03-contracts.html"><span class="n">03</span>Contracts</a>
+<a href="04-storage.html"><span class="n">04</span>Storage</a>
+<a href="05-roles.html"><span class="n">05</span>Roles and permissions</a>
+<a href="06-states.html"><span class="n">06</span>States</a>
+<a href="07-functions.html" aria-current="page"><span class="n">07</span>Function reference</a>
+<a href="08-compliance-pipeline.html"><span class="n">08</span>Compliance pipeline</a>
+<a href="09-identity-did.html"><span class="n">09</span>Identity and DID</a>
+<a href="10-rules.html"><span class="n">10</span>Rules</a>
+<a href="11-passport.html"><span class="n">11</span>Asset Passport</a>
+<a href="12-offering.html"><span class="n">12</span>Offerings</a>
+<a href="13-treasury.html"><span class="n">13</span>Treasury</a>
+<a href="14-events-errors.html"><span class="n">14</span>Events and errors</a>
+<a href="15-standards.html"><span class="n">15</span>Standards</a>
+<a href="16-deployment.html"><span class="n">16</span>Deployment</a>
+<a href="17-security.html"><span class="n">17</span>Security</a>
+<a href="18-glossary.html"><span class="n">18</span>Glossary</a>
+<a href="19-open-boundary.html"><span class="n">19</span>The open boundary</a>
+<a href="20-development-plan.html"><span class="n">20</span>Development plan</a>
+<a href="21-interface-specification.html"><span class="n">21</span>Interface specification</a>
+<a href="22-agents-and-settlement.html"><span class="n">22</span>Agents and settlement</a>
+<a href="23-testing-plan.html"><span class="n">23</span>Testing plan</a>
+<a href="24-work-registry.html"><span class="n">24</span>Work registry</a>
+<a href="25-design-system.html"><span class="n">25</span>Design system</a>
+<a href="26-handoff.html"><span class="n">26</span>Handoff: specification to build</a>
+<a href="27-model-inventory.html"><span class="n">27</span>Model inventory and artifact register</a>
+<a href="28-product-model.html"><span class="n">28</span>Product model</a>
+<a href="29-data-model.html"><span class="n">29</span>Data model</a>
+<a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
+<a href="31-verification.html"><span class="n">31</span>Verification framework</a>
+<a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
+<a href="author.html"><span class="n">—</span>The author</a>
+<p class="t s">Surfaces</p>
+<a href="../prototypes/"><span class="n">—</span>All prototypes</a>
+<a href="../prototypes/deploy-console.html"><span class="n">—</span>Deploy console</a>
+<a href="../prototypes/token-console.html"><span class="n">—</span>Token console</a>
+<a href="../prototypes/verifier.html"><span class="n">—</span>Public verifier</a>
+<a href="../prototypes/investor.html"><span class="n">—</span>Investor page</a>
+<p class="t s">Repository</p>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory"><span class="n">—</span>Source on GitHub</a>
+<a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
+</nav>
+<article>
+<header class="mast">
+<h1>uRWA Factory</h1>
+<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
+<div class="meta">
+<span><b>Status</b> Specification · no code yet</span>
+<span><b>Licence</b> MIT</span>
+<span><b>Chain</b> Base</span>
+<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
+</div>
+</header>
+
+<div class="hero">
+
+<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
+<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
+
+<div class="wxy">
+<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
+<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
+<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
+<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
+</div>
+
+<div class="author">
+<div class="ini">GD</div>
+<div class="b">
+<p class="nm">Gene Deyev</p>
+<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
+<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
+<div class="lk">
+<a href="https://stobox.io/team/gene-deyev">Profile</a>
+<a href="https://github.com/genedeyev">GitHub</a>
+<a href="mailto:gd@stoboxplatform.com">Email</a>
+<a href="https://stobox.io">Stobox</a>
+</div>
+</div>
+</div>
+
+<div class="startat">
+<a class="k" href="00-why-this-exists.html">Why this exists</a>
+<a href="02-architecture.html">Architecture</a>
+<a href="07-functions.html">Function reference</a>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
+</div>
+
+</div>
+
+<section class="doc" id="doc-07"><h2 id="sec-07">07 — Function reference</h2>
+<p>Every function in the system, with four things stated for each: <strong>what it does</strong>, <strong>who calls it</strong>, <strong>why it exists</strong>, and where relevant, <strong>how to use it correctly</strong>.</p>
+<h3 id="07-how-to-read-this">How to read this</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Column</th><th style="text-align:left">Meaning</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Function</strong></td><td style="text-align:left">Signature. Return types shown after <code>→</code></td></tr><tr><td style="text-align:left"><strong>Does</strong></td><td style="text-align:left">What actually happens on chain</td></tr><tr><td style="text-align:left"><strong>Called by</strong></td><td style="text-align:left">The role or actor who realistically calls it</td></tr><tr><td style="text-align:left"><strong>Why</strong></td><td style="text-align:left">The problem it solves. If a function has no answer here, it should not exist</td></tr></tbody></table></div>
+<p><code>view</code> means it reads only — free to call, no transaction, no gas when called off-chain. <code>write</code> means it changes state and needs a transaction.</p>
+<h3 id="07-contents">Contents</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Contract</th><th style="text-align:left">Purpose</th><th style="text-align:left">Section</th></tr></thead><tbody><tr><td style="text-align:left"><strong>uRWAToken — core</strong></td><td style="text-align:left">The ERC-20 everyone already knows how to use</td><td style="text-align:left"><a href="#07-urwatoken-erc-20-core">↓</a></td></tr><tr><td style="text-align:left"><strong>ComplianceFacet</strong></td><td style="text-align:left">Decides whether a transfer may happen</td><td style="text-align:left"><a href="#07-compliancefacet">↓</a></td></tr><tr><td style="text-align:left"><strong>FreezeFacet</strong></td><td style="text-align:left">Freezes balances indefinitely</td><td style="text-align:left"><a href="#07-freezefacet">↓</a></td></tr><tr><td style="text-align:left"><strong>LockupFacet</strong></td><td style="text-align:left">Locks balances until a date</td><td style="text-align:left"><a href="#07-lockupfacet">↓</a></td></tr><tr><td style="text-align:left"><strong>MonetaryFacet</strong></td><td style="text-align:left">Creates, destroys and distributes supply</td><td style="text-align:left"><a href="#07-monetaryfacet">↓</a></td></tr><tr><td style="text-align:left"><strong>RolesFacet</strong></td><td style="text-align:left">Who is allowed to do what</td><td style="text-align:left"><a href="#07-rolesfacet">↓</a></td></tr><tr><td style="text-align:left"><strong>EmergencyFacet</strong></td><td style="text-align:left">Court orders and lost keys. Opt-in</td><td style="text-align:left"><a href="#07-emergencyfacet-opt-in">↓</a></td></tr><tr><td style="text-align:left"><strong>PurchaseFacet</strong></td><td style="text-align:left">Buying during an offering</td><td style="text-align:left"><a href="#07-purchasefacet">↓</a></td></tr><tr><td style="text-align:left"><strong>IPolicySet</strong></td><td style="text-align:left">Composes rules into a policy</td><td style="text-align:left"><a href="#07-ipolicyset">↓</a></td></tr><tr><td style="text-align:left"><strong>IRule</strong></td><td style="text-align:left">A single compliance check</td><td style="text-align:left"><a href="#07-irule">↓</a></td></tr><tr><td style="text-align:left"><strong>IIdentityRegistry</strong></td><td style="text-align:left">What is verified about a wallet</td><td style="text-align:left"><a href="#07-iidentityregistry">↓</a></td></tr><tr><td style="text-align:left"><strong>Treasury</strong></td><td style="text-align:left">Holds supply and investor payments</td><td style="text-align:left"><a href="#07-treasury">↓</a></td></tr><tr><td style="text-align:left"><strong>uRWAFactory</strong></td><td style="text-align:left">Deploys everything</td><td style="text-align:left"><a href="#07-urwafactory">↓</a></td></tr><tr><td style="text-align:left"><strong>AssetPassport</strong></td><td style="text-align:left">What the asset actually is</td><td style="text-align:left"><a href="#07-assetpassport">↓</a></td></tr><tr><td style="text-align:left"><strong>AttestorRegistry</strong></td><td style="text-align:left">Who may sign attestations</td><td style="text-align:left"><a href="#07-attestorregistry">↓</a></td></tr><tr><td style="text-align:left"><strong>OfferingRegistry</strong></td><td style="text-align:left">Runs the primary sale</td><td style="text-align:left"><a href="#07-offeringregistry">↓</a></td></tr><tr><td style="text-align:left"><strong>AgentAuthority</strong></td><td style="text-align:left">Bounds what an agent may do</td><td style="text-align:left"><a href="#07-agentauthority">↓</a></td></tr><tr><td style="text-align:left"><strong>AtomicDvP</strong></td><td style="text-align:left">Settles a trade in one transaction</td><td style="text-align:left"><a href="#07-atomicdvp">↓</a></td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="07-urwatoken-erc-20-core">uRWAToken — ERC-20 core</h3>
+<p><strong>What this is.</strong> The ordinary ERC-20 surface. Wallets, exchanges, block explorers and accounting systems already speak it, which is the entire reason a regulated asset is wrapped this way rather than in a bespoke interface.</p>
+<p><strong>Who it is for.</strong> Everyone. Holders, wallets, integrators, indexers.</p>
+<p><strong>Why it matters that these are immutable.</strong> These selectors are registered against the diamond itself, so <code>LibDiamond</code> refuses to replace or remove them. No admin key, no governance vote and no upgrade can alter how balances are accounted. That is the foundation of the whole security model: a compliance bug can stop transfers, but nothing can rewrite who owns what.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>name() → string</code></td><td style="text-align:left">Returns the token&#x27;s full name</td><td style="text-align:left">Anyone, wallets</td><td style="text-align:left">Display</td></tr><tr><td style="text-align:left"><code>symbol() → string</code></td><td style="text-align:left">Returns the ticker</td><td style="text-align:left">Anyone, wallets</td><td style="text-align:left">Display</td></tr><tr><td style="text-align:left"><code>decimals() → uint8</code></td><td style="text-align:left">Divisibility, usually 18</td><td style="text-align:left">Anyone, wallets</td><td style="text-align:left">Correct amount maths</td></tr><tr><td style="text-align:left"><code>totalSupply() → uint256</code></td><td style="text-align:left">Tokens currently in existence</td><td style="text-align:left">Anyone</td><td style="text-align:left">Supply transparency</td></tr><tr><td style="text-align:left"><code>balanceOf(address) → uint256</code></td><td style="text-align:left">Holdings of one address</td><td style="text-align:left">Anyone</td><td style="text-align:left">The basic question</td></tr><tr><td style="text-align:left"><code>maxSupply() → uint256</code></td><td style="text-align:left">Hard cap; <code>0</code> means unlimited</td><td style="text-align:left">Anyone, investors</td><td style="text-align:left">An investor must know dilution is bounded</td></tr><tr><td style="text-align:left"><code>allowance(owner, spender) → uint256</code></td><td style="text-align:left">How much a spender may move</td><td style="text-align:left">Anyone, dApps</td><td style="text-align:left">Standard delegation</td></tr><tr><td style="text-align:left"><code>transfer(to, value) → bool</code></td><td style="text-align:left">Moves tokens, <strong>through the compliance pipeline</strong></td><td style="text-align:left">Holder</td><td style="text-align:left">The core action</td></tr><tr><td style="text-align:left"><code>approve(spender, value) → bool</code></td><td style="text-align:left">Authorises a spender</td><td style="text-align:left">Holder</td><td style="text-align:left">Lets contracts move tokens for you</td></tr><tr><td style="text-align:left"><code>transferFrom(from, to, value) → bool</code></td><td style="text-align:left">Moves on behalf of an owner, <strong>through the pipeline</strong></td><td style="text-align:left">Approved spender</td><td style="text-align:left">Exchanges, settlement contracts</td></tr><tr><td style="text-align:left"><code>permit(...)</code></td><td style="text-align:left">Approval by signature instead of a transaction</td><td style="text-align:left">Holder, ERC-2612</td><td style="text-align:left">Saves a transaction and its gas at purchase</td></tr><tr><td style="text-align:left"><code>nonces(address) → uint256</code></td><td style="text-align:left">Signature counter for permit</td><td style="text-align:left">dApps</td><td style="text-align:left">Replay protection</td></tr><tr><td style="text-align:left"><code>DOMAIN_SEPARATOR() → bytes32</code></td><td style="text-align:left">EIP-712 domain</td><td style="text-align:left">dApps</td><td style="text-align:left">Signature scoping</td></tr><tr><td style="text-align:left"><code>owner() → address</code></td><td style="text-align:left">ERC-173 owner</td><td style="text-align:left">Anyone, tooling</td><td style="text-align:left">Explorer and tooling compatibility</td></tr><tr><td style="text-align:left"><code>deployer() → address</code></td><td style="text-align:left">Who deployed it</td><td style="text-align:left">Anyone</td><td style="text-align:left">Provenance</td></tr></tbody></table></div>
+<p><strong>How to use <code>transfer</code> correctly.</strong> Call <code>canTransfer(from, to, amount)</code> first. It is free and it tells you whether the transfer will succeed. Submitting a transfer that will revert costs gas and teaches the user nothing — see <a href="21-interface-specification.html">21 — Interface specification</a>.</p>
+<p><strong>Note on <code>approve</code>.</strong> Approval is <em>not</em> compliance-checked. Anyone may hold an allowance; the check happens when tokens actually move. This is deliberate and matches ERC-7943 — restricting approvals would break ordinary DeFi patterns without adding safety, because the transfer itself is still gated.</p>
+<hr class="soft">
+<h3 id="07-diamondcutfacet-and-diamondloupefacet">DiamondCutFacet and DiamondLoupeFacet</h3>
+<p><strong>What this is.</strong> The EIP-2535 machinery: one facet changes the function table, the other reads it. Both are installed on the token, the factory and the offering registry — every diamond in the system.</p>
+<p><strong>Who it is for.</strong> <code>DiamondCutFacet</code> is for the upgrade admin. <code>DiamondLoupeFacet</code> is for <strong>everyone else</strong> — it is how an outsider proves which code a deployed token actually runs, without trusting anything we say about it.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>diamondCut(cuts, init, calldata)</code></td><td style="text-align:left">Add, replace or remove selectors</td><td style="text-align:left"><code>UPGRADE_ADMIN</code></td><td style="text-align:left">The only way the function table changes</td></tr><tr><td style="text-align:left"><code>facets() → Facet[]</code></td><td style="text-align:left">Every facet and its selectors</td><td style="text-align:left"><strong>Anyone</strong></td><td style="text-align:left">The loupe report; independent verification</td></tr><tr><td style="text-align:left"><code>facetAddresses() → address[]</code></td><td style="text-align:left">Installed facet addresses</td><td style="text-align:left">Anyone</td><td style="text-align:left">Diff against the published package</td></tr><tr><td style="text-align:left"><code>facetAddress(selector) → address</code></td><td style="text-align:left">Which facet serves this call</td><td style="text-align:left">Anyone</td><td style="text-align:left">Proves an absent function is absent — <code>address(0)</code></td></tr><tr><td style="text-align:left"><code>facetFunctionSelectors(facet) → bytes4[]</code></td><td style="text-align:left">Selectors of one facet</td><td style="text-align:left">Anyone</td><td style="text-align:left">Per-facet audit</td></tr><tr><td style="text-align:left"><code>supportsInterface(id) → bool</code></td><td style="text-align:left">ERC-165</td><td style="text-align:left">Anyone</td><td style="text-align:left">How conformance is claimed and checked</td></tr></tbody></table></div>
+<p><strong><code>diamondCut</code> cannot replace or remove the ERC-20 selectors.</strong> They are immutable selectors — registered against the diamond itself — and <code>LibDiamond</code> reverts with <code>CannotReplaceImmutableFunction</code>. This is the mechanism behind the whole three-plane split, and the reason the ledger plane is genuinely immutable rather than immutable by policy. See <a href="02-architecture.html">02</a>.</p>
+<h3 id="07-compliancefacet">ComplianceFacet</h3>
+<p><strong>What this is.</strong> The part that decides whether value may move. Everything else in the system exists to feed it or to act on its answer.</p>
+<p><strong>Who it is for.</strong> Three different audiences use it for three different reasons: <strong>integrators</strong> ask it questions before acting, <strong>investors</strong> find out why something failed, and <strong>issuers</strong> configure it.</p>
+<h4 id="07-the-erc-7943-questions">The ERC-7943 questions</h4>
+<p>These three are the standard interface. They are <code>view</code>, they are free, and <strong>they never revert</strong> — an integrator can call them on any address, including garbage, and always get an answer.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>canSend(account) → bool</code></td><td style="text-align:left">May this account send at all?</td><td style="text-align:left">Integrators, agents, UI</td><td style="text-align:left">Account-level eligibility, independent of amount</td></tr><tr><td style="text-align:left"><code>canReceive(account) → bool</code></td><td style="text-align:left">May this account receive at all?</td><td style="text-align:left">Integrators, agents, UI</td><td style="text-align:left">Check a recipient before sending them anything</td></tr><tr><td style="text-align:left"><code>canTransfer(from, to, amount) → bool</code></td><td style="text-align:left">Will this specific transfer succeed?</td><td style="text-align:left">Integrators, agents, UI, settlement</td><td style="text-align:left">The complete answer, including amount and rules</td></tr></tbody></table></div>
+<p><strong>How to use them.</strong> <code>canSend</code> and <code>canReceive</code> answer &quot;is this wallet eligible in principle&quot; — useful for onboarding screens and address books. <code>canTransfer</code> answers &quot;will this exact operation work&quot; and is what you call immediately before acting.</p>
+<p><strong>Why this matters more than it looks.</strong> Almost no token can answer these questions. Systems built on tokens that cannot must guess, submit, and handle failure — which is why autonomous agents have been impractical on regulated assets. A free, deterministic, non-reverting pre-flight changes that completely. See <a href="22-agents-and-settlement.html">22 — Agents and settlement</a>.</p>
+<h4 id="07-diagnostics">Diagnostics</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>whyBlocked(from, to, amount) → (uint8 stage, address rule, string reason)</code></td><td style="text-align:left">Explains the first failure</td><td style="text-align:left">UI, support, agents</td><td style="text-align:left">&quot;It failed&quot; is useless; &quot;jurisdiction excluded, by rule 0x5c…d9&quot; is actionable</td></tr><tr><td style="text-align:left"><code>detectTransferRestriction(from, to, amount) → uint8</code></td><td style="text-align:left">ERC-1404 restriction code</td><td style="text-align:left">Legacy integrators</td><td style="text-align:left">Older platforms speak ERC-1404, not ERC-7943</td></tr><tr><td style="text-align:left"><code>messageForTransferRestriction(uint8) → string</code></td><td style="text-align:left">Human text for a code</td><td style="text-align:left">Legacy integrators</td><td style="text-align:left">Same</td></tr></tbody></table></div>
+<p><strong>How to use <code>whyBlocked</code>.</strong> It runs the identical code path as enforcement, in view mode. Show the <code>reason</code> to the user verbatim; show the <code>rule</code> address to a developer. The stage index maps to <a href="06-states.html">06 — States</a>.</p>
+<p><strong>Why it exists.</strong> Compliance systems fail in support tickets, not in exploits. A transfer that reverts with no explanation costs an issuer a day of back-and-forth. Because enforcement and explanation share one implementation, they cannot drift apart — which is the actual mechanism, not the diagnostic itself.</p>
+<h4 id="07-configuration">Configuration</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>policySet() → address</code></td><td style="text-align:left">Current rule engine</td><td style="text-align:left">Anyone</td><td style="text-align:left">Transparency — anyone can read the live rules</td></tr><tr><td style="text-align:left"><code>identityRegistry() → address</code></td><td style="text-align:left">Current identity source</td><td style="text-align:left">Anyone</td><td style="text-align:left">Same</td></tr><tr><td style="text-align:left"><code>setPolicySet(address)</code></td><td style="text-align:left">Swaps the entire compliance regime</td><td style="text-align:left">UPGRADE_ADMIN</td><td style="text-align:left">Regulation changes; the token should not have to</td></tr><tr><td style="text-align:left"><code>setIdentityRegistry(address)</code></td><td style="text-align:left">Swaps the identity source</td><td style="text-align:left">UPGRADE_ADMIN</td><td style="text-align:left">Move between allowlist, EAS and DID without redeploying</td></tr></tbody></table></div>
+<p><strong>Why these two matter.</strong> This is the agility claim made concrete. A new regulation means deploying a new <code>PolicySet</code> and calling <code>setPolicySet</code>. Holders do not move, nothing is re-minted, no migration happens, and balances are untouchable by construction.</p>
+<h4 id="07-trust-list">Trust list</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>trust(account, reason)</code></td><td style="text-align:left">Marks a system address as trusted</td><td style="text-align:left">ISSUER_ADMIN</td><td style="text-align:left">Treasury and offering contracts would otherwise fail their own rules</td></tr><tr><td style="text-align:left"><code>distrust(account, reason)</code></td><td style="text-align:left">Removes it</td><td style="text-align:left">ISSUER_ADMIN</td><td style="text-align:left">Decommissioning</td></tr><tr><td style="text-align:left"><code>isTrusted(address) → bool</code></td><td style="text-align:left">Trust status</td><td style="text-align:left">Anyone</td><td style="text-align:left">Auditability</td></tr><tr><td style="text-align:left"><code>trustList() → address[]</code></td><td style="text-align:left">Everything trusted</td><td style="text-align:left">Anyone</td><td style="text-align:left">An investor can see exactly which addresses are privileged</td></tr><tr><td style="text-align:left"><code>trustReasonOf(address) → string</code></td><td style="text-align:left">Why it was trusted</td><td style="text-align:left">Anyone</td><td style="text-align:left">A privilege with no stated reason is a red flag</td></tr></tbody></table></div>
+<p><strong>How to use it.</strong> Trust the treasury and the offering registry at deployment. Trust nothing else without a written reason — the reason is mandatory precisely so that it ends up in the audit trail.</p>
+<p><strong>What trust does and does not do.</strong> It skips <strong>rules only</strong>. It never skips the pause check or the frozen-balance check. That is what stops a compromised treasury from draining locked supply.</p>
+<h4 id="07-pause">Pause</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>pause()</code></td><td style="text-align:left">Halts every transfer immediately</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Security incident, regulatory order, corporate action</td></tr><tr><td style="text-align:left"><code>unpause()</code></td><td style="text-align:left">Resumes</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Recovery</td></tr><tr><td style="text-align:left"><code>paused() → bool</code></td><td style="text-align:left">Current state</td><td style="text-align:left">Anyone</td><td style="text-align:left">Integrators must show it</td></tr><tr><td style="text-align:left"><code>pauseAddress(account, reason)</code></td><td style="text-align:left">Halts one address in <strong>both</strong> directions</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">A compromised wallet or a counterparty under investigation</td></tr><tr><td style="text-align:left"><code>unpauseAddress(account)</code></td><td style="text-align:left">Resumes that address</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Recovery</td></tr><tr><td style="text-align:left"><code>addressPaused(account) → bool</code></td><td style="text-align:left">Is this address halted</td><td style="text-align:left">Anyone</td><td style="text-align:left">Pre-flight, and why a transfer failed</td></tr></tbody></table></div>
+<p><strong>Why an address pause is not just a full freeze.</strong> A freeze restricts sending; the holder can still be paid. An address pause blocks sending <em>and</em> receiving. See <a href="05-roles.html">05</a> for the full comparison — the two are separate instruments for separate problems, and collapsing them would leave no way to stop value flowing <strong>toward</strong> an address.</p>
+<p><code>reason</code> is mandatory and evented, on the same principle as the trust list: an unexplained restriction is indistinguishable from an attack on a holder.</p>
+<p><strong>Why there is no timelock on this.</strong> A delay on an emergency stop defeats the purpose. Upgrades are timelocked; the emergency brake is not.</p>
+<h4 id="07-holder-accounting">Holder accounting</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>holderCount() → uint256</code></td><td style="text-align:left">Addresses with a balance</td><td style="text-align:left">Anyone, reporting</td><td style="text-align:left">Basic register size</td></tr><tr><td style="text-align:left"><code>subjectHolderCount() → uint256</code></td><td style="text-align:left"><strong>Identities</strong> with a balance</td><td style="text-align:left">Rules, reporting, regulators</td><td style="text-align:left">The number holder caps must use</td></tr><tr><td style="text-align:left"><code>subjectBalanceOf(subject) → uint256</code></td><td style="text-align:left">Total across all of an identity&#x27;s wallets</td><td style="text-align:left">Rules, reporting</td><td style="text-align:left">Concentration limits</td></tr><tr><td style="text-align:left"><code>subjectOf(wallet) → bytes32</code></td><td style="text-align:left">Which identity owns this wallet</td><td style="text-align:left">Anyone, UI</td><td style="text-align:left">Grouping wallets by person</td></tr></tbody></table></div>
+<p><strong>Why the distinction is not academic.</strong> A Reg D offering may have at most 2,000 holders. If the cap counts addresses, one investor with three wallets consumes three slots — or worse, evades the cap entirely while every dashboard reports compliance. Counting identities is the only correct implementation, and it cannot be added later because past addresses cannot be retroactively grouped.</p>
+<hr class="soft">
+<h3 id="07-freezefacet">FreezeFacet</h3>
+<p><strong>What this is.</strong> Indefinite freezing of part of a balance, by the compliance officer.</p>
+<p><strong>Who it is for.</strong> Compliance officers acting on a legal instruction; integrators displaying what is actually spendable.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>getFrozenTokens(account) → uint256</code></td><td style="text-align:left">Total frozen: admin freeze <strong>plus</strong> unexpired lockups</td><td style="text-align:left">Anyone, ERC-7943</td><td style="text-align:left">One number every integrator understands</td></tr><tr><td style="text-align:left"><code>setFrozenTokens(account, amount) → bool</code></td><td style="text-align:left">Sets the admin freeze</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Court order, investigation, suspected compromise</td></tr><tr><td style="text-align:left"><code>unfrozenBalanceOf(account) → uint256</code></td><td style="text-align:left">What can actually move now</td><td style="text-align:left">UI, agents</td><td style="text-align:left">The number a user cares about</td></tr><tr><td style="text-align:left"><code>adminFrozenOf(account) → uint256</code></td><td style="text-align:left">Just the admin component</td><td style="text-align:left">UI, audit</td><td style="text-align:left">Distinguishes a freeze from a scheduled lockup</td></tr></tbody></table></div>
+<p><strong>How to use it.</strong> <code>setFrozenTokens</code> writes only the admin portion. Lockups are managed separately through <code>LockupFacet</code>, and <code>getFrozenTokens</code> returns the sum. This keeps the standard&#x27;s setter honest while supporting any number of independent restrictions on the same balance.</p>
+<p><strong>Why <code>getFrozenTokens</code> may exceed the balance.</strong> ERC-7943 permits it, and it is the right behaviour: freezing 1,000 tokens on an account holding 400 means the next 600 received are also frozen. It must never revert.</p>
+<hr class="soft">
+<h3 id="07-lockupfacet">LockupFacet</h3>
+<p><strong>What this is.</strong> Time-limited restrictions that expire on their own.</p>
+<p><strong>Who it is for.</strong> Issuers applying regulatory hold periods and vesting; investors seeing when their tokens unlock.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>addLockup(account, amount, unlockAt, note)</code></td><td style="text-align:left">Locks an amount until a date</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Rule 144 hold periods, vesting, offering lockups</td></tr><tr><td style="text-align:left"><code>clearLockups(account, reason)</code></td><td style="text-align:left">Removes all lockups early</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Correcting a mistake; reason mandatory</td></tr><tr><td style="text-align:left"><code>releaseExpired(account)</code></td><td style="text-align:left">Prunes expired entries</td><td style="text-align:left"><strong>Anyone</strong></td><td style="text-align:left">Housekeeping to bound gas</td></tr><tr><td style="text-align:left"><code>lockupsOf(account) → Lockup[]</code></td><td style="text-align:left">Full schedule with dates and notes</td><td style="text-align:left">Anyone, UI</td><td style="text-align:left">An investor must see when tokens unlock</td></tr><tr><td style="text-align:left"><code>lockedAmountOf(account) → uint256</code></td><td style="text-align:left">Currently locked total</td><td style="text-align:left">Anyone</td><td style="text-align:left">Feeds the frozen total</td></tr><tr><td style="text-align:left"><code>lockupCount(account) → uint256</code></td><td style="text-align:left">Number of entries</td><td style="text-align:left">UI, gas estimation</td><td style="text-align:left">Pagination</td></tr></tbody></table></div>
+<p><strong>How lockups expire.</strong> By timestamp comparison, with no transaction. Nobody has to &quot;unlock&quot; anything; no keeper is required; the state cannot go stale. <code>releaseExpired</code> is permissionless and purely cosmetic — it tidies the array and cannot change the computed total.</p>
+<p><strong>Why <code>note</code> is required.</strong> Six months later, &quot;why is 300 of my balance locked&quot; must have an answer that does not depend on someone&#x27;s memory.</p>
+<hr class="soft">
+<h3 id="07-monetaryfacet">MonetaryFacet</h3>
+<p><strong>What this is.</strong> Creation, destruction and distribution of supply.</p>
+<p><strong>Who it is for.</strong> The issuer&#x27;s finance function.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>issue(to, amount)</code></td><td style="text-align:left">Mints new tokens</td><td style="text-align:left">SUPPLY_OPERATOR</td><td style="text-align:left">Creating the asset&#x27;s representation</td></tr><tr><td style="text-align:left"><code>redeem(amount)</code></td><td style="text-align:left">Burns from the treasury</td><td style="text-align:left">SUPPLY_OPERATOR</td><td style="text-align:left">Buy-backs, redemptions, cancelling unsold supply</td></tr><tr><td style="text-align:left"><code>distributeFromTreasury(to, amount, unlockAt)</code></td><td style="text-align:left">Sends to a holder, optionally with a lockup</td><td style="text-align:left">SUPPLY_OPERATOR</td><td style="text-align:left">Allocations, private placements, dividends in kind</td></tr><tr><td style="text-align:left"><code>totalIssued() → uint256</code></td><td style="text-align:left">Lifetime issuance, never decreases</td><td style="text-align:left">Reporting, auditors</td><td style="text-align:left">Distinguishes &quot;ever created&quot; from &quot;currently outstanding&quot;</td></tr><tr><td style="text-align:left"><code>setMaxSupply(newMax)</code></td><td style="text-align:left">Changes the cap</td><td style="text-align:left">ISSUER_ADMIN</td><td style="text-align:left">Follow-on rounds — <strong>reverts if the cap was locked</strong></td></tr><tr><td style="text-align:left"><code>capLocked() → bool</code></td><td style="text-align:left">Whether the cap is permanent</td><td style="text-align:left">Anyone, investors</td><td style="text-align:left">The strongest possible dilution guarantee</td></tr><tr><td style="text-align:left"><code>treasury() → address</code></td><td style="text-align:left">The vault</td><td style="text-align:left">Anyone</td><td style="text-align:left">Provenance and reconciliation</td></tr><tr><td style="text-align:left"><code>setTreasury(address)</code></td><td style="text-align:left">Points at a treasury</td><td style="text-align:left">ISSUER_ADMIN</td><td style="text-align:left">Initial wiring</td></tr><tr><td style="text-align:left"><code>offeringRegistry() → address</code></td><td style="text-align:left">The sale contract</td><td style="text-align:left">Anyone</td><td style="text-align:left">Transparency</td></tr><tr><td style="text-align:left"><code>setOfferingRegistry(address)</code></td><td style="text-align:left">Points at a registry</td><td style="text-align:left">ISSUER_ADMIN</td><td style="text-align:left">Initial wiring</td></tr></tbody></table></div>
+<p><strong>How to use <code>issue</code>.</strong> Default practice is minting to the treasury and distributing from there — one custody point, clean accounting, easy reconciliation. Minting directly to a holder is the same function with a different destination, and it still passes the full compliance pipeline.</p>
+<p><strong>Why <code>totalIssued</code> exists separately from <code>totalSupply</code>.</strong> After a redemption, supply falls but the fact that tokens were once issued does not. Regulators and auditors ask for both.</p>
+<p><strong>Why <code>capLocked</code> is irreversible.</strong> A cap that can be unlocked is not a cap. Making the lock permanent at deployment is what turns it into a guarantee an investor can rely on rather than a current setting.</p>
+<hr class="soft">
+<h3 id="07-rolesfacet">RolesFacet</h3>
+<p><strong>What this is.</strong> Access control. Four roles, deliberately separated.</p>
+<p><strong>Who it is for.</strong> Whoever governs the token — typically a board, a CFO and a compliance officer.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>grantRole(role, account)</code></td><td style="text-align:left">Gives a role</td><td style="text-align:left">The role&#x27;s admin</td><td style="text-align:left">Onboarding staff and multisigs</td></tr><tr><td style="text-align:left"><code>revokeRole(role, account)</code></td><td style="text-align:left">Takes it away</td><td style="text-align:left">The role&#x27;s admin</td><td style="text-align:left">Offboarding, key compromise</td></tr><tr><td style="text-align:left"><code>renounceRole(role)</code></td><td style="text-align:left">Gives up your own</td><td style="text-align:left">The holder</td><td style="text-align:left">Voluntary reduction of privilege</td></tr><tr><td style="text-align:left"><code>hasRole(role, account) → bool</code></td><td style="text-align:left">Check</td><td style="text-align:left">Anyone</td><td style="text-align:left">Auditability</td></tr><tr><td style="text-align:left"><code>getRoleMember(role, index) → address</code></td><td style="text-align:left">Enumerate</td><td style="text-align:left">Anyone</td><td style="text-align:left">Who actually holds power here</td></tr><tr><td style="text-align:left"><code>getRoleMemberCount(role) → uint256</code></td><td style="text-align:left">How many</td><td style="text-align:left">Anyone</td><td style="text-align:left">Same</td></tr><tr><td style="text-align:left"><code>roleAdmin(role) → bytes32</code></td><td style="text-align:left">Which role administers it</td><td style="text-align:left">Anyone</td><td style="text-align:left">Understanding the hierarchy</td></tr></tbody></table></div>
+<p><strong>Why enumeration is public.</strong> An investor should be able to see how many keys can freeze their assets without asking the issuer. A role system that cannot be enumerated cannot be audited.</p>
+<p>See <a href="05-roles.html">05 — Roles</a> for what each role can and cannot do.</p>
+<hr class="soft">
+<h3 id="07-emergencyfacet-opt-in">EmergencyFacet — opt-in</h3>
+<p><strong>What this is.</strong> Forced movement of tokens without the owner&#x27;s consent.</p>
+<p><strong>Who it is for.</strong> Compliance officers acting on a court order, a regulatory instruction, or a documented case of lost access.</p>
+<p><strong>Not installed by default.</strong> Adding it is a deliberate act by the issuer. A token without this facet simply does not have these functions, and that is a meaningful thing to be able to tell investors.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>forcedTransfer(from, to, amount) → bool</code></td><td style="text-align:left">Moves tokens without consent</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Court orders; recovery from a compromised wallet</td></tr><tr><td style="text-align:left"><code>forcedTransfer(from, to, amount, reason) → bool</code></td><td style="text-align:left">Same, with the justification on chain</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">The audit trail regulators actually want</td></tr><tr><td style="text-align:left"><code>forcedMint(to, amount, reason)</code></td><td style="text-align:left">Creates tokens outside the normal path</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Correcting an issuance error; compensation</td></tr><tr><td style="text-align:left"><code>forcedBurn(from, amount, reason)</code></td><td style="text-align:left">Destroys tokens</td><td style="text-align:left">COMPLIANCE_OFFICER</td><td style="text-align:left">Recall, court-ordered cancellation</td></tr></tbody></table></div>
+<p><strong>How <code>forcedTransfer</code> behaves, in order.</strong> Unfreezes what it must and emits <code>Frozen</code> <strong>before</strong> the transfer event, as ERC-7943 requires; enforces <code>canReceive</code> on the destination; moves the balance directly, bypassing the rules; emits the ordinary <code>Transfer</code>, then <code>ForcedTransfer</code>, then <code>ForcedOperation</code> with the reason.</p>
+<p><strong>Why <code>canReceive</code> is still enforced.</strong> A seizure to an unverified address would place a regulated asset with an unknown party — solving one compliance problem by creating another. If a court names a destination, that destination is onboarded first.</p>
+<hr class="soft">
+<h3 id="07-purchasefacet">PurchaseFacet</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>purchase(offeringId, amount)</code></td><td style="text-align:left">Buys tokens in an active offering</td><td style="text-align:left">Investor</td><td style="text-align:left">The primary sale</td></tr><tr><td style="text-align:left"><code>previewPurchase(offeringId, amount) → (cost, tokens, unlockAt)</code></td><td style="text-align:left">Calculates before committing</td><td style="text-align:left">Investor, UI</td><td style="text-align:left">Nobody should sign before seeing the price and the lockup</td></tr><tr><td style="text-align:left"><code>refundPurchase(purchaseId)</code></td><td style="text-align:left">Claims a refund</td><td style="text-align:left">Investor</td><td style="text-align:left">Soft cap missed — the investor gets their money back without anyone&#x27;s permission</td></tr></tbody></table></div>
+<p><strong>Why <code>refundPurchase</code> is callable by the investor.</strong> Operator-driven refunds are better UX, but an operator who is absent, unwilling or insolvent must not be able to strand funds.</p>
+<hr class="soft">
+<h3 id="07-ipolicyset">IPolicySet</h3>
+<p><strong>What this is.</strong> The contract that composes individual rules into a compliance regime.</p>
+<p><strong>Who it is for.</strong> Issuers configuring a regime; integrators reading what applies.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>evaluate(from, to, amount) → (ok, failingRule, reason)</code></td><td style="text-align:left">Runs every rule</td><td style="text-align:left">The token, agents</td><td style="text-align:left">The compliance decision</td></tr><tr><td style="text-align:left"><code>addGroup(group)</code></td><td style="text-align:left">Creates an OR-group</td><td style="text-align:left">UPGRADE_ADMIN</td><td style="text-align:left">Expressing &quot;professional <strong>or</strong> accredited&quot;</td></tr><tr><td style="text-align:left"><code>removeGroup(group)</code></td><td style="text-align:left">Deletes one</td><td style="text-align:left">UPGRADE_ADMIN</td><td style="text-align:left">Regime change</td></tr><tr><td style="text-align:left"><code>addRule(group, rule)</code></td><td style="text-align:left">Adds a rule to a group</td><td style="text-align:left">UPGRADE_ADMIN</td><td style="text-align:left">Extending a regime</td></tr><tr><td style="text-align:left"><code>removeRule(group, rule)</code></td><td style="text-align:left">Removes one</td><td style="text-align:left">UPGRADE_ADMIN</td><td style="text-align:left">Same</td></tr><tr><td style="text-align:left"><code>groups() → bytes32[]</code></td><td style="text-align:left">All groups</td><td style="text-align:left"><strong>Anyone</strong></td><td style="text-align:left">Public transparency of the live policy</td></tr><tr><td style="text-align:left"><code>rulesOf(group) → address[]</code></td><td style="text-align:left">Rules in a group</td><td style="text-align:left"><strong>Anyone</strong></td><td style="text-align:left">Same</td></tr><tr><td style="text-align:left"><code>ruleCount() → uint256</code></td><td style="text-align:left">Total rules</td><td style="text-align:left">Anyone, gas estimation</td><td style="text-align:left">Cost visibility</td></tr><tr><td style="text-align:left"><code>maxRules() → uint256</code></td><td style="text-align:left">The hard cap</td><td style="text-align:left">Anyone</td><td style="text-align:left">Proof that an admin cannot gas-grief the token</td></tr></tbody></table></div>
+<p><strong>How composition works.</strong> Groups AND together; rules inside a group OR. <code>(identity) AND (EU professional OR US accredited) AND (sanctions clear)</code> covers essentially every real regime without a general expression engine, which would be the easiest place to misconfigure a live policy and the hardest thing to audit.</p>
+<p><strong>Why the reads are public.</strong> An investor must be able to determine their eligibility <strong>before</strong> buying. A compliance regime nobody can inspect is one nobody should trust.</p>
+<hr class="soft">
+<h3 id="07-irule">IRule</h3>
+<p><strong>What this is.</strong> A single compliance check. The extension point of the whole system.</p>
+<p><strong>Who it is for.</strong> Anyone. Writing a rule needs no permission from anybody.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>check(from, to, amount, ctx) → (ok, reason)</code></td><td style="text-align:left">Answers yes or no, with a reason</td><td style="text-align:left">PolicySet</td><td style="text-align:left">The atomic compliance decision</td></tr><tr><td style="text-align:left"><code>bounds(account) → (min, max)</code></td><td style="text-align:left">Investment limits for this account</td><td style="text-align:left">Offering registry</td><td style="text-align:left">Accreditation-linked minimums</td></tr><tr><td style="text-align:left"><code>ruleId() → bytes32</code></td><td style="text-align:left">Stable identifier</td><td style="text-align:left">Tooling, UI</td><td style="text-align:left">Rendering a rule in plain language</td></tr></tbody></table></div>
+<p><strong>How to write one.</strong> Keep <code>check</code> pure and cheap — it runs on every transfer. Read only from <code>IIdentityRegistry</code>, token views and <code>Context</code>. Return a short specific <code>reason</code>; it surfaces directly in <code>whyBlocked</code> and ends up in front of a user. Never revert for an ordinary &quot;no&quot; — return <code>(false, reason)</code>.</p>
+<p><strong>Why rules never write state.</strong> A rule that stores data cannot be swapped without a migration, which would destroy the agility the policy layer exists to provide. Where a rule appears to need state — a holder cap — the <strong>token</strong> maintains the counter and the rule reads it.</p>
+<hr class="soft">
+<h3 id="07-iidentityregistry">IIdentityRegistry</h3>
+<p><strong>What this is.</strong> The source of truth about wallets. One interface, three interchangeable implementations.</p>
+<p><strong>Who it is for.</strong> Rules read it. Issuers choose which implementation to install.</p>
+<p>Three implementations ship, all behind this one interface: <code>AllowlistRegistry</code> (tier 0, own storage, the open-source default), <code>EASAdapter</code> (tier 1, Ethereum Attestation Service) and <code>StoboxDIDAdapter</code> (tier 2, StoboxDID). <strong>The token neither knows nor cares which is installed</strong> — swapping one for another is a single <code>setIdentityRegistry</code> call and moves no balance.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>subjectOf(wallet) → bytes32</code></td><td style="text-align:left">Which identity owns this wallet</td><td style="text-align:left">Token, rules</td><td style="text-align:left">One person, many wallets</td></tr><tr><td style="text-align:left"><code>isActive(wallet) → bool</code></td><td style="text-align:left">Verified, unexpired, unblocked, not deactivated</td><td style="text-align:left">Token, rules, UI</td><td style="text-align:left">The base eligibility gate</td></tr><tr><td style="text-align:left"><code>claim(subject, key) → Claim</code></td><td style="text-align:left">One verified fact, with issuer and expiry</td><td style="text-align:left">Rules</td><td style="text-align:left">Jurisdiction, accreditation, screening</td></tr><tr><td style="text-align:left"><code>hasValidClaim(subject, key) → bool</code></td><td style="text-align:left">Convenience check</td><td style="text-align:left">Rules</td><td style="text-align:left">The common case</td></tr></tbody></table></div>
+<p><strong>Critical implementation requirement.</strong> All four <strong>must return rather than revert</strong> for unknown wallets. StoboxDID&#x27;s <code>getUserDID</code> and <code>getAttribute</code> revert when a wallet has no DID, so every call in that adapter is wrapped in <code>try/catch</code>. Without this the token breaks ERC-7943 conformance on the most common case in existence: a transfer to a new address. See <a href="09-identity-did.html">09 — Identity and DID</a>.</p>
+<p><strong>Why claims are hashed.</strong> The registry holds <code>valueHash</code>, not the value. A rule compares hashes, so &quot;is this investor in Germany&quot; is answerable on chain without a country code — let alone a name — appearing anywhere.</p>
+<hr class="soft">
+<h3 id="07-treasury">Treasury</h3>
+<p><strong>What this is.</strong> The vault. One per token.</p>
+<p><strong>Who it is for.</strong> The issuer&#x27;s finance function; the offering registry.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>token() → address</code></td><td style="text-align:left">Which token this serves</td><td style="text-align:left">Anyone</td><td style="text-align:left">Provenance</td></tr><tr><td style="text-align:left"><code>deposit(asset, amount)</code></td><td style="text-align:left">Accepts tokens</td><td style="text-align:left">Anyone</td><td style="text-align:left">Funding the treasury</td></tr><tr><td style="text-align:left"><code>withdrawERC20(asset, to, amount)</code></td><td style="text-align:left">Takes payment tokens out</td><td style="text-align:left">SUPPLY_OPERATOR</td><td style="text-align:left">The issuer collecting proceeds</td></tr><tr><td style="text-align:left"><code>reserve(amount, offeringId)</code></td><td style="text-align:left">Commits supply to an offering</td><td style="text-align:left">Offering registry</td><td style="text-align:left">Buyers must be sure tokens exist</td></tr><tr><td style="text-align:left"><code>release(amount, offeringId)</code></td><td style="text-align:left">Uncommits it</td><td style="text-align:left">Offering registry</td><td style="text-align:left">Offering cancelled or under-subscribed</td></tr><tr><td style="text-align:left"><code>lockPayments(offeringId)</code></td><td style="text-align:left">Freezes investor money</td><td style="text-align:left">Offering registry</td><td style="text-align:left">Refundability until the soft cap</td></tr><tr><td style="text-align:left"><code>unlockPayments(offeringId)</code></td><td style="text-align:left">Releases it</td><td style="text-align:left">Offering registry</td><td style="text-align:left">Soft cap met</td></tr><tr><td style="text-align:left"><code>reservedOf(offeringId) → uint256</code></td><td style="text-align:left">Committed supply</td><td style="text-align:left">Anyone</td><td style="text-align:left">Investors verify availability</td></tr><tr><td style="text-align:left"><code>availableBalance() → uint256</code></td><td style="text-align:left">Unreserved supply</td><td style="text-align:left">Anyone, SUPPLY_OPERATOR</td><td style="text-align:left">What can actually be moved</td></tr><tr><td style="text-align:left"><code>paymentBalance(asset) → uint256</code></td><td style="text-align:left">Payment tokens held</td><td style="text-align:left">Anyone</td><td style="text-align:left">Raise transparency</td></tr></tbody></table></div>
+<p><strong>Why <code>withdrawERC20</code> sometimes reverts.</strong> It refuses while any offering holding that asset is active or closed with its soft cap unmet. <strong>The treasury enforces this, not operator discipline.</strong> An operator who wants the money early cannot get it by calling in a different order, and one who forgets cannot accidentally break refundability.</p>
+<hr class="soft">
+<h3 id="07-urwafactory">uRWAFactory</h3>
+<p><strong>What this is.</strong> The deployer. Permissionless.</p>
+<p><strong>Who it is for.</strong> Anyone issuing an asset.</p>
+<p>The factory is itself a diamond. <code>CreateFacet</code> serves the two creation calls; <code>PackageFacet</code> and <code>PresetFacet</code> hold the facet packages and policy presets they draw on; <code>RegistryFacet</code> records what was deployed and answers <code>isFactoryIssued</code>; <code>FeeFacet</code> holds the fee token and amount, <strong>which are zero in the open distribution</strong>; <code>DiamondCutFacet</code> and <code>DiamondLoupeFacet</code> are as above.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>createToken(params) → (token, treasury)</code></td><td style="text-align:left">Deploys and wires everything</td><td style="text-align:left"><strong>Anyone</strong></td><td style="text-align:left">One transaction from nothing to a working compliant token</td></tr><tr><td style="text-align:left"><code>createTokenWithOffering(params, offering) → (token, treasury, id)</code></td><td style="text-align:left">Same, plus the first sale</td><td style="text-align:left">Anyone</td><td style="text-align:left">Fewer steps for the common case</td></tr><tr><td style="text-align:left"><code>registerPackage(id, cuts)</code></td><td style="text-align:left">Defines a facet set</td><td style="text-align:left">FACTORY_ADMIN</td><td style="text-align:left">Versioned feature sets</td></tr><tr><td style="text-align:left"><code>packages(id) → FacetCut[]</code></td><td style="text-align:left">Reads one</td><td style="text-align:left">Anyone</td><td style="text-align:left">Verify what you are deploying</td></tr><tr><td style="text-align:left"><code>registerPreset(id, rules, groups)</code></td><td style="text-align:left">Defines a regime</td><td style="text-align:left">FACTORY_ADMIN</td><td style="text-align:left">Reg D, Reg S, MiFID II, MiCA</td></tr><tr><td style="text-align:left"><code>presets(id) → (address[], bytes32[])</code></td><td style="text-align:left">Reads one</td><td style="text-align:left">Anyone</td><td style="text-align:left">Verify before choosing</td></tr><tr><td style="text-align:left"><code>setFeeToken(address)</code> / <code>setFee(uint256)</code></td><td style="text-align:left">Configures a fee</td><td style="text-align:left">FACTORY_ADMIN</td><td style="text-align:left"><strong>Zero in the open distribution</strong></td></tr><tr><td style="text-align:left"><code>feeToken()</code> / <code>fee()</code></td><td style="text-align:left">Reads it</td><td style="text-align:left">Anyone</td><td style="text-align:left">Anyone can verify the open build charges nothing</td></tr><tr><td style="text-align:left"><code>deploymentsOf(issuer) → address[]</code></td><td style="text-align:left">Tokens by issuer</td><td style="text-align:left">Anyone</td><td style="text-align:left">Portfolio views</td></tr><tr><td style="text-align:left"><code>allDeployments() → address[]</code></td><td style="text-align:left">Everything</td><td style="text-align:left">Anyone</td><td style="text-align:left">Ecosystem visibility</td></tr><tr><td style="text-align:left"><code>isFactoryIssued(token) → bool</code></td><td style="text-align:left">Did this factory create it?</td><td style="text-align:left">Anyone</td><td style="text-align:left"><strong>Distinguishes a real issuance from a misconfigured fork in one call</strong></td></tr></tbody></table></div>
+<p><strong>Why <code>createToken</code> has no access control.</strong> A permissioned factory is a gatekeeper, and the point of this project is that there is no gatekeeper. <code>FACTORY_ADMIN</code> governs only the factory&#x27;s own configuration and can never touch a deployed token — which is the deliberate departure from designs where the factory retains admin rights over everything it created.</p>
+<p><strong>Why <code>isFactoryIssued</code> matters commercially.</strong> When someone misconfigures a fork and loses money, the question &quot;was that one of yours&quot; must be answerable in seconds, publicly, by anyone, without your cooperation.</p>
+<hr class="soft">
+<h3 id="07-assetpassport">AssetPassport</h3>
+<p><strong>What this is.</strong> The record of what the asset actually is. Interface open, Stobox implementation proprietary.</p>
+<p><strong>Who it is for.</strong> Diligence teams, allocators, custodians, auditors.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>mint(passportId, issuer)</code></td><td style="text-align:left">Creates a passport</td><td style="text-align:left">PASSPORT_ISSUER</td><td style="text-align:left">An asset gets a record before any token exists</td></tr><tr><td style="text-align:left"><code>anchorSnapshot(passportId, snapshot)</code></td><td style="text-align:left">Commits the current record</td><td style="text-align:left">PASSPORT_ISSUER</td><td style="text-align:left">One 32-byte root covering every datapoint</td></tr><tr><td style="text-align:left"><code>declareToken(token, chainId)</code></td><td style="text-align:left">Token claims a passport</td><td style="text-align:left">Token&#x27;s ISSUER_ADMIN</td><td style="text-align:left">One half of the handshake</td></tr><tr><td style="text-align:left"><code>confirmToken(passportId, token, chainId)</code></td><td style="text-align:left">Passport confirms the token</td><td style="text-align:left">PASSPORT_ISSUER</td><td style="text-align:left">The other half — <strong>only this side proves provenance</strong></td></tr><tr><td style="text-align:left"><code>revokeToken(passportId, token)</code></td><td style="text-align:left">Withdraws confirmation</td><td style="text-align:left">PASSPORT_ISSUER</td><td style="text-align:left">The link was wrong or the asset changed</td></tr><tr><td style="text-align:left"><code>grantAccess(passportId, grant)</code></td><td style="text-align:left">Lets someone read private data</td><td style="text-align:left">Passport owner</td><td style="text-align:left">Diligence under an NDA</td></tr><tr><td style="text-align:left"><code>revokeAccess(passportId, grantee)</code></td><td style="text-align:left">Ends it</td><td style="text-align:left">Passport owner</td><td style="text-align:left">Deal over</td></tr><tr><td style="text-align:left"><code>recordAttestation(passportId, attestation)</code></td><td style="text-align:left">Signs a fact</td><td style="text-align:left">ATTESTOR</td><td style="text-align:left">An auditor&#x27;s own signature, not the issuer&#x27;s claim</td></tr><tr><td style="text-align:left"><code>snapshotOf(passportId) → (Snapshot, bool stale)</code></td><td style="text-align:left">Latest commitment + freshness</td><td style="text-align:left">Anyone</td><td style="text-align:left"><strong>Staleness is a value, not a UI convention</strong></td></tr><tr><td style="text-align:left"><code>tokensOf(passportId) → address[]</code></td><td style="text-align:left">Confirmed tokens</td><td style="text-align:left">Anyone</td><td style="text-align:left">One asset, several tranches</td></tr><tr><td style="text-align:left"><code>passportOf(token) → bytes32</code></td><td style="text-align:left">Reverse lookup</td><td style="text-align:left">Anyone</td><td style="text-align:left">Start from the token, find the asset</td></tr><tr><td style="text-align:left"><code>isConfirmed(passportId, token) → bool</code></td><td style="text-align:left">Is the link real?</td><td style="text-align:left">Anyone</td><td style="text-align:left">The only state that proves provenance</td></tr><tr><td style="text-align:left"><code>attestationsOf(passportId) → Attestation[]</code></td><td style="text-align:left">Who signed what, when</td><td style="text-align:left"><strong>Anyone</strong></td><td style="text-align:left">Signal without disclosure</td></tr><tr><td style="text-align:left"><code>publicLeaf(passportId, code) → bytes</code></td><td style="text-align:left">A public datapoint</td><td style="text-align:left">Anyone</td><td style="text-align:left">The few facts published in clear</td></tr><tr><td style="text-align:left"><code>verify(passportId, code, value, salt, proof) → bool</code></td><td style="text-align:left">Checks a disclosed value</td><td style="text-align:left">Anyone</td><td style="text-align:left">Verify without trusting the issuer</td></tr><tr><td style="text-align:left"><code>verifyAbsence(passportId, code, proof) → bool</code></td><td style="text-align:left">Proves something is <strong>not</strong> recorded</td><td style="text-align:left">Anyone</td><td style="text-align:left">&quot;There is no legal opinion&quot; is what diligence checks</td></tr><tr><td style="text-align:left"><code>accessOf(passportId, grantee) → AccessGrant</code></td><td style="text-align:left">Current grant</td><td style="text-align:left">Anyone</td><td style="text-align:left">Who has access is public even when the data is not</td></tr></tbody></table></div>
+<p><strong>How the handshake works.</strong> Anyone can <em>declare</em> a passport. Only the passport can <em>confirm</em>. A declared-but-unconfirmed link is exactly what a forgery looks like, and integrators must treat it that way.</p>
+<p><strong>Why attestation metadata is public while values are not.</strong> A counterparty can see that a named audit firm signed the reserve figure eleven days ago, valid for ninety days — without seeing the figure. That answers most of the diligence question before anyone signs an NDA.</p>
+<p><strong>Why <code>verifyAbsence</code> exists.</strong> A system that can only prove presence lets an issuer hide an inconvenient fact by omitting it. Absence must be as provable as presence.</p>
+<hr class="soft">
+<h3 id="07-attestorregistry">AttestorRegistry</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>registerKey(attestor, validFrom, validTo)</code></td><td style="text-align:left">Records a signing key and its window</td><td style="text-align:left">PASSPORT_ADMIN</td><td style="text-align:left">Attestors rotate keys</td></tr><tr><td style="text-align:left"><code>revokeKey(attestor)</code></td><td style="text-align:left">Ends validity</td><td style="text-align:left">PASSPORT_ADMIN</td><td style="text-align:left">Compromise</td></tr><tr><td style="text-align:left"><code>isValidAt(attestor, timestamp) → bool</code></td><td style="text-align:left">Was this key valid then?</td><td style="text-align:left">Verifiers</td><td style="text-align:left"><strong>History must survive a rotation</strong></td></tr><tr><td style="text-align:left"><code>attestors() → address[]</code></td><td style="text-align:left">Recognised signers</td><td style="text-align:left">Anyone</td><td style="text-align:left">Who this passport trusts</td></tr></tbody></table></div>
+<p><strong>Why validity windows.</strong> Checking a signature against the <em>current</em> key would invalidate every past attestation the moment a firm rotated its key. Checking against the key valid <strong>at signing time</strong> keeps history intact.</p>
+<hr class="soft">
+<h3 id="07-offeringregistry">OfferingRegistry</h3>
+<p><strong>What this is.</strong> The primary sale.</p>
+<p><strong>Who it is for.</strong> Issuers running a raise; investors buying.</p>
+<p>Also a diamond, split by concern so the read path can never be blocked by an upgrade to the write path: <code>OfferingGovernanceFacet</code> (create, activate, pause, close, cancel), <code>OfferingPurchaseFacet</code> (purchases, allocation, pricing), <code>OfferingRefundFacet</code> (operator push and investor pull), <code>OfferingRuleFacet</code> (offering-level rules) and <code>OfferingStorageFacet</code> (all reads).</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>createOffering(params) → id</code></td><td style="text-align:left">Defines a sale</td><td style="text-align:left">OFFERING_OPERATOR</td><td style="text-align:left">Price, caps, dates, rules, regime</td></tr><tr><td style="text-align:left"><code>activate(id)</code></td><td style="text-align:left">Opens it</td><td style="text-align:left">OFFERING_OPERATOR</td><td style="text-align:left">Go live</td></tr><tr><td style="text-align:left"><code>pause(id)</code> / <code>unpause(id)</code></td><td style="text-align:left">Suspends and resumes</td><td style="text-align:left">OFFERING_OPERATOR</td><td style="text-align:left">Issues mid-raise</td></tr><tr><td style="text-align:left"><code>close(id)</code></td><td style="text-align:left">Ends purchasing</td><td style="text-align:left">OFFERING_OPERATOR</td><td style="text-align:left">End date or hard cap</td></tr><tr><td style="text-align:left"><code>cancel(id, reason)</code></td><td style="text-align:left">Aborts</td><td style="text-align:left">OFFERING_OPERATOR</td><td style="text-align:left">Raise abandoned; refunds follow</td></tr><tr><td style="text-align:left"><code>settle(id)</code></td><td style="text-align:left">Releases proceeds</td><td style="text-align:left"><strong>Anyone</strong>, once soft cap met</td><td style="text-align:left">The issuer collects</td></tr><tr><td style="text-align:left"><code>beginRefunding(id)</code></td><td style="text-align:left">Starts refunds</td><td style="text-align:left"><strong>Anyone</strong>, once soft cap missed</td><td style="text-align:left">Investors get their money back</td></tr><tr><td style="text-align:left"><code>refundBatch(id, limit)</code></td><td style="text-align:left">Refunds many at once</td><td style="text-align:left">OFFERING_OPERATOR</td><td style="text-align:left">Good UX at scale</td></tr><tr><td style="text-align:left"><code>claimRefund(purchaseId)</code></td><td style="text-align:left">Refunds yourself</td><td style="text-align:left">Investor</td><td style="text-align:left">The backstop that makes refunds a guarantee</td></tr><tr><td style="text-align:left"><code>addRule(id, rule)</code> / <code>removeRule(id, rule)</code></td><td style="text-align:left">Offering-level compliance</td><td style="text-align:left">OFFERING_OPERATOR</td><td style="text-align:left">Accreditation, geography, allocations</td></tr><tr><td style="text-align:left"><code>offeringOf(id) → Offering</code></td><td style="text-align:left">Full terms</td><td style="text-align:left">Anyone</td><td style="text-align:left">An investor reads terms before buying</td></tr><tr><td style="text-align:left"><code>statusOf(id) → uint8</code></td><td style="text-align:left">Current state</td><td style="text-align:left">Anyone</td><td style="text-align:left">Can I still buy?</td></tr><tr><td style="text-align:left"><code>purchaseOf(purchaseId) → Purchase</code></td><td style="text-align:left">One purchase</td><td style="text-align:left">Investor, audit</td><td style="text-align:left">Receipts</td></tr><tr><td style="text-align:left"><code>purchasesOf(investor) → uint256[]</code></td><td style="text-align:left">All of an investor&#x27;s purchases</td><td style="text-align:left">Investor, UI</td><td style="text-align:left">Portfolio</td></tr><tr><td style="text-align:left"><code>raisedOf(id) → uint256</code></td><td style="text-align:left">Progress</td><td style="text-align:left">Anyone</td><td style="text-align:left">Soft cap visibility</td></tr><tr><td style="text-align:left"><code>previewPurchase(id, amount) → (cost, tokens, unlockAt)</code></td><td style="text-align:left">Calculates</td><td style="text-align:left">Anyone, UI</td><td style="text-align:left">See price and lockup before signing</td></tr></tbody></table></div>
+<p>| <code>setDefaultPaymentTokens(tokens[])</code> | Chain-wide payment token list | REGISTRY_ADMIN | One list, not one per offering |</p>
+<p>| <code>forceStatus(id, status, reason)</code> | Overrides a stuck offering | REGISTRY_ADMIN | Recovery of last resort; reason mandatory and evented |</p>
+<p><code>REGISTRY_ADMIN</code> administers the registry contract itself and can neither move a token nor touch a balance. Its two powers are chain-wide configuration and the recovery override — which is why <code>forceStatus</code> records a reason on chain rather than silently changing state.</p>
+<p><strong>Why <code>settle</code> and <code>beginRefunding</code> are permissionless.</strong> Both are mechanical consequences of facts already true on chain — the soft cap was met or it was not. Requiring an operator to act would let an absent operator hold investor funds hostage.</p>
+<hr class="soft">
+<h3 id="07-agentauthority">AgentAuthority</h3>
+<p><strong>What this is.</strong> The bounds on what an automated agent may do for a principal.</p>
+<p><strong>Who it is for.</strong> Issuers automating operations; market-making agents; anyone delegating to software.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>grant(mandate) → mandateId</code></td><td style="text-align:left">Authorises an agent within limits</td><td style="text-align:left">Principal</td><td style="text-align:left">Delegation with a hard ceiling</td></tr><tr><td style="text-align:left"><code>revoke(mandateId)</code></td><td style="text-align:left">Cancels, immediately</td><td style="text-align:left">Principal</td><td style="text-align:left"><strong>The kill switch — no timelock</strong></td></tr><tr><td style="text-align:left"><code>check(mandateId, scope, token, counterparty, amount) → (bool, reason)</code></td><td style="text-align:left">Is this action permitted?</td><td style="text-align:left">The agent, before acting</td><td style="text-align:left">Free pre-flight, same idea as <code>canTransfer</code></td></tr><tr><td style="text-align:left"><code>consumed(mandateId) → (thisEpoch, epochEnds)</code></td><td style="text-align:left">Budget used and remaining</td><td style="text-align:left">Principal, agent</td><td style="text-align:left">Monitoring</td></tr><tr><td style="text-align:left"><code>mandatesOf(principal) → bytes32[]</code></td><td style="text-align:left">Every live mandate</td><td style="text-align:left">Principal</td><td style="text-align:left"><strong>You cannot lose track of your own agents</strong></td></tr></tbody></table></div>
+<p><strong>How a mandate bounds an agent.</strong> Scope, token allowlist, counterparty allowlist, per-action cap, per-epoch cap and a mandatory expiry. Exceeding any of them reverts. The agent is not trusted to respect its mandate — it is unable to exceed it.</p>
+<p><strong>What no scope ever grants.</strong> Minting, role changes, upgrades, freezing, seizure or pause. Those require a human role holder, and there is no mandate that can include them.</p>
+<hr class="soft">
+<h3 id="07-atomicdvp">AtomicDvP</h3>
+<p><strong>What this is.</strong> Delivery versus payment in a single transaction. Both legs move or neither does.</p>
+<p><strong>Who it is for.</strong> Secondary trading, market makers, agent-to-agent settlement.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Function</th><th style="text-align:left">Does</th><th style="text-align:left">Called by</th><th style="text-align:left">Why</th></tr></thead><tbody><tr><td style="text-align:left"><code>settle(instruction, sellerSig, buyerSig) → settlementId</code></td><td style="text-align:left">Executes both legs atomically</td><td style="text-align:left">Either party, or their agent</td><td style="text-align:left"><strong>Settlement risk cannot occur</strong></td></tr><tr><td style="text-align:left"><code>previewSettle(instruction) → (ok, stage, rule, reason)</code></td><td style="text-align:left">Will this trade work?</td><td style="text-align:left">Anyone, agents</td><td style="text-align:left">Check before signing, for free</td></tr><tr><td style="text-align:left"><code>cancel(nonce)</code></td><td style="text-align:left">Invalidates a signed instruction</td><td style="text-align:left">Either party</td><td style="text-align:left">Change of mind before settlement</td></tr><tr><td style="text-align:left"><code>isSettled(nonce) → bool</code></td><td style="text-align:left">Already done?</td><td style="text-align:left">Anyone</td><td style="text-align:left">Replay protection</td></tr></tbody></table></div>
+<p><strong>Why signatures rather than approvals.</strong> Both parties sign off-chain; either side or their agent submits. No standing allowance is granted to a counterparty, the terms are fixed at signing, and a matching agent can execute a trade it negotiated <strong>without ever holding custody of either leg</strong>.</p>
+<p><strong>Why this removes settlement risk rather than reducing it.</strong> Conventional settlement runs securities and cash on separate ledgers, so there is always an interval where one leg has moved and the other has not. Here both legs are transfers in one transaction on one chain. There is no interval.</p>
+<p><strong>And the part that is genuinely new:</strong> the security leg passes the token&#x27;s own compliance pipeline as part of the atomic operation. A non-compliant trade <strong>cannot settle</strong> — not &quot;is detected and reversed&quot;. That is only possible because the compliance system and the settlement system are the same system.</p>
+<hr class="soft">
+<h3 id="07-related-documents">Related documents</h3>
+<ul>
+<li><a href="06-states.html">06 — States</a> — what the return values mean</li>
+<li><a href="08-compliance-pipeline.html">08 — Compliance pipeline</a> — the order these run in</li>
+<li><a href="14-events-errors.html">14 — Events and errors</a> — what each function emits</li>
+<li><a href="21-interface-specification.html">21 — Interface specification</a> — how a user reaches these</li>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="06-states.html">← States</a><a class="pn n" href="08-compliance-pipeline.html">Compliance pipeline →</a></nav></section>
+<footer>
+<p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
+Edit the Markdown, not this file.</p>
+<p>Stobox is a software and infrastructure provider. This documentation describes product
+architecture and is not legal, financial or investment advice.</p>
+</footer>
+</article>
+<aside class="rail" aria-label="Section reference">
+<div class="railsec" data-sec="sec-07"><p class="railt">On this page</p><a href="#07-how-to-read-this">How to read this</a><a href="#07-contents">Contents</a><a href="#07-urwatoken-erc-20-core">uRWAToken — ERC-20 core</a><a href="#07-diamondcutfacet-and-diamondloupefacet">DiamondCutFacet and DiamondLoupeFacet</a><a href="#07-compliancefacet">ComplianceFacet</a><a href="#07-freezefacet">FreezeFacet</a><a href="#07-lockupfacet">LockupFacet</a><a href="#07-monetaryfacet">MonetaryFacet</a><a href="#07-rolesfacet">RolesFacet</a><a href="#07-emergencyfacet-opt-in">EmergencyFacet — opt-in</a><a href="#07-purchasefacet">PurchaseFacet</a><a href="#07-ipolicyset">IPolicySet</a><a href="#07-irule">IRule</a><a href="#07-iidentityregistry">IIdentityRegistry</a><a href="#07-treasury">Treasury</a><a href="#07-urwafactory">uRWAFactory</a><a href="#07-assetpassport">AssetPassport</a><a href="#07-attestorregistry">AttestorRegistry</a><a href="#07-offeringregistry">OfferingRegistry</a><a href="#07-agentauthority">AgentAuthority</a><a href="#07-atomicdvp">AtomicDvP</a><p class="railt s">Related</p><a href="06-states.html">06 — States</a><a href="08-compliance-pipeline.html">08 — Compliance pipeline</a><a href="14-events-errors.html">14 — Events and errors</a><a href="21-interface-specification.html">21 — Interface specification</a></div>
+<div class="railfix">
+<p class="railt s">Reference</p>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Source on GitHub</a>
+<a href="https://eips.ethereum.org/EIPS/eip-7943">ERC-7943 on eips.ethereum.org</a>
+<a href="../LICENSE">Licence — MIT</a>
+</div>
+</aside>
+</div>
+<script>
+(() => {
+  const nav = document.querySelector("nav.toc");
+  const secs = [...document.querySelectorAll("section.doc")];
+  if (!nav || !secs.length) return;
+
+  const links = new Map();
+  document.querySelectorAll('nav.toc a[href^="#sec-"]').forEach(a =>
+    links.set(a.getAttribute("href").slice(1), a));
+
+  let current = null;
+  const mark = id => {
+    if (id === current) return;
+    const prev = links.get(current);
+    if (prev) prev.removeAttribute("aria-current");
+    document.querySelectorAll("aside.rail .railsec.on").forEach(b => b.classList.remove("on"));
+    const block = document.querySelector('aside.rail .railsec[data-sec="' + id + '"]');
+    if (block) block.classList.add("on");
+    const next = links.get(id);
+    if (next) {
+      next.setAttribute("aria-current", "true");
+      // Keep the mark inside the contents list without scrolling the page.
+      const r = next.getBoundingClientRect(), n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+    }
+    current = id;
+  };
+
+  // The section whose top has passed a line a quarter down the viewport is the
+  // one being read. Plain geometry: no observer, no dependency, and it settles
+  // correctly on load, on resize, and after a jump to an anchor.
+  const pick = () => {
+    const line = window.innerHeight * 0.25;
+    let id = secs[0].id;
+    for (const sec of secs) {
+      if (sec.getBoundingClientRect().top > line) break;
+      id = sec.id;
+    }
+    mark("sec-" + id.replace("doc-", ""));
+  };
+
+  const frame = window.requestAnimationFrame || (fn => setTimeout(fn, 16));
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    frame(() => { queued = false; pick(); });
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  addEventListener("hashchange", onScroll);
+
+  // A click moves the mark at once, before the scroll settles.
+  links.forEach((a, id) => a.addEventListener("click", () => mark(id)));
+
+  pick();
+})();
+</script>
+<!-- source-digest: 8d55bc03834c551232f3d706aa41aa2bc5b855b967fcfe67dcb4b89013a94c13 -->

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>31 — Verification framework — uRWA Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<base href=".">
+<style>/* uRWA Factory — the design system. One file, every surface.
+   ==========================================================================
+   This is the only place colour, type, shape and depth are decided. No page
+   declares its own tokens, and no page restates a rule that lives here; a page
+   adds only what is true of that page alone.
+
+   A new page needs exactly one line in its head:
+
+       <link rel="stylesheet" href="theme.css">        (repository root)
+       <link rel="stylesheet" href="../theme.css">     (prototypes/)
+
+   and inherits the whole system — fonts included, imported below.
+
+   The documentation build inlines this file verbatim, so
+   urwa-documentation.html stays one self-contained artefact from one source.
+
+   Documented in docs/25-design-system.md. Verified by verify.py L0.12.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── tokens ─────────────────────────────────────────────────────────────── */
+
+:root{
+  /* ground and surfaces */
+  --ground:#F5F5F7;
+  --surface:#FFFFFF;
+  --raised:#FFFFFF;
+  --sunk:#F0F2F8;
+  --dark:#0C0C0F;
+
+  /* ink */
+  --ink:#1D1D1F;
+  --ink-2:#3C3C43;
+  --muted:#57575B;
+  --faint:#6E6E73;
+
+  /* lines — hairlines, never structure */
+  --rule:#E2E4E9;
+  --rule-strong:#D2D5DB;
+
+  /* emphasis — black carries the primary action */
+  --accent:#0C0C0F;
+  --accent-2:#1D1D1F;
+  --accent-wash:#F5F5F7;
+  --accent-edge:#E2E4E9;
+
+  /* the one hue — a single spot colour, used sparingly */
+  --spot:#22D3EE;
+  --spot-2:#0EBDD9;
+  --spot-ink:#0C2E33;
+  --spot-text:#0E7490;
+  --spot-wash:rgba(34,211,238,.22);
+  --spot-edge:#A5E9F4;
+
+  /* status */
+  --ok:#0F7A5F;
+  --ok-wash:#E9F8F3;
+  --ok-edge:#B6E5D6;
+  --warn:#B45309;
+  --warn-wash:#FEF6E7;
+  --warn-edge:#F3DDB2;
+  --crit:#B42318;
+  --crit-wash:#FEF1EF;
+  --crit-edge:#F5CFCA;
+
+  /* type */
+  --body:-apple-system,system-ui,'SF Pro Display','SF Pro Text','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --display:-apple-system,system-ui,'SF Pro Display','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+
+  /* shape */
+  --r:10px;
+  --r-md:12px;
+  --r-lg:20px;
+  --r-pill:980px;
+
+  /* depth — soft and far, never a hard edge */
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --sh-lg:0 8px 20px -4px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.05);
+  --sh-card:0 10px 30px -24px rgba(0,0,0,.3);
+  --sh-focus:0 0 0 3px rgba(34,211,238,.45);
+}
+
+/* ── base ───────────────────────────────────────────────────────────────── */
+
+*{box-sizing:border-box}
+
+/* Every surface paints its own ground and ink, so the page holds on any host
+   background rather than inheriting one. A page overrides only size and leading. */
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+
+h1,h2,h3,h4{font-family:var(--display);font-weight:700}
+h1{letter-spacing:-.03em;line-height:1.06}
+
+a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+
+/* Focus is a black outline first — the spot colour alone does not carry
+   enough contrast to announce focus by itself. */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);box-shadow:var(--sh-focus)}
+
+/* ── controls ───────────────────────────────────────────────────────────── */
+
+.btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary,.btn.spot{
+  border-radius:var(--r-pill);font-weight:600;box-shadow:none;
+  transition:background .18s,border-color .18s,color .18s,transform .12s}
+.btn{background:var(--surface);border-color:var(--rule-strong);color:var(--ink)}
+.btn:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.btn.p,.btn.primary{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#FFFFFF}
+.btn.spot{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:700}
+.btn.spot:hover{background:var(--spot-2);border-color:var(--spot-2);color:var(--spot-ink)}
+.btn.d{border-color:var(--crit-edge);color:var(--crit);background:var(--surface)}
+.btn.d:hover{background:var(--crit-wash)}
+.btn:active:not([disabled]){transform:translateY(1px)}
+
+.inp,input.inp,input,select,textarea{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
+.inp:focus,input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:var(--sh-focus)}
+
+/* ── containers ─────────────────────────────────────────────────────────── */
+
+.card,.figbox,.k,.addrcard,.tscroll{border-radius:var(--r-lg)}
+.note,.nextitem,.wal,.opt,pre{border-radius:var(--r-md)}
+.card,.figbox,.k,.addrcard{box-shadow:var(--sh-card);border-color:var(--rule)}
+.pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
+.bar{border-radius:var(--r-pill);overflow:hidden}
+.bar div{border-radius:0}
+table,th,td{border-color:var(--rule)}
+
+/* ── marks ──────────────────────────────────────────────────────────────── */
+
+/* Aqua marks emphasis and nothing else. Status is green, ochre or oxblood,
+   and always carries a word or a symbol as well as its colour. */
+.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.banner{background:var(--spot-wash);border-bottom:1px solid var(--spot-edge);color:var(--accent)}
+.tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+/* "You are here" is one mark everywhere: an aqua wash, an aqua ring, and
+   heavier text — never colour on its own. */
+.nb.on{background:var(--spot-wash);color:var(--accent);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.nb.on .b{color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--spot-wash)}
+
+.step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.stg.n .i,.sg.no .i{background:var(--crit);border-color:var(--crit);color:#FFFFFF}
+
+.st.ok{color:var(--ok)}
+.st.ok::before{background:var(--ok)}
+.pill.ok{background:var(--ok-wash);border-color:var(--ok-edge);color:var(--ok)}
+.el.y .m{color:var(--ok)}
+.wal.ok{border-color:var(--ok-edge);background:var(--ok-wash)}
+.wal.ok .dot{background:var(--ok)}
+.wallet.ok .dot{background:var(--ok)}
+
+/* ── site navigation ────────────────────────────────────────────────────── */
+
+.sitenav{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:10px 22px;
+  border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  font-size:13px;position:sticky;top:0;z-index:200}
+.sitenav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:var(--r-pill);
+  font-weight:500;transition:background .18s,color .18s;white-space:nowrap}
+.sitenav a:hover{color:var(--ink);background:var(--sunk);text-decoration:none}
+.sitenav a[aria-current="page"]{color:var(--accent);background:var(--spot-wash);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.sitenav .home{font-weight:700;font-size:15px;letter-spacing:-.02em;color:var(--ink);padding-left:0}
+.sitenav .home:hover{background:none;color:var(--ink)}
+.sitenav .div{width:1px;height:15px;background:var(--rule);margin:0 8px;flex:none}
+.sitenav .push{margin-left:auto;background:var(--accent);color:#FFFFFF;font-weight:600}
+.sitenav .push:hover{background:var(--accent-2);color:#FFFFFF}
+
+@media(max-width:720px){
+  .sitenav{position:static;padding:6px 12px}
+  .sitenav a{padding:13px 14px}
+  .sitenav .push{margin-left:0}
+}
+
+/* ── motion ─────────────────────────────────────────────────────────────── */
+
+/* Movement here is decoration; colour and border still report every state,
+   so removing the movement removes nothing a reader needs. */
+@media(prefers-reduced-motion:reduce){
+  a.card:hover,.btn:active:not([disabled]),.startat a:active{transform:none!important}
+}
+
+/* landing cards and page-to-page navigation */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:10px;margin:8px 0 30px}
+.cards .card{display:flex;align-items:baseline;gap:11px;padding:14px 16px;border:1px solid var(--rule);
+  border-radius:var(--r-lg);background:var(--surface);text-decoration:none;transition:border-color .14s,background .14s}
+.cards .card:hover{border-color:var(--rule-strong);background:var(--ground)}
+.cards .card .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none}
+.cards .card .l{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.allnote{font-size:14px;color:var(--muted);padding-top:20px;border-top:1px solid var(--rule)}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:44px 0 8px;
+  padding-top:22px;border-top:1px solid var(--rule)}
+.pnav .pn{font-size:14px;color:var(--muted);text-decoration:none;padding:9px 14px;
+  border:1px solid var(--rule);border-radius:var(--r-pill);transition:border-color .14s,color .14s}
+.pnav .pn:hover{color:var(--ink);border-color:var(--rule-strong)}
+.pnav .pn.n{margin-left:auto}
+nav.toc a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+nav.toc a.home{font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--rule);border-radius:0}
+
+/* Page styles for the documentation site. Tokens, controls, containers, marks
+   and the site navigation come from theme.css, which is inlined above this
+   block at build time — never restate them here. */
+body{font-size:17.5px;line-height:1.7}
+/* the bar's brand lines up with the contents heading below it */
+nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
+.shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
+@media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
+nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
+nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
+figure.dg{margin:34px 0;padding:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+figure.dg svg{display:block;width:100%;height:auto;max-width:100%}
+figure.dg figcaption{font-size:13.5px;line-height:1.6;color:var(--muted);padding:13px 20px 15px;border-top:1px solid var(--rule);background:var(--ground)}
+figure.dg figcaption strong{color:var(--ink-2);font-weight:600}
+p.missing{color:var(--crit);font-family:var(--mono);font-size:13px}
+nav.toc a{display:block;font-size:14.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:var(--r-pill);transition:background .18s,color .18s}
+nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a[aria-current="true"]{color:var(--accent);background:var(--spot-wash);font-weight:600;box-shadow:inset 0 0 0 1px var(--spot-edge)}
+nav.toc a[aria-current="true"] .n{color:var(--accent)}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+aside.rail{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
+aside.rail .railt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+aside.rail .railt.s{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+aside.rail a{display:block;font-size:13.5px;line-height:1.45;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .18s,color .18s}
+aside.rail a:hover{color:var(--ink);background:var(--sunk)}
+aside.rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+aside.rail .railsec{display:none}
+aside.rail .railsec.on{display:block}
+aside.rail .empty{font-size:13px;color:var(--faint);margin:0;padding:0 10px}
+.relmob{display:none}
+header.mast{border-bottom:1px solid var(--rule);padding-bottom:38px;margin-bottom:10px}
+header.mast h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,7vw,84px);line-height:1.02;letter-spacing:-.038em;margin:0 0 18px;text-wrap:balance}
+header.mast p{color:var(--muted);max-width:58ch;margin:0 0 28px;font-size:23px;line-height:1.45;letter-spacing:-.015em}
+header.mast .meta{display:flex;flex-wrap:wrap;gap:8px}
+header.mast .meta span{font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-pill);padding:6px 15px}
+header.mast .meta b{color:var(--ink);font-weight:600;margin-right:6px}
+header.mast .meta span:first-child{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+header.mast .meta span:first-child b{color:var(--spot-ink)}
+article{min-width:0}
+@media(min-width:1181px){article h3[id$="-related-documents"],article h3[id$="-related-documents"]+ul,article h3[id$="-related"],article h3[id$="-related"]+ul{display:none}}
+.hero{border-bottom:1px solid var(--rule);padding-bottom:48px;margin-bottom:8px}
+.hero .q{font-size:clamp(24px,2.8vw,34px);line-height:1.2;font-weight:700;letter-spacing:-.032em;margin:0 0 30px;max-width:22ch;text-wrap:balance}
+.hero .q em{font-style:normal;color:var(--muted);display:block;font-size:17.5px;font-weight:400;line-height:1.6;margin-top:20px;letter-spacing:-.005em;max-width:62ch}
+.wxy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 30px}
+.wxy>div{padding:24px 26px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+@media(max-width:640px){.wxy{grid-template-columns:1fr}}
+.wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
+.wxy strong,.wxy b{color:var(--ink)}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
+.author .b{flex:1;min-width:240px}
+.author .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.022em;margin:0 0 2px}
+.author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
+.author .bio{font-size:14.5px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+.author .lk{display:flex;gap:8px;flex-wrap:wrap}
+.author .lk a{font-size:13.5px;font-weight:500;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:7px 16px;color:var(--ink);transition:background .18s,border-color .18s}
+.author .lk a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.startat a{font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:9px 20px;color:var(--ink);background:var(--surface);transition:background .18s,border-color .18s,transform .12s}
+.startat a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat a:active{transform:translateY(1px)}
+.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
+.startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
+section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
+section.doc:first-of-type{margin-top:44px}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
+h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
+h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:86px}
+h5{font-weight:700;font-size:12.5px;margin:26px 0 8px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;scroll-margin-top:86px}
+p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
+article{--measure:74ch}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh-card)}
+pre code{background:none;padding:0;font-size:inherit}
+ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
+li{margin-bottom:9px}
+li::marker{color:var(--faint)}
+ul.task{list-style:none;padding-left:2px}
+ul.task .box{font-family:var(--mono);color:var(--ink);margin-right:9px}
+blockquote{border:1px solid var(--rule);background:var(--surface);padding:18px 22px;margin:0 0 22px;border-radius:var(--r-md);max-width:74ch;box-shadow:var(--sh-card)}
+blockquote p{margin:0 0 14px;max-width:none}
+blockquote p:last-child{margin:0}
+.tscroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:520px}
+th{color:var(--faint);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:14px 16px 11px;border-bottom:1px solid var(--rule);vertical-align:bottom}
+td{padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:600}
+details.faq{border:1px solid var(--rule);border-radius:var(--r-md);background:var(--surface);margin:0 0 8px;box-shadow:var(--sh-card)}
+details.faq>summary{cursor:pointer;list-style:none;padding:15px 52px 15px 20px;font-family:var(--display);font-size:16.5px;font-weight:600;letter-spacing:-.016em;position:relative;border-radius:var(--r-md)}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq>summary::after{content:"";position:absolute;right:20px;top:50%;width:9px;height:9px;margin-top:-6px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .18s}
+details.faq[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+details.faq>summary:hover{background:var(--sunk)}
+details.faq>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+details.faq[open]>summary{border-bottom:1px solid var(--rule);border-radius:var(--r-md) var(--r-md) 0 0}
+details.faq p{margin:0;padding:16px 20px 18px;font-size:16px;color:var(--ink-2);max-width:74ch}
+@media(prefers-reduced-motion:reduce){details.faq>summary::after{transition:none}}
+hr.soft{border:0;border-top:1px solid var(--rule);margin:32px 0}
+footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:14px;color:var(--faint)}
+footer p{max-width:76ch;margin:0 0 8px}
+@media(prefers-reduced-motion:reduce){.startat a:active{transform:none}}
+</style>
+<nav class="sitenav" aria-label="Documentation">
+<a class="home" href="#top">uRWA Factory</a>
+<span class="div"></span>
+<a href="00-why-this-exists.html">Start</a>
+<a href="04-storage.html">Mechanics</a>
+<a href="15-standards.html">Standards</a>
+<a href="21-interface-specification.html">Interfaces</a>
+<a href="27-model-inventory.html">Models</a>
+<a href="32-faq.html">FAQ</a>
+<a href="author.html">Author</a>
+<span class="div"></span>
+<a href="../prototypes/index.html">Prototypes</a>
+<a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
+</nav>
+<div class="shell" id="top">
+<nav class="toc" aria-label="Contents">
+<p class="t">Contents</p>
+<a class="home" href="../index.html"><span class="n">↑</span>All documentation</a>
+<a href="00-why-this-exists.html"><span class="n">00</span>Why this exists</a>
+<a href="01-overview.html"><span class="n">01</span>Overview</a>
+<a href="02-architecture.html"><span class="n">02</span>Architecture</a>
+<a href="03-contracts.html"><span class="n">03</span>Contracts</a>
+<a href="04-storage.html"><span class="n">04</span>Storage</a>
+<a href="05-roles.html"><span class="n">05</span>Roles and permissions</a>
+<a href="06-states.html"><span class="n">06</span>States</a>
+<a href="07-functions.html"><span class="n">07</span>Function reference</a>
+<a href="08-compliance-pipeline.html"><span class="n">08</span>Compliance pipeline</a>
+<a href="09-identity-did.html"><span class="n">09</span>Identity and DID</a>
+<a href="10-rules.html"><span class="n">10</span>Rules</a>
+<a href="11-passport.html"><span class="n">11</span>Asset Passport</a>
+<a href="12-offering.html"><span class="n">12</span>Offerings</a>
+<a href="13-treasury.html"><span class="n">13</span>Treasury</a>
+<a href="14-events-errors.html"><span class="n">14</span>Events and errors</a>
+<a href="15-standards.html"><span class="n">15</span>Standards</a>
+<a href="16-deployment.html"><span class="n">16</span>Deployment</a>
+<a href="17-security.html"><span class="n">17</span>Security</a>
+<a href="18-glossary.html"><span class="n">18</span>Glossary</a>
+<a href="19-open-boundary.html"><span class="n">19</span>The open boundary</a>
+<a href="20-development-plan.html"><span class="n">20</span>Development plan</a>
+<a href="21-interface-specification.html"><span class="n">21</span>Interface specification</a>
+<a href="22-agents-and-settlement.html"><span class="n">22</span>Agents and settlement</a>
+<a href="23-testing-plan.html"><span class="n">23</span>Testing plan</a>
+<a href="24-work-registry.html"><span class="n">24</span>Work registry</a>
+<a href="25-design-system.html"><span class="n">25</span>Design system</a>
+<a href="26-handoff.html"><span class="n">26</span>Handoff: specification to build</a>
+<a href="27-model-inventory.html"><span class="n">27</span>Model inventory and artifact register</a>
+<a href="28-product-model.html"><span class="n">28</span>Product model</a>
+<a href="29-data-model.html"><span class="n">29</span>Data model</a>
+<a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
+<a href="31-verification.html" aria-current="page"><span class="n">31</span>Verification framework</a>
+<a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
+<a href="author.html"><span class="n">—</span>The author</a>
+<p class="t s">Surfaces</p>
+<a href="../prototypes/"><span class="n">—</span>All prototypes</a>
+<a href="../prototypes/deploy-console.html"><span class="n">—</span>Deploy console</a>
+<a href="../prototypes/token-console.html"><span class="n">—</span>Token console</a>
+<a href="../prototypes/verifier.html"><span class="n">—</span>Public verifier</a>
+<a href="../prototypes/investor.html"><span class="n">—</span>Investor page</a>
+<p class="t s">Repository</p>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory"><span class="n">—</span>Source on GitHub</a>
+<a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
+</nav>
+<article>
+<header class="mast">
+<h1>uRWA Factory</h1>
+<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
+<div class="meta">
+<span><b>Status</b> Specification · no code yet</span>
+<span><b>Licence</b> MIT</span>
+<span><b>Chain</b> Base</span>
+<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
+</div>
+</header>
+
+<div class="hero">
+
+<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
+<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
+
+<div class="wxy">
+<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
+<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
+<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
+<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
+</div>
+
+<div class="author">
+<div class="ini">GD</div>
+<div class="b">
+<p class="nm">Gene Deyev</p>
+<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
+<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
+<div class="lk">
+<a href="https://stobox.io/team/gene-deyev">Profile</a>
+<a href="https://github.com/genedeyev">GitHub</a>
+<a href="mailto:gd@stoboxplatform.com">Email</a>
+<a href="https://stobox.io">Stobox</a>
+</div>
+</div>
+</div>
+
+<div class="startat">
+<a class="k" href="00-why-this-exists.html">Why this exists</a>
+<a href="02-architecture.html">Architecture</a>
+<a href="07-functions.html">Function reference</a>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
+</div>
+
+</div>
+
+<section class="doc" id="doc-31"><h2 id="sec-31">31 — Verification framework</h2>
+<p>Six levels of checking, each verifying something the level below cannot. The top level verifies the checks themselves, because <strong>a check that never fails is not a check</strong> — it is a comment that costs CI time.</p>
+<p>Everything described here that can run today does run today, in <a href="../verify.py"><code>verify.py</code></a>, on every commit.</p>
+<h3 id="31-the-levels">The levels</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Level</th><th style="text-align:left">Verifies</th><th style="text-align:left">Runs</th><th style="text-align:left">Fails the build</th></tr></thead><tbody><tr><td style="text-align:left"><strong>L0</strong></td><td style="text-align:left">Syntax and structure</td><td style="text-align:left"><code>verify.py</code>, CI</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left"><strong>L1</strong></td><td style="text-align:left">Internal consistency of each document</td><td style="text-align:left"><code>verify.py</code>, CI</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left"><strong>L2</strong></td><td style="text-align:left">Consistency <strong>between</strong> models</td><td style="text-align:left"><code>verify.py</code>, CI</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left"><strong>L3</strong></td><td style="text-align:left">Code against specification</td><td style="text-align:left">Foundry</td><td style="text-align:left">✅ once code exists</td></tr><tr><td style="text-align:left"><strong>L4</strong></td><td style="text-align:left">Runtime behaviour and invariants</td><td style="text-align:left">Foundry, fork tests</td><td style="text-align:left">✅ once code exists</td></tr><tr><td style="text-align:left"><strong>L5</strong></td><td style="text-align:left"><strong>The checks themselves</strong></td><td style="text-align:left"><code>verify.py --self-test</code>, CI</td><td style="text-align:left">✅</td></tr></tbody></table></div>
+<figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 464" class="d-ver">
+<style>
+.d-ver text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-ver .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
+.d-ver .st{font-size:13px;font-weight:600}
+.d-ver .sm{font-size:11.5px;fill:#57575B}
+.d-ver .fa{font-size:10.5px;fill:#6E6E73}
+.d-ver .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#57575B}
+.d-ver .lv{font-size:13px;font-weight:700}
+.d-ver .i-lv{fill:#FFFFFF}
+.d-ver .i-st{fill:#FFFFFF}
+.d-ver .i-sm{fill:#6E6E73}
+.d-ver .i-mos{fill:#F0F2F8}
+.d-ver .grey{fill:#6E6E73}
+
+.d-ver .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-ver .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-ver .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<rect width="760" height="464" fill="#FFFFFF"/>
+
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M12 2.2l8 3v6c0 5-3.5 9-8 10.8C7.5 20.2 4 16.2 4 11.2v-6Z"/><path d="M8.5 11.8l2.6 2.6 4.6-5"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Verification levels</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
+
+<text class="lbl" x="24" y="24">EACH LEVEL VERIFIES WHAT THE ONE BELOW CANNOT</text>
+<text class="lbl" x="600" y="24">BLIND TO</text>
+
+<rect x="24" y="36" width="560" height="40" rx="9" fill="#F5F5F7" stroke="#E2E4E9"/>
+<text class="lv" x="44" y="61">L0</text>
+<text class="st" x="78" y="61">Structure</text>
+<text class="sm" x="238" y="61">links, anchors, staleness, encoding</text>
+<text class="mos" x="506" y="61">12</text>
+<text class="fa" x="600" y="61">whether the prose is true</text>
+
+<rect x="24" y="82" width="560" height="40" rx="9" fill="#F5F5F7" stroke="#E2E4E9"/>
+<text class="lv" x="44" y="107">L1</text>
+<text class="st" x="78" y="107">Each document</text>
+<text class="sm" x="238" y="107">tables, fences, registry IDs, totals</text>
+<text class="mos" x="506" y="107">7</text>
+<text class="fa" x="600" y="107">whether documents agree</text>
+
+<rect x="24" y="128" width="560" height="40" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="lv" x="44" y="153">L2</text>
+<text class="st" x="78" y="153">Between models</text>
+<text class="sm" x="238" y="153">contracts, roles, entities, claim keys</text>
+<text class="mos" x="506" y="153">16</text>
+<text class="fa" x="600" y="153">whether they match reality</text>
+
+<rect x="24" y="174" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
+<text class="lv grey" x="44" y="199">L3</text>
+<text class="st grey" x="78" y="199">Code vs spec</text>
+<text class="sm" x="238" y="199">signatures, storage, events, modifiers</text>
+<text class="mos" x="506" y="199">7 later</text>
+<text class="fa" x="600" y="199">whether code behaves</text>
+
+<rect x="24" y="220" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
+<text class="lv grey" x="44" y="245">L4</text>
+<text class="st grey" x="78" y="245">Runtime</text>
+<text class="sm" x="238" y="245">the fifteen invariants, fuzzed and forked</text>
+<text class="mos" x="506" y="245">15 later</text>
+<text class="fa" x="600" y="245">whether the spec was right</text>
+
+<rect x="24" y="266" width="560" height="56" rx="9" fill="#0C0C0F"/>
+<text class="lv i-lv" x="44" y="288">L5</text>
+<text class="st i-st" x="78" y="288">The checks themselves</text>
+<text class="sm i-sm" x="238" y="288">every check must fail its own fixture</text>
+<text class="mos i-mos" x="506" y="288">all</text>
+<text class="fa i-sm" x="78" y="310">A check that passes its broken input is reported dead, not counted as a pass.</text>
+<text class="fa" x="600" y="288">what the checks miss</text>
+
+<rect x="24" y="332" width="712" height="30" rx="8" fill="#F5F5F7" stroke="#E2E4E9"/>
+<text class="sm" x="44" y="352">L5 found six dead checks on its first run. All six passed L0 through L2 and looked healthy. Nothing below L5 could have found them.</text></g>
+</svg>
+<figcaption>Six levels, each catching what the one below cannot — and each honest about its own blind spot. Thirty-six checks run today; L3 and L4 arrive with the code they test.</figcaption></figure>
+<p><strong>Thirty-six checks run today</strong> — thirteen at L0, seven at L1, sixteen at L2 — and all thirty-six are re-run against their own broken fixtures at L5. The twenty-two L3 and L4 checks are specified below and implemented with the code they test.</p>
+<h3 id="31-l0-structure">L0 — Structure</h3>
+<p>Cheap, mechanical, catches rot before anyone reads.</p>
+<p><code>L0.6</code> compares a SHA-256 digest of every source file against a digest stamped into the built HTML. Timestamps would be useless here: a fresh clone gives every file the same mtime, so an mtime comparison passes in CI no matter how stale the build is — a check that is green precisely where it matters least.</p>
+<p><code>L0.11</code> includes a text-overflow estimate, because SVG does not wrap. A caption edited to be two words longer does not error and does not wrap — the words are simply not on the canvas, and the diagram still looks finished. The check measures each label against the viewBox using advance widths calibrated from rendered output.</p>
+<p>It also pins every colour literal to the design tokens. The sixteen diagrams were first drawn in a warm grey family against pages built from a cool one — near enough to look deliberate, far enough to read as an off-brand tint. Nothing else in the pipeline would have caught it.</p>
+<p><code>L0.13</code> guards the split site. The documentation is built as one page per document plus a combined file: the pages are what people read and link to, the combined file is what full-corpus <code>Ctrl+F</code> and printing need. Both come from one source, so the check that matters is that no document loses its page and no page loses its way back — every page links the landing page and its two neighbours.</p>
+<p><code>L0.12</code> keeps the design system single-sourced. Every surface used to inline its own copy of the tokens, which is a system only until one copy is edited and the others are not. The tokens now live in <code>theme.css</code> alone: the prototypes link it, the documentation build inlines it, and this check fails a page that links nothing, declares a token of its own, or pulls in its own web font.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><code>L0.1</code></td><td style="text-align:left">Every <code>docs/*.md</code> appears in the README index</td></tr><tr><td style="text-align:left"><code>L0.2</code></td><td style="text-align:left">Every document in the index exists on disk</td></tr><tr><td style="text-align:left"><code>L0.3</code></td><td style="text-align:left">Document numbers are contiguous with no gaps or duplicates</td></tr><tr><td style="text-align:left"><code>L0.4</code></td><td style="text-align:left">Every internal link resolves to a real file or anchor</td></tr><tr><td style="text-align:left"><code>L0.5</code></td><td style="text-align:left">The built HTML has no broken in-page anchors</td></tr><tr><td style="text-align:left"><code>L0.6</code></td><td style="text-align:left">The built HTML is not stale relative to the sources — by content digest, not timestamp</td></tr><tr><td style="text-align:left"><code>L0.7</code></td><td style="text-align:left">No raw Markdown leaks into the HTML — no <code>![</code>, no <code>](</code>, no escaped block tags</td></tr><tr><td style="text-align:left"><code>L0.8</code></td><td style="text-align:left">Every HTML tag balances</td></tr><tr><td style="text-align:left"><code>L0.9</code></td><td style="text-align:left">Every page is reachable from every other — the documentation links each surface, each surface links back and sideways</td></tr><tr><td style="text-align:left"><code>L0.10</code></td><td style="text-align:left">Every page declares its character set and viewport</td></tr><tr><td style="text-align:left"><code>L0.11</code></td><td style="text-align:left">Every diagram resolves, parses, carries a <code>viewBox</code> and a header icon, sets no <code>fill</code> on <code>&lt;text&gt;</code>, fetches nothing, keeps to the design tokens, and has no label running off the canvas</td></tr><tr><td style="text-align:left"><code>L0.13</code></td><td style="text-align:left">Every document has its own page, the landing page links each one, and every page links back and to its neighbours</td></tr><tr><td style="text-align:left"><code>L0.12</code></td><td style="text-align:left">Every page inherits the design system — each prototype links <code>theme.css</code>, none declares its own tokens or loads its own web font, and the built documentation carries the tokens inline</td></tr></tbody></table></div>
+<h3 id="31-l1-document-consistency">L1 — Document consistency</h3>
+<p>Each document must be internally coherent.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><code>L1.1</code></td><td style="text-align:left">Every table has a header separator and uniform column count</td></tr><tr><td style="text-align:left"><code>L1.2</code></td><td style="text-align:left">Every fenced code block is closed</td></tr><tr><td style="text-align:left"><code>L1.3</code></td><td style="text-align:left">Every document ends with a Related section linking at least one other</td></tr><tr><td style="text-align:left"><code>L1.4</code></td><td style="text-align:left">No document references a registry ID that does not exist in <a href="24-work-registry.html">24</a></td></tr><tr><td style="text-align:left"><code>L1.5</code></td><td style="text-align:left">Registry IDs are unique</td></tr><tr><td style="text-align:left"><code>L1.6</code></td><td style="text-align:left">Every registry item has a status from the declared vocabulary</td></tr><tr><td style="text-align:left"><code>L1.7</code></td><td style="text-align:left">Artifact register totals match the row counts they claim, per register and overall</td></tr></tbody></table></div>
+<h3 id="31-l2-cross-model-consistency">L2 — Cross-model consistency</h3>
+<p><strong>This is the level that catches real drift.</strong> Each rule ties two models together, so a change to one without the other fails.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th><th style="text-align:left">Catches</th></tr></thead><tbody><tr><td style="text-align:left"><code>L2.1</code></td><td style="text-align:left">Every contract and facet in <a href="03-contracts.html">03</a> appears in <a href="07-functions.html">07</a>; every rule contract appears in <a href="10-rules.html">10</a></td><td style="text-align:left">A contract with no documented API</td></tr><tr><td style="text-align:left"><code>L2.2</code></td><td style="text-align:left">Every storage struct in <a href="04-storage.html">04</a> is owned by a contract in <a href="03-contracts.html">03</a></td><td style="text-align:left">Orphan storage</td></tr><tr><td style="text-align:left"><code>L2.3</code></td><td style="text-align:left">Every role in <a href="05-roles.html">05</a> is used as an access level in <a href="07-functions.html">07</a></td><td style="text-align:left">A role nobody can exercise</td></tr><tr><td style="text-align:left"><code>L2.4</code></td><td style="text-align:left">Every access level in <a href="07-functions.html">07</a> is a role defined in <a href="05-roles.html">05</a></td><td style="text-align:left">An invented permission</td></tr><tr><td style="text-align:left"><code>L2.5</code></td><td style="text-align:left">Every entity in <a href="29-data-model.html">29</a> names an owning contract from <a href="03-contracts.html">03</a></td><td style="text-align:left">Unowned data</td></tr><tr><td style="text-align:left"><code>L2.6</code></td><td style="text-align:left">Every entity has at least one stated invariant</td><td style="text-align:left">An assumption pretending to be a model</td></tr><tr><td style="text-align:left"><code>L2.7</code></td><td style="text-align:left">Every actor in <a href="28-product-model.html">28</a> has at least one job</td><td style="text-align:left">A decorative persona</td></tr><tr><td style="text-align:left"><code>L2.8</code></td><td style="text-align:left">Every job names a surface and a contract path</td><td style="text-align:left">A job that cannot be done</td></tr><tr><td style="text-align:left"><code>L2.9</code></td><td style="text-align:left">Every surface in <a href="28-product-model.html">28</a> appears in <a href="21-interface-specification.html">21</a></td><td style="text-align:left">An unspecified screen</td></tr><tr><td style="text-align:left"><code>L2.10</code></td><td style="text-align:left">Every call in <a href="30-interaction-model.html">30</a> exists in <a href="07-functions.html">07</a></td><td style="text-align:left">A sequence citing a function that does not exist</td></tr><tr><td style="text-align:left"><code>L2.11</code></td><td style="text-align:left">Every rule in <a href="10-rules.html">10</a> reads a claim key declared in <a href="09-identity-did.html">09</a></td><td style="text-align:left">A rule with no data source</td></tr><tr><td style="text-align:left"><code>L2.12</code></td><td style="text-align:left">Every claim key in <a href="09-identity-did.html">09</a> is read by a rule, or is explicitly marked reporting-only</td><td style="text-align:left">A key nothing uses, passing as enforced</td></tr><tr><td style="text-align:left"><code>L2.13</code></td><td style="text-align:left">Every state in <a href="06-states.html">06</a> is entered by a named function and left by one</td><td style="text-align:left">A dead or trapped state</td></tr><tr><td style="text-align:left"><code>L2.14</code></td><td style="text-align:left">Every artifact in <a href="27-model-inventory.html">27</a> names an owner and a check</td><td style="text-align:left">An unowned deliverable</td></tr><tr><td style="text-align:left"><code>L2.15</code></td><td style="text-align:left">Every glossary term in <a href="18-glossary.html">18</a> is used somewhere</td><td style="text-align:left">A stale definition</td></tr><tr><td style="text-align:left"><code>L2.16</code></td><td style="text-align:left">Every check in this document exists in <a href="../verify.py"><code>verify.py</code></a>, and the reverse</td><td style="text-align:left">The framework and its implementation drifting apart</td></tr></tbody></table></div>
+<h3 id="31-l3-code-against-specification">L3 — Code against specification</h3>
+<p>Runs once code exists. Listed now so the checks are written before the code, not after.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><code>L3.1</code></td><td style="text-align:left">Every function in <a href="07-functions.html">07</a> exists in the interfaces with a matching signature</td></tr><tr><td style="text-align:left"><code>L3.2</code></td><td style="text-align:left">Every interface function is documented in <a href="07-functions.html">07</a></td></tr><tr><td style="text-align:left"><code>L3.3</code></td><td style="text-align:left">Every storage struct matches <a href="04-storage.html">04</a> field for field, in order</td></tr><tr><td style="text-align:left"><code>L3.4</code></td><td style="text-align:left">Slot constants match the documented strings exactly</td></tr><tr><td style="text-align:left"><code>L3.5</code></td><td style="text-align:left">Every event and error in <a href="14-events-errors.html">14</a> exists in Solidity</td></tr><tr><td style="text-align:left"><code>L3.6</code></td><td style="text-align:left">Every access modifier matches the role in <a href="07-functions.html">07</a></td></tr><tr><td style="text-align:left"><code>L3.7</code></td><td style="text-align:left">Storage structs only ever grow — diffed against the previous release</td></tr></tbody></table></div>
+<h3 id="31-l4-runtime">L4 — Runtime</h3>
+<p>The fifteen invariants in <a href="17-security.html">17</a>, plus the behaviour the standard demands.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><code>L4.1</code></td><td style="text-align:left">ERC-20 selectors cannot be replaced or removed</td></tr><tr><td style="text-align:left"><code>L4.2</code></td><td style="text-align:left">The four view functions never revert, over fuzzed addresses</td></tr><tr><td style="text-align:left"><code>L4.3</code></td><td style="text-align:left">Removing the compliance facet halts transfers</td></tr><tr><td style="text-align:left"><code>L4.4</code></td><td style="text-align:left">No value moves outside the pipeline except forced operations</td></tr><tr><td style="text-align:left"><code>L4.5</code></td><td style="text-align:left">Holder caps count subjects, proven with one investor and three wallets</td></tr><tr><td style="text-align:left"><code>L4.6</code></td><td style="text-align:left"><code>Σ balances == Σ subjectBalance == totalSupply</code></td></tr><tr><td style="text-align:left"><code>L4.7</code></td><td style="text-align:left"><code>totalIssued</code> monotonic; <code>capLocked</code> irreversible</td></tr><tr><td style="text-align:left"><code>L4.8</code></td><td style="text-align:left">A compromised upgrade admin cannot change a balance</td></tr><tr><td style="text-align:left"><code>L4.9</code></td><td style="text-align:left">Trust never bypasses pause or frozen balance</td></tr><tr><td style="text-align:left"><code>L4.10</code></td><td style="text-align:left">A refunded purchase cannot be refunded twice</td></tr><tr><td style="text-align:left"><code>L4.11</code></td><td style="text-align:left"><code>getFrozenTokens</code> may exceed balance without reverting</td></tr><tr><td style="text-align:left"><code>L4.12</code></td><td style="text-align:left">The default deployment charges zero; any fee is readable through the public interface; no STBU reference exists</td></tr><tr><td style="text-align:left"><code>L4.13</code></td><td style="text-align:left">The whole stack deploys on a clean chain with no Stobox contract</td></tr><tr><td style="text-align:left"><code>L4.14</code></td><td style="text-align:left">A payment leg cannot settle without its security leg</td></tr><tr><td style="text-align:left"><code>L4.15</code></td><td style="text-align:left">No agent action exceeds its mandate</td></tr></tbody></table></div>
+<h3 id="31-l5-verifying-the-verifier">L5 — Verifying the verifier</h3>
+<p>The level everyone skips.</p>
+<p><strong>The problem.</strong> A check that is subtly wrong — a regex that matches nothing, a loop over an empty list, a comparison that is always true — passes forever and reports health. It is worse than no check, because it manufactures confidence.</p>
+<p><strong>The method.</strong> Every check ships with a <strong>known-bad fixture</strong>: a deliberately broken copy of the thing it inspects. The self-test asserts the check <em>fails</em> on that fixture. A check that passes its own broken input is reported as dead.</p>
+<pre>verify.py --self-test
+
+  for each check C:
+      1. run C against the real corpus          expect: pass
+      2. run C against C&#x27;s broken fixture       expect: FAIL
+      3. if step 2 passed → report &quot;C is dead&quot;  ← the actual finding</pre>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><code>L5.1</code></td><td style="text-align:left">Every check has a known-bad fixture</td></tr><tr><td style="text-align:left"><code>L5.2</code></td><td style="text-align:left">Every check fails on its fixture — no dead checks</td></tr><tr><td style="text-align:left"><code>L5.3</code></td><td style="text-align:left">Every check inspects a non-empty set — no check that silently iterates nothing</td></tr><tr><td style="text-align:left"><code>L5.4</code></td><td style="text-align:left">Every level has at least one check</td></tr><tr><td style="text-align:left"><code>L5.5</code></td><td style="text-align:left">Every check listed in this document exists in <code>verify.py</code>, and vice versa</td></tr></tbody></table></div>
+<p><code>L5.5</code> is the one that closes the loop: this document and the verifier check each other. Adding a check here without implementing it fails the build; implementing one without documenting it fails too.</p>
+<h4 id="31-what-l5-caught-on-its-first-run">What L5 caught on its first run</h4>
+<p>Not a hypothetical. The first <code>--self-test</code> run reported six dead checks — <code>L1.5</code>, <code>L1.6</code>, <code>L1.7</code>, <code>L2.9</code>, <code>L2.14</code> and <code>L2.15</code>. All six had the same defect: their fixtures appended a broken table row to the <strong>end</strong> of a document, where the table parser never looks, because a row only parses when it follows a header separator. The checks were reading the real corpus correctly and reporting nothing wrong with a corpus that had nothing wrong with it. Six of the thirty-one would have shipped green and blind.</p>
+<p><code>L2.9</code> then failed twice. Its second fixture anchored on the string <code>| Public verifier |</code>, which also occurs as a <em>cell</em> in the jobs tables — so the ghost row landed in a table <code>L2.9</code> does not read. The fixture now anchors on the surfaces table header, and if that header ever changes the fixture stops firing and L5 says so.</p>
+<p><strong>This is the whole argument for the level.</strong> Every one of those six checks passed L0 through L2 and looked healthy. Nothing below L5 could have found them.</p>
+<h3 id="31-running-it">Running it</h3>
+<pre>python3 verify.py              # L0, L1, L2 — the levels that can run today
+python3 verify.py --self-test  # L5 — proves the checks are alive
+python3 verify.py --verbose    # per-check detail
+forge test                     # L3, L4, once code exists</pre>
+<p>CI runs both on every push and pull request, and both must pass. <strong><code>--self-test</code> runs first.</strong> If the checks are dead, a green <code>verify.py</code> means nothing, and reporting it as a pass is worse than not having run it.</p>
+<h3 id="31-what-each-level-cannot-catch">What each level cannot catch</h3>
+<p>Stated so nobody mistakes a green build for correctness.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Level</th><th style="text-align:left">Blind to</th></tr></thead><tbody><tr><td style="text-align:left">L0</td><td style="text-align:left">Whether any of the prose is true</td></tr><tr><td style="text-align:left">L1</td><td style="text-align:left">Whether documents agree with each other</td></tr><tr><td style="text-align:left">L2</td><td style="text-align:left">Whether the models describe the actual system</td></tr><tr><td style="text-align:left">L3</td><td style="text-align:left">Whether the code behaves as its signatures suggest</td></tr><tr><td style="text-align:left">L4</td><td style="text-align:left">Whether the specification was right to begin with</td></tr><tr><td style="text-align:left">L5</td><td style="text-align:left">Whether the checks check the things that matter</td></tr></tbody></table></div>
+<p><strong>No level substitutes for review, and none substitutes for the audit.</strong> What the framework buys is that a whole class of drift — the kind that accumulates silently between a document and the thing it describes — cannot survive a commit.</p>
+<h3 id="31-related">Related</h3>
+<ul>
+<li><a href="27-model-inventory.html">27 — Model inventory</a> — what is being verified</li>
+<li><a href="23-testing-plan.html">23 — Testing plan</a> — L3 and L4 in detail</li>
+<li><a href="17-security.html">17 — Security</a> — the runtime invariants</li>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="30-interaction-model.html">← Interaction and API model</a><a class="pn n" href="32-faq.html">Frequently asked questions →</a></nav></section>
+<footer>
+<p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
+Edit the Markdown, not this file.</p>
+<p>Stobox is a software and infrastructure provider. This documentation describes product
+architecture and is not legal, financial or investment advice.</p>
+</footer>
+</article>
+<aside class="rail" aria-label="Section reference">
+<div class="railsec" data-sec="sec-31"><p class="railt">On this page</p><a href="#31-the-levels">The levels</a><a href="#31-l0-structure">L0 — Structure</a><a href="#31-l1-document-consistency">L1 — Document consistency</a><a href="#31-l2-cross-model-consistency">L2 — Cross-model consistency</a><a href="#31-l3-code-against-specification">L3 — Code against specification</a><a href="#31-l4-runtime">L4 — Runtime</a><a href="#31-l5-verifying-the-verifier">L5 — Verifying the verifier</a><a href="#31-running-it">Running it</a><a href="#31-what-each-level-cannot-catch">What each level cannot catch</a><p class="railt s">Related</p><a href="27-model-inventory.html">27 — Model inventory</a><a href="23-testing-plan.html">23 — Testing plan</a><a href="17-security.html">17 — Security</a></div>
+<div class="railfix">
+<p class="railt s">Reference</p>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Source on GitHub</a>
+<a href="https://eips.ethereum.org/EIPS/eip-7943">ERC-7943 on eips.ethereum.org</a>
+<a href="../LICENSE">Licence — MIT</a>
+</div>
+</aside>
+</div>
+<script>
+(() => {
+  const nav = document.querySelector("nav.toc");
+  const secs = [...document.querySelectorAll("section.doc")];
+  if (!nav || !secs.length) return;
+
+  const links = new Map();
+  document.querySelectorAll('nav.toc a[href^="#sec-"]').forEach(a =>
+    links.set(a.getAttribute("href").slice(1), a));
+
+  let current = null;
+  const mark = id => {
+    if (id === current) return;
+    const prev = links.get(current);
+    if (prev) prev.removeAttribute("aria-current");
+    document.querySelectorAll("aside.rail .railsec.on").forEach(b => b.classList.remove("on"));
+    const block = document.querySelector('aside.rail .railsec[data-sec="' + id + '"]');
+    if (block) block.classList.add("on");
+    const next = links.get(id);
+    if (next) {
+      next.setAttribute("aria-current", "true");
+      // Keep the mark inside the contents list without scrolling the page.
+      const r = next.getBoundingClientRect(), n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+    }
+    current = id;
+  };
+
+  // The section whose top has passed a line a quarter down the viewport is the
+  // one being read. Plain geometry: no observer, no dependency, and it settles
+  // correctly on load, on resize, and after a jump to an anchor.
+  const pick = () => {
+    const line = window.innerHeight * 0.25;
+    let id = secs[0].id;
+    for (const sec of secs) {
+      if (sec.getBoundingClientRect().top > line) break;
+      id = sec.id;
+    }
+    mark("sec-" + id.replace("doc-", ""));
+  };
+
+  const frame = window.requestAnimationFrame || (fn => setTimeout(fn, 16));
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    frame(() => { queued = false; pick(); });
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  addEventListener("hashchange", onScroll);
+
+  // A click moves the mark at once, before the scroll settles.
+  links.forEach((a, id) => a.addEventListener("click", () => mark(id)));
+
+  pick();
+})();
+</script>
+<!-- source-digest: 8d55bc03834c551232f3d706aa41aa2bc5b855b967fcfe67dcb4b89013a94c13 -->

@@ -20,9 +20,9 @@ jobs:
 
       - name: Fail if the committed build is stale
         run: |
-          if ! git diff --quiet -- urwa-documentation.html; then
-            echo "::error::urwa-documentation.html is stale. Run 'python3 build-docs.py' and commit the result."
-            git diff --stat -- urwa-documentation.html
+          if ! git diff --quiet -- index.html all.html pages/; then
+            echo "::error::the built site is stale. Run 'python3 build-docs.py' and commit the result."
+            git diff --stat -- index.html all.html pages/
             exit 1
           fi
 

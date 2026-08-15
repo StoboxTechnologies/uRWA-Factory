@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>09 — Identity and DID — uRWA Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<base href=".">
+<style>/* uRWA Factory — the design system. One file, every surface.
+   ==========================================================================
+   This is the only place colour, type, shape and depth are decided. No page
+   declares its own tokens, and no page restates a rule that lives here; a page
+   adds only what is true of that page alone.
+
+   A new page needs exactly one line in its head:
+
+       <link rel="stylesheet" href="theme.css">        (repository root)
+       <link rel="stylesheet" href="../theme.css">     (prototypes/)
+
+   and inherits the whole system — fonts included, imported below.
+
+   The documentation build inlines this file verbatim, so
+   urwa-documentation.html stays one self-contained artefact from one source.
+
+   Documented in docs/25-design-system.md. Verified by verify.py L0.12.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── tokens ─────────────────────────────────────────────────────────────── */
+
+:root{
+  /* ground and surfaces */
+  --ground:#F5F5F7;
+  --surface:#FFFFFF;
+  --raised:#FFFFFF;
+  --sunk:#F0F2F8;
+  --dark:#0C0C0F;
+
+  /* ink */
+  --ink:#1D1D1F;
+  --ink-2:#3C3C43;
+  --muted:#57575B;
+  --faint:#6E6E73;
+
+  /* lines — hairlines, never structure */
+  --rule:#E2E4E9;
+  --rule-strong:#D2D5DB;
+
+  /* emphasis — black carries the primary action */
+  --accent:#0C0C0F;
+  --accent-2:#1D1D1F;
+  --accent-wash:#F5F5F7;
+  --accent-edge:#E2E4E9;
+
+  /* the one hue — a single spot colour, used sparingly */
+  --spot:#22D3EE;
+  --spot-2:#0EBDD9;
+  --spot-ink:#0C2E33;
+  --spot-text:#0E7490;
+  --spot-wash:rgba(34,211,238,.22);
+  --spot-edge:#A5E9F4;
+
+  /* status */
+  --ok:#0F7A5F;
+  --ok-wash:#E9F8F3;
+  --ok-edge:#B6E5D6;
+  --warn:#B45309;
+  --warn-wash:#FEF6E7;
+  --warn-edge:#F3DDB2;
+  --crit:#B42318;
+  --crit-wash:#FEF1EF;
+  --crit-edge:#F5CFCA;
+
+  /* type */
+  --body:-apple-system,system-ui,'SF Pro Display','SF Pro Text','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --display:-apple-system,system-ui,'SF Pro Display','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+
+  /* shape */
+  --r:10px;
+  --r-md:12px;
+  --r-lg:20px;
+  --r-pill:980px;
+
+  /* depth — soft and far, never a hard edge */
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --sh-lg:0 8px 20px -4px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.05);
+  --sh-card:0 10px 30px -24px rgba(0,0,0,.3);
+  --sh-focus:0 0 0 3px rgba(34,211,238,.45);
+}
+
+/* ── base ───────────────────────────────────────────────────────────────── */
+
+*{box-sizing:border-box}
+
+/* Every surface paints its own ground and ink, so the page holds on any host
+   background rather than inheriting one. A page overrides only size and leading. */
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+
+h1,h2,h3,h4{font-family:var(--display);font-weight:700}
+h1{letter-spacing:-.03em;line-height:1.06}
+
+a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+
+/* Focus is a black outline first — the spot colour alone does not carry
+   enough contrast to announce focus by itself. */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);box-shadow:var(--sh-focus)}
+
+/* ── controls ───────────────────────────────────────────────────────────── */
+
+.btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary,.btn.spot{
+  border-radius:var(--r-pill);font-weight:600;box-shadow:none;
+  transition:background .18s,border-color .18s,color .18s,transform .12s}
+.btn{background:var(--surface);border-color:var(--rule-strong);color:var(--ink)}
+.btn:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.btn.p,.btn.primary{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#FFFFFF}
+.btn.spot{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:700}
+.btn.spot:hover{background:var(--spot-2);border-color:var(--spot-2);color:var(--spot-ink)}
+.btn.d{border-color:var(--crit-edge);color:var(--crit);background:var(--surface)}
+.btn.d:hover{background:var(--crit-wash)}
+.btn:active:not([disabled]){transform:translateY(1px)}
+
+.inp,input.inp,input,select,textarea{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
+.inp:focus,input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:var(--sh-focus)}
+
+/* ── containers ─────────────────────────────────────────────────────────── */
+
+.card,.figbox,.k,.addrcard,.tscroll{border-radius:var(--r-lg)}
+.note,.nextitem,.wal,.opt,pre{border-radius:var(--r-md)}
+.card,.figbox,.k,.addrcard{box-shadow:var(--sh-card);border-color:var(--rule)}
+.pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
+.bar{border-radius:var(--r-pill);overflow:hidden}
+.bar div{border-radius:0}
+table,th,td{border-color:var(--rule)}
+
+/* ── marks ──────────────────────────────────────────────────────────────── */
+
+/* Aqua marks emphasis and nothing else. Status is green, ochre or oxblood,
+   and always carries a word or a symbol as well as its colour. */
+.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.banner{background:var(--spot-wash);border-bottom:1px solid var(--spot-edge);color:var(--accent)}
+.tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+/* "You are here" is one mark everywhere: an aqua wash, an aqua ring, and
+   heavier text — never colour on its own. */
+.nb.on{background:var(--spot-wash);color:var(--accent);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.nb.on .b{color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--spot-wash)}
+
+.step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.stg.n .i,.sg.no .i{background:var(--crit);border-color:var(--crit);color:#FFFFFF}
+
+.st.ok{color:var(--ok)}
+.st.ok::before{background:var(--ok)}
+.pill.ok{background:var(--ok-wash);border-color:var(--ok-edge);color:var(--ok)}
+.el.y .m{color:var(--ok)}
+.wal.ok{border-color:var(--ok-edge);background:var(--ok-wash)}
+.wal.ok .dot{background:var(--ok)}
+.wallet.ok .dot{background:var(--ok)}
+
+/* ── site navigation ────────────────────────────────────────────────────── */
+
+.sitenav{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:10px 22px;
+  border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  font-size:13px;position:sticky;top:0;z-index:200}
+.sitenav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:var(--r-pill);
+  font-weight:500;transition:background .18s,color .18s;white-space:nowrap}
+.sitenav a:hover{color:var(--ink);background:var(--sunk);text-decoration:none}
+.sitenav a[aria-current="page"]{color:var(--accent);background:var(--spot-wash);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.sitenav .home{font-weight:700;font-size:15px;letter-spacing:-.02em;color:var(--ink);padding-left:0}
+.sitenav .home:hover{background:none;color:var(--ink)}
+.sitenav .div{width:1px;height:15px;background:var(--rule);margin:0 8px;flex:none}
+.sitenav .push{margin-left:auto;background:var(--accent);color:#FFFFFF;font-weight:600}
+.sitenav .push:hover{background:var(--accent-2);color:#FFFFFF}
+
+@media(max-width:720px){
+  .sitenav{position:static;padding:6px 12px}
+  .sitenav a{padding:13px 14px}
+  .sitenav .push{margin-left:0}
+}
+
+/* ── motion ─────────────────────────────────────────────────────────────── */
+
+/* Movement here is decoration; colour and border still report every state,
+   so removing the movement removes nothing a reader needs. */
+@media(prefers-reduced-motion:reduce){
+  a.card:hover,.btn:active:not([disabled]),.startat a:active{transform:none!important}
+}
+
+/* landing cards and page-to-page navigation */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:10px;margin:8px 0 30px}
+.cards .card{display:flex;align-items:baseline;gap:11px;padding:14px 16px;border:1px solid var(--rule);
+  border-radius:var(--r-lg);background:var(--surface);text-decoration:none;transition:border-color .14s,background .14s}
+.cards .card:hover{border-color:var(--rule-strong);background:var(--ground)}
+.cards .card .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none}
+.cards .card .l{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.allnote{font-size:14px;color:var(--muted);padding-top:20px;border-top:1px solid var(--rule)}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:44px 0 8px;
+  padding-top:22px;border-top:1px solid var(--rule)}
+.pnav .pn{font-size:14px;color:var(--muted);text-decoration:none;padding:9px 14px;
+  border:1px solid var(--rule);border-radius:var(--r-pill);transition:border-color .14s,color .14s}
+.pnav .pn:hover{color:var(--ink);border-color:var(--rule-strong)}
+.pnav .pn.n{margin-left:auto}
+nav.toc a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+nav.toc a.home{font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--rule);border-radius:0}
+
+/* Page styles for the documentation site. Tokens, controls, containers, marks
+   and the site navigation come from theme.css, which is inlined above this
+   block at build time — never restate them here. */
+body{font-size:17.5px;line-height:1.7}
+/* the bar's brand lines up with the contents heading below it */
+nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
+.shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
+@media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
+nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
+nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
+figure.dg{margin:34px 0;padding:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+figure.dg svg{display:block;width:100%;height:auto;max-width:100%}
+figure.dg figcaption{font-size:13.5px;line-height:1.6;color:var(--muted);padding:13px 20px 15px;border-top:1px solid var(--rule);background:var(--ground)}
+figure.dg figcaption strong{color:var(--ink-2);font-weight:600}
+p.missing{color:var(--crit);font-family:var(--mono);font-size:13px}
+nav.toc a{display:block;font-size:14.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:var(--r-pill);transition:background .18s,color .18s}
+nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a[aria-current="true"]{color:var(--accent);background:var(--spot-wash);font-weight:600;box-shadow:inset 0 0 0 1px var(--spot-edge)}
+nav.toc a[aria-current="true"] .n{color:var(--accent)}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+aside.rail{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
+aside.rail .railt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+aside.rail .railt.s{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+aside.rail a{display:block;font-size:13.5px;line-height:1.45;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .18s,color .18s}
+aside.rail a:hover{color:var(--ink);background:var(--sunk)}
+aside.rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+aside.rail .railsec{display:none}
+aside.rail .railsec.on{display:block}
+aside.rail .empty{font-size:13px;color:var(--faint);margin:0;padding:0 10px}
+.relmob{display:none}
+header.mast{border-bottom:1px solid var(--rule);padding-bottom:38px;margin-bottom:10px}
+header.mast h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,7vw,84px);line-height:1.02;letter-spacing:-.038em;margin:0 0 18px;text-wrap:balance}
+header.mast p{color:var(--muted);max-width:58ch;margin:0 0 28px;font-size:23px;line-height:1.45;letter-spacing:-.015em}
+header.mast .meta{display:flex;flex-wrap:wrap;gap:8px}
+header.mast .meta span{font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-pill);padding:6px 15px}
+header.mast .meta b{color:var(--ink);font-weight:600;margin-right:6px}
+header.mast .meta span:first-child{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+header.mast .meta span:first-child b{color:var(--spot-ink)}
+article{min-width:0}
+@media(min-width:1181px){article h3[id$="-related-documents"],article h3[id$="-related-documents"]+ul,article h3[id$="-related"],article h3[id$="-related"]+ul{display:none}}
+.hero{border-bottom:1px solid var(--rule);padding-bottom:48px;margin-bottom:8px}
+.hero .q{font-size:clamp(24px,2.8vw,34px);line-height:1.2;font-weight:700;letter-spacing:-.032em;margin:0 0 30px;max-width:22ch;text-wrap:balance}
+.hero .q em{font-style:normal;color:var(--muted);display:block;font-size:17.5px;font-weight:400;line-height:1.6;margin-top:20px;letter-spacing:-.005em;max-width:62ch}
+.wxy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 30px}
+.wxy>div{padding:24px 26px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+@media(max-width:640px){.wxy{grid-template-columns:1fr}}
+.wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
+.wxy strong,.wxy b{color:var(--ink)}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
+.author .b{flex:1;min-width:240px}
+.author .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.022em;margin:0 0 2px}
+.author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
+.author .bio{font-size:14.5px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+.author .lk{display:flex;gap:8px;flex-wrap:wrap}
+.author .lk a{font-size:13.5px;font-weight:500;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:7px 16px;color:var(--ink);transition:background .18s,border-color .18s}
+.author .lk a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.startat a{font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:9px 20px;color:var(--ink);background:var(--surface);transition:background .18s,border-color .18s,transform .12s}
+.startat a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat a:active{transform:translateY(1px)}
+.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
+.startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
+section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
+section.doc:first-of-type{margin-top:44px}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
+h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
+h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:86px}
+h5{font-weight:700;font-size:12.5px;margin:26px 0 8px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;scroll-margin-top:86px}
+p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
+article{--measure:74ch}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh-card)}
+pre code{background:none;padding:0;font-size:inherit}
+ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
+li{margin-bottom:9px}
+li::marker{color:var(--faint)}
+ul.task{list-style:none;padding-left:2px}
+ul.task .box{font-family:var(--mono);color:var(--ink);margin-right:9px}
+blockquote{border:1px solid var(--rule);background:var(--surface);padding:18px 22px;margin:0 0 22px;border-radius:var(--r-md);max-width:74ch;box-shadow:var(--sh-card)}
+blockquote p{margin:0 0 14px;max-width:none}
+blockquote p:last-child{margin:0}
+.tscroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:520px}
+th{color:var(--faint);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:14px 16px 11px;border-bottom:1px solid var(--rule);vertical-align:bottom}
+td{padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:600}
+details.faq{border:1px solid var(--rule);border-radius:var(--r-md);background:var(--surface);margin:0 0 8px;box-shadow:var(--sh-card)}
+details.faq>summary{cursor:pointer;list-style:none;padding:15px 52px 15px 20px;font-family:var(--display);font-size:16.5px;font-weight:600;letter-spacing:-.016em;position:relative;border-radius:var(--r-md)}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq>summary::after{content:"";position:absolute;right:20px;top:50%;width:9px;height:9px;margin-top:-6px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .18s}
+details.faq[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+details.faq>summary:hover{background:var(--sunk)}
+details.faq>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+details.faq[open]>summary{border-bottom:1px solid var(--rule);border-radius:var(--r-md) var(--r-md) 0 0}
+details.faq p{margin:0;padding:16px 20px 18px;font-size:16px;color:var(--ink-2);max-width:74ch}
+@media(prefers-reduced-motion:reduce){details.faq>summary::after{transition:none}}
+hr.soft{border:0;border-top:1px solid var(--rule);margin:32px 0}
+footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:14px;color:var(--faint)}
+footer p{max-width:76ch;margin:0 0 8px}
+@media(prefers-reduced-motion:reduce){.startat a:active{transform:none}}
+</style>
+<nav class="sitenav" aria-label="Documentation">
+<a class="home" href="#top">uRWA Factory</a>
+<span class="div"></span>
+<a href="00-why-this-exists.html">Start</a>
+<a href="04-storage.html">Mechanics</a>
+<a href="15-standards.html">Standards</a>
+<a href="21-interface-specification.html">Interfaces</a>
+<a href="27-model-inventory.html">Models</a>
+<a href="32-faq.html">FAQ</a>
+<a href="author.html">Author</a>
+<span class="div"></span>
+<a href="../prototypes/index.html">Prototypes</a>
+<a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
+</nav>
+<div class="shell" id="top">
+<nav class="toc" aria-label="Contents">
+<p class="t">Contents</p>
+<a class="home" href="../index.html"><span class="n">↑</span>All documentation</a>
+<a href="00-why-this-exists.html"><span class="n">00</span>Why this exists</a>
+<a href="01-overview.html"><span class="n">01</span>Overview</a>
+<a href="02-architecture.html"><span class="n">02</span>Architecture</a>
+<a href="03-contracts.html"><span class="n">03</span>Contracts</a>
+<a href="04-storage.html"><span class="n">04</span>Storage</a>
+<a href="05-roles.html"><span class="n">05</span>Roles and permissions</a>
+<a href="06-states.html"><span class="n">06</span>States</a>
+<a href="07-functions.html"><span class="n">07</span>Function reference</a>
+<a href="08-compliance-pipeline.html"><span class="n">08</span>Compliance pipeline</a>
+<a href="09-identity-did.html" aria-current="page"><span class="n">09</span>Identity and DID</a>
+<a href="10-rules.html"><span class="n">10</span>Rules</a>
+<a href="11-passport.html"><span class="n">11</span>Asset Passport</a>
+<a href="12-offering.html"><span class="n">12</span>Offerings</a>
+<a href="13-treasury.html"><span class="n">13</span>Treasury</a>
+<a href="14-events-errors.html"><span class="n">14</span>Events and errors</a>
+<a href="15-standards.html"><span class="n">15</span>Standards</a>
+<a href="16-deployment.html"><span class="n">16</span>Deployment</a>
+<a href="17-security.html"><span class="n">17</span>Security</a>
+<a href="18-glossary.html"><span class="n">18</span>Glossary</a>
+<a href="19-open-boundary.html"><span class="n">19</span>The open boundary</a>
+<a href="20-development-plan.html"><span class="n">20</span>Development plan</a>
+<a href="21-interface-specification.html"><span class="n">21</span>Interface specification</a>
+<a href="22-agents-and-settlement.html"><span class="n">22</span>Agents and settlement</a>
+<a href="23-testing-plan.html"><span class="n">23</span>Testing plan</a>
+<a href="24-work-registry.html"><span class="n">24</span>Work registry</a>
+<a href="25-design-system.html"><span class="n">25</span>Design system</a>
+<a href="26-handoff.html"><span class="n">26</span>Handoff: specification to build</a>
+<a href="27-model-inventory.html"><span class="n">27</span>Model inventory and artifact register</a>
+<a href="28-product-model.html"><span class="n">28</span>Product model</a>
+<a href="29-data-model.html"><span class="n">29</span>Data model</a>
+<a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
+<a href="31-verification.html"><span class="n">31</span>Verification framework</a>
+<a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
+<a href="author.html"><span class="n">—</span>The author</a>
+<p class="t s">Surfaces</p>
+<a href="../prototypes/"><span class="n">—</span>All prototypes</a>
+<a href="../prototypes/deploy-console.html"><span class="n">—</span>Deploy console</a>
+<a href="../prototypes/token-console.html"><span class="n">—</span>Token console</a>
+<a href="../prototypes/verifier.html"><span class="n">—</span>Public verifier</a>
+<a href="../prototypes/investor.html"><span class="n">—</span>Investor page</a>
+<p class="t s">Repository</p>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory"><span class="n">—</span>Source on GitHub</a>
+<a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
+</nav>
+<article>
+<header class="mast">
+<h1>uRWA Factory</h1>
+<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
+<div class="meta">
+<span><b>Status</b> Specification · no code yet</span>
+<span><b>Licence</b> MIT</span>
+<span><b>Chain</b> Base</span>
+<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
+</div>
+</header>
+
+<div class="hero">
+
+<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
+<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
+
+<div class="wxy">
+<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
+<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
+<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
+<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
+</div>
+
+<div class="author">
+<div class="ini">GD</div>
+<div class="b">
+<p class="nm">Gene Deyev</p>
+<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
+<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
+<div class="lk">
+<a href="https://stobox.io/team/gene-deyev">Profile</a>
+<a href="https://github.com/genedeyev">GitHub</a>
+<a href="mailto:gd@stoboxplatform.com">Email</a>
+<a href="https://stobox.io">Stobox</a>
+</div>
+</div>
+</div>
+
+<div class="startat">
+<a class="k" href="00-why-this-exists.html">Why this exists</a>
+<a href="02-architecture.html">Architecture</a>
+<a href="07-functions.html">Function reference</a>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
+</div>
+
+</div>
+
+<section class="doc" id="doc-09"><h2 id="sec-09">09 — Identity and DID</h2>
+<h3 id="09-one-interface-three-adapters">One interface, three adapters</h3>
+<p>The token depends on <code>IIdentityRegistry</code> as an interface. Any implementation works. This single indirection is what lets Stobox ship StoboxDID as its own default while the same code, forked, runs with no Stobox contract in the dependency graph.</p>
+<figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 392" class="d-tier">
+<style>
+.d-tier text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-tier .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
+.d-tier .st{font-size:13.5px;font-weight:600}
+.d-tier .sm{font-size:11.5px;fill:#57575B}
+.d-tier .fa{font-size:10.5px;fill:#6E6E73}
+.d-tier .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-tier .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
+.d-tier .i-st{fill:#FFFFFF}
+.d-tier .i-sm{fill:#6E6E73}
+.d-tier .i-mo{fill:#F0F2F8}
+
+.d-tier .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-tier .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-tier .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<defs>
+<marker id="ia" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
+</marker>
+</defs>
+<rect width="760" height="392" fill="#FFFFFF"/>
+
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><circle cx="12" cy="7" r="3.2"/><path d="M6 14.5h12"/><path d="M8 18h8"/><path d="M10 21.2h4"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Identity tiers</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
+
+<rect x="230" y="16" width="300" height="54" rx="10" fill="#0C0C0F"/>
+<text class="lbl i-sm" x="250" y="40">THE TOKEN DEPENDS ON AN INTERFACE</text>
+<text class="mo i-mo" x="250" y="60">IIdentityRegistry — never an implementation</text>
+
+<path d="M310 76 L200 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+<path d="M380 76 L380 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+<path d="M450 76 L560 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+
+<rect x="24" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="44" y="134" width="52" height="19" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="lbl" x="56" y="147">TIER 0</text>
+<text class="st" x="44" y="176">AllowlistRegistry</text>
+<text class="sm" x="44" y="196">Its own storage</text>
+<text class="fa" x="44" y="216">The open-source default. Any fork</text>
+<text class="fa" x="44" y="230">runs the whole stack on this alone.</text>
+
+<rect x="270" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="290" y="134" width="52" height="19" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="lbl" x="302" y="147">TIER 1</text>
+<text class="st" x="290" y="176">EASAdapter</text>
+<text class="sm" x="290" y="196">Ethereum Attestation Service</text>
+<text class="fa" x="290" y="216">Attestations issued by anyone,</text>
+<text class="fa" x="290" y="230">readable by everyone.</text>
+
+<rect x="516" y="116" width="220" height="120" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
+<rect x="536" y="134" width="52" height="19" rx="9" fill="#FFFFFF" stroke="#D2D5DB"/>
+<text class="lbl" x="548" y="147">TIER 2</text>
+<text class="st" x="536" y="176">StoboxDIDAdapter</text>
+<text class="sm" x="536" y="196">StoboxDID, already deployed</text>
+<text class="fa" x="536" y="216">Every call wrapped in try/catch —</text>
+<text class="fa" x="536" y="230">its getters revert on unknown wallets.</text>
+
+<rect x="24" y="250" width="712" height="38" rx="9" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="sm" x="44" y="274">All three expose the identical interface. Switching is one setIdentityRegistry call: no balance moves, no migration, no redeployment.</text></g>
+</svg>
+<figcaption>Three interchangeable identity sources behind one interface. A fork runs on tier 0 alone, with no dependency on Stobox or on any attestation service.</figcaption></figure>
+<pre>   ComplianceFacet · PolicySet
+              │
+              ▼
+      IIdentityRegistry
+              │
+    ┌─────────┼─────────┐
+    ▼         ▼         ▼
+ Allowlist   EAS    StoboxDID
+  tier 0    tier 1   tier 2</pre>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Tier</th><th style="text-align:left">Adapter</th><th style="text-align:left">Holds</th><th style="text-align:left">Ships in</th></tr></thead><tbody><tr><td style="text-align:left"><strong>0</strong></td><td style="text-align:left"><code>AllowlistRegistry</code></td><td style="text-align:left">address → permitted</td><td style="text-align:left">Open-source default; any fork</td></tr><tr><td style="text-align:left"><strong>1</strong></td><td style="text-align:left"><code>EASAdapter</code></td><td style="text-align:left">Namespaced claims with issuer, expiry, revocation</td><td style="text-align:left">Open source; Base-native</td></tr><tr><td style="text-align:left"><strong>2</strong></td><td style="text-align:left"><code>StoboxDIDAdapter</code></td><td style="text-align:left">Claims + subject binding + jurisdiction rules linked on-chain</td><td style="text-align:left">Open source; StoboxDID itself is Stobox-operated</td></tr></tbody></table></div>
+<h3 id="09-why-extended-not-a-plain-whitelist">Why extended, not a plain whitelist</h3>
+<p>A plain allowlist answers exactly one question — is this address permitted. It cannot supply jurisdiction, accreditation, professional-client status or investor type. Those facts would remain manually maintained forever, and the rules that depend on them could not exist.</p>
+<p>The tier therefore determines how much of the compliance configuration can ever be machine-verified. Tier 0 exists so a fork works at all, not because it is sufficient for a regulated issuance.</p>
+<h3 id="09-the-interface">The interface</h3>
+<pre>struct Claim {
+    bytes32 valueHash;    // hashed value — no personal data on chain
+    uint256 numeric;      // optional bound, for thresholds and tiers
+    uint64  issuedAt;
+    uint64  expiresAt;    // 0 = no expiry
+    address issuer;       // attesting authority
+    bool    revoked;
+}
+
+interface IIdentityRegistry {
+    function subjectOf(address wallet) external view returns (bytes32 subject);
+    function isActive(address wallet) external view returns (bool);
+    function claim(bytes32 subject, bytes32 key) external view returns (Claim memory);
+    function hasValidClaim(bytes32 subject, bytes32 key) external view returns (bool);
+}</pre>
+<h3 id="09-claim-keys">Claim keys</h3>
+<p>Keys are <code>keccak256</code> of a dotted namespace. Stobox owns <code>urwa.*</code>. Anyone may define their own — <code>ch.finma.qualified</code> needs no permission from Stobox and no core upgrade. <strong>This is the extensibility guarantee</strong>, and it is why the schema is a key-value registry rather than a fixed struct.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Key</th><th style="text-align:left">Carries</th><th style="text-align:left">Used by</th></tr></thead><tbody><tr><td style="text-align:left"><code>urwa.identity.valid</code></td><td style="text-align:left">Existence, expiry, block status</td><td style="text-align:left"><code>canSend</code>, <code>canReceive</code> — the base gate</td></tr><tr><td style="text-align:left"><code>urwa.jurisdiction.country</code></td><td style="text-align:left">Hashed ISO 3166-1 alpha-2</td><td style="text-align:left"><code>JurisdictionAllow</code> / <code>JurisdictionDeny</code></td></tr><tr><td style="text-align:left"><code>urwa.investor.type</code></td><td style="text-align:left">Retail, professional, institutional</td><td style="text-align:left">Reporting only — no rule in the default library reads it</td></tr><tr><td style="text-align:left"><code>us.regd.accredited</code></td><td style="text-align:left">US accredited-investor status + expiry</td><td style="text-align:left"><code>USAccreditedOnly</code></td></tr><tr><td style="text-align:left"><code>eu.mifid2.professional</code></td><td style="text-align:left">MiFID II professional client + expiry</td><td style="text-align:left"><code>EUProfessionalOnly</code></td></tr><tr><td style="text-align:left"><code>eu.prospectus.qualified</code></td><td style="text-align:left">Qualified-investor status</td><td style="text-align:left"><code>EUQualifiedExemption</code></td></tr><tr><td style="text-align:left"><code>aml.sanctions.clear</code></td><td style="text-align:left">Screening result + timestamp</td><td style="text-align:left"><code>SanctionsScreen</code></td></tr><tr><td style="text-align:left"><code>iso17442.lei</code></td><td style="text-align:left">Hashed Legal Entity Identifier</td><td style="text-align:left">Reporting only — no rule in the default library reads it</td></tr><tr><td style="text-align:left"><code>mica.issuer.authorised</code></td><td style="text-align:left">Authorisation status + competent authority + expiry</td><td style="text-align:left"><code>MiCAIssuerAuthorised</code></td></tr><tr><td style="text-align:left"><code>mica.token.class</code></td><td style="text-align:left">ART, EMT or other crypto-asset</td><td style="text-align:left"><code>MiCATokenClass</code></td></tr><tr><td style="text-align:left"><code>mica.whitepaper.notified</code></td><td style="text-align:left">Notification date to the competent authority</td><td style="text-align:left"><code>MiCAWhitepaperNotified</code></td></tr><tr><td style="text-align:left"><code>mica.reserve.attested</code></td><td style="text-align:left">Reserve attestation date + attestor</td><td style="text-align:left"><code>MiCAReserveAttested</code></td></tr></tbody></table></div>
+<h4 id="09-the-mica-keys-and-what-they-are-for">The MiCA keys, and what they are for</h4>
+<p>Four keys were added for the tokens that genuinely fall under MiCA — asset-referenced tokens and e-money tokens — because those obligations attach to the <strong>issuer and the instrument</strong>, not to the holder. That is the opposite of every other key here, and it is why they could not be folded into the existing set.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Key</th><th style="text-align:left">Attaches to</th><th style="text-align:left">Why a rule needs it</th></tr></thead><tbody><tr><td style="text-align:left"><code>mica.issuer.authorised</code></td><td style="text-align:left">The issuer</td><td style="text-align:left">An unauthorised issuer may not offer the token at all</td></tr><tr><td style="text-align:left"><code>mica.token.class</code></td><td style="text-align:left">The instrument</td><td style="text-align:left">Determines which obligations apply; ART and EMT differ</td></tr><tr><td style="text-align:left"><code>mica.whitepaper.notified</code></td><td style="text-align:left">The instrument</td><td style="text-align:left">A public offer without notification is not permitted</td></tr><tr><td style="text-align:left"><code>mica.reserve.attested</code></td><td style="text-align:left">The instrument</td><td style="text-align:left">ART and EMT must be backed; staleness is the risk</td></tr></tbody></table></div>
+<p><code>mica.reserve.attested</code> is the one that ties the two halves of this system together. The claim carries a date and an attestor; the evidence behind it lives in the <a href="11-passport.html">Asset Passport</a> as a committed datapoint. <strong>The chain enforces that an attestation exists and is fresh. It never sees what the attestation says.</strong></p>
+<p>Two keys are marked <strong>reporting only</strong>. They are declared because issuers and supervisors ask for them and because a fork may write rules against them, but no rule in the default library reads either one. The distinction is recorded rather than hidden: a key that looks enforced but is not is worse than a key that is plainly informational, and <code>L2.12</code> fails if any other key lacks a consumer.</p>
+<h4 id="09-eu-and-us-eligibility-are-separate-keys-deliberately">EU and US eligibility are separate keys, deliberately</h4>
+<p>EU <strong>professional client</strong> and US <strong>accredited investor</strong> are different tests with different thresholds. Collapsing them into one <code>accredited</code> boolean makes it impossible to run a Reg S tranche and an EU tranche off one identity set. This is the schema decision that would be most expensive to reverse.</p>
+<h3 id="09-stoboxdid-mapping-no-fork-required">StoboxDID mapping — no fork required</h3>
+<p>StoboxDID already provides everything tier 2 requires.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left"><code>IIdentityRegistry</code></th><th style="text-align:left">StoboxDID source</th></tr></thead><tbody><tr><td style="text-align:left"><code>subjectOf(wallet)</code></td><td style="text-align:left"><code>getLinker(wallet).uDID</code>, hashed to <code>bytes32</code></td></tr><tr><td style="text-align:left"><code>isActive(wallet)</code></td><td style="text-align:left"><code>!linker.deactivated</code> AND <code>!did.blocked</code> AND <code>did.validTo &gt; now</code></td></tr><tr><td style="text-align:left"><code>claim(subject, key)</code></td><td style="text-align:left"><code>getAttribute(wallet, keyString)</code> → value, validTo, lastUpdatedBy</td></tr><tr><td style="text-align:left"><code>hasValidClaim</code></td><td style="text-align:left">attribute exists AND <code>validTo &gt; now</code> AND not deactivated</td></tr></tbody></table></div>
+<p>Existing structures used:</p>
+<pre>struct Attribute {
+    bytes value; string valueType;
+    uint256 createdAt; uint256 updatedAt; uint256 validTo;
+    address lastUpdatedBy;
+}
+
+struct Linker {
+    string UDID; uint256 joinDate; uint256 updateDate;
+    bool deactivated; address[] linkedAddresses;
+}</pre>
+<p><code>Linker</code> gives wallet → subject, which is exactly the subject binding holder caps require.</p>
+<p>Source: <a href="https://github.com/StoboxTechnologies/Stobox-Decentralized-ID">StoboxTechnologies/Stobox-Decentralized-ID</a>, MIT. Deployed on Arbitrum One at <code>0x25E6036178656b1329ee51696407b367D8C6ba84</code> and on Arbitrum Sepolia at <code>0xA832662d1E11F2a6cEF706cE54A993E7eeEDC440</code>. No audit is published.</p>
+<h3 id="09-how-a-wallet-is-linked-to-a-did">How a wallet is linked to a DID</h3>
+<p>The mechanism the whole subject-based accounting rests on, stated exactly as the deployed contract implements it.</p>
+<figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 580" class="d-link">
+<style>
+.d-link text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-link .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
+.d-link .st{font-size:13px;font-weight:600}
+.d-link .sm{font-size:11.5px;fill:#57575B}
+.d-link .fa{font-size:10.5px;fill:#6E6E73}
+.d-link .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-link .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#57575B}
+.d-link .i-st{fill:#FFFFFF}
+.d-link .i-sm{fill:#6E6E73}
+.d-link .warn{fill:#B42318;font-size:11.5px;font-weight:600}
+
+.d-link .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-link .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-link .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<defs>
+<marker id="la" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
+</marker>
+</defs>
+<rect width="760" height="580" fill="#FFFFFF"/>
+
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M9.5 14.5 14.5 9.5"/><path d="M8 12.2 5.6 14.6a3.9 3.9 0 0 0 5.5 5.5l2.4-2.4"/><path d="M10.5 6.3 12.9 3.9a3.9 3.9 0 0 1 5.5 5.5L16 11.8"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Wallet to DID</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
+
+
+<text class="lbl" x="24" y="24">1 · THE OPERATOR CREATES THE SUBJECT</text>
+<rect x="24" y="36" width="330" height="86" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
+<text class="mo" x="40" y="60">createDID(uDID, wallet, validTo, blocked)</text>
+<rect x="40" y="72" width="112" height="22" rx="11" fill="#0C0C0F"/>
+<text class="fa i-sm" x="52" y="87">WRITER_ROLE ONLY</text>
+<text class="sm" x="40" y="112">After KYC. Creates the subject and links the first wallet.</text>
+
+<rect x="392" y="36" width="344" height="86" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<circle cx="424" cy="72" r="15" fill="#0C0C0F"/>
+<text class="st i-st" x="418.5" y="76">S</text>
+<text class="st" x="452" y="68">Subject</text>
+<text class="mos" x="452" y="86">keccak256(uDID) — one person, one key</text>
+<text class="fa" x="452" y="106">Balances, caps and reports are counted against this.</text>
+
+<path d="M380 79 L390 79" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#la)" fill="none"/>
+
+
+<text class="lbl" x="24" y="164">2 · THE HOLDER ADDS THEIR OWN WALLETS</text>
+<rect x="24" y="176" width="330" height="104" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
+<text class="mo" x="40" y="200">linkAddressToDID(existing, new)</text>
+<rect x="40" y="212" width="196" height="22" rx="11" fill="#1D1D1F"/>
+<text class="fa i-sm" x="52" y="227">WRITER_ROLE — OR THE DID OWNER</text>
+<text class="sm" x="40" y="252">No operator, no ticket, no fee. The caller's own wallet</text>
+<text class="sm" x="40" y="268">must resolve to the same subject and not be deactivated.</text>
+
+<rect x="392" y="176" width="344" height="104" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<circle cx="424" cy="212" r="13" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="418" y="216">A</text>
+<circle cx="460" cy="212" r="13" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="454" y="216">B</text>
+<circle cx="496" cy="212" r="13" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="490" y="216">C</text>
+<circle cx="532" cy="212" r="13" fill="#0C0C0F"/><text class="mos i-st" x="526" y="216">D</text>
+<text class="fa" x="556" y="216">…up to 10</text>
+<text class="mos" x="408" y="248">linker[D] = [D, A, B, C]   the new wallet, complete</text>
+<text class="mos" x="408" y="266">linker[A…C].push(D)        each existing one gains D</text>
+
+
+<text class="lbl" x="24" y="322">3 · LEAVING — THREE OPERATIONS, THREE AUTHORITIES</text>
+
+<rect x="24" y="334" width="232" height="136" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="mo" x="40" y="358">deactivateAddressOfDID</text>
+<text class="sm" x="40" y="378">Writer or the holder</text>
+<text class="warn" x="40" y="400">Holder can undo it</text>
+<text class="fa" x="40" y="420">activateAddressOfDID sits behind</text>
+<text class="fa" x="40" y="436">the same guard, so this is never</text>
+<text class="fa" x="40" y="452">an enforcement signal.</text>
+
+<rect x="272" y="334" width="232" height="136" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="mo" x="288" y="358">removeLinkedAddress</text>
+<text class="sm" x="288" y="378">WRITER_ROLE only</text>
+<text class="st" x="288" y="400">Authoritative</text>
+<text class="fa" x="288" y="420">Deletes the link. Refuses on the</text>
+<text class="fa" x="288" y="436">last wallet, so a subject can</text>
+<text class="fa" x="288" y="452">never become unreachable.</text>
+
+<rect x="520" y="334" width="216" height="136" rx="10" fill="#0C0C0F"/>
+<text class="mo i-sm" x="536" y="358">blockDID</text>
+<text class="sm i-sm" x="536" y="378">WRITER_ROLE only</text>
+<text class="st i-st" x="536" y="400">Stops the person</text>
+<text class="fa i-sm" x="536" y="420">The only instrument that acts</text>
+<text class="fa i-sm" x="536" y="436">on every wallet of the subject</text>
+<text class="fa i-sm" x="536" y="452">at once.</text></g>
+</svg>
+<figcaption>How wallets join and leave a subject. Note the second row: linking is self-service, and of the three ways out only two are authoritative — a holder can undo their own deactivation.</figcaption></figure>
+<h4 id="09-two-ways-in-with-different-authority">Two ways in, with different authority</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left"></th><th style="text-align:left"><code>createDID(uDID, wallet, validTo, blocked)</code></th><th style="text-align:left"><code>linkAddressToDID(existingWallet, newWallet)</code></th></tr></thead><tbody><tr><td style="text-align:left"><strong>Who may call</strong></td><td style="text-align:left"><code>WRITER_ROLE</code> only</td><td style="text-align:left"><code>WRITER_ROLE</code> <strong>or the DID owner</strong></td></tr><tr><td style="text-align:left"><strong>Creates the subject</strong></td><td style="text-align:left">Yes</td><td style="text-align:left">No — the subject must exist</td></tr><tr><td style="text-align:left"><strong>Wallets after</strong></td><td style="text-align:left">Exactly one</td><td style="text-align:left">One more, up to the cap</td></tr><tr><td style="text-align:left"><strong>Typical caller</strong></td><td style="text-align:left">The onboarding operator, after KYC</td><td style="text-align:left"><strong>The holder, from their own wallet</strong></td></tr></tbody></table></div>
+<p>The second row is the one that matters and the one most integrations get wrong. <code>linkAddressToDID</code> is guarded by <code>writerOrDIDOwner</code>, which passes when the caller&#x27;s own wallet resolves to the <strong>same UDID</strong> and that wallet is not deactivated. <strong>A verified holder adds their own further wallets without asking anyone</strong> — no operator, no ticket, no fee.</p>
+<h4 id="09-preconditions-each-with-its-own-error">Preconditions, each with its own error</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Condition</th><th style="text-align:left">Reverts with</th></tr></thead><tbody><tr><td style="text-align:left">The reference wallet has a DID</td><td style="text-align:left"><code>AddressDoesNotLinkedToDID</code></td></tr><tr><td style="text-align:left">The new wallet is not <code>address(0)</code></td><td style="text-align:left"><code>ZeroAddressNotAllowed</code></td></tr><tr><td style="text-align:left">The new wallet is not already linked anywhere</td><td style="text-align:left"><code>AddressAlreadyLinkedToDID(addr, uDID)</code></td></tr><tr><td style="text-align:left">Caller is a writer, or owns the DID and is not deactivated</td><td style="text-align:left"><code>NotAuthorizedForThisTransaction</code></td></tr><tr><td style="text-align:left">The subject is below the wallet cap</td><td style="text-align:left"><code>MaxLinkedAddressesExceeded(uDID, max)</code></td></tr></tbody></table></div>
+<p>A wallet belongs to <strong>at most one</strong> subject, enforced at link time rather than reconciled later. This is what makes <code>subjectOf</code> a total function and what makes holder caps sound.</p>
+<h4 id="09-what-the-link-writes">What the link writes</h4>
+<p>Every wallet of a subject stores the <strong>full list</strong> of that subject&#x27;s wallets, so linking writes to all of them:</p>
+<pre>linkAddressToDID(A, D)  where A already has {A, B, C}
+
+  linker[D].linkedAddresses = [D, A, B, C]     the new wallet, complete
+  linker[A].linkedAddresses.push(D)            each existing wallet, appended
+  linker[B].linkedAddresses.push(D)
+  linker[C].linkedAddresses.push(D)</pre>
+<p>Cost grows with the number of wallets already linked — the nth link writes n entries. Bounded by <code>MAX_DID_LINKED_ADDRESSES</code>, <strong>10 by default</strong>, changeable by <code>DEFAULT_ADMIN_ROLE</code> through <code>setMaxDIDLinkedAddresses</code>. At ten the worst case is trivial; the design would not survive a cap of several hundred, which is a reason not to raise it casually.</p>
+<h4 id="09-leaving-three-different-things-three-different-authorities">Leaving: three different things, three different authorities</h4>
+<p><strong>This is the distinction that determines what a compliance officer may rely on.</strong></p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Operation</th><th style="text-align:left">Who may call</th><th style="text-align:left">Reversible by the holder</th><th style="text-align:left">Effect</th></tr></thead><tbody><tr><td style="text-align:left"><code>deactivateAddressOfDID(wallet)</code></td><td style="text-align:left">Writer <strong>or the DID owner</strong></td><td style="text-align:left"><strong>Yes — <code>activateAddressOfDID</code></strong></td><td style="text-align:left">That wallet stops resolving as active</td></tr><tr><td style="text-align:left"><code>removeLinkedAddress(wallet)</code></td><td style="text-align:left"><code>WRITER_ROLE</code> only</td><td style="text-align:left">No</td><td style="text-align:left">The link is deleted; refuses on the last wallet</td></tr><tr><td style="text-align:left"><code>blockDID(uDID, reason)</code></td><td style="text-align:left"><code>WRITER_ROLE</code> only</td><td style="text-align:left">No — needs <code>unBlockDID</code></td><td style="text-align:left"><strong>Every</strong> wallet of the subject fails at once</td></tr></tbody></table></div>
+<p><strong>Wallet deactivation is not a compliance control.</strong> The holder can call <code>activateAddressOfDID</code> and undo it in the next block, because both sit behind the same <code>writerOrDIDOwner</code> guard. It is a self-service convenience — losing a device, retiring a hot wallet — and reading it as an enforcement signal would be a serious error.</p>
+<p>Only <code>blockDID</code> and <code>removeLinkedAddress</code> are authoritative, and only <code>blockDID</code> acts on the whole subject. A rule that must stop a person, rather than an address, has exactly one instrument.</p>
+<p><code>removeLinkedAddress</code> also refuses to remove the last wallet (<code>CantRemoveLastLinkedAddress</code>), so a subject can never become unreachable. Where its internal bookkeeping disagrees with itself it emits <code>UnexpectedBehavior</code> and continues rather than reverting — worth indexing, because it is the contract reporting its own inconsistency.</p>
+<h4 id="09-what-this-means-for-the-factory">What this means for the factory</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Fact</th><th style="text-align:left">Consequence for us</th></tr></thead><tbody><tr><td style="text-align:left">Holders link their own wallets</td><td style="text-align:left">The issuer does not control the wallet set. Caps must count subjects, or they count nothing.</td></tr><tr><td style="text-align:left">Deactivation is holder-reversible</td><td style="text-align:left"><code>isActive</code> may read it, but no rule may treat it as enforcement. Enforcement reads <code>blocked</code>.</td></tr><tr><td style="text-align:left">Cap is 10 and admin-mutable</td><td style="text-align:left">Read <code>MAX_DID_LINKED_ADDRESSES</code> rather than assuming it; a raise changes gas, not correctness.</td></tr><tr><td style="text-align:left"><code>readLinkedAddresses</code> emits an event</td><td style="text-align:left">It is <strong>not</strong> a <code>view</code> function and cannot be called from the compliance path.</td></tr><tr><td style="text-align:left">UDID is a <code>string</code></td><td style="text-align:left">The subject is <code>keccak256(bytes(uDID))</code>. Fixed once; changing it re-keys every balance.</td></tr></tbody></table></div>
+<p>The fourth row is the reason the adapter never enumerates wallets. It derives the subject from <code>getLinker(wallet).uDID</code> and hashes it — one read, no list, and it works from a <code>view</code> context, which enumeration cannot.</p>
+<h3 id="09-swapping-the-registry">Swapping the registry</h3>
+<p><code>setIdentityRegistry</code> replaces the claims source. <strong>No balance moves and no holder loses anything.</strong></p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left"></th><th style="text-align:left"></th></tr></thead><tbody><tr><td style="text-align:left">Existing balances</td><td style="text-align:left">Untouched</td></tr><tr><td style="text-align:left">Existing holders</td><td style="text-align:left">Re-checked at their next transfer, not retroactively</td></tr><tr><td style="text-align:left">A holder who fails the new registry</td><td style="text-align:left">Keeps their tokens; cannot transfer until they are registered</td></tr><tr><td style="text-align:left">Trusted addresses</td><td style="text-align:left">Unaffected — they skip claims entirely</td></tr></tbody></table></div>
+<p>This is the only defensible behaviour. Retro-checking would mean either seizing from holders who did nothing wrong, or maintaining a second eligibility state that drifts from the first. Deferring to the next transfer keeps one source of truth and puts the cost on the person who has to act.</p>
+<p>The transition is therefore visible rather than silent: a holder discovers the change when <code>canTransfer</code> returns false, and <code>whyBlocked</code> names the missing claim. The console warns the issuer that a swap will strand any holder not present in the new registry, with the count, before it runs.</p>
+<h3 id="09-blocking-integration-defect-must-be-handled-in-the-adapter">Blocking integration defect — must be handled in the adapter</h3>
+<p><code>getUserDID</code> and <code>getAttribute</code> carry the <code>hasDID</code> modifier and <strong>revert</strong> when the wallet has no DID.</p>
+<p>ERC-7943 requires that <code>canSend</code>, <code>canReceive</code> and <code>canTransfer</code> <strong>never revert</strong>. An unknown wallet — the single most common case in any transfer to a new counterparty — would therefore break conformance.</p>
+<p><strong>Every StoboxDID call in the adapter must be wrapped in <code>try/catch</code></strong>, returning &quot;no claim&quot; rather than bubbling the revert:</p>
+<pre>function isActive(address wallet) external view returns (bool) {
+    try did.getLinker(wallet) returns (string memory u, uint256, uint256, bool deactivated) {
+        if (deactivated) return false;
+        try did.getUserDID(wallet) returns (string memory, uint256 validTo, uint256, bool blocked, address) {
+            return !blocked &amp;&amp; validTo &gt; block.timestamp;
+        } catch { return false; }
+    } catch { return false; }
+}</pre>
+<p>Check <code>getLinker</code> first — it reverts only on a missing linker — and treat any failure as absence. This pattern applies to every read in the adapter without exception.</p>
+<p><code>isActive</code> reads <code>deactivated</code> because a holder who disabled a wallet should not transact from it. <strong>No rule may read it as an enforcement signal</strong>, for the reason given above: the holder can reverse it themselves. Rules that must stop a person read <code>blocked</code>.</p>
+<h3 id="09-privacy-check-before-launch">Privacy check before launch</h3>
+<p><code>getUserDID</code>, <code>getAttribute</code> and <code>getLinker</code> are <code>public view</code> with <strong>no role gate</strong>. Only the event-emitting <code>readAttributeList</code>, <code>readLinkedAddresses</code> and <code>readFullDID</code> are gated by <code>ATTRIBUTE_READER_ROLE</code>.</p>
+<p>Attribute values are therefore world-readable on chain today. That is correct and necessary — the compliance pipeline must read them from a <code>view</code> context — but it means <strong>values must be hashes, never plaintext</strong>.</p>
+<p><strong>Action:</strong> confirm that no deployment stores plaintext country codes, names or document numbers in <code>Attribute.value</code>, and make hashing the documented convention for every writer.</p>
+<h3 id="09-wallets-and-subjects">Wallets and subjects</h3>
+<figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 448" class="d-subj">
+<style>
+.d-subj text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-subj .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
+.d-subj .st{font-size:13.5px;font-weight:600}
+.d-subj .big{font-size:24px;font-weight:600;letter-spacing:-.02em}
+.d-subj .sm{font-size:11.5px;fill:#57575B}
+.d-subj .fa{font-size:10.5px;fill:#6E6E73}
+.d-subj .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#57575B}
+.d-subj .bad{fill:#B42318}
+.d-subj .ok{fill:#1D1D1F}
+.d-subj .i-st{fill:#FFFFFF}
+.d-subj .i-sm{fill:#6E6E73}
+
+.d-subj .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-subj .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-subj .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<defs>
+<marker id="sa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
+</marker>
+</defs>
+<rect width="760" height="448" fill="#FFFFFF"/>
+
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.5c0-4.3 3.2-6.6 7.2-6.6s7.2 2.3 7.2 6.6"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Subject and address</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
+
+<text class="lbl" x="24" y="24">THE CAP: NO MORE THAN 2 HOLDERS</text>
+
+
+<rect x="24" y="40" width="200" height="196" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
+<text class="st" x="40" y="66">One investor</text>
+<circle cx="56" cy="98" r="16" fill="#0C0C0F"/><text class="st i-st" x="50" y="103">I</text>
+<text class="mos" x="82" y="94">subject</text>
+<text class="mos" x="82" y="110">0x9f3c…</text>
+<text class="sm" x="40" y="146">Opens three wallets. Nothing</text>
+<text class="sm" x="40" y="162">stops them — linking is</text>
+<text class="sm" x="40" y="178">self-service.</text>
+<text class="fa" x="40" y="206">A second investor holds one</text>
+<text class="fa" x="40" y="222">wallet. Two people in total.</text>
+
+
+<rect x="252" y="40" width="180" height="196" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="lbl" x="268" y="64">WALLETS ON CHAIN</text>
+<rect x="268" y="76" width="148" height="26" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="282" y="93">0xA1…  investor 1</text>
+<rect x="268" y="108" width="148" height="26" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="282" y="125">0xB2…  investor 1</text>
+<rect x="268" y="140" width="148" height="26" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="282" y="157">0xC3…  investor 1</text>
+<rect x="268" y="172" width="148" height="26" rx="8" fill="#FFFFFF" stroke="#D2D5DB"/><text class="mos" x="282" y="189">0xD4…  investor 2</text>
+<text class="fa" x="268" y="220">Four addresses, two people.</text>
+
+<path d="M436 138 L462 138" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#sa)" fill="none"/>
+
+
+<rect x="470" y="40" width="266" height="92" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="lbl" x="486" y="64">COUNT ADDRESSES</text>
+<text class="big bad" x="486" y="98">4 &gt; 2</text>
+<text class="sm" x="556" y="98">cap appears breached</text>
+<text class="fa" x="486" y="120">The honest investor is refused; the evasion is missed.</text>
+
+<rect x="470" y="144" width="266" height="92" rx="12" fill="#0C0C0F"/>
+<text class="lbl" x="486" y="168">COUNT SUBJECTS</text>
+<text class="big i-st" x="486" y="202">2 = 2</text>
+<text class="sm i-sm" x="556" y="202">cap correctly held</text>
+<text class="fa i-sm" x="486" y="224">Splitting across wallets changes nothing.</text>
+
+
+<rect x="24" y="256" width="712" height="76" rx="12" fill="#F5F5F7" stroke="#E2E4E9"/>
+<text class="st" x="44" y="282">Why this cannot be added later</text>
+<text class="sm" x="44" y="304">Subject balances and subject holder counts are maintained inside transfer accounting, because they</text>
+<text class="sm" x="44" y="322">cannot be derived at read time within gas limits — and cannot be reconstructed from history afterwards.</text></g>
+</svg>
+<figcaption>Why the cap must count subjects. Counting addresses refuses the honest investor and misses the evasion at the same time — it is wrong in both directions.</figcaption></figure>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Fact</th><th style="text-align:left">Consequence</th></tr></thead><tbody><tr><td style="text-align:left">One subject may hold many wallets</td><td style="text-align:left">Holder caps must count subjects</td></tr><tr><td style="text-align:left">The holder links their own wallets</td><td style="text-align:left">The wallet set is outside the issuer&#x27;s control; only the subject count is enforceable</td></tr><tr><td style="text-align:left">A wallet may be deactivated without blocking the subject</td><td style="text-align:left">Other wallets of the same subject keep working</td></tr><tr><td style="text-align:left">Deactivation is reversible by the holder</td><td style="text-align:left">Never an enforcement signal — see the authority table above</td></tr><tr><td style="text-align:left">A wallet with no subject</td><td style="text-align:left">Assigned a synthetic subject derived from the address, so counts never under-report</td></tr><tr><td style="text-align:left">Maximum wallets per DID</td><td style="text-align:left">Enforced by StoboxDID via <code>MAX_DID_LINKED_ADDRESSES</code>, 10 by default</td></tr></tbody></table></div>
+<h3 id="09-revocation">Revocation</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Mechanism</th><th style="text-align:left">Scope</th><th style="text-align:left">Effect</th></tr></thead><tbody><tr><td style="text-align:left"><code>blockDID</code></td><td style="text-align:left">Whole subject</td><td style="text-align:left">Every wallet fails <code>isActive</code> immediately</td></tr><tr><td style="text-align:left"><code>deactivateDIDAttribute</code></td><td style="text-align:left">One claim</td><td style="text-align:left">That claim fails <code>hasValidClaim</code>; others unaffected</td></tr><tr><td style="text-align:left"><code>deactivateAddressOfDID</code></td><td style="text-align:left">One wallet</td><td style="text-align:left">That wallet fails; subject and other wallets unaffected. <strong>Holder-reversible — not enforcement</strong></td></tr><tr><td style="text-align:left"><code>removeLinkedAddress</code></td><td style="text-align:left">One wallet</td><td style="text-align:left">The link is deleted. <code>WRITER_ROLE</code> only; refuses on the last wallet</td></tr><tr><td style="text-align:left">Attribute <code>validTo</code> elapses</td><td style="text-align:left">One claim</td><td style="text-align:left">Automatic, no transaction</td></tr></tbody></table></div>
+<p>Revocation takes effect on the <strong>next transfer</strong>, not on the next onboarding cycle. There is no cache.</p>
+<h3 id="09-related-documents">Related documents</h3>
+<ul>
+<li><a href="10-rules.html">10 — Rules</a></li>
+<li><a href="06-states.html">06 — States</a></li>
+<li><a href="11-passport.html">11 — Asset Passport</a></li>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="08-compliance-pipeline.html">← Compliance pipeline</a><a class="pn n" href="10-rules.html">Rules →</a></nav></section>
+<footer>
+<p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
+Edit the Markdown, not this file.</p>
+<p>Stobox is a software and infrastructure provider. This documentation describes product
+architecture and is not legal, financial or investment advice.</p>
+</footer>
+</article>
+<aside class="rail" aria-label="Section reference">
+<div class="railsec" data-sec="sec-09"><p class="railt">On this page</p><a href="#09-one-interface-three-adapters">One interface, three adapters</a><a href="#09-why-extended-not-a-plain-whitelist">Why extended, not a plain whitelist</a><a href="#09-the-interface">The interface</a><a href="#09-claim-keys">Claim keys</a><a href="#09-stoboxdid-mapping-no-fork-required">StoboxDID mapping — no fork required</a><a href="#09-how-a-wallet-is-linked-to-a-did">How a wallet is linked to a DID</a><a href="#09-swapping-the-registry">Swapping the registry</a><a href="#09-blocking-integration-defect-must-be-handled-in-the-adapter">Blocking integration defect — must be handled in the adapter</a><a href="#09-privacy-check-before-launch">Privacy check before launch</a><a href="#09-wallets-and-subjects">Wallets and subjects</a><a href="#09-revocation">Revocation</a><p class="railt s">Related</p><a href="10-rules.html">10 — Rules</a><a href="06-states.html">06 — States</a><a href="11-passport.html">11 — Asset Passport</a></div>
+<div class="railfix">
+<p class="railt s">Reference</p>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Source on GitHub</a>
+<a href="https://eips.ethereum.org/EIPS/eip-7943">ERC-7943 on eips.ethereum.org</a>
+<a href="../LICENSE">Licence — MIT</a>
+</div>
+</aside>
+</div>
+<script>
+(() => {
+  const nav = document.querySelector("nav.toc");
+  const secs = [...document.querySelectorAll("section.doc")];
+  if (!nav || !secs.length) return;
+
+  const links = new Map();
+  document.querySelectorAll('nav.toc a[href^="#sec-"]').forEach(a =>
+    links.set(a.getAttribute("href").slice(1), a));
+
+  let current = null;
+  const mark = id => {
+    if (id === current) return;
+    const prev = links.get(current);
+    if (prev) prev.removeAttribute("aria-current");
+    document.querySelectorAll("aside.rail .railsec.on").forEach(b => b.classList.remove("on"));
+    const block = document.querySelector('aside.rail .railsec[data-sec="' + id + '"]');
+    if (block) block.classList.add("on");
+    const next = links.get(id);
+    if (next) {
+      next.setAttribute("aria-current", "true");
+      // Keep the mark inside the contents list without scrolling the page.
+      const r = next.getBoundingClientRect(), n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+    }
+    current = id;
+  };
+
+  // The section whose top has passed a line a quarter down the viewport is the
+  // one being read. Plain geometry: no observer, no dependency, and it settles
+  // correctly on load, on resize, and after a jump to an anchor.
+  const pick = () => {
+    const line = window.innerHeight * 0.25;
+    let id = secs[0].id;
+    for (const sec of secs) {
+      if (sec.getBoundingClientRect().top > line) break;
+      id = sec.id;
+    }
+    mark("sec-" + id.replace("doc-", ""));
+  };
+
+  const frame = window.requestAnimationFrame || (fn => setTimeout(fn, 16));
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    frame(() => { queued = false; pick(); });
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  addEventListener("hashchange", onScroll);
+
+  // A click moves the mark at once, before the scroll settles.
+  links.forEach((a, id) => a.addEventListener("click", () => mark(id)));
+
+  pick();
+})();
+</script>
+<!-- source-digest: 8d55bc03834c551232f3d706aa41aa2bc5b855b967fcfe67dcb4b89013a94c13 -->

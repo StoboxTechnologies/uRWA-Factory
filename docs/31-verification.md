@@ -18,9 +18,9 @@ commit.
 | **L4** | Runtime behaviour and invariants | Foundry, fork tests | ✅ once code exists |
 | **L5** | **The checks themselves** | `verify.py --self-test`, CI | ✅ |
 
-![Six levels, each catching what the one below cannot — and each honest about its own blind spot. Thirty-five checks run today; L3 and L4 arrive with the code they test.](diagrams/verification-levels.svg)
+![Six levels, each catching what the one below cannot — and each honest about its own blind spot. Thirty-six checks run today; L3 and L4 arrive with the code they test.](diagrams/verification-levels.svg)
 
-**Thirty-five checks run today** — twelve at L0, seven at L1, sixteen at L2 — and all thirty-five are
+**Thirty-six checks run today** — thirteen at L0, seven at L1, sixteen at L2 — and all thirty-six are
 re-run against their own broken fixtures at L5. The twenty-two L3 and L4 checks are specified below
 and implemented with the code they test.
 
@@ -42,6 +42,11 @@ It also pins every colour literal to the design tokens. The sixteen diagrams wer
 warm grey family against pages built from a cool one — near enough to look deliberate, far enough to
 read as an off-brand tint. Nothing else in the pipeline would have caught it.
 
+`L0.13` guards the split site. The documentation is built as one page per document plus a combined
+file: the pages are what people read and link to, the combined file is what full-corpus `Ctrl+F` and
+printing need. Both come from one source, so the check that matters is that no document loses its
+page and no page loses its way back — every page links the landing page and its two neighbours.
+
 `L0.12` keeps the design system single-sourced. Every surface used to inline its own copy of the
 tokens, which is a system only until one copy is edited and the others are not. The tokens now live
 in `theme.css` alone: the prototypes link it, the documentation build inlines it, and this check
@@ -60,6 +65,7 @@ fails a page that links nothing, declares a token of its own, or pulls in its ow
 | `L0.9` | Every page is reachable from every other — the documentation links each surface, each surface links back and sideways |
 | `L0.10` | Every page declares its character set and viewport |
 | `L0.11` | Every diagram resolves, parses, carries a `viewBox` and a header icon, sets no `fill` on `<text>`, fetches nothing, keeps to the design tokens, and has no label running off the canvas |
+| `L0.13` | Every document has its own page, the landing page links each one, and every page links back and to its neighbours |
 | `L0.12` | Every page inherits the design system — each prototype links `theme.css`, none declares its own tokens or loads its own web font, and the built documentation carries the tokens inline |
 
 ## L1 — Document consistency

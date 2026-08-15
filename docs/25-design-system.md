@@ -175,7 +175,7 @@ because a scoped `text{fill:…}` rule silently beats an inline fill.
 | Surface | File | How it gets the system |
 |---|---|---|
 | Design system | `theme.css` | — it *is* the system |
-| Documentation site | `build-docs.py` → `urwa-documentation.html` | Inlined at build time |
+| Documentation site | `build-docs.py` → `index.html` | Inlined at build time |
 | Prototype index | `prototypes/index.html` | `<link href="../theme.css">` |
 | Deploy console | `prototypes/deploy-console.html` | `<link href="../theme.css">` |
 | Token console | `prototypes/token-console.html` | `<link href="../theme.css">` |

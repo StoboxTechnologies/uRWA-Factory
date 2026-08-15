@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>22 — Agents and settlement — uRWA Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<base href=".">
+<style>/* uRWA Factory — the design system. One file, every surface.
+   ==========================================================================
+   This is the only place colour, type, shape and depth are decided. No page
+   declares its own tokens, and no page restates a rule that lives here; a page
+   adds only what is true of that page alone.
+
+   A new page needs exactly one line in its head:
+
+       <link rel="stylesheet" href="theme.css">        (repository root)
+       <link rel="stylesheet" href="../theme.css">     (prototypes/)
+
+   and inherits the whole system — fonts included, imported below.
+
+   The documentation build inlines this file verbatim, so
+   urwa-documentation.html stays one self-contained artefact from one source.
+
+   Documented in docs/25-design-system.md. Verified by verify.py L0.12.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── tokens ─────────────────────────────────────────────────────────────── */
+
+:root{
+  /* ground and surfaces */
+  --ground:#F5F5F7;
+  --surface:#FFFFFF;
+  --raised:#FFFFFF;
+  --sunk:#F0F2F8;
+  --dark:#0C0C0F;
+
+  /* ink */
+  --ink:#1D1D1F;
+  --ink-2:#3C3C43;
+  --muted:#57575B;
+  --faint:#6E6E73;
+
+  /* lines — hairlines, never structure */
+  --rule:#E2E4E9;
+  --rule-strong:#D2D5DB;
+
+  /* emphasis — black carries the primary action */
+  --accent:#0C0C0F;
+  --accent-2:#1D1D1F;
+  --accent-wash:#F5F5F7;
+  --accent-edge:#E2E4E9;
+
+  /* the one hue — a single spot colour, used sparingly */
+  --spot:#22D3EE;
+  --spot-2:#0EBDD9;
+  --spot-ink:#0C2E33;
+  --spot-text:#0E7490;
+  --spot-wash:rgba(34,211,238,.22);
+  --spot-edge:#A5E9F4;
+
+  /* status */
+  --ok:#0F7A5F;
+  --ok-wash:#E9F8F3;
+  --ok-edge:#B6E5D6;
+  --warn:#B45309;
+  --warn-wash:#FEF6E7;
+  --warn-edge:#F3DDB2;
+  --crit:#B42318;
+  --crit-wash:#FEF1EF;
+  --crit-edge:#F5CFCA;
+
+  /* type */
+  --body:-apple-system,system-ui,'SF Pro Display','SF Pro Text','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --display:-apple-system,system-ui,'SF Pro Display','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+
+  /* shape */
+  --r:10px;
+  --r-md:12px;
+  --r-lg:20px;
+  --r-pill:980px;
+
+  /* depth — soft and far, never a hard edge */
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --sh-lg:0 8px 20px -4px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.05);
+  --sh-card:0 10px 30px -24px rgba(0,0,0,.3);
+  --sh-focus:0 0 0 3px rgba(34,211,238,.45);
+}
+
+/* ── base ───────────────────────────────────────────────────────────────── */
+
+*{box-sizing:border-box}
+
+/* Every surface paints its own ground and ink, so the page holds on any host
+   background rather than inheriting one. A page overrides only size and leading. */
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+
+h1,h2,h3,h4{font-family:var(--display);font-weight:700}
+h1{letter-spacing:-.03em;line-height:1.06}
+
+a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+
+/* Focus is a black outline first — the spot colour alone does not carry
+   enough contrast to announce focus by itself. */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);box-shadow:var(--sh-focus)}
+
+/* ── controls ───────────────────────────────────────────────────────────── */
+
+.btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary,.btn.spot{
+  border-radius:var(--r-pill);font-weight:600;box-shadow:none;
+  transition:background .18s,border-color .18s,color .18s,transform .12s}
+.btn{background:var(--surface);border-color:var(--rule-strong);color:var(--ink)}
+.btn:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.btn.p,.btn.primary{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#FFFFFF}
+.btn.spot{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:700}
+.btn.spot:hover{background:var(--spot-2);border-color:var(--spot-2);color:var(--spot-ink)}
+.btn.d{border-color:var(--crit-edge);color:var(--crit);background:var(--surface)}
+.btn.d:hover{background:var(--crit-wash)}
+.btn:active:not([disabled]){transform:translateY(1px)}
+
+.inp,input.inp,input,select,textarea{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
+.inp:focus,input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:var(--sh-focus)}
+
+/* ── containers ─────────────────────────────────────────────────────────── */
+
+.card,.figbox,.k,.addrcard,.tscroll{border-radius:var(--r-lg)}
+.note,.nextitem,.wal,.opt,pre{border-radius:var(--r-md)}
+.card,.figbox,.k,.addrcard{box-shadow:var(--sh-card);border-color:var(--rule)}
+.pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
+.bar{border-radius:var(--r-pill);overflow:hidden}
+.bar div{border-radius:0}
+table,th,td{border-color:var(--rule)}
+
+/* ── marks ──────────────────────────────────────────────────────────────── */
+
+/* Aqua marks emphasis and nothing else. Status is green, ochre or oxblood,
+   and always carries a word or a symbol as well as its colour. */
+.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.banner{background:var(--spot-wash);border-bottom:1px solid var(--spot-edge);color:var(--accent)}
+.tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+/* "You are here" is one mark everywhere: an aqua wash, an aqua ring, and
+   heavier text — never colour on its own. */
+.nb.on{background:var(--spot-wash);color:var(--accent);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.nb.on .b{color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--spot-wash)}
+
+.step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.stg.n .i,.sg.no .i{background:var(--crit);border-color:var(--crit);color:#FFFFFF}
+
+.st.ok{color:var(--ok)}
+.st.ok::before{background:var(--ok)}
+.pill.ok{background:var(--ok-wash);border-color:var(--ok-edge);color:var(--ok)}
+.el.y .m{color:var(--ok)}
+.wal.ok{border-color:var(--ok-edge);background:var(--ok-wash)}
+.wal.ok .dot{background:var(--ok)}
+.wallet.ok .dot{background:var(--ok)}
+
+/* ── site navigation ────────────────────────────────────────────────────── */
+
+.sitenav{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:10px 22px;
+  border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  font-size:13px;position:sticky;top:0;z-index:200}
+.sitenav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:var(--r-pill);
+  font-weight:500;transition:background .18s,color .18s;white-space:nowrap}
+.sitenav a:hover{color:var(--ink);background:var(--sunk);text-decoration:none}
+.sitenav a[aria-current="page"]{color:var(--accent);background:var(--spot-wash);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.sitenav .home{font-weight:700;font-size:15px;letter-spacing:-.02em;color:var(--ink);padding-left:0}
+.sitenav .home:hover{background:none;color:var(--ink)}
+.sitenav .div{width:1px;height:15px;background:var(--rule);margin:0 8px;flex:none}
+.sitenav .push{margin-left:auto;background:var(--accent);color:#FFFFFF;font-weight:600}
+.sitenav .push:hover{background:var(--accent-2);color:#FFFFFF}
+
+@media(max-width:720px){
+  .sitenav{position:static;padding:6px 12px}
+  .sitenav a{padding:13px 14px}
+  .sitenav .push{margin-left:0}
+}
+
+/* ── motion ─────────────────────────────────────────────────────────────── */
+
+/* Movement here is decoration; colour and border still report every state,
+   so removing the movement removes nothing a reader needs. */
+@media(prefers-reduced-motion:reduce){
+  a.card:hover,.btn:active:not([disabled]),.startat a:active{transform:none!important}
+}
+
+/* landing cards and page-to-page navigation */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:10px;margin:8px 0 30px}
+.cards .card{display:flex;align-items:baseline;gap:11px;padding:14px 16px;border:1px solid var(--rule);
+  border-radius:var(--r-lg);background:var(--surface);text-decoration:none;transition:border-color .14s,background .14s}
+.cards .card:hover{border-color:var(--rule-strong);background:var(--ground)}
+.cards .card .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none}
+.cards .card .l{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.allnote{font-size:14px;color:var(--muted);padding-top:20px;border-top:1px solid var(--rule)}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:44px 0 8px;
+  padding-top:22px;border-top:1px solid var(--rule)}
+.pnav .pn{font-size:14px;color:var(--muted);text-decoration:none;padding:9px 14px;
+  border:1px solid var(--rule);border-radius:var(--r-pill);transition:border-color .14s,color .14s}
+.pnav .pn:hover{color:var(--ink);border-color:var(--rule-strong)}
+.pnav .pn.n{margin-left:auto}
+nav.toc a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+nav.toc a.home{font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--rule);border-radius:0}
+
+/* Page styles for the documentation site. Tokens, controls, containers, marks
+   and the site navigation come from theme.css, which is inlined above this
+   block at build time — never restate them here. */
+body{font-size:17.5px;line-height:1.7}
+/* the bar's brand lines up with the contents heading below it */
+nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
+.shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
+@media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
+nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
+nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
+figure.dg{margin:34px 0;padding:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+figure.dg svg{display:block;width:100%;height:auto;max-width:100%}
+figure.dg figcaption{font-size:13.5px;line-height:1.6;color:var(--muted);padding:13px 20px 15px;border-top:1px solid var(--rule);background:var(--ground)}
+figure.dg figcaption strong{color:var(--ink-2);font-weight:600}
+p.missing{color:var(--crit);font-family:var(--mono);font-size:13px}
+nav.toc a{display:block;font-size:14.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:var(--r-pill);transition:background .18s,color .18s}
+nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a[aria-current="true"]{color:var(--accent);background:var(--spot-wash);font-weight:600;box-shadow:inset 0 0 0 1px var(--spot-edge)}
+nav.toc a[aria-current="true"] .n{color:var(--accent)}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+aside.rail{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
+aside.rail .railt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+aside.rail .railt.s{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+aside.rail a{display:block;font-size:13.5px;line-height:1.45;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .18s,color .18s}
+aside.rail a:hover{color:var(--ink);background:var(--sunk)}
+aside.rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+aside.rail .railsec{display:none}
+aside.rail .railsec.on{display:block}
+aside.rail .empty{font-size:13px;color:var(--faint);margin:0;padding:0 10px}
+.relmob{display:none}
+header.mast{border-bottom:1px solid var(--rule);padding-bottom:38px;margin-bottom:10px}
+header.mast h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,7vw,84px);line-height:1.02;letter-spacing:-.038em;margin:0 0 18px;text-wrap:balance}
+header.mast p{color:var(--muted);max-width:58ch;margin:0 0 28px;font-size:23px;line-height:1.45;letter-spacing:-.015em}
+header.mast .meta{display:flex;flex-wrap:wrap;gap:8px}
+header.mast .meta span{font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-pill);padding:6px 15px}
+header.mast .meta b{color:var(--ink);font-weight:600;margin-right:6px}
+header.mast .meta span:first-child{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+header.mast .meta span:first-child b{color:var(--spot-ink)}
+article{min-width:0}
+@media(min-width:1181px){article h3[id$="-related-documents"],article h3[id$="-related-documents"]+ul,article h3[id$="-related"],article h3[id$="-related"]+ul{display:none}}
+.hero{border-bottom:1px solid var(--rule);padding-bottom:48px;margin-bottom:8px}
+.hero .q{font-size:clamp(24px,2.8vw,34px);line-height:1.2;font-weight:700;letter-spacing:-.032em;margin:0 0 30px;max-width:22ch;text-wrap:balance}
+.hero .q em{font-style:normal;color:var(--muted);display:block;font-size:17.5px;font-weight:400;line-height:1.6;margin-top:20px;letter-spacing:-.005em;max-width:62ch}
+.wxy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 30px}
+.wxy>div{padding:24px 26px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+@media(max-width:640px){.wxy{grid-template-columns:1fr}}
+.wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
+.wxy strong,.wxy b{color:var(--ink)}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
+.author .b{flex:1;min-width:240px}
+.author .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.022em;margin:0 0 2px}
+.author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
+.author .bio{font-size:14.5px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+.author .lk{display:flex;gap:8px;flex-wrap:wrap}
+.author .lk a{font-size:13.5px;font-weight:500;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:7px 16px;color:var(--ink);transition:background .18s,border-color .18s}
+.author .lk a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.startat a{font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:9px 20px;color:var(--ink);background:var(--surface);transition:background .18s,border-color .18s,transform .12s}
+.startat a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat a:active{transform:translateY(1px)}
+.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
+.startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
+section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
+section.doc:first-of-type{margin-top:44px}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
+h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
+h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:86px}
+h5{font-weight:700;font-size:12.5px;margin:26px 0 8px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;scroll-margin-top:86px}
+p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
+article{--measure:74ch}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh-card)}
+pre code{background:none;padding:0;font-size:inherit}
+ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
+li{margin-bottom:9px}
+li::marker{color:var(--faint)}
+ul.task{list-style:none;padding-left:2px}
+ul.task .box{font-family:var(--mono);color:var(--ink);margin-right:9px}
+blockquote{border:1px solid var(--rule);background:var(--surface);padding:18px 22px;margin:0 0 22px;border-radius:var(--r-md);max-width:74ch;box-shadow:var(--sh-card)}
+blockquote p{margin:0 0 14px;max-width:none}
+blockquote p:last-child{margin:0}
+.tscroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:520px}
+th{color:var(--faint);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:14px 16px 11px;border-bottom:1px solid var(--rule);vertical-align:bottom}
+td{padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:600}
+details.faq{border:1px solid var(--rule);border-radius:var(--r-md);background:var(--surface);margin:0 0 8px;box-shadow:var(--sh-card)}
+details.faq>summary{cursor:pointer;list-style:none;padding:15px 52px 15px 20px;font-family:var(--display);font-size:16.5px;font-weight:600;letter-spacing:-.016em;position:relative;border-radius:var(--r-md)}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq>summary::after{content:"";position:absolute;right:20px;top:50%;width:9px;height:9px;margin-top:-6px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .18s}
+details.faq[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+details.faq>summary:hover{background:var(--sunk)}
+details.faq>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+details.faq[open]>summary{border-bottom:1px solid var(--rule);border-radius:var(--r-md) var(--r-md) 0 0}
+details.faq p{margin:0;padding:16px 20px 18px;font-size:16px;color:var(--ink-2);max-width:74ch}
+@media(prefers-reduced-motion:reduce){details.faq>summary::after{transition:none}}
+hr.soft{border:0;border-top:1px solid var(--rule);margin:32px 0}
+footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:14px;color:var(--faint)}
+footer p{max-width:76ch;margin:0 0 8px}
+@media(prefers-reduced-motion:reduce){.startat a:active{transform:none}}
+</style>
+<nav class="sitenav" aria-label="Documentation">
+<a class="home" href="#top">uRWA Factory</a>
+<span class="div"></span>
+<a href="00-why-this-exists.html">Start</a>
+<a href="04-storage.html">Mechanics</a>
+<a href="15-standards.html">Standards</a>
+<a href="21-interface-specification.html">Interfaces</a>
+<a href="27-model-inventory.html">Models</a>
+<a href="32-faq.html">FAQ</a>
+<a href="author.html">Author</a>
+<span class="div"></span>
+<a href="../prototypes/index.html">Prototypes</a>
+<a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
+</nav>
+<div class="shell" id="top">
+<nav class="toc" aria-label="Contents">
+<p class="t">Contents</p>
+<a class="home" href="../index.html"><span class="n">↑</span>All documentation</a>
+<a href="00-why-this-exists.html"><span class="n">00</span>Why this exists</a>
+<a href="01-overview.html"><span class="n">01</span>Overview</a>
+<a href="02-architecture.html"><span class="n">02</span>Architecture</a>
+<a href="03-contracts.html"><span class="n">03</span>Contracts</a>
+<a href="04-storage.html"><span class="n">04</span>Storage</a>
+<a href="05-roles.html"><span class="n">05</span>Roles and permissions</a>
+<a href="06-states.html"><span class="n">06</span>States</a>
+<a href="07-functions.html"><span class="n">07</span>Function reference</a>
+<a href="08-compliance-pipeline.html"><span class="n">08</span>Compliance pipeline</a>
+<a href="09-identity-did.html"><span class="n">09</span>Identity and DID</a>
+<a href="10-rules.html"><span class="n">10</span>Rules</a>
+<a href="11-passport.html"><span class="n">11</span>Asset Passport</a>
+<a href="12-offering.html"><span class="n">12</span>Offerings</a>
+<a href="13-treasury.html"><span class="n">13</span>Treasury</a>
+<a href="14-events-errors.html"><span class="n">14</span>Events and errors</a>
+<a href="15-standards.html"><span class="n">15</span>Standards</a>
+<a href="16-deployment.html"><span class="n">16</span>Deployment</a>
+<a href="17-security.html"><span class="n">17</span>Security</a>
+<a href="18-glossary.html"><span class="n">18</span>Glossary</a>
+<a href="19-open-boundary.html"><span class="n">19</span>The open boundary</a>
+<a href="20-development-plan.html"><span class="n">20</span>Development plan</a>
+<a href="21-interface-specification.html"><span class="n">21</span>Interface specification</a>
+<a href="22-agents-and-settlement.html" aria-current="page"><span class="n">22</span>Agents and settlement</a>
+<a href="23-testing-plan.html"><span class="n">23</span>Testing plan</a>
+<a href="24-work-registry.html"><span class="n">24</span>Work registry</a>
+<a href="25-design-system.html"><span class="n">25</span>Design system</a>
+<a href="26-handoff.html"><span class="n">26</span>Handoff: specification to build</a>
+<a href="27-model-inventory.html"><span class="n">27</span>Model inventory and artifact register</a>
+<a href="28-product-model.html"><span class="n">28</span>Product model</a>
+<a href="29-data-model.html"><span class="n">29</span>Data model</a>
+<a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
+<a href="31-verification.html"><span class="n">31</span>Verification framework</a>
+<a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
+<a href="author.html"><span class="n">—</span>The author</a>
+<p class="t s">Surfaces</p>
+<a href="../prototypes/"><span class="n">—</span>All prototypes</a>
+<a href="../prototypes/deploy-console.html"><span class="n">—</span>Deploy console</a>
+<a href="../prototypes/token-console.html"><span class="n">—</span>Token console</a>
+<a href="../prototypes/verifier.html"><span class="n">—</span>Public verifier</a>
+<a href="../prototypes/investor.html"><span class="n">—</span>Investor page</a>
+<p class="t s">Repository</p>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory"><span class="n">—</span>Source on GitHub</a>
+<a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
+</nav>
+<article>
+<header class="mast">
+<h1>uRWA Factory</h1>
+<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
+<div class="meta">
+<span><b>Status</b> Specification · no code yet</span>
+<span><b>Licence</b> MIT</span>
+<span><b>Chain</b> Base</span>
+<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
+</div>
+</header>
+
+<div class="hero">
+
+<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
+<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
+
+<div class="wxy">
+<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
+<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
+<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
+<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
+</div>
+
+<div class="author">
+<div class="ini">GD</div>
+<div class="b">
+<p class="nm">Gene Deyev</p>
+<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
+<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
+<div class="lk">
+<a href="https://stobox.io/team/gene-deyev">Profile</a>
+<a href="https://github.com/genedeyev">GitHub</a>
+<a href="mailto:gd@stoboxplatform.com">Email</a>
+<a href="https://stobox.io">Stobox</a>
+</div>
+</div>
+</div>
+
+<div class="startat">
+<a class="k" href="00-why-this-exists.html">Why this exists</a>
+<a href="02-architecture.html">Architecture</a>
+<a href="07-functions.html">Function reference</a>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
+</div>
+
+</div>
+
+<section class="doc" id="doc-22"><h2 id="sec-22">22 — Agents and settlement</h2>
+<h3 id="22-why-this-system-is-agent-native">Why this system is agent-native</h3>
+<p>Autonomous agents fail on financial rails for one structural reason: <strong>they cannot predict the outcome of an action before taking it.</strong> They submit, the transaction reverts, gas is spent, and — worse — a multi-step flow leaves partial state behind that a machine cannot reliably unwind.</p>
+<p>Three properties already in this design remove that failure mode. None were added for agents; they follow from ERC-7943 conformance.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Property</th><th style="text-align:left">What it gives an agent</th></tr></thead><tbody><tr><td style="text-align:left"><code>canTransfer</code> is a free, non-reverting view</td><td style="text-align:left">Deterministic pre-flight. The agent computes the outcome before acting, at zero cost.</td></tr><tr><td style="text-align:left"><code>whyBlocked</code> returns stage, rule address and reason</td><td style="text-align:left">A machine-readable <em>cause</em>, so the agent can reason rather than retry blindly.</td></tr><tr><td style="text-align:left">ERC-7943 is a standard interface</td><td style="text-align:left">One integration serves every conformant token. No per-asset adapter.</td></tr><tr><td style="text-align:left">Atomic DvP settles both legs or neither</td><td style="text-align:left">No partial state ever exists for an agent to reconcile.</td></tr></tbody></table></div>
+<p>An agent that must guess is dangerous. An agent that can ask is ordinary infrastructure.</p>
+<hr class="soft">
+<h3 id="22-single-ledger-settlement">Single-ledger settlement</h3>
+<h4 id="22-the-problem-it-removes">The problem it removes</h4>
+<p>Conventional settlement runs two ledgers: securities at a CSD, cash at a bank. Delivery and payment happen in different systems, so they cannot be simultaneous. The gap is bridged with T+2, reconciliation and a counterparty who might not perform — settlement risk that is <em>managed</em> rather than <em>absent</em>.</p>
+<h4 id="22-what-replaces-it">What replaces it</h4>
+<p>Both legs are ERC-20 transfers on the same chain in the same transaction.</p>
+<pre>   Traditional                        Single ledger
+
+   securities ledger ──┐              ┌─────────────────────┐
+                       ├─ reconcile   │  one transaction    │
+   cash ledger ────────┘   T+2        │  security ⇄ payment │
+                                      │  both or neither    │
+   settlement risk: managed           └─────────────────────┘
+                                      settlement risk: structurally absent</pre>
+<p>Settlement risk is not reduced. It cannot occur, because there is no interval during which one leg has moved and the other has not.</p>
+<h4 id="22-the-part-that-is-genuinely-new">The part that is genuinely new</h4>
+<p>Compliance is evaluated <strong>inside</strong> the settlement, not before and after it.</p>
+<p>In a conventional flow the transfer agent checks eligibility, the trade settles elsewhere, and a reconciliation later confirms nothing went wrong. Here the security leg passes the token&#x27;s own compliance pipeline as part of the atomic operation. A non-compliant trade <strong>cannot settle</strong> — not &quot;is detected and reversed&quot;, but cannot occur.</p>
+<p>That is only possible because the compliance system and the settlement system are the same system.</p>
+<hr class="soft">
+<h3 id="22-atomicdvp">AtomicDvP</h3>
+<figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 472" class="d-dvp">
+<style>
+.d-dvp text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-dvp .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
+.d-dvp .st{font-size:13px;font-weight:600}
+.d-dvp .sm{font-size:11.5px;fill:#57575B}
+.d-dvp .fa{font-size:10.5px;fill:#6E6E73}
+.d-dvp .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-dvp .i-st{fill:#FFFFFF}
+.d-dvp .i-sm{fill:#6E6E73}
+.d-dvp .bad{fill:#B42318;font-size:11.5px;font-weight:600}
+.d-dvp .badf{fill:#B42318;font-size:10.5px}
+
+.d-dvp .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-dvp .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-dvp .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<defs>
+<marker id="va" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
+</marker>
+<marker id="vb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#F5CFCA"/>
+</marker>
+</defs>
+<rect width="760" height="472" fill="#FFFFFF"/>
+
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M2.5 8h16"/><path d="M15.2 4.6 18.6 8l-3.4 3.4"/><path d="M21.5 16h-16"/><path d="M8.8 12.6 5.4 16l3.4 3.4"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Atomic DvP</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
+
+
+<text class="lbl" x="24" y="24">CONVENTIONAL SETTLEMENT · TWO TRANSACTIONS</text>
+<rect x="24" y="36" width="342" height="140" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="44" y="58" width="120" height="30" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="mo" x="58" y="78">payment leg</text>
+<path d="M170 73 L214 73" stroke="#F5CFCA" stroke-width="1.3" marker-end="url(#vb)" fill="none"/>
+<rect x="222" y="58" width="120" height="30" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="mo" x="236" y="78">security leg</text>
+<rect x="44" y="100" width="298" height="56" rx="8" fill="#FFFFFF" stroke="#F5CFCA" stroke-dasharray="4 3"/>
+<text class="bad" x="60" y="122">The gap between them is settlement risk</text>
+<text class="badf" x="60" y="142">One party has paid. The other has not delivered.</text>
+
+
+<text class="lbl" x="394" y="24">ATOMIC DvP · ONE TRANSACTION</text>
+<rect x="394" y="36" width="342" height="140" rx="12" fill="#0C0C0F"/>
+<rect x="414" y="58" width="120" height="30" rx="8" fill="#1D1D1F"/>
+<text class="mo i-sm" x="428" y="78">payment leg</text>
+<rect x="558" y="58" width="120" height="30" rx="8" fill="#1D1D1F"/>
+<text class="mo i-sm" x="572" y="78">security leg</text>
+<path d="M540 73 L552 73" stroke="#6E6E73" stroke-width="1.3" fill="none"/>
+<rect x="414" y="100" width="264" height="56" rx="8" fill="#1D1D1F"/>
+<text class="st i-st" x="430" y="122">Both, or neither</text>
+<text class="fa i-sm" x="430" y="142">There is no block in which one has moved.</text>
+
+
+<text class="lbl" x="24" y="212">WHAT settle() DOES, IN ORDER</text>
+<rect x="24" y="224" width="712" height="60" rx="10" fill="#F5F5F7" stroke="#E2E4E9"/>
+<text class="mo" x="44" y="248">not expired · nonce unused · both EIP-712 signatures valid · token.canTransfer(seller, buyer, amount)</text>
+<text class="mo" x="44" y="270">payment: buyer → seller · security: seller → buyer through the full compliance pipeline · mark settled</text>
+
+<rect x="24" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="st" x="44" y="322">Compliance is checked inside settlement</text>
+<text class="fa" x="44" y="344">Not before it, where the answer could go stale in between.</text>
+
+<rect x="388" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="st" x="408" y="322">Any failure reverts everything</text>
+<text class="fa" x="408" y="344">Settlement risk cannot occur, rather than being managed.</text></g>
+</svg>
+<figcaption>Delivery versus payment in a single transaction. The gap that conventional settlement manages does not exist here, because there is no block in which one leg has moved and the other has not.</figcaption></figure>
+<pre>struct Instruction {
+    address securityToken;
+    address paymentToken;
+    address seller;
+    address buyer;
+    uint256 securityAmount;
+    uint256 paymentAmount;
+    uint64  validUntil;
+    bytes32 nonce;
+    bytes32 tradeRef;        // reporting reference, opaque to the contract
+}
+
+interface IAtomicDvP {
+    function settle(Instruction calldata i, bytes calldata sellerSig, bytes calldata buyerSig)
+        external returns (bytes32 settlementId);
+
+    function previewSettle(Instruction calldata i)
+        external view returns (bool ok, uint8 stage, address rule, string memory reason);
+
+    function cancel(bytes32 nonce) external;
+    function isSettled(bytes32 nonce) external view returns (bool);
+}</pre>
+<h4 id="22-execution-order">Execution order</h4>
+<pre> 1. instruction not expired, nonce unused
+ 2. both signatures valid (EIP-712)        ← either party or their agent may submit
+ 3. token.canTransfer(seller, buyer, securityAmount)   ← revert with the rule&#x27;s reason if false
+ 4. paymentToken:  buyer  → seller
+ 5. securityToken: seller → buyer          ← runs the full compliance pipeline
+ 6. mark nonce settled, emit Settled</pre>
+<p>Step 3 is a courtesy that makes failures legible: step 5 would enforce it anyway, but reverting early returns the <em>rule and reason</em> rather than a bare failure. <code>previewSettle</code> runs steps 1–3 in view mode and is what an agent calls before it ever constructs a transaction.</p>
+<h4 id="22-why-signatures-rather-than-approvals">Why signatures rather than approvals</h4>
+<p>Both parties sign the instruction off-chain. Either side — or either side&#x27;s agent — submits it. This means no party ever grants a standing allowance to a counterparty, the trade terms are fixed at signing, and the submitter pays gas. A matching agent can therefore execute a trade it negotiated without ever holding custody of either leg.</p>
+<h4 id="22-properties">Properties</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Property</th><th style="text-align:left">Mechanism</th></tr></thead><tbody><tr><td style="text-align:left">Atomicity</td><td style="text-align:left">Single transaction; any failure reverts both legs</td></tr><tr><td style="text-align:left">No custody by intermediaries</td><td style="text-align:left">Signatures, not escrow</td></tr><tr><td style="text-align:left">Compliance-integrated</td><td style="text-align:left">Security leg passes the full pipeline</td></tr><tr><td style="text-align:left">Replay-safe</td><td style="text-align:left">Nonce marked settled; <code>cancel</code> invalidates unilaterally</td></tr><tr><td style="text-align:left">Reportable</td><td style="text-align:left"><code>tradeRef</code> plus a <code>Settled</code> event carrying both legs</td></tr><tr><td style="text-align:left">Front-running resistant</td><td style="text-align:left">Terms are signed; a third party cannot alter price or size</td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="22-agent-authority">Agent authority</h3>
+<p>Agents act <strong>for a principal</strong>, never in their own right. The agent&#x27;s wallet is linked to the principal&#x27;s DID subject, so it inherits the principal&#x27;s eligibility — and, because holder caps count subjects, adding agent wallets never inflates the holder register.</p>
+<figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 458" class="d-mand">
+<style>
+.d-mand text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-mand .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
+.d-mand .st{font-size:13px;font-weight:600}
+.d-mand .sm{font-size:11.5px;fill:#57575B}
+.d-mand .fa{font-size:10.5px;fill:#6E6E73}
+.d-mand .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-mand .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
+.d-mand .i-st{fill:#FFFFFF}
+.d-mand .i-sm{fill:#6E6E73}
+.d-mand .no{fill:#B42318;font-size:10.5px}
+.d-mand .nob{fill:#B42318;font-size:11.5px;font-weight:600}
+
+.d-mand .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-mand .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-mand .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<defs>
+<marker id="ma" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
+</marker>
+<marker id="mb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#F5CFCA"/>
+</marker>
+</defs>
+<rect width="760" height="458" fill="#FFFFFF"/>
+
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><rect x="3.8" y="8" width="16.4" height="12.4" rx="3.4"/><path d="M12 3.6V8"/><circle cx="12" cy="2.6" r="1.4"/><path d="M9 13v2.2"/><path d="M15 13v2.2"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Agent mandate</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
+
+<rect x="24" y="16" width="150" height="60" rx="10" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="st" x="42" y="40">Agent</text>
+<text class="fa" x="42" y="60">automated operator</text>
+
+<path d="M182 46 L216 46" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#ma)" fill="none"/>
+<text class="mos" x="186" y="38">acts</text>
+
+<rect x="224" y="16" width="512" height="60" rx="10" fill="#0C0C0F"/>
+<text class="lbl i-sm" x="244" y="40">AGENTAUTHORITY · CHECKED BEFORE ANY STATE CHANGES</text>
+<text class="mo i-sm" x="244" y="62">check(mandate, scope, token, counterparty, amount) → (bool, reason)</text>
+
+
+<text class="lbl" x="24" y="112">WHAT A MANDATE BOUNDS</text>
+<rect x="24" y="124" width="230" height="118" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="mos" x="42" y="148">scopes[]         which actions</text>
+<text class="mos" x="42" y="168">tokens[]         which assets</text>
+<text class="mos" x="42" y="188">counterparties[] whom with</text>
+<text class="mos" x="42" y="208">maxPerAction     per call</text>
+<text class="mos" x="42" y="228">maxPerEpoch      per window</text>
+
+<rect x="266" y="124" width="230" height="118" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
+<text class="st" x="284" y="148">Every mandate expires</text>
+<text class="sm" x="284" y="170">There is no perpetual mandate</text>
+<text class="sm" x="284" y="186">in the type — it is a required</text>
+<text class="sm" x="284" y="202">field, not a default.</text>
+<text class="mos" x="284" y="228">revoke() takes effect next call</text>
+
+<rect x="508" y="124" width="228" height="118" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="lbl" x="526" y="148">NO SCOPE EVER GRANTS</text>
+<text class="no" x="526" y="170">minting · role changes</text>
+<text class="no" x="526" y="190">upgrades · freezing</text>
+<text class="no" x="526" y="210">seizure · pause</text>
+<text class="fa" x="526" y="232">Not configurable. Absent from the type.</text>
+
+
+<rect x="24" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<text class="st" x="44" y="286">Inside the mandate</text>
+<text class="mo" x="44" y="308">consume(mandate, amount) · action proceeds</text>
+<text class="fa" x="44" y="330">AgentActed logged with principal, selector, token, amount.</text>
+
+<rect x="388" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#F5CFCA"/>
+<text class="nob" x="408" y="286">Outside it</text>
+<text class="mo" x="408" y="308">reverts before any state change</text>
+<text class="fa" x="408" y="330">The agent is not trusted to respect its mandate. It cannot exceed it.</text></g>
+</svg>
+<figcaption>What a mandate bounds. The agent is not trusted to stay inside its limits — it is structurally unable to exceed them, and no scope grants minting, upgrades, freezing, seizure or pause.</figcaption></figure>
+<p>Eligibility is not authority. Authority is separate, explicit and on-chain.</p>
+<pre>struct Mandate {
+    bytes32   principal;        // DID subject the agent acts for
+    address   agent;            // agent wallet
+    bytes32[] scopes;           // permitted action classes
+    address[] tokens;           // asset allowlist; empty = any
+    address[] counterparties;   // permitted counterparties; empty = any eligible
+    uint256   maxPerAction;
+    uint256   maxPerEpoch;
+    uint64    epochLength;
+    uint64    expiresAt;        // always set — no perpetual mandate
+    bool      revoked;
+}
+
+interface IAgentAuthority {
+    function grant(Mandate calldata m) external returns (bytes32 mandateId);
+    function revoke(bytes32 mandateId) external;              // immediate, no timelock
+    function check(bytes32 mandateId, bytes32 scope, address token,
+                   address counterparty, uint256 amount) external view returns (bool, string memory);
+    function consumed(bytes32 mandateId) external view returns (uint256 thisEpoch, uint64 epochEnds);
+    function mandatesOf(bytes32 principal) external view returns (bytes32[] memory);
+}</pre>
+<h4 id="22-scopes">Scopes</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Scope</th><th style="text-align:left">Permits</th><th style="text-align:left">Never permits</th></tr></thead><tbody><tr><td style="text-align:left"><code>AGENT_DISTRIBUTE</code></td><td style="text-align:left"><code>distributeFromTreasury</code> within limits</td><td style="text-align:left">Minting</td></tr><tr><td style="text-align:left"><code>AGENT_LOCKUP</code></td><td style="text-align:left"><code>addLockup</code> on distributions it made</td><td style="text-align:left">Clearing another party&#x27;s lockups</td></tr><tr><td style="text-align:left"><code>AGENT_SETTLE</code></td><td style="text-align:left">Submit signed DvP instructions</td><td style="text-align:left">Signing on the principal&#x27;s behalf</td></tr><tr><td style="text-align:left"><code>AGENT_QUOTE</code></td><td style="text-align:left">Publish quotes; sign instructions within a price band</td><td style="text-align:left">Exceeding inventory or band</td></tr><tr><td style="text-align:left"><code>AGENT_READ</code></td><td style="text-align:left">Everything readable</td><td style="text-align:left">Nothing else</td></tr></tbody></table></div>
+<p><strong>Never in any scope:</strong> minting, role changes, diamond cuts, policy-set swaps, freezing, seizure, pause. Those require a human role holder. An agent cannot expand its own mandate, and there is no scope that would let it.</p>
+<h4 id="22-limits-are-enforced-not-advisory">Limits are enforced, not advisory</h4>
+<p>Every privileged agent call passes through <code>check</code>. Exceeding <code>maxPerAction</code>, exhausting <code>maxPerEpoch</code>, addressing a token outside the allowlist, facing a counterparty outside the list, or running past <code>expiresAt</code> reverts. The agent is not trusted to respect its mandate — it is unable to exceed it.</p>
+<p><code>revoke</code> is immediate and has no timelock. This is the kill switch, and a delay would defeat its purpose.</p>
+<hr class="soft">
+<h3 id="22-the-three-agent-roles">The three agent roles</h3>
+<h4 id="22-issuer-operations">Issuer operations</h4>
+<p>Automates what an operations team does by hand: distributions to a holder list, applying lockups on issuance, treasury rebalancing, responding to offering events, and reporting.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Scope</th><th style="text-align:left">Bound</th></tr></thead><tbody><tr><td style="text-align:left">Distribute to an approved list</td><td style="text-align:left"><code>AGENT_DISTRIBUTE</code></td><td style="text-align:left">Per-action and per-epoch caps, token allowlist</td></tr><tr><td style="text-align:left">Apply lockups on distribution</td><td style="text-align:left"><code>AGENT_LOCKUP</code></td><td style="text-align:left">Only on its own distributions</td></tr><tr><td style="text-align:left">Publish cap-table and compliance reports</td><td style="text-align:left"><code>AGENT_READ</code></td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">Alert on blocked transfers and <code>RuleFailed</code></td><td style="text-align:left"><code>AGENT_READ</code></td><td style="text-align:left">—</td></tr></tbody></table></div>
+<p>The last one is worth its own note. <code>RuleFailed</code> means a rule contract is malfunctioning — an operational fault, not a compliance outcome. It is exactly the signal a monitoring agent should raise immediately and a human should see the same hour.</p>
+<h4 id="22-market-maker-and-matching">Market maker and matching</h4>
+<p>Quotes two-sided prices and matches counterparties, then settles atomically.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Scope</th><th style="text-align:left">Bound</th></tr></thead><tbody><tr><td style="text-align:left">Publish quotes</td><td style="text-align:left"><code>AGENT_QUOTE</code></td><td style="text-align:left">Price band, inventory limit</td></tr><tr><td style="text-align:left">Sign instructions within band</td><td style="text-align:left"><code>AGENT_QUOTE</code></td><td style="text-align:left"><code>maxPerAction</code>, <code>maxPerEpoch</code></td></tr><tr><td style="text-align:left">Submit matched instructions</td><td style="text-align:left"><code>AGENT_SETTLE</code></td><td style="text-align:left">Counterparty allowlist</td></tr></tbody></table></div>
+<p>A matching agent needs neither leg in custody: it collects two signatures and submits. Its worst-case failure is a trade at a bad price within the band, never loss of the assets.</p>
+<h4 id="22-agent-to-agent-m2m">Agent-to-agent (M2M)</h4>
+<p>Two agents negotiate and settle directly, with no human in the loop on either side. This is where the pre-flight property stops being a convenience and becomes a requirement.</p>
+<pre>  Agent A                          Agent B
+     │  previewSettle(instruction)    │      ← both check independently, free
+     │◀──── ok / reason ─────────────▶│
+     │  sign                           │  sign
+     │            AtomicDvP.settle     │
+     └───────────────▶ ◀──────────────┘
+                    both legs or neither</pre>
+<p>Neither agent can strand the other. Neither needs to trust the other&#x27;s compliance state — both verify it directly against the token. If either side is ineligible, <code>previewSettle</code> says so before a signature exists.</p>
+<hr class="soft">
+<h3 id="22-agent-facing-read-surface">Agent-facing read surface</h3>
+<p>Formalised so an agent integrates once, against any conformant token.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Question</th><th style="text-align:left">Call</th></tr></thead><tbody><tr><td style="text-align:left">May this transfer proceed?</td><td style="text-align:left"><code>canTransfer(from, to, amount)</code></td></tr><tr><td style="text-align:left">If not, why?</td><td style="text-align:left"><code>whyBlocked(from, to, amount)</code> → stage, rule, reason</td></tr><tr><td style="text-align:left">What is actually movable?</td><td style="text-align:left"><code>unfrozenBalanceOf(account)</code></td></tr><tr><td style="text-align:left">When does the rest unlock?</td><td style="text-align:left"><code>lockupsOf(account)</code></td></tr><tr><td style="text-align:left">What rules apply?</td><td style="text-align:left"><code>policySet.groups()</code>, <code>rulesOf(group)</code>, <code>rule.ruleId()</code></td></tr><tr><td style="text-align:left">What are the bounds for this account?</td><td style="text-align:left"><code>rule.bounds(account)</code></td></tr><tr><td style="text-align:left">Will this trade settle?</td><td style="text-align:left"><code>previewSettle(instruction)</code></td></tr><tr><td style="text-align:left">Am I authorised?</td><td style="text-align:left"><code>agentAuthority.check(...)</code>, <code>consumed(...)</code></td></tr><tr><td style="text-align:left">Is the asset record current?</td><td style="text-align:left"><code>passport.snapshotOf(id)</code> → snapshot, stale flag</td></tr></tbody></table></div>
+<p>Every one is a free view call that does not revert. An agent can build a complete picture of what it may do, and why, without submitting anything.</p>
+<hr class="soft">
+<h3 id="22-attribution-and-audit">Attribution and audit</h3>
+<p>Every agent action is attributable to a mandate and a principal.</p>
+<pre>event AgentActed(
+    bytes32 indexed mandateId,
+    address indexed agent,
+    bytes32 indexed principal,
+    bytes4  selector,
+    address token,
+    uint256 amount
+);
+
+event MandateGranted(bytes32 indexed mandateId, bytes32 indexed principal, address indexed agent, uint64 expiresAt);
+event MandateRevoked(bytes32 indexed mandateId, address indexed by);
+event Settled(bytes32 indexed settlementId, address indexed securityToken, address indexed paymentToken,
+              address seller, address buyer, uint256 securityAmount, uint256 paymentAmount, bytes32 tradeRef);</pre>
+<p>From logs alone: which agent did what, under whose mandate, within which limits, and what remained. An agent-executed action is never indistinguishable from a human one — that distinction must survive into the audit trail, and it does.</p>
+<hr class="soft">
+<h3 id="22-failure-modes">Failure modes</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Failure</th><th style="text-align:left">Response</th></tr></thead><tbody><tr><td style="text-align:left">Agent key compromised</td><td style="text-align:left"><code>revoke</code> is immediate; damage bounded by <code>maxPerEpoch</code> already consumed</td></tr><tr><td style="text-align:left">Agent loops on a failing action</td><td style="text-align:left">Pre-flight is free, so a correct agent never submits; a broken one is bounded by limits and visible in <code>AgentActed</code></td></tr><tr><td style="text-align:left">Agent settles at a bad price</td><td style="text-align:left">Price band in the quote scope; outside it, signing fails</td></tr><tr><td style="text-align:left">Counterparty becomes ineligible between signing and settling</td><td style="text-align:left"><code>settle</code> reverts atomically — nothing moves</td></tr><tr><td style="text-align:left">Instruction replayed</td><td style="text-align:left">Nonce marked settled; <code>cancel</code> invalidates unilaterally</td></tr><tr><td style="text-align:left">Mandate outlives its purpose</td><td style="text-align:left"><code>expiresAt</code> is mandatory — no perpetual mandate exists in the type</td></tr><tr><td style="text-align:left">Agent acts outside the asset allowlist</td><td style="text-align:left"><code>check</code> reverts</td></tr><tr><td style="text-align:left">Principal loses track of agents</td><td style="text-align:left"><code>mandatesOf(principal)</code> enumerates all live mandates</td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="22-scope-note">Scope note</h3>
+<p>Issuer-operations automation and market making are different activities with different operational profiles, even though both use the same mandate mechanism. The architecture makes the boundary explicit and enforceable through scopes and limits, so that whichever profile applies, the agent&#x27;s actual authority is visible on chain and bounded by construction.</p>
+<p>Stobox supplies the mechanism. Which activities a given principal may delegate, and under what conditions, is the principal&#x27;s determination.</p>
+<hr class="soft">
+<h3 id="22-build-placement">Build placement</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Item</th><th style="text-align:left">Phase</th></tr></thead><tbody><tr><td style="text-align:left">Agent read surface</td><td style="text-align:left">Already exists — Phase 1 and 2 deliver it</td></tr><tr><td style="text-align:left"><code>AgentAuthority</code></td><td style="text-align:left">Phase 3, alongside offerings</td></tr><tr><td style="text-align:left"><code>AtomicDvP</code></td><td style="text-align:left">Phase 3</td></tr><tr><td style="text-align:left"><code>previewSettle</code></td><td style="text-align:left">Phase 3</td></tr><tr><td style="text-align:left">Agent SDK and reference monitoring agent</td><td style="text-align:left">Phase 5, with the interfaces</td></tr></tbody></table></div>
+<p>Nothing here requires a change to the token. <code>AtomicDvP</code> and <code>AgentAuthority</code> are external contracts that use the existing surface — which is the strongest evidence that the three-plane split was drawn in the right place.</p>
+<h3 id="22-related-documents">Related documents</h3>
+<ul>
+<li><a href="07-functions.html">07 — Function reference</a></li>
+<li><a href="08-compliance-pipeline.html">08 — Compliance pipeline</a></li>
+<li><a href="20-development-plan.html">20 — Development plan</a></li>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="21-interface-specification.html">← Interface specification</a><a class="pn n" href="23-testing-plan.html">Testing plan →</a></nav></section>
+<footer>
+<p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
+Edit the Markdown, not this file.</p>
+<p>Stobox is a software and infrastructure provider. This documentation describes product
+architecture and is not legal, financial or investment advice.</p>
+</footer>
+</article>
+<aside class="rail" aria-label="Section reference">
+<div class="railsec" data-sec="sec-22"><p class="railt">On this page</p><a href="#22-why-this-system-is-agent-native">Why this system is agent-native</a><a href="#22-single-ledger-settlement">Single-ledger settlement</a><a href="#22-atomicdvp">AtomicDvP</a><a href="#22-agent-authority">Agent authority</a><a href="#22-the-three-agent-roles">The three agent roles</a><a href="#22-agent-facing-read-surface">Agent-facing read surface</a><a href="#22-attribution-and-audit">Attribution and audit</a><a href="#22-failure-modes">Failure modes</a><a href="#22-scope-note">Scope note</a><a href="#22-build-placement">Build placement</a><p class="railt s">Related</p><a href="07-functions.html">07 — Function reference</a><a href="08-compliance-pipeline.html">08 — Compliance pipeline</a><a href="20-development-plan.html">20 — Development plan</a></div>
+<div class="railfix">
+<p class="railt s">Reference</p>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Source on GitHub</a>
+<a href="https://eips.ethereum.org/EIPS/eip-7943">ERC-7943 on eips.ethereum.org</a>
+<a href="../LICENSE">Licence — MIT</a>
+</div>
+</aside>
+</div>
+<script>
+(() => {
+  const nav = document.querySelector("nav.toc");
+  const secs = [...document.querySelectorAll("section.doc")];
+  if (!nav || !secs.length) return;
+
+  const links = new Map();
+  document.querySelectorAll('nav.toc a[href^="#sec-"]').forEach(a =>
+    links.set(a.getAttribute("href").slice(1), a));
+
+  let current = null;
+  const mark = id => {
+    if (id === current) return;
+    const prev = links.get(current);
+    if (prev) prev.removeAttribute("aria-current");
+    document.querySelectorAll("aside.rail .railsec.on").forEach(b => b.classList.remove("on"));
+    const block = document.querySelector('aside.rail .railsec[data-sec="' + id + '"]');
+    if (block) block.classList.add("on");
+    const next = links.get(id);
+    if (next) {
+      next.setAttribute("aria-current", "true");
+      // Keep the mark inside the contents list without scrolling the page.
+      const r = next.getBoundingClientRect(), n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+    }
+    current = id;
+  };
+
+  // The section whose top has passed a line a quarter down the viewport is the
+  // one being read. Plain geometry: no observer, no dependency, and it settles
+  // correctly on load, on resize, and after a jump to an anchor.
+  const pick = () => {
+    const line = window.innerHeight * 0.25;
+    let id = secs[0].id;
+    for (const sec of secs) {
+      if (sec.getBoundingClientRect().top > line) break;
+      id = sec.id;
+    }
+    mark("sec-" + id.replace("doc-", ""));
+  };
+
+  const frame = window.requestAnimationFrame || (fn => setTimeout(fn, 16));
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    frame(() => { queued = false; pick(); });
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  addEventListener("hashchange", onScroll);
+
+  // A click moves the mark at once, before the scroll settles.
+  links.forEach((a, id) => a.addEventListener("click", () => mark(id)));
+
+  pick();
+})();
+</script>
+<!-- source-digest: 8d55bc03834c551232f3d706aa41aa2bc5b855b967fcfe67dcb4b89013a94c13 -->

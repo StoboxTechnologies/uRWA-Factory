@@ -24,7 +24,7 @@ its one-off components. Never:
 `verify.py` `L0.12` fails the build on all three. Changing how everything looks is one edit to one
 file; do it there.
 
-`urwa-documentation.html` is the exception that proves the rule: it *inlines* `theme.css` at build
+`index.html` is the exception that proves the rule: it *inlines* `theme.css` at build
 time, from the same file, because it must travel as one self-contained artefact. `build-docs.py`
 reads the file — it does not hold a copy.
 
@@ -40,9 +40,9 @@ a value; update it in the same commit if you do.
 python3 build-docs.py && python3 verify.py && python3 verify.py --self-test
 ```
 
-`build-docs.py` regenerates `urwa-documentation.html` from `README.md`, `docs/*.md` and `theme.css`.
+`build-docs.py` regenerates `index.html` from `README.md`, `docs/*.md` and `theme.css`.
 The built file is committed, and CI fails if it is stale — so rebuild in the same commit as any
-change to a document or to the theme. Never hand-edit `urwa-documentation.html`.
+change to a document or to the theme. Never hand-edit `index.html`.
 
 Every check in `verify.py` must appear in [docs/31-verification.md](docs/31-verification.md) and must
 fail on its own fixture (`--self-test`). A new check needs both, or L2.16 and L5 fail.

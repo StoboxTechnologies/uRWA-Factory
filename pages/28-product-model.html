@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>28 — Product model — uRWA Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<base href=".">
+<style>/* uRWA Factory — the design system. One file, every surface.
+   ==========================================================================
+   This is the only place colour, type, shape and depth are decided. No page
+   declares its own tokens, and no page restates a rule that lives here; a page
+   adds only what is true of that page alone.
+
+   A new page needs exactly one line in its head:
+
+       <link rel="stylesheet" href="theme.css">        (repository root)
+       <link rel="stylesheet" href="../theme.css">     (prototypes/)
+
+   and inherits the whole system — fonts included, imported below.
+
+   The documentation build inlines this file verbatim, so
+   urwa-documentation.html stays one self-contained artefact from one source.
+
+   Documented in docs/25-design-system.md. Verified by verify.py L0.12.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── tokens ─────────────────────────────────────────────────────────────── */
+
+:root{
+  /* ground and surfaces */
+  --ground:#F5F5F7;
+  --surface:#FFFFFF;
+  --raised:#FFFFFF;
+  --sunk:#F0F2F8;
+  --dark:#0C0C0F;
+
+  /* ink */
+  --ink:#1D1D1F;
+  --ink-2:#3C3C43;
+  --muted:#57575B;
+  --faint:#6E6E73;
+
+  /* lines — hairlines, never structure */
+  --rule:#E2E4E9;
+  --rule-strong:#D2D5DB;
+
+  /* emphasis — black carries the primary action */
+  --accent:#0C0C0F;
+  --accent-2:#1D1D1F;
+  --accent-wash:#F5F5F7;
+  --accent-edge:#E2E4E9;
+
+  /* the one hue — a single spot colour, used sparingly */
+  --spot:#22D3EE;
+  --spot-2:#0EBDD9;
+  --spot-ink:#0C2E33;
+  --spot-text:#0E7490;
+  --spot-wash:rgba(34,211,238,.22);
+  --spot-edge:#A5E9F4;
+
+  /* status */
+  --ok:#0F7A5F;
+  --ok-wash:#E9F8F3;
+  --ok-edge:#B6E5D6;
+  --warn:#B45309;
+  --warn-wash:#FEF6E7;
+  --warn-edge:#F3DDB2;
+  --crit:#B42318;
+  --crit-wash:#FEF1EF;
+  --crit-edge:#F5CFCA;
+
+  /* type */
+  --body:-apple-system,system-ui,'SF Pro Display','SF Pro Text','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --display:-apple-system,system-ui,'SF Pro Display','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+
+  /* shape */
+  --r:10px;
+  --r-md:12px;
+  --r-lg:20px;
+  --r-pill:980px;
+
+  /* depth — soft and far, never a hard edge */
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --sh-lg:0 8px 20px -4px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.05);
+  --sh-card:0 10px 30px -24px rgba(0,0,0,.3);
+  --sh-focus:0 0 0 3px rgba(34,211,238,.45);
+}
+
+/* ── base ───────────────────────────────────────────────────────────────── */
+
+*{box-sizing:border-box}
+
+/* Every surface paints its own ground and ink, so the page holds on any host
+   background rather than inheriting one. A page overrides only size and leading. */
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+
+h1,h2,h3,h4{font-family:var(--display);font-weight:700}
+h1{letter-spacing:-.03em;line-height:1.06}
+
+a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+
+/* Focus is a black outline first — the spot colour alone does not carry
+   enough contrast to announce focus by itself. */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);box-shadow:var(--sh-focus)}
+
+/* ── controls ───────────────────────────────────────────────────────────── */
+
+.btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary,.btn.spot{
+  border-radius:var(--r-pill);font-weight:600;box-shadow:none;
+  transition:background .18s,border-color .18s,color .18s,transform .12s}
+.btn{background:var(--surface);border-color:var(--rule-strong);color:var(--ink)}
+.btn:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.btn.p,.btn.primary{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#FFFFFF}
+.btn.spot{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:700}
+.btn.spot:hover{background:var(--spot-2);border-color:var(--spot-2);color:var(--spot-ink)}
+.btn.d{border-color:var(--crit-edge);color:var(--crit);background:var(--surface)}
+.btn.d:hover{background:var(--crit-wash)}
+.btn:active:not([disabled]){transform:translateY(1px)}
+
+.inp,input.inp,input,select,textarea{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
+.inp:focus,input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:var(--sh-focus)}
+
+/* ── containers ─────────────────────────────────────────────────────────── */
+
+.card,.figbox,.k,.addrcard,.tscroll{border-radius:var(--r-lg)}
+.note,.nextitem,.wal,.opt,pre{border-radius:var(--r-md)}
+.card,.figbox,.k,.addrcard{box-shadow:var(--sh-card);border-color:var(--rule)}
+.pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
+.bar{border-radius:var(--r-pill);overflow:hidden}
+.bar div{border-radius:0}
+table,th,td{border-color:var(--rule)}
+
+/* ── marks ──────────────────────────────────────────────────────────────── */
+
+/* Aqua marks emphasis and nothing else. Status is green, ochre or oxblood,
+   and always carries a word or a symbol as well as its colour. */
+.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.banner{background:var(--spot-wash);border-bottom:1px solid var(--spot-edge);color:var(--accent)}
+.tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+/* "You are here" is one mark everywhere: an aqua wash, an aqua ring, and
+   heavier text — never colour on its own. */
+.nb.on{background:var(--spot-wash);color:var(--accent);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.nb.on .b{color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--spot-wash)}
+
+.step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.stg.n .i,.sg.no .i{background:var(--crit);border-color:var(--crit);color:#FFFFFF}
+
+.st.ok{color:var(--ok)}
+.st.ok::before{background:var(--ok)}
+.pill.ok{background:var(--ok-wash);border-color:var(--ok-edge);color:var(--ok)}
+.el.y .m{color:var(--ok)}
+.wal.ok{border-color:var(--ok-edge);background:var(--ok-wash)}
+.wal.ok .dot{background:var(--ok)}
+.wallet.ok .dot{background:var(--ok)}
+
+/* ── site navigation ────────────────────────────────────────────────────── */
+
+.sitenav{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:10px 22px;
+  border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  font-size:13px;position:sticky;top:0;z-index:200}
+.sitenav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:var(--r-pill);
+  font-weight:500;transition:background .18s,color .18s;white-space:nowrap}
+.sitenav a:hover{color:var(--ink);background:var(--sunk);text-decoration:none}
+.sitenav a[aria-current="page"]{color:var(--accent);background:var(--spot-wash);font-weight:600;
+  box-shadow:inset 0 0 0 1px var(--spot-edge)}
+.sitenav .home{font-weight:700;font-size:15px;letter-spacing:-.02em;color:var(--ink);padding-left:0}
+.sitenav .home:hover{background:none;color:var(--ink)}
+.sitenav .div{width:1px;height:15px;background:var(--rule);margin:0 8px;flex:none}
+.sitenav .push{margin-left:auto;background:var(--accent);color:#FFFFFF;font-weight:600}
+.sitenav .push:hover{background:var(--accent-2);color:#FFFFFF}
+
+@media(max-width:720px){
+  .sitenav{position:static;padding:6px 12px}
+  .sitenav a{padding:13px 14px}
+  .sitenav .push{margin-left:0}
+}
+
+/* ── motion ─────────────────────────────────────────────────────────────── */
+
+/* Movement here is decoration; colour and border still report every state,
+   so removing the movement removes nothing a reader needs. */
+@media(prefers-reduced-motion:reduce){
+  a.card:hover,.btn:active:not([disabled]),.startat a:active{transform:none!important}
+}
+
+/* landing cards and page-to-page navigation */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:10px;margin:8px 0 30px}
+.cards .card{display:flex;align-items:baseline;gap:11px;padding:14px 16px;border:1px solid var(--rule);
+  border-radius:var(--r-lg);background:var(--surface);text-decoration:none;transition:border-color .14s,background .14s}
+.cards .card:hover{border-color:var(--rule-strong);background:var(--ground)}
+.cards .card .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none}
+.cards .card .l{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.allnote{font-size:14px;color:var(--muted);padding-top:20px;border-top:1px solid var(--rule)}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:44px 0 8px;
+  padding-top:22px;border-top:1px solid var(--rule)}
+.pnav .pn{font-size:14px;color:var(--muted);text-decoration:none;padding:9px 14px;
+  border:1px solid var(--rule);border-radius:var(--r-pill);transition:border-color .14s,color .14s}
+.pnav .pn:hover{color:var(--ink);border-color:var(--rule-strong)}
+.pnav .pn.n{margin-left:auto}
+nav.toc a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+nav.toc a.home{font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--rule);border-radius:0}
+
+/* Page styles for the documentation site. Tokens, controls, containers, marks
+   and the site navigation come from theme.css, which is inlined above this
+   block at build time — never restate them here. */
+body{font-size:17.5px;line-height:1.7}
+/* the bar's brand lines up with the contents heading below it */
+nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
+.shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
+@media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
+nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
+nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
+figure.dg{margin:34px 0;padding:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+figure.dg svg{display:block;width:100%;height:auto;max-width:100%}
+figure.dg figcaption{font-size:13.5px;line-height:1.6;color:var(--muted);padding:13px 20px 15px;border-top:1px solid var(--rule);background:var(--ground)}
+figure.dg figcaption strong{color:var(--ink-2);font-weight:600}
+p.missing{color:var(--crit);font-family:var(--mono);font-size:13px}
+nav.toc a{display:block;font-size:14.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:var(--r-pill);transition:background .18s,color .18s}
+nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a[aria-current="true"]{color:var(--accent);background:var(--spot-wash);font-weight:600;box-shadow:inset 0 0 0 1px var(--spot-edge)}
+nav.toc a[aria-current="true"] .n{color:var(--accent)}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+aside.rail{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
+aside.rail .railt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+aside.rail .railt.s{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+aside.rail a{display:block;font-size:13.5px;line-height:1.45;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .18s,color .18s}
+aside.rail a:hover{color:var(--ink);background:var(--sunk)}
+aside.rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+aside.rail .railsec{display:none}
+aside.rail .railsec.on{display:block}
+aside.rail .empty{font-size:13px;color:var(--faint);margin:0;padding:0 10px}
+.relmob{display:none}
+header.mast{border-bottom:1px solid var(--rule);padding-bottom:38px;margin-bottom:10px}
+header.mast h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,7vw,84px);line-height:1.02;letter-spacing:-.038em;margin:0 0 18px;text-wrap:balance}
+header.mast p{color:var(--muted);max-width:58ch;margin:0 0 28px;font-size:23px;line-height:1.45;letter-spacing:-.015em}
+header.mast .meta{display:flex;flex-wrap:wrap;gap:8px}
+header.mast .meta span{font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-pill);padding:6px 15px}
+header.mast .meta b{color:var(--ink);font-weight:600;margin-right:6px}
+header.mast .meta span:first-child{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+header.mast .meta span:first-child b{color:var(--spot-ink)}
+article{min-width:0}
+@media(min-width:1181px){article h3[id$="-related-documents"],article h3[id$="-related-documents"]+ul,article h3[id$="-related"],article h3[id$="-related"]+ul{display:none}}
+.hero{border-bottom:1px solid var(--rule);padding-bottom:48px;margin-bottom:8px}
+.hero .q{font-size:clamp(24px,2.8vw,34px);line-height:1.2;font-weight:700;letter-spacing:-.032em;margin:0 0 30px;max-width:22ch;text-wrap:balance}
+.hero .q em{font-style:normal;color:var(--muted);display:block;font-size:17.5px;font-weight:400;line-height:1.6;margin-top:20px;letter-spacing:-.005em;max-width:62ch}
+.wxy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 30px}
+.wxy>div{padding:24px 26px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+@media(max-width:640px){.wxy{grid-template-columns:1fr}}
+.wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
+.wxy strong,.wxy b{color:var(--ink)}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
+.author .b{flex:1;min-width:240px}
+.author .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.022em;margin:0 0 2px}
+.author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
+.author .bio{font-size:14.5px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+.author .lk{display:flex;gap:8px;flex-wrap:wrap}
+.author .lk a{font-size:13.5px;font-weight:500;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:7px 16px;color:var(--ink);transition:background .18s,border-color .18s}
+.author .lk a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.startat a{font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:9px 20px;color:var(--ink);background:var(--surface);transition:background .18s,border-color .18s,transform .12s}
+.startat a:hover{background:var(--sunk);border-color:var(--rule-strong)}
+.startat a:active{transform:translateY(1px)}
+.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
+.startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
+section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
+section.doc:first-of-type{margin-top:44px}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
+h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
+h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:86px}
+h5{font-weight:700;font-size:12.5px;margin:26px 0 8px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;scroll-margin-top:86px}
+p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
+article{--measure:74ch}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh-card)}
+pre code{background:none;padding:0;font-size:inherit}
+ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
+li{margin-bottom:9px}
+li::marker{color:var(--faint)}
+ul.task{list-style:none;padding-left:2px}
+ul.task .box{font-family:var(--mono);color:var(--ink);margin-right:9px}
+blockquote{border:1px solid var(--rule);background:var(--surface);padding:18px 22px;margin:0 0 22px;border-radius:var(--r-md);max-width:74ch;box-shadow:var(--sh-card)}
+blockquote p{margin:0 0 14px;max-width:none}
+blockquote p:last-child{margin:0}
+.tscroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:520px}
+th{color:var(--faint);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:14px 16px 11px;border-bottom:1px solid var(--rule);vertical-align:bottom}
+td{padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:600}
+details.faq{border:1px solid var(--rule);border-radius:var(--r-md);background:var(--surface);margin:0 0 8px;box-shadow:var(--sh-card)}
+details.faq>summary{cursor:pointer;list-style:none;padding:15px 52px 15px 20px;font-family:var(--display);font-size:16.5px;font-weight:600;letter-spacing:-.016em;position:relative;border-radius:var(--r-md)}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq>summary::after{content:"";position:absolute;right:20px;top:50%;width:9px;height:9px;margin-top:-6px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .18s}
+details.faq[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+details.faq>summary:hover{background:var(--sunk)}
+details.faq>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+details.faq[open]>summary{border-bottom:1px solid var(--rule);border-radius:var(--r-md) var(--r-md) 0 0}
+details.faq p{margin:0;padding:16px 20px 18px;font-size:16px;color:var(--ink-2);max-width:74ch}
+@media(prefers-reduced-motion:reduce){details.faq>summary::after{transition:none}}
+hr.soft{border:0;border-top:1px solid var(--rule);margin:32px 0}
+footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:14px;color:var(--faint)}
+footer p{max-width:76ch;margin:0 0 8px}
+@media(prefers-reduced-motion:reduce){.startat a:active{transform:none}}
+</style>
+<nav class="sitenav" aria-label="Documentation">
+<a class="home" href="#top">uRWA Factory</a>
+<span class="div"></span>
+<a href="00-why-this-exists.html">Start</a>
+<a href="04-storage.html">Mechanics</a>
+<a href="15-standards.html">Standards</a>
+<a href="21-interface-specification.html">Interfaces</a>
+<a href="27-model-inventory.html">Models</a>
+<a href="32-faq.html">FAQ</a>
+<a href="author.html">Author</a>
+<span class="div"></span>
+<a href="../prototypes/index.html">Prototypes</a>
+<a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
+</nav>
+<div class="shell" id="top">
+<nav class="toc" aria-label="Contents">
+<p class="t">Contents</p>
+<a class="home" href="../index.html"><span class="n">↑</span>All documentation</a>
+<a href="00-why-this-exists.html"><span class="n">00</span>Why this exists</a>
+<a href="01-overview.html"><span class="n">01</span>Overview</a>
+<a href="02-architecture.html"><span class="n">02</span>Architecture</a>
+<a href="03-contracts.html"><span class="n">03</span>Contracts</a>
+<a href="04-storage.html"><span class="n">04</span>Storage</a>
+<a href="05-roles.html"><span class="n">05</span>Roles and permissions</a>
+<a href="06-states.html"><span class="n">06</span>States</a>
+<a href="07-functions.html"><span class="n">07</span>Function reference</a>
+<a href="08-compliance-pipeline.html"><span class="n">08</span>Compliance pipeline</a>
+<a href="09-identity-did.html"><span class="n">09</span>Identity and DID</a>
+<a href="10-rules.html"><span class="n">10</span>Rules</a>
+<a href="11-passport.html"><span class="n">11</span>Asset Passport</a>
+<a href="12-offering.html"><span class="n">12</span>Offerings</a>
+<a href="13-treasury.html"><span class="n">13</span>Treasury</a>
+<a href="14-events-errors.html"><span class="n">14</span>Events and errors</a>
+<a href="15-standards.html"><span class="n">15</span>Standards</a>
+<a href="16-deployment.html"><span class="n">16</span>Deployment</a>
+<a href="17-security.html"><span class="n">17</span>Security</a>
+<a href="18-glossary.html"><span class="n">18</span>Glossary</a>
+<a href="19-open-boundary.html"><span class="n">19</span>The open boundary</a>
+<a href="20-development-plan.html"><span class="n">20</span>Development plan</a>
+<a href="21-interface-specification.html"><span class="n">21</span>Interface specification</a>
+<a href="22-agents-and-settlement.html"><span class="n">22</span>Agents and settlement</a>
+<a href="23-testing-plan.html"><span class="n">23</span>Testing plan</a>
+<a href="24-work-registry.html"><span class="n">24</span>Work registry</a>
+<a href="25-design-system.html"><span class="n">25</span>Design system</a>
+<a href="26-handoff.html"><span class="n">26</span>Handoff: specification to build</a>
+<a href="27-model-inventory.html"><span class="n">27</span>Model inventory and artifact register</a>
+<a href="28-product-model.html" aria-current="page"><span class="n">28</span>Product model</a>
+<a href="29-data-model.html"><span class="n">29</span>Data model</a>
+<a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
+<a href="31-verification.html"><span class="n">31</span>Verification framework</a>
+<a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
+<a href="author.html"><span class="n">—</span>The author</a>
+<p class="t s">Surfaces</p>
+<a href="../prototypes/"><span class="n">—</span>All prototypes</a>
+<a href="../prototypes/deploy-console.html"><span class="n">—</span>Deploy console</a>
+<a href="../prototypes/token-console.html"><span class="n">—</span>Token console</a>
+<a href="../prototypes/verifier.html"><span class="n">—</span>Public verifier</a>
+<a href="../prototypes/investor.html"><span class="n">—</span>Investor page</a>
+<p class="t s">Repository</p>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory"><span class="n">—</span>Source on GitHub</a>
+<a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
+</nav>
+<article>
+<header class="mast">
+<h1>uRWA Factory</h1>
+<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
+<div class="meta">
+<span><b>Status</b> Specification · no code yet</span>
+<span><b>Licence</b> MIT</span>
+<span><b>Chain</b> Base</span>
+<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
+</div>
+</header>
+
+<div class="hero">
+
+<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
+<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
+
+<div class="wxy">
+<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
+<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
+<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
+<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
+</div>
+
+<div class="author">
+<div class="ini">GD</div>
+<div class="b">
+<p class="nm">Gene Deyev</p>
+<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
+<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
+<div class="lk">
+<a href="https://stobox.io/team/gene-deyev">Profile</a>
+<a href="https://github.com/genedeyev">GitHub</a>
+<a href="mailto:gd@stoboxplatform.com">Email</a>
+<a href="https://stobox.io">Stobox</a>
+</div>
+</div>
+</div>
+
+<div class="startat">
+<a class="k" href="00-why-this-exists.html">Why this exists</a>
+<a href="02-architecture.html">Architecture</a>
+<a href="07-functions.html">Function reference</a>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
+</div>
+
+</div>
+
+<section class="doc" id="doc-28"><h2 id="sec-28">28 — Product model</h2>
+<p>Who uses this, what they are trying to get done, what moves as a result, and where each job is carried out. Every actor must have at least one job; every job must reach a surface. The verifier checks both.</p>
+<h3 id="28-actors">Actors</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">ID</th><th style="text-align:left">Actor</th><th style="text-align:left">Is</th><th style="text-align:left">Holds</th><th style="text-align:left">Trusts us for</th></tr></thead><tbody><tr><td style="text-align:left">P-01</td><td style="text-align:left"><strong>Issuer</strong></td><td style="text-align:left">The company tokenizing an asset</td><td style="text-align:left"><code>ISSUER_ADMIN</code>, <code>UPGRADE_ADMIN</code></td><td style="text-align:left">That configured rules are actually enforced</td></tr><tr><td style="text-align:left">P-02</td><td style="text-align:left"><strong>Supply operator</strong></td><td style="text-align:left">Treasury or finance function</td><td style="text-align:left"><code>SUPPLY_OPERATOR</code></td><td style="text-align:left">That issuance cannot exceed the cap</td></tr><tr><td style="text-align:left">P-03</td><td style="text-align:left"><strong>Compliance officer</strong></td><td style="text-align:left">Legal or compliance</td><td style="text-align:left"><code>COMPLIANCE_OFFICER</code></td><td style="text-align:left">That freeze and seizure work, and are logged</td></tr><tr><td style="text-align:left">P-04</td><td style="text-align:left"><strong>Upgrade admin</strong></td><td style="text-align:left">Board or technical trustee</td><td style="text-align:left"><code>UPGRADE_ADMIN</code></td><td style="text-align:left">That upgrades cannot touch balances</td></tr><tr><td style="text-align:left">P-05</td><td style="text-align:left"><strong>Investor</strong></td><td style="text-align:left">Holder or prospective holder</td><td style="text-align:left">Tokens</td><td style="text-align:left">That eligibility is knowable before buying</td></tr><tr><td style="text-align:left">P-06</td><td style="text-align:left"><strong>Integrator</strong></td><td style="text-align:left">Exchange, custodian, lender</td><td style="text-align:left">Nothing</td><td style="text-align:left">One interface across every conformant token</td></tr><tr><td style="text-align:left">P-07</td><td style="text-align:left"><strong>Attestor</strong></td><td style="text-align:left">Auditor, valuer, oracle</td><td style="text-align:left"><code>ATTESTOR</code></td><td style="text-align:left">That their signature is theirs and revocable</td></tr><tr><td style="text-align:left">P-08</td><td style="text-align:left"><strong>Regulator</strong></td><td style="text-align:left">Supervisory authority</td><td style="text-align:left">Nothing</td><td style="text-align:left">A reconstructible register and audit trail</td></tr><tr><td style="text-align:left">P-09</td><td style="text-align:left"><strong>Agent</strong></td><td style="text-align:left">Automated operator</td><td style="text-align:left">A bounded mandate</td><td style="text-align:left">That it cannot exceed its mandate</td></tr><tr><td style="text-align:left">P-10</td><td style="text-align:left"><strong>Forker</strong></td><td style="text-align:left">Anyone deploying their own instance</td><td style="text-align:left">Their own everything</td><td style="text-align:left">That nothing depends on Stobox</td></tr></tbody></table></div>
+<h3 id="28-jobs">Jobs</h3>
+<p>Each job names its actor, the surface where it happens, the contract path it takes, and what completion looks like.</p>
+<h4 id="28-issuance">Issuance</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">ID</th><th style="text-align:left">Job</th><th style="text-align:left">Actor</th><th style="text-align:left">Surface</th><th style="text-align:left">Path</th><th style="text-align:left">Done when</th></tr></thead><tbody><tr><td style="text-align:left">J-01</td><td style="text-align:left">Deploy a compliant token</td><td style="text-align:left">P-01</td><td style="text-align:left">Deploy console</td><td style="text-align:left"><code>factory.createToken</code></td><td style="text-align:left">Token and treasury exist, roles granted, registered</td></tr><tr><td style="text-align:left">J-02</td><td style="text-align:left">Choose a regulatory regime</td><td style="text-align:left">P-01</td><td style="text-align:left">Deploy console</td><td style="text-align:left">preset → <code>PolicySet</code></td><td style="text-align:left">Rules readable by anyone</td></tr><tr><td style="text-align:left">J-03</td><td style="text-align:left">Choose an identity source</td><td style="text-align:left">P-01</td><td style="text-align:left">Deploy console</td><td style="text-align:left"><code>setIdentityRegistry</code></td><td style="text-align:left">Adapter installed, tier recorded</td></tr><tr><td style="text-align:left">J-04</td><td style="text-align:left">Issue supply</td><td style="text-align:left">P-02</td><td style="text-align:left">Token console</td><td style="text-align:left"><code>issue</code></td><td style="text-align:left">Treasury holds it; <code>totalIssued</code> up</td></tr><tr><td style="text-align:left">J-05</td><td style="text-align:left">Distribute to a holder</td><td style="text-align:left">P-02</td><td style="text-align:left">Token console</td><td style="text-align:left"><code>distributeFromTreasury</code></td><td style="text-align:left">Holder credited, lockup applied if set</td></tr><tr><td style="text-align:left">J-06</td><td style="text-align:left">Redeem supply</td><td style="text-align:left">P-02</td><td style="text-align:left">Token console</td><td style="text-align:left"><code>redeem</code></td><td style="text-align:left">Supply down, <code>totalIssued</code> unchanged</td></tr></tbody></table></div>
+<h4 id="28-compliance">Compliance</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">ID</th><th style="text-align:left">Job</th><th style="text-align:left">Actor</th><th style="text-align:left">Surface</th><th style="text-align:left">Path</th><th style="text-align:left">Done when</th></tr></thead><tbody><tr><td style="text-align:left">J-07</td><td style="text-align:left">Change the rule set without a migration</td><td style="text-align:left">P-04</td><td style="text-align:left">Token console</td><td style="text-align:left"><code>setPolicySet</code></td><td style="text-align:left">New rules live; no balance moved</td></tr><tr><td style="text-align:left">J-08</td><td style="text-align:left">Trust a system address</td><td style="text-align:left">P-01</td><td style="text-align:left">Token console</td><td style="text-align:left"><code>trust</code></td><td style="text-align:left">Address listed with its reason</td></tr><tr><td style="text-align:left">J-09</td><td style="text-align:left">Freeze part of a balance</td><td style="text-align:left">P-03</td><td style="text-align:left">Compliance console</td><td style="text-align:left"><code>setFrozenTokens</code></td><td style="text-align:left"><code>Frozen</code> emitted with composed total</td></tr><tr><td style="text-align:left">J-10</td><td style="text-align:left">Apply a lockup</td><td style="text-align:left">P-03</td><td style="text-align:left">Compliance console</td><td style="text-align:left"><code>addLockup</code></td><td style="text-align:left">Visible in the holder&#x27;s position with its date</td></tr><tr><td style="text-align:left">J-11</td><td style="text-align:left">Halt all transfers</td><td style="text-align:left">P-03</td><td style="text-align:left">Compliance console</td><td style="text-align:left"><code>pause</code></td><td style="text-align:left">Every transfer reverts, trusted included</td></tr><tr><td style="text-align:left">J-12</td><td style="text-align:left">Seize under legal compulsion</td><td style="text-align:left">P-03</td><td style="text-align:left">Compliance console</td><td style="text-align:left"><code>forcedTransfer</code></td><td style="text-align:left">Moved, reason on chain, <code>canReceive</code> enforced</td></tr><tr><td style="text-align:left">J-13</td><td style="text-align:left">See why a transfer was refused</td><td style="text-align:left">P-01, P-03</td><td style="text-align:left">Any surface</td><td style="text-align:left"><code>whyBlocked</code></td><td style="text-align:left">Stage, rule and reason returned</td></tr></tbody></table></div>
+<h4 id="28-investment">Investment</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">ID</th><th style="text-align:left">Job</th><th style="text-align:left">Actor</th><th style="text-align:left">Surface</th><th style="text-align:left">Path</th><th style="text-align:left">Done when</th></tr></thead><tbody><tr><td style="text-align:left">J-14</td><td style="text-align:left">Find out if I may hold this</td><td style="text-align:left">P-05</td><td style="text-align:left">Investor page, verifier</td><td style="text-align:left"><code>canReceive</code>, claims</td><td style="text-align:left">Answered before any signature</td></tr><tr><td style="text-align:left">J-15</td><td style="text-align:left">Buy in an offering</td><td style="text-align:left">P-05</td><td style="text-align:left">Investor page</td><td style="text-align:left"><code>purchase</code></td><td style="text-align:left">Tokens received, payment locked to soft cap</td></tr><tr><td style="text-align:left">J-16</td><td style="text-align:left">See what I can actually move</td><td style="text-align:left">P-05</td><td style="text-align:left">Investor page</td><td style="text-align:left"><code>unfrozenBalanceOf</code>, <code>lockupsOf</code></td><td style="text-align:left">Split shown with unlock dates</td></tr><tr><td style="text-align:left">J-17</td><td style="text-align:left">Transfer to someone</td><td style="text-align:left">P-05</td><td style="text-align:left">Investor page</td><td style="text-align:left"><code>canTransfer</code> → <code>transfer</code></td><td style="text-align:left">Checked free first; no signature if it would fail</td></tr><tr><td style="text-align:left">J-18</td><td style="text-align:left">Get my money back</td><td style="text-align:left">P-05</td><td style="text-align:left">Investor page</td><td style="text-align:left"><code>claimRefund</code></td><td style="text-align:left">Refunded without anyone&#x27;s approval</td></tr></tbody></table></div>
+<h4 id="28-verification">Verification</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">ID</th><th style="text-align:left">Job</th><th style="text-align:left">Actor</th><th style="text-align:left">Surface</th><th style="text-align:left">Path</th><th style="text-align:left">Done when</th></tr></thead><tbody><tr><td style="text-align:left">J-19</td><td style="text-align:left">Confirm a token is what it claims</td><td style="text-align:left">P-06, P-08</td><td style="text-align:left">Public verifier</td><td style="text-align:left"><code>supportsInterface</code>, <code>isFactoryIssued</code></td><td style="text-align:left">Answered with no account</td></tr><tr><td style="text-align:left">J-20</td><td style="text-align:left">Predict a transfer&#x27;s outcome</td><td style="text-align:left">P-06, P-09</td><td style="text-align:left">Public verifier, SDK</td><td style="text-align:left"><code>canTransfer</code>, <code>whyBlocked</code></td><td style="text-align:left">Free, deterministic, never reverts</td></tr><tr><td style="text-align:left">J-21</td><td style="text-align:left">Read the live rule set</td><td style="text-align:left">P-06, P-05</td><td style="text-align:left">Public verifier</td><td style="text-align:left"><code>groups</code>, <code>rulesOf</code></td><td style="text-align:left">Plain-language list</td></tr><tr><td style="text-align:left">J-22</td><td style="text-align:left">Verify an asset claim</td><td style="text-align:left">P-06, P-08</td><td style="text-align:left">Passport surface</td><td style="text-align:left"><code>verify</code>, <code>verifyAbsence</code></td><td style="text-align:left">Proven against the anchored root</td></tr><tr><td style="text-align:left">J-23</td><td style="text-align:left">Reconstruct the register</td><td style="text-align:left">P-08</td><td style="text-align:left">Logs</td><td style="text-align:left">Events only</td><td style="text-align:left">No indexer, no API, no cooperation needed</td></tr></tbody></table></div>
+<h4 id="28-attestation-and-automation">Attestation and automation</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">ID</th><th style="text-align:left">Job</th><th style="text-align:left">Actor</th><th style="text-align:left">Surface</th><th style="text-align:left">Path</th><th style="text-align:left">Done when</th></tr></thead><tbody><tr><td style="text-align:left">J-24</td><td style="text-align:left">Sign a fact about an asset</td><td style="text-align:left">P-07</td><td style="text-align:left">Compass</td><td style="text-align:left"><code>recordAttestation</code></td><td style="text-align:left">Metadata public, value not</td></tr><tr><td style="text-align:left">J-25</td><td style="text-align:left">Revoke an attestation</td><td style="text-align:left">P-07</td><td style="text-align:left">Compass</td><td style="text-align:left">revocation tree</td><td style="text-align:left">No longer provable</td></tr><tr><td style="text-align:left">J-26</td><td style="text-align:left">Automate operations within limits</td><td style="text-align:left">P-09</td><td style="text-align:left">SDK</td><td style="text-align:left"><code>AgentAuthority.check</code></td><td style="text-align:left">Action inside mandate or reverts</td></tr><tr><td style="text-align:left">J-27</td><td style="text-align:left">Settle a trade atomically</td><td style="text-align:left">P-09, P-06</td><td style="text-align:left">SDK</td><td style="text-align:left"><code>AtomicDvP.settle</code></td><td style="text-align:left">Both legs or neither</td></tr><tr><td style="text-align:left">J-28</td><td style="text-align:left">Kill an agent immediately</td><td style="text-align:left">P-01</td><td style="text-align:left">Token console</td><td style="text-align:left"><code>revoke</code></td><td style="text-align:left">Next action reverts, no timelock</td></tr></tbody></table></div>
+<h4 id="28-forking">Forking</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">ID</th><th style="text-align:left">Job</th><th style="text-align:left">Actor</th><th style="text-align:left">Surface</th><th style="text-align:left">Path</th><th style="text-align:left">Done when</th></tr></thead><tbody><tr><td style="text-align:left">J-29</td><td style="text-align:left">Run the whole stack independently</td><td style="text-align:left">P-10</td><td style="text-align:left">Repository</td><td style="text-align:left">Allowlist adapter, zero fee</td><td style="text-align:left">Clean-chain CI job passes</td></tr></tbody></table></div>
+<p><strong>29 jobs across 10 actors.</strong> Every actor appears in at least one job. Every job names a surface and a contract path.</p>
+<h3 id="28-value-flows">Value flows</h3>
+<p>What actually moves, and where it rests.</p>
+<pre>  Investor ──payment──▶ Treasury ──held until soft cap──▶ Issuer
+                           │                                 ▲
+                           │ security tokens                 │ settle
+                           ▼                                 │
+                       Investor ◀───────── refund ───────────┘
+                                          (soft cap missed)
+
+  Issuer ──issue──▶ Treasury ──distribute──▶ Investor ──transfer──▶ Investor
+                                                  │
+                                                  └──atomic DvP──▶ Counterparty
+                                                     both legs or neither</pre>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Flow</th><th style="text-align:left">Moves</th><th style="text-align:left">Guard</th></tr></thead><tbody><tr><td style="text-align:left">Issuance</td><td style="text-align:left">Nothing external</td><td style="text-align:left">Cap, <code>totalIssued</code> monotonic</td></tr><tr><td style="text-align:left">Distribution</td><td style="text-align:left">Security token</td><td style="text-align:left">Full compliance pipeline</td></tr><tr><td style="text-align:left">Primary purchase</td><td style="text-align:left">Payment in, token out</td><td style="text-align:left">Offering rules, then token pipeline</td></tr><tr><td style="text-align:left">Refund</td><td style="text-align:left">Payment back, token back</td><td style="text-align:left">Idempotent; both paths</td></tr><tr><td style="text-align:left">Secondary transfer</td><td style="text-align:left">Security token</td><td style="text-align:left">Full pipeline</td></tr><tr><td style="text-align:left">Atomic settlement</td><td style="text-align:left">Both legs, one transaction</td><td style="text-align:left">Pipeline inside the settlement</td></tr><tr><td style="text-align:left">Seizure</td><td style="text-align:left">Security token</td><td style="text-align:left">Reason mandatory, <code>canReceive</code> enforced</td></tr></tbody></table></div>
+<p><strong>No value flow bypasses the compliance pipeline except the two forced operations</strong>, which are separately access-controlled and separately evented.</p>
+<h3 id="28-surfaces">Surfaces</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Surface</th><th style="text-align:left">Actors</th><th style="text-align:left">Auth</th><th style="text-align:left">Public</th><th style="text-align:left">Jobs</th></tr></thead><tbody><tr><td style="text-align:left">Public verifier</td><td style="text-align:left">P-05, P-06, P-08</td><td style="text-align:left">None</td><td style="text-align:left">✅</td><td style="text-align:left">J-19…J-23</td></tr><tr><td style="text-align:left">Investor page</td><td style="text-align:left">P-05</td><td style="text-align:left">Wallet</td><td style="text-align:left">✅ per token</td><td style="text-align:left">J-14…J-18</td></tr><tr><td style="text-align:left">Deploy console</td><td style="text-align:left">P-01</td><td style="text-align:left">Wallet + role</td><td style="text-align:left">❌</td><td style="text-align:left">J-01…J-03</td></tr><tr><td style="text-align:left">Token console</td><td style="text-align:left">P-01, P-02, P-04</td><td style="text-align:left">Wallet + role</td><td style="text-align:left">❌</td><td style="text-align:left">J-04…J-08, J-28</td></tr><tr><td style="text-align:left">Compliance console</td><td style="text-align:left">P-03</td><td style="text-align:left">Wallet + role</td><td style="text-align:left">❌</td><td style="text-align:left">J-09…J-13</td></tr><tr><td style="text-align:left">SDK</td><td style="text-align:left">P-06, P-09</td><td style="text-align:left">None to read</td><td style="text-align:left">✅</td><td style="text-align:left">J-20, J-26, J-27</td></tr><tr><td style="text-align:left">Repository</td><td style="text-align:left">P-10</td><td style="text-align:left">None</td><td style="text-align:left">✅</td><td style="text-align:left">J-29</td></tr></tbody></table></div>
+<h3 id="28-what-the-product-is-not">What the product is not</h3>
+<p>Stated because a product model that only lists capabilities implies the rest.</p>
+<ul>
+<li>Not a custodian. Contracts move tokens; the underlying asset sits where its legal structure puts it.</li>
+<li>Not a market. Compliant transferability is a precondition for one, not one.</li>
+<li>Not a determination that any asset is or is not a security.</li>
+<li>Not a guarantee of compliance. It enforces the rules it was configured with.</li>
+<li>Not a KYC provider. It reads claims; someone else issues them.</li>
+</ul>
+<h3 id="28-related">Related</h3>
+<ul>
+<li><a href="21-interface-specification.html">21 — Interface specification</a> — the surfaces in detail</li>
+<li><a href="29-data-model.html">29 — Data model</a> — what the jobs read and write</li>
+<li><a href="30-interaction-model.html">30 — Interaction model</a> — the call paths named above</li>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="27-model-inventory.html">← Model inventory and artifact register</a><a class="pn n" href="29-data-model.html">Data model →</a></nav></section>
+<footer>
+<p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
+Edit the Markdown, not this file.</p>
+<p>Stobox is a software and infrastructure provider. This documentation describes product
+architecture and is not legal, financial or investment advice.</p>
+</footer>
+</article>
+<aside class="rail" aria-label="Section reference">
+<div class="railsec" data-sec="sec-28"><p class="railt">On this page</p><a href="#28-actors">Actors</a><a href="#28-jobs">Jobs</a><a href="#28-value-flows">Value flows</a><a href="#28-surfaces">Surfaces</a><a href="#28-what-the-product-is-not">What the product is not</a><p class="railt s">Related</p><a href="21-interface-specification.html">21 — Interface specification</a><a href="29-data-model.html">29 — Data model</a><a href="30-interaction-model.html">30 — Interaction model</a></div>
+<div class="railfix">
+<p class="railt s">Reference</p>
+<a href="../prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Source on GitHub</a>
+<a href="https://eips.ethereum.org/EIPS/eip-7943">ERC-7943 on eips.ethereum.org</a>
+<a href="../LICENSE">Licence — MIT</a>
+</div>
+</aside>
+</div>
+<script>
+(() => {
+  const nav = document.querySelector("nav.toc");
+  const secs = [...document.querySelectorAll("section.doc")];
+  if (!nav || !secs.length) return;
+
+  const links = new Map();
+  document.querySelectorAll('nav.toc a[href^="#sec-"]').forEach(a =>
+    links.set(a.getAttribute("href").slice(1), a));
+
+  let current = null;
+  const mark = id => {
+    if (id === current) return;
+    const prev = links.get(current);
+    if (prev) prev.removeAttribute("aria-current");
+    document.querySelectorAll("aside.rail .railsec.on").forEach(b => b.classList.remove("on"));
+    const block = document.querySelector('aside.rail .railsec[data-sec="' + id + '"]');
+    if (block) block.classList.add("on");
+    const next = links.get(id);
+    if (next) {
+      next.setAttribute("aria-current", "true");
+      // Keep the mark inside the contents list without scrolling the page.
+      const r = next.getBoundingClientRect(), n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+    }
+    current = id;
+  };
+
+  // The section whose top has passed a line a quarter down the viewport is the
+  // one being read. Plain geometry: no observer, no dependency, and it settles
+  // correctly on load, on resize, and after a jump to an anchor.
+  const pick = () => {
+    const line = window.innerHeight * 0.25;
+    let id = secs[0].id;
+    for (const sec of secs) {
+      if (sec.getBoundingClientRect().top > line) break;
+      id = sec.id;
+    }
+    mark("sec-" + id.replace("doc-", ""));
+  };
+
+  const frame = window.requestAnimationFrame || (fn => setTimeout(fn, 16));
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    frame(() => { queued = false; pick(); });
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  addEventListener("hashchange", onScroll);
+
+  // A click moves the mark at once, before the scroll settles.
+  links.forEach((a, id) => a.addEventListener("click", () => mark(id)));
+
+  pick();
+})();
+</script>
+<!-- source-digest: 8d55bc03834c551232f3d706aa41aa2bc5b855b967fcfe67dcb4b89013a94c13 -->

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build urwa-documentation.html from README.md + docs/*.md.
+"""Build index.html — the whole documentation as one page — from README.md + docs/*.md.
 
 No dependencies. A deliberately small Markdown subset is supported — exactly the
 constructs used in this documentation set: headings, tables, fenced code, lists,
@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 DOCS = ROOT / "docs"
-OUT = ROOT / "urwa-documentation.html"
+OUT = ROOT / "index.html"
 THEME = ROOT / "theme.css"
 
 
@@ -278,14 +278,33 @@ def render(md, sec):
 # ── assemble ────────────────────────────────────────────────────────────────
 
 STYLE = """
+/* landing cards and page-to-page navigation */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:10px;margin:8px 0 30px}
+.cards .card{display:flex;align-items:baseline;gap:11px;padding:14px 16px;border:1px solid var(--rule);
+  border-radius:var(--r-lg);background:var(--surface);text-decoration:none;transition:border-color .14s,background .14s}
+.cards .card:hover{border-color:var(--rule-strong);background:var(--ground)}
+.cards .card .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none}
+.cards .card .l{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.allnote{font-size:14px;color:var(--muted);padding-top:20px;border-top:1px solid var(--rule)}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:44px 0 8px;
+  padding-top:22px;border-top:1px solid var(--rule)}
+.pnav .pn{font-size:14px;color:var(--muted);text-decoration:none;padding:9px 14px;
+  border:1px solid var(--rule);border-radius:var(--r-pill);transition:border-color .14s,color .14s}
+.pnav .pn:hover{color:var(--ink);border-color:var(--rule-strong)}
+.pnav .pn.n{margin-left:auto}
+nav.toc a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+nav.toc a.home{font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--rule);border-radius:0}
+
 /* Page styles for the documentation site. Tokens, controls, containers, marks
    and the site navigation come from theme.css, which is inlined above this
    block at build time — never restate them here. */
 body{font-size:17.5px;line-height:1.7}
-.shell{max-width:1520px;margin:0 auto;padding:clamp(30px,4vw,72px) clamp(18px,3vw,40px) 110px;display:grid;grid-template-columns:236px minmax(0,1fr) 248px;gap:clamp(24px,3vw,52px);align-items:start}
+/* the bar's brand lines up with the contents heading below it */
+nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
+.shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
 @media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
 @media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
-nav.toc{position:sticky;top:28px;max-height:calc(100vh - 56px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
+nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
 nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
 nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
 figure.dg{margin:34px 0;padding:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
@@ -299,7 +318,7 @@ nav.toc a[aria-current="true"]{color:var(--accent);background:var(--spot-wash);f
 nav.toc a[aria-current="true"] .n{color:var(--accent)}
 nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
 nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
-aside.rail{position:sticky;top:28px;max-height:calc(100vh - 56px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
+aside.rail{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
 aside.rail .railt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
 aside.rail .railt.s{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
 aside.rail a{display:block;font-size:13.5px;line-height:1.45;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .18s,color .18s}
@@ -343,13 +362,14 @@ article{min-width:0}
 .startat a:active{transform:translateY(1px)}
 .startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
 .startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
-section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:24px}
+section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
 section.doc:first-of-type{margin-top:44px}
-h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:24px}
-h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:24px}
-h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:24px}
-h5{font-weight:700;font-size:12.5px;margin:26px 0 8px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;scroll-margin-top:24px}
-p{margin:0 0 17px;max-width:72ch;text-wrap:pretty}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
+h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
+h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:86px}
+h5{font-weight:700;font-size:12.5px;margin:26px 0 8px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;scroll-margin-top:86px}
+p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
+article{--measure:74ch}
 a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
 a:hover{text-decoration-color:var(--accent)}
 a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
@@ -510,8 +530,31 @@ def title_of(md, fallback):
     return m.group(1) if m else fallback
 
 
+PAGES = ROOT / "pages"
+ALL = ROOT / "all.html"
+
+
+def page_file(sec, rel):
+    """The file name a document gets as its own page."""
+    if sec == "readme":
+        return "index.html"
+    if sec == "author":
+        return "author.html"
+    return Path(rel).stem + ".html"
+
+
+def to_pages(body, files, prefix=""):
+    """Rewrite combined-mode section anchors into links between pages."""
+    def sub(m):
+        target = files.get(m.group(1))
+        return f'href="{prefix}{target}"' if target else m.group(0)
+
+    return re.sub(r'href="#sec-([\w-]+)"', sub, body)
+
+
 def main():
     sections, toc, rails = [], [], []
+    docs, files = {}, {}
     for rel in ORDER:
         path = ROOT / rel
         if not path.exists():
@@ -535,27 +578,45 @@ def main():
         if sec == "32":
             body = accordion(body)
         sections.append(f'<section class="doc" id="doc-{sec}">{body}</section>')
-        rails.append(rail_block(sec, heads, related(md)))
-        print(f"  {rel}  →  #sec-{sec}")
+        rail = rail_block(sec, heads, related(md))
+        rails.append(rail)
+        files[sec] = page_file(sec, rel)
+        docs[sec] = {"label": label, "title": raw, "body": body, "rail": rail}
+        print(f"  {rel}  →  {files[sec]}")
 
     nav = "\n".join(
         f'<a href="#sec-{s}"><span class="n">{s if s.isdigit() else "—"}</span>{html.escape(t)}</a>'
         for s, t in toc
     )
 
-    doc = f"""<!DOCTYPE html>
+    def shell(BODY, NAV, RAIL, TITLE):
+        return f"""<!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>uRWA Factory — Complete Documentation</title>
+<title>{TITLE}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>{THEME.read_text(encoding="utf-8")}{STYLE}</style>
-<div class="shell">
+<nav class="sitenav" aria-label="Documentation">
+<a class="home" href="#top">uRWA Factory</a>
+<span class="div"></span>
+<a href="#sec-00">Start</a>
+<a href="#sec-04">Mechanics</a>
+<a href="#sec-15">Standards</a>
+<a href="#sec-21">Interfaces</a>
+<a href="#sec-27">Models</a>
+<a href="#sec-32">FAQ</a>
+<a href="#sec-author">Author</a>
+<span class="div"></span>
+<a href="prototypes/index.html">Prototypes</a>
+<a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
+</nav>
+<div class="shell" id="top">
 <nav class="toc" aria-label="Contents">
 <p class="t">Contents</p>
-{nav}
+{NAV}
 <p class="t s">Surfaces</p>
 <a href="prototypes/"><span class="n">—</span>All prototypes</a>
 <a href="prototypes/deploy-console.html"><span class="n">—</span>Deploy console</a>
@@ -615,7 +676,7 @@ def main():
 
 </div>
 
-{"".join(sections)}
+{BODY}
 <footer>
 <p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
 Edit the Markdown, not this file.</p>
@@ -624,7 +685,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 <aside class="rail" aria-label="Section reference">
-{"".join(rails)}
+{RAIL}
 <div class="railfix">
 <p class="railt s">Reference</p>
 <a href="prototypes/">Prototypes</a>
@@ -637,8 +698,63 @@ architecture and is not legal, financial or investment advice.</p>
 {SPY}
 <!-- source-digest: {source_digest()} -->
 """
-    OUT.write_text(doc, encoding="utf-8")
-    print(f"\n  wrote {OUT.relative_to(ROOT)}  ({len(doc):,} bytes, {len(sections)} sections)")
+    # ── the combined corpus ──────────────────────────────────────────────
+    # Kept because splitting the site costs full-corpus Ctrl+F, which is how
+    # people actually find a term across thirty-three documents. Also what
+    # prints, and what reads offline.
+    ALL.write_text(shell("".join(sections), nav, "".join(rails),
+                         "uRWA Factory — Complete Documentation"), encoding="utf-8")
+
+    # ── one page per document ────────────────────────────────────────────
+    PAGES.mkdir(exist_ok=True)
+    for old_page in PAGES.glob("*.html"):
+        old_page.unlink()
+
+    order = [s for s, _ in toc]
+    for i, sec in enumerate(order):
+        d = docs[sec]
+        page_nav = "\n".join(
+            f'<a href="{files[s]}"{" aria-current=\"page\"" if s == sec else ""}>'
+            f'<span class="n">{s if s.isdigit() else "—"}</span>{html.escape(lbl)}</a>'
+            for s, lbl in toc
+        )
+        page_nav = ('<a class="home" href="../index.html">'
+                    '<span class="n">↑</span>All documentation</a>\n' + page_nav)
+        prev_next = []
+        if i:
+            prev_next.append(f'<a class="pn p" href="{files[order[i-1]]}">← {html.escape(docs[order[i-1]]["label"])}</a>')
+        if i + 1 < len(order):
+            prev_next.append(f'<a class="pn n" href="{files[order[i+1]]}">{html.escape(docs[order[i+1]]["label"])} →</a>')
+        body = d["body"] + f'<nav class="pnav" aria-label="Adjacent documents">{"".join(prev_next)}</nav>'
+        page = shell(f'<section class="doc" id="doc-{sec}">{body}</section>',
+                     page_nav, d["rail"], f'{d["title"]} — uRWA Factory')
+        # Rewrite across the whole page, not just the body: the masthead and the
+        # rail carry section anchors too, and a page has no other section to
+        # anchor into.
+        page = to_pages(page, files)
+        page = page.replace('href="prototypes/', 'href="../prototypes/')
+        page = page.replace('href="LICENSE"', 'href="../LICENSE"')
+        page = page.replace('<style>', '<base href=".">\n<style>', 1)
+        (PAGES / files[sec]).write_text(page, encoding="utf-8")
+
+    # ── the landing page ─────────────────────────────────────────────────
+    cards = "".join(
+        f'<a class="card" href="pages/{files[s]}"><span class="n">{s if s.isdigit() else "—"}</span>'
+        f'<span class="l">{html.escape(lbl)}</span></a>'
+        for s, lbl in toc if s != "readme"
+    )
+    index_nav = "\n".join(
+        f'<a href="pages/{files[s]}"><span class="n">{s if s.isdigit() else "—"}</span>{html.escape(lbl)}</a>'
+        for s, lbl in toc
+    )
+    landing = (f'<div class="cards">{cards}</div>'
+               f'<p class="allnote">Every document on one page, for searching and printing: '
+               f'<a href="all.html">the complete documentation</a>.</p>')
+    index = shell(landing, index_nav, "", "uRWA Factory — Documentation")
+    index = to_pages(index, files, prefix="pages/")
+    OUT.write_text(index, encoding="utf-8")
+
+    print(f"\n  wrote {OUT.name}, {ALL.name} and {len(order)} pages in {PAGES.name}/")
 
 
 if __name__ == "__main__":
