@@ -136,6 +136,21 @@ tokens that cannot must guess, submit, and handle failure — which is why auton
 impractical on regulated assets. A free, deterministic, non-reverting pre-flight changes that
 completely. See [22 — Agents and settlement](22-agents-and-settlement.md).
 
+### The hook
+
+| Function | Does | Called by | Why |
+|---|---|---|---|
+| `beforeUpdate(from, to, amount)` | Runs the seven gates and reverts with the reason | **The ledger, on itself** | Every movement of value passes through it |
+
+**Not called by anyone else.** The token invokes it on its own address before touching a balance, so
+the fallback router resolves it. That indirection is what makes the system fail closed: remove the
+compliance facet and the selector is unregistered, so every transfer reverts `FunctionNotFound` with
+no code anywhere stating that behaviour.
+
+The gate order is a cost decision — cheap storage reads first, the single unbounded external call
+last. Refusing a paused token or an unverified wallet costs almost nothing. See
+[08](08-compliance-pipeline.md).
+
 ### Diagnostics
 
 | Function | Does | Called by | Why |

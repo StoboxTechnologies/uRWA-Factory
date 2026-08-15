@@ -980,16 +980,18 @@ def _(c):
     if not c.solidity:
         return ["no Solidity sources found"]
     documented = doc_table_functions(c.d("07")) | doc_functions(c.d("07"))
-    # `interface` blocks plus the external and public functions of `contract`
-    # blocks. A library's internal accessors are not API and do not belong in a
-    # reference aimed at integrators — but a facet's entry points are.
-    api = "\n".join(re.findall(r"\binterface\s+\w+[^{]*\{(.*?)\n\}", c.solidity, re.S))
-    for body in re.findall(r"\bcontract\s+\w+[^{]*\{(.*?)\n\}", c.solidity, re.S):
-        api += "\n" + "\n".join(
-            m.group(0) for m in re.finditer(r"function\s+\w+\s*\([^;{]*?\b(?:external|public)\b", body, re.S)
-        )
+    # The API surface is: every interface declaration (they end in `;`) plus
+    # every external or public function of a contract. Block-matching by regex
+    # was tried and is wrong — a non-greedy block capture runs past the end of
+    # one file into the next and swallows whatever lies between.
+    api = set(re.findall(r"\bfunction\s+(\w+)\s*\([^;{]*\)[^;{]*;", c.solidity, re.S))
+    api |= set(
+        re.findall(r"\bfunction\s+(\w+)\s*\([^;{]*?\b(?:external|public)\b[^;{]*\{", c.solidity, re.S)
+    )
+    # A leading underscore marks an internal helper by convention throughout
+    # this codebase, and no such function is part of the documented surface.
     out = []
-    for name in sorted(sol_functions(api)):
+    for name in sorted(n for n in api if not n.startswith("_")):
         if name not in documented:
             out.append(f"{name}() is declared in Solidity but absent from the function reference")
     return out

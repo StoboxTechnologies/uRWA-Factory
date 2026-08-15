@@ -29,7 +29,11 @@ contract DiamondCutFacet is IErrors {
         if (init != address(0)) {
             (bool ok, bytes memory result) = init.delegatecall(data);
             if (!ok) {
-                if (result.length == 0) revert FunctionNotFound(bytes4(data));
+                // The initialiser reverted without data; name its selector if the
+                // calldata is long enough to carry one.
+                if (result.length == 0) {
+                    revert FunctionNotFound(data.length >= 4 ? bytes4(data[:4]) : bytes4(0));
+                }
                 assembly {
                     revert(add(result, 0x20), mload(result))
                 }
