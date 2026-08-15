@@ -46,7 +46,7 @@ def link(label, href):
     if m:
         return f'<a href="#sec-{m.group(1)}">{label}</a>'
     if href.startswith("#"):
-        return f'<a href="{href}">{label}</a>'
+        return f'<a href="{href}" data-scoped="1">{label}</a>'
     return f'<a href="{html.escape(href)}">{label}</a>'
 
 
@@ -304,7 +304,9 @@ def main():
         else:
             label = raw.split("—", 1)[1].strip() if "—" in raw else raw
         toc.append((sec, label))
-        sections.append(f'<section class="doc" id="doc-{sec}">{render(md, sec)}</section>')
+        body = render(md, sec)
+        body = re.sub(r'href="#([\w-]+)" data-scoped="1"', lambda m: f'href="#{sec}-{m.group(1)}"', body)
+        sections.append(f'<section class="doc" id="doc-{sec}">{body}</section>')
         print(f"  {rel}  →  #sec-{sec}")
 
     nav = "\n".join(

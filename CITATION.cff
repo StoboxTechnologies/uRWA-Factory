@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: uRWA Factory
+message: >-
+  If you use this specification or implementation, please cite it as below.
+type: software
+authors:
+  - given-names: Gene
+    family-names: Deyev
+    email: gd@stoboxplatform.com
+    affiliation: Stobox Technologies
+repository-code: https://github.com/StoboxTechnologies/uRWA-Factory
+url: https://github.com/StoboxTechnologies/uRWA-Factory
+abstract: >-
+  An open-source factory for compliant real-world-asset security tokens built
+  on ERC-7943 (uRWA). Provides a token with an immutable ledger and a
+  replaceable compliance policy layer, a permissionless factory, a pluggable
+  identity layer, a rule library covering common regulatory regimes, primary
+  offering machinery, and an asset-passport interface with commitment-based
+  disclosure. Released in a personal capacity under the MIT licence.
+keywords:
+  - ERC-7943
+  - uRWA
+  - real world assets
+  - tokenization
+  - security token
+  - compliance
+  - Ethereum
+  - Solidity
+license: MIT
+date-released: '2026-08-15'

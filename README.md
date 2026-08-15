@@ -111,8 +111,22 @@ MIT — see [LICENSE](LICENSE). The licence grants rights to the code, not to th
 that it *passes the uRWA conformance suite*; it may not describe itself as built or certified by
 Stobox. See [NOTICE](NOTICE).
 
+## Author
+
+**Gene Deyev** — Founder and CEO of [Stobox Technologies](https://stobox.io).
+
+This project is released in a **personal capacity** and is not a Stobox product. Copyright is held
+personally; the repository is hosted under the Stobox organisation for continuity, not ownership.
+Stobox Technologies is one user of this software among others — it operates one factory instance and
+offers a paid attestation service on top, and neither is required to use anything here.
+
+The affiliation is disclosed because you should know who wrote your compliance layer and what their
+interests are. See [AUTHORS](AUTHORS), [NOTICE](NOTICE) and
+[00 — Why this exists](docs/00-why-this-exists.md).
+
 ## Disclaimer
 
-Stobox is a software and infrastructure provider. This project supplies mechanisms and templates.
-Which rules apply to a given asset, and the consequences of that choice, are the issuer's decision.
-Nothing here is legal, financial or investment advice.
+This project supplies mechanisms and templates. This project supplies mechanisms and templates.
+Which rules apply to a given asset, and the
+consequences of that choice, are the issuer's decision. Nothing here is legal, financial or investment
+advice.

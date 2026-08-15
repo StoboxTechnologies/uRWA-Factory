@@ -63,6 +63,59 @@ conformance suite. **That gap is what this repository fills.**
 
 ---
 
+## Who is releasing this, and why
+
+### The author
+
+**Gene Deyev** — Founder and CEO of [Stobox Technologies](https://stobox.io), a real-world-asset
+intelligence and tokenization company founded in 2018. Eight years spent on the parts of this market
+that do not photograph well: what a compliant issuance actually requires, which jurisdictions demand
+what, what an institutional buyer asks for in diligence, and the specific places tokenization projects
+fail.
+
+**This project is released in a personal capacity.** It is not a Stobox product. The copyright is held
+personally, the licence you receive comes from the author, and the repository is hosted under the
+Stobox organisation for continuity rather than ownership. Stobox Technologies is one user of this
+software among others — it operates one factory instance and offers a paid attestation service on top,
+and neither is required to use anything here. That affiliation is disclosed because you should know
+who wrote your compliance layer and what their interests are, not because the company is a party to
+the licence.
+
+### Why I am doing this
+
+> I have spent eight years watching this market almost work.
+>
+> The technology has not been the obstacle for a long time. Every serious attempt runs into the same
+> wall: a token that moves freely and a legal wrapper that says it must not. The gap between them gets
+> filled with lawyers, spreadsheets and hope — which is exactly what tokenization was supposed to
+> remove.
+>
+> Solving that properly requires a piece of infrastructure that behaves the same way for everyone. Not
+> a product with my name on it that each issuer licenses separately, but a shared primitive that an
+> exchange, a custodian, a regulator and a competitor can all read the same way. Infrastructure of
+> that kind does not emerge from a vendor's roadmap. Somebody has to put it in the open and accept
+> that others will use it without paying.
+>
+> So this is my contribution to that. The token, the factory, the rule engine, the identity adapters
+> and the conformance tests are free, MIT, and carry no dependency on my company. Anyone can deploy
+> the whole system on a chain where Stobox does not exist — and a build step proves it on every
+> commit, because a claim like that is worth nothing unless it is tested.
+>
+> I am not being altruistic about it. A compliant token contract is going to be commoditised in 2026
+> whether or not I publish one; charging for it would be a delay, not a business model. And a standard
+> with a single implementer is not a standard — ERC-7943 becomes useful to me only when many issuers
+> use it and many platforms read it. What is genuinely hard to reproduce was never the contract. It is
+> knowing what is true about an asset and being able to prove it.
+>
+> There is also a reason that has nothing to do with strategy. A compliance system nobody can inspect
+> is a compliance system nobody should trust. If code decides who may own a regulated asset, that code
+> should be readable by the people it decides about. I would not want to hold a security whose
+> transfer rules I was not allowed to see, and I do not think I should ask anyone else to.
+>
+> — **Gene Deyev**, 15 August 2026
+
+---
+
 ## What Stobox is
 
 | | |
@@ -73,9 +126,8 @@ conformance suite. **That gap is what this repository fills.**
 | **Industry body** | Founding Member, Corporate tier, of the STO Foundation |
 | **Published methodology** | The AXIS asset-evaluation methodology is public under CC BY 4.0 |
 
-Stobox has spent those eight years on the unglamorous parts: what a compliant issuance actually
-requires, which jurisdictions demand what, what an institutional buyer asks for in diligence, and
-where tokenization projects fail. This repository is that experience turned into contracts.
+Stobox is the commercial context this work comes from, and the reason the design is grounded in real
+issuances rather than in theory. It is not a party to the licence.
 
 ### What Stobox provides
 
@@ -96,21 +148,23 @@ This is the question every reader asks, so it gets a direct answer.
 
 ### 1. The primitive is commoditised either way
 
-A compliant token contract is going to exist as open source in 2026 whether or not Stobox publishes
-one. Charging for a contract that someone else will give away for free is not a business model — it is
-a delay.
+A compliant token contract is going to exist as open source in 2026 whether or not this one is
+published. Charging for a contract that someone else will give away for free is not a business model —
+it is a delay.
 
 ### 2. A standard with one implementer is not a standard
 
-ERC-7943's value to everyone, including Stobox, depends on many issuers using it and many platforms
-reading it. A closed implementation would slow the very adoption that makes the standard useful. The
-fastest way to make the socket universal is to hand out the tooling.
+ERC-7943's value to everyone — including its backers — depends on many issuers using it and many
+platforms reading it. A closed implementation would slow the very adoption that makes the standard
+useful. The fastest way to make the socket universal is to hand out the tooling.
 
 ### 3. Value does not live in the contract
 
 What is genuinely hard to reproduce is not the code. It is knowing *what is true about an asset* and
 being able to prove it: the data model, the attestor relationships, the verification pipeline, the
-judgement encoded in eight years of doing this. A fork gets the token. It does not get the record.
+judgement encoded in eight years of doing this. A fork gets the token. It does not get the record —
+and the record is where Stobox's commercial interest sits, openly stated rather than hidden in the
+contracts.
 
 **The token says who may hold it. The passport says what it actually is.** The first is a public good.
 The second is a service.
@@ -201,8 +255,11 @@ Stated plainly, because a document like this is usually where overstatement cree
   not a market.
 - **This does not custody anything.** The contracts move tokens. The underlying asset sits wherever
   its legal structure puts it.
-- **Stobox is a software and infrastructure provider,** not an adviser. We supply mechanisms and
-  templates. Nothing here is legal, financial or investment advice.
+- **This is software, not advice.** The author is not your adviser, and neither is Stobox. The project
+  supplies mechanisms and templates. Nothing here is legal, financial or investment advice.
+- **The author has a commercial interest,** stated openly: Stobox Technologies sells the attestation
+  service that sits on top of this. That is why the boundary between the two is written down in
+  [19 — Open boundary](19-open-boundary.md) and enforced in CI rather than left to good intentions.
 
 Market-size and client-count figures are deliberately absent from this document. Where such figures
 appear in Stobox materials they carry their own sources and dates; a technical repository is the wrong

@@ -1,7 +1,25 @@
 uRWA Factory
-Copyright (c) 2026 Stobox Technologies
+Copyright (c) 2026 Gene Deyev
 
 This software is licensed under the MIT License (see LICENSE).
+
+AUTHORSHIP
+----------
+This project was initiated, designed and released by Gene Deyev in a personal
+capacity. Gene Deyev is the Founder and CEO of Stobox Technologies; that
+affiliation is disclosed for transparency and does not make this a Stobox
+product.
+
+The repository is hosted under the StoboxTechnologies GitHub organisation for
+continuity and discoverability. Hosting is not authorship. Copyright is held
+personally, and the licence granted to you comes from the author, not from the
+company.
+
+Stobox Technologies is one user of this software among others. It operates one
+factory instance and offers a proprietary attestation service on top. Neither is
+required to use anything in this repository.
+
+  https://stobox.io
 
 TRADEMARKS
 ----------
@@ -14,8 +32,8 @@ by, certified by, endorsed by, or affiliated with Stobox.
 
 RESPONSIBILITY FOR DEPLOYMENTS
 ------------------------------
-This is software. Anyone may deploy it. Stobox operates one instance and is
-responsible for that instance only.
+This is software. Anyone may deploy it. Neither the author nor Stobox
+Technologies is responsible for deployments they do not operate.
 
 A deployment issued through the Stobox factory is verifiable on chain:
 
@@ -27,7 +45,6 @@ what it is called or how it is presented.
 
 NOT ADVICE
 ----------
-Stobox is a software and infrastructure provider. This project supplies
-mechanisms and templates. Which rules apply to a given asset, and the
-consequences of that choice, are the issuer's decision. Nothing in this
-repository is legal, financial, tax or investment advice.
+This project supplies mechanisms and templates. Which rules apply to a given
+asset, and the consequences of that choice, are the issuer's decision. Nothing
+in this repository is legal, financial, tax or investment advice.
