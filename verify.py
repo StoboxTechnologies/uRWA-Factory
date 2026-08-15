@@ -27,13 +27,15 @@ PROTO = ROOT / "prototypes"
 HTML = ROOT / "index.html"       # the whole documentation, one page
 HUB = ROOT / "start.html"        # one card per document
 PAGES = ROOT / "pages"
+SRC = ROOT / "src"
 README = ROOT / "README.md"
 
 RESET, BOLD, RED, GREEN, DIM = "\033[0m", "\033[1m", "\033[31m", "\033[32m", "\033[2m"
 
 SEPARATOR = re.compile(r"^\s*\|(?:\s*:?-+:?\s*\|)+\s*$")
 STATUSES = {"Done", "Ready", "Blocked", "Planned", "Parked", "New"}
-LEVEL_NAMES = ["structure", "document consistency", "cross-model consistency"]
+LEVEL_NAMES = ["structure", "document consistency", "cross-model consistency",
+               "code against specification"]
 
 
 # ── corpus ───────────────────────────────────────────────────────────────────
@@ -70,6 +72,9 @@ class Corpus:
         self.proto = {p.name: p.read_text(encoding="utf-8") for p in sorted(PROTO.glob("*.html"))}
         self.diagrams = {p.name: p.read_text(encoding="utf-8")
                          for p in sorted((DOCS / "diagrams").glob("*.svg"))}
+        self.sol = {str(p.relative_to(ROOT)): p.read_text(encoding="utf-8")
+                    for p in sorted(SRC.rglob("*.sol"))}
+        self.solidity = "\n".join(self.sol.values())
         self.hub = HUB.read_text(encoding="utf-8") if HUB.exists() else ""
         self.pages = {p.name: p.read_text(encoding="utf-8") for p in sorted(PAGES.glob("*.html"))}
         # Every built surface, for the checks that must hold on all of them.
@@ -941,8 +946,7 @@ def _(c):
     documented = set(re.findall(r"`(L[0-5]\.\d+)`", c.d("31")))
     if not documented:
         return ["doc 31 lists no checks"]
-    deferred = {f"L3.{i}" for i in range(1, 8)} | {f"L4.{i}" for i in range(1, 16)} \
-        | {f"L5.{i}" for i in range(1, 6)}
+    deferred = {"L3.6", "L3.7"} | {f"L4.{i}" for i in range(1, 16)} | {f"L5.{i}" for i in range(1, 6)}
     implemented = {ch["id"] for ch in CHECKS}
     out = [f"{k} is documented but not implemented" for k in sorted(documented - implemented - deferred)]
     out += [f"{k} is implemented but not documented in doc 31" for k in sorted(implemented - documented)]
@@ -955,6 +959,171 @@ def _(c):
     return c
 
 
+
+@check("L3.1", 3, "Every function in 07 exists in the interfaces")
+def _(c):
+    if not c.solidity:
+        return ["no Solidity sources found"]
+    declared = sol_functions(c.solidity)
+    missing = sorted(n for n in doc_table_functions(c.d("07")) if n not in declared)
+    return [f"doc 07 documents {n}(), which no interface declares" for n in missing]
+
+
+@breaks("L3.1")
+def _(c):
+    c.solidity = c.solidity.replace("function canSend(", "function canSendX(")
+    return c
+
+
+@check("L3.2", 3, "Every interface function is documented in 07")
+def _(c):
+    if not c.solidity:
+        return ["no Solidity sources found"]
+    documented = doc_table_functions(c.d("07")) | doc_functions(c.d("07"))
+    # Only `interface` blocks. A library's internal accessors are not API and
+    # do not belong in a function reference aimed at integrators.
+    api = "\n".join(re.findall(r"\binterface\s+\w+[^{]*\{(.*?)\n\}", c.solidity, re.S))
+    out = []
+    for name in sorted(sol_functions(api)):
+        if name not in documented:
+            out.append(f"{name}() is declared in Solidity but absent from the function reference")
+    return out
+
+
+@breaks("L3.2")
+def _(c):
+    # Multi-line: the check reads `interface` blocks, and the block regex needs
+    # a newline before the closing brace.
+    c.solidity += "\ninterface IGhost {\n    function undocumentedFunction() external;\n}\n"
+    return c
+
+
+@check("L3.3", 3, "Every storage struct matches 04 field for field, in order")
+def _(c):
+    code = sol_structs(c.solidity)
+    spec = sol_structs(c.d("04"))
+    if not code or not spec:
+        return ["no storage structs found in the code or the specification"]
+    out = []
+    for name, fields in spec.items():
+        if name not in code:
+            out.append(f"{name} is specified in doc 04 but declared nowhere in src/")
+        elif code[name] != fields:
+            out.append(f"{name} fields differ from doc 04: {fields} vs {code[name]}")
+    # The reverse direction covers src/storage/ only: doc 04 is about storage,
+    # while calldata and memory structs are specified where they are used.
+    stored = sol_structs("\n".join(v for k, v in c.sol.items() if k.startswith("src/storage/")))
+    for name in sorted(set(stored) - set(spec)):
+        out.append(f"{name} is stored but not specified in doc 04")
+    return out
+
+
+@breaks("L3.3")
+def _(c):
+    # `c.solidity` is what the check reads; mutating only `c.sol` would leave
+    # the check inspecting the unmodified corpus.
+    c.solidity = c.solidity.replace("uint256 totalSupply;", "uint256 totalSupplyRenamed;", 1)
+    return c
+
+
+@check("L3.4", 3, "Slot constants derive from the documented strings")
+def _(c):
+    code = dict(re.findall(r'(\w+)\s*=\s*keccak256\("(urwa\.storage\.[\w.]+)"\)',
+                           c.sol.get("src/storage/Slots.sol", "")))
+    spec = set(re.findall(r'keccak256\("(urwa\.storage\.[\w.]+)"\)', c.d("04")))
+    if not code or not spec:
+        return ["no slot constants found in the code or the specification"]
+    used = set(code.values())
+    out = [f"doc 04 documents slot {s}, which Slots.sol does not declare" for s in sorted(spec - used)]
+    out += [f"Slots.sol declares {s}, which doc 04 does not document" for s in sorted(used - spec)]
+    return out
+
+
+@breaks("L3.4")
+def _(c):
+    c.sol["src/storage/Slots.sol"] = c.sol["src/storage/Slots.sol"].replace(
+        "urwa.storage.core.v1", "urwa.storage.core.v2", 1)
+    return c
+
+
+@check("L3.5", 3, "Events and errors agree between 14 and Solidity, both ways")
+def _(c):
+    doc = c.d("14")
+    if not c.solidity or not doc:
+        return ["no Solidity sources or no event catalogue"]
+    out = []
+    for keyword, label in (("event", "event"), ("error", "error")):
+        in_code = sol_named(c.solidity, keyword)
+        in_doc = sol_named(doc, keyword)
+        out += [f"{label} {n} is in doc 14 but not in Solidity" for n in sorted(in_doc - in_code)]
+        out += [f"{label} {n} is in Solidity but not in doc 14" for n in sorted(in_code - in_doc)]
+    return out
+
+
+@breaks("L3.5")
+def _(c):
+    c.solidity += "\ninterface IGhostEvents { event NeverDocumented(uint256 x); }\n"
+    return c
+
+
+# ── L3 · code against specification ──────────────────────────────────────────
+#
+# These read the Solidity source rather than the compiled ABI, so `verify.py`
+# stays dependency-free and runnable without a toolchain. Foundry checks the
+# other direction — that what is declared here actually compiles and behaves.
+
+
+def sol_functions(text):
+    """Every function name declared in Solidity."""
+    return set(re.findall(r"\bfunction\s+([a-zA-Z_]\w*)\s*\(", text))
+
+
+def sol_named(text, keyword):
+    """Every event or error name declared in Solidity."""
+    return set(re.findall(rf"\b{keyword}\s+([A-Z]\w*)\s*\(", text))
+
+
+def sol_structs(text):
+    """Struct name → its field names, in declaration order."""
+    out = {}
+    for m in re.finditer(r"\bstruct\s+(\w+)\s*\{(.*?)\n\s*\}", text, re.S):
+        fields = []
+        for line in m.group(2).split("\n"):
+            line = re.sub(r"//.*", "", line).strip().rstrip(";")
+            if not line or line.startswith("/") or line.startswith("*"):
+                continue
+            name = line.split()[-1]
+            if name.isidentifier():
+                fields.append(name)
+        out[m.group(1)] = fields
+    return out
+
+
+def doc_table_functions(text):
+    """Function names from the first column of the reference tables.
+
+    Prose mentions a great many names; the tables are the actual claim about
+    what exists, so `L3.1` reads those and nothing else.
+    """
+    names = set()
+    for row in table_rows(text):
+        for m in re.finditer(r"`([A-Za-z_]\w*)\(", row[0]):
+            names.add(m.group(1))
+    return names
+
+
+def doc_functions(text):
+    """Function names the documentation claims exist."""
+    names = set()
+    for m in re.finditer(r"`([a-z_]\w*)\(", text):
+        names.add(m.group(1))
+    return names
+
+
+def doc_named(text, pattern):
+    return set(re.findall(pattern, text))
+
+
 # ── runner ───────────────────────────────────────────────────────────────────
 
 
@@ -963,8 +1132,10 @@ def run(verbose=False):
     results = [(ch, ch["fn"](c)) for ch in CHECKS]
     failed = sum(1 for _, p in results if p)
 
-    for level in (0, 1, 2):
+    for level in (0, 1, 2, 3):
         rows = [(ch, p) for ch, p in results if ch["level"] == level]
+        if not rows:
+            continue
         print(f"\n{BOLD}L{level}{RESET}  {DIM}{LEVEL_NAMES[level]}{RESET}")
         for ch, problems in rows:
             if problems:
@@ -979,7 +1150,7 @@ def run(verbose=False):
             print(f"  {GREEN}✓{RESET} {sum(1 for _, p in rows if not p)} of {len(rows)} passed")
 
     print(f"\n{BOLD}{len(results) - failed}/{len(results)} checks passed{RESET}")
-    print(f"{DIM}L3 and L4 run in Foundry once code exists · L5: verify.py --self-test{RESET}")
+    print(f"{DIM}L4 runs in Foundry · L5: verify.py --self-test{RESET}")
     return 1 if failed else 0
 
 
@@ -1010,7 +1181,7 @@ def self_test(verbose=False):
             print(f"  {GREEN}✓ {ch['id']}{RESET}  {DIM}{found[0][:66]}{RESET}")
 
     # L5.4 — every level has at least one check
-    for lv in (0, 1, 2):
+    for lv in (0, 1, 2, 3):
         if not any(ch["level"] == lv for ch in CHECKS):
             bad.add(f"L{lv}")
             print(f"  {RED}✕ L5.4{RESET}  level L{lv} has no checks")

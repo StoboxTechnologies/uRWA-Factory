@@ -98,6 +98,8 @@ anything we say about it.
 | `facetAddress(selector) → address` | Which facet serves this call | Anyone | Proves an absent function is absent — `address(0)` |
 | `facetFunctionSelectors(facet) → bytes4[]` | Selectors of one facet | Anyone | Per-facet audit |
 | `supportsInterface(id) → bool` | ERC-165 | Anyone | How conformance is claimed and checked |
+| `upgradeDelay() → uint64` | The delay the issuer configured; `0` means immediate | **Anyone** | A token with a seven-day delay is a different instrument from one without |
+| `scheduledAt(cutHash) → uint64` | When a pending cut becomes executable | Anyone | A scheduled upgrade is inspectable before it lands |
 
 **`diamondCut` cannot replace or remove the ERC-20 selectors.** They are immutable selectors —
 registered against the diamond itself — and `LibDiamond` reverts with
@@ -278,6 +280,7 @@ that does not depend on someone's memory.
 | `redeem(amount)` | Burns from the treasury | SUPPLY_OPERATOR | Buy-backs, redemptions, cancelling unsold supply |
 | `distributeFromTreasury(to, amount, unlockAt)` | Sends to a holder, optionally with a lockup | SUPPLY_OPERATOR | Allocations, private placements, dividends in kind |
 | `totalIssued() → uint256` | Lifetime issuance, never decreases | Reporting, auditors | Distinguishes "ever created" from "currently outstanding" |
+| `lockCap()` | Makes the cap permanent | ISSUER_ADMIN | Irreversible by design: a cap that can be raised is not a cap |
 | `setMaxSupply(newMax)` | Changes the cap | ISSUER_ADMIN | Follow-on rounds — **reverts if the cap was locked** |
 | `capLocked() → bool` | Whether the cap is permanent | Anyone, investors | The strongest possible dilution guarantee |
 | `treasury() → address` | The vault | Anyone | Provenance and reconciliation |
@@ -487,6 +490,8 @@ zero in the open distribution**; `DiamondCutFacet` and `DiamondLoupeFacet` are a
 | `createTokenWithOffering(params, offering) → (token, treasury, id)` | Same, plus the first sale | Anyone | Fewer steps for the common case |
 | `registerPackage(id, cuts)` | Defines a facet set | FACTORY_ADMIN | Versioned feature sets |
 | `packages(id) → FacetCut[]` | Reads one | Anyone | Verify what you are deploying |
+| `packageOf(id) → FacetCut[]` | The facets a package installs | Anyone | Diff a deployed token against the published package |
+| `presetOf(id) → (rules, groups)` | The rules a preset composes | Anyone | An investor reads the regime before the token exists |
 | `registerPreset(id, rules, groups)` | Defines a regime | FACTORY_ADMIN | Reg D, Reg S, MiFID II, MiCA |
 | `presets(id) → (address[], bytes32[])` | Reads one | Anyone | Verify before choosing |
 | `setFeeToken(address)` / `setFee(uint256)` | Configures a fee | FACTORY_ADMIN | **Zero in the open distribution** |
@@ -528,7 +533,6 @@ proprietary.
 | `passportOf(token) → bytes32` | Reverse lookup | Anyone | Start from the token, find the asset |
 | `isConfirmed(passportId, token) → bool` | Is the link real? | Anyone | The only state that proves provenance |
 | `attestationsOf(passportId) → Attestation[]` | Who signed what, when | **Anyone** | Signal without disclosure |
-| `publicLeaf(passportId, code) → bytes` | A public datapoint | Anyone | The few facts published in clear |
 | `verify(passportId, code, value, salt, proof) → bool` | Checks a disclosed value | Anyone | Verify without trusting the issuer |
 | `verifyAbsence(passportId, code, proof) → bool` | Proves something is **not** recorded | Anyone | "There is no legal opinion" is what diligence checks |
 | `accessOf(passportId, grantee) → AccessGrant` | Current grant | Anyone | Who has access is public even when the data is not |
@@ -615,6 +619,8 @@ absent operator hold investor funds hostage.
 | `grant(mandate) → mandateId` | Authorises an agent within limits | Principal | Delegation with a hard ceiling |
 | `revoke(mandateId)` | Cancels, immediately | Principal | **The kill switch — no timelock** |
 | `check(mandateId, scope, token, counterparty, amount) → (bool, reason)` | Is this action permitted? | The agent, before acting | Free pre-flight, same idea as `canTransfer` |
+| `consume(mandateId, amount)` | Draws against the mandate's limits, or reverts | The scoped function being called | The agent cannot exceed its mandate, rather than being trusted not to |
+| `mandateOf(mandateId) → Mandate` | The mandate's terms | Principal, agent, anyone | Bounds are public, so a counterparty can see them |
 | `consumed(mandateId) → (thisEpoch, epochEnds)` | Budget used and remaining | Principal, agent | Monitoring |
 | `mandatesOf(principal) → bytes32[]` | Every live mandate | Principal | **You cannot lose track of your own agents** |
 

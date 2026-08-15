@@ -24,4 +24,16 @@ interface IuRWAToken {
         external;
     function nonces(address owner) external view returns (uint256);
     function DOMAIN_SEPARATOR() external view returns (bytes32);
+
+    // ── provenance ──────────────────────────────────────────────────────────
+
+    /// @notice ERC-173, for explorer and tooling compatibility
+    function owner() external view returns (address);
+
+    /// @notice Which factory deployed this token
+    function deployer() external view returns (address);
+
+    /// @notice Hard cap; `0` means unlimited
+    /// @dev An investor must be able to see that dilution is bounded.
+    function maxSupply() external view returns (uint256);
 }

@@ -1,0 +1,6 @@
+InterfacePackageTest:test_erc7943InterfaceIdIsAsDocumented() (gas: 324)
+InterfacePackageTest:test_euAndUsEligibilityAreSeparateKeys() (gas: 239)
+InterfacePackageTest:test_micaKeysAreDeclared() (gas: 437)
+InterfacePackageTest:test_roleIdentifiersAreDistinct() (gas: 3376)
+InterfacePackageTest:test_storageSlotsAreDistinct() (gas: 9445)
+InterfacePackageTest:test_storageSlotsDeriveFromTheDocumentedStrings() (gas: 283)

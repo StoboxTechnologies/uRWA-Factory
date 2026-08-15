@@ -398,6 +398,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
 <a href="31-verification.html"><span class="n">31</span>Verification framework</a>
 <a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
+<a href="33-test-results.html"><span class="n">33</span>Test results</a>
 <a href="author.html"><span class="n">—</span>The author</a>
 <p class="t s">Surfaces</p>
 <a href="../prototypes/"><span class="n">—</span>All prototypes</a>
@@ -449,6 +450,7 @@ event ExpiredReleased(address indexed account, uint256 count);</pre>
 <pre>event Issued(address indexed to, uint256 amount, uint256 totalIssued);
 event Redeemed(uint256 amount, uint256 totalIssued);
 event MaxSupplyChanged(uint256 previous, uint256 current);
+event CapLocked();
 event TreasuryChanged(address indexed previous, address indexed current);
 event OfferingRegistryChanged(address indexed previous, address indexed current);</pre>
 <h3 id="14-roles">Roles</h3>
@@ -477,7 +479,9 @@ event MandateRevoked(bytes32 indexed mandateId);
 event AgentActed(
     bytes32 indexed mandateId, address indexed agent, address indexed principal, bytes4 selector, uint256 amount
 );</pre>
+<pre>event Settled(bytes32 indexed settlementId, address indexed seller, address indexed buyer, bytes32 tradeRef);</pre>
 <p><code>AgentActed</code> names the <strong>principal</strong> as well as the agent, because the accountable party for an automated action is the person who granted the mandate, not the software that executed it.</p>
+<p><code>Settled</code> carries <code>tradeRef</code> unchanged from the signed instruction. The contract never interprets it; it exists so a trade on chain can be matched to the same trade in a reporting system that knows nothing about blockchains.</p>
 <h3 id="14-factory">Factory</h3>
 <pre>event TokenCreated(
     address indexed token,
@@ -531,7 +535,7 @@ error ERC20InvalidSpender(address spender);</pre>
 <h4 id="14-urwa">uRWA</h4>
 <pre>error ProtocolPaused();
 error RuleLimitExceeded(uint256 count, uint256 max);
-error CapLocked();
+error CapIsLocked();
 error MaxSupplyExceeded(uint256 supplyAfterMint, uint256 maxSupply);
 error ZeroAddress();
 error NotAuthorized(address caller, bytes32 role);
@@ -551,6 +555,22 @@ error AboveMaximum(uint256 amount, uint256 maximum);
 error HardCapExceeded(uint256 raised, uint256 hardCap);
 error AllocationExceeded(bytes32 subject, uint256 allocated, uint256 requested);
 error AlreadyRefunded(uint256 purchaseId);
+error AddressIsPaused(address account);
+
+error CannotReplaceImmutableFunction(bytes4 selector);
+error FunctionNotFound(bytes4 selector);
+error UpgradeNotScheduled(bytes32 cutHash);
+error UpgradeNotReady(bytes32 cutHash, uint64 executableAt);
+
+error MandateExpired(bytes32 mandateId, uint64 expiredAt);
+error MandateRevoked(bytes32 mandateId);
+error OutOfScope(bytes32 mandateId, bytes32 scope);
+error PerActionLimitExceeded(uint256 requested, uint256 limit);
+error PerEpochLimitExceeded(uint256 requested, uint256 remaining);
+error InstructionExpired(uint64 validUntil);
+error NonceAlreadySettled(bytes32 nonce);
+error BadSignature(address expected);
+
 error SoftCapMet();              // beginRefunding called when it should settle
 error SoftCapNotMet();           // settle called when it should refund</pre>
 <h4 id="14-treasury">Treasury</h4>
@@ -642,4 +662,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 6a6bfa1c028400387550dbe507e0cec7acc27859a091685818f8c29b3106a568 -->
+<!-- source-digest: 1fbc9f929d6c9b09f7e2b9ccc51568d79799e7e8135807f0a200392211b0e946 -->

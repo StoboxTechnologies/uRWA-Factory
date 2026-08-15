@@ -57,6 +57,30 @@ surfaces open with a one-line breadcrumb. Anything added to the shared chrome la
 Every check in `verify.py` must appear in [docs/31-verification.md](docs/31-verification.md) and must
 fail on its own fixture (`--self-test`). A new check needs both, or L2.16 and L5 fail.
 
+## Contracts
+
+```bash
+forge build && forge test && forge fmt --check
+```
+
+`src/` is interfaces and storage only — no implementation yet. The storage layout in
+`src/storage/Layout.sol` is **frozen**: append fields, never insert or reorder, because in a diamond
+those fields hold live balances.
+
+`L3.1`…`L3.5` compare the Solidity with the documentation in both directions, so a function added to
+an interface must be added to [docs/07-functions.md](docs/07-functions.md) in the same commit, and an
+event added to either must be added to [docs/14-events-errors.md](docs/14-events-errors.md).
+
+## Test results
+
+```bash
+python3 report.py
+```
+
+Runs every tool and writes [docs/33-test-results.md](docs/33-test-results.md). Generated — never edit
+it by hand. It carries a timestamp, so regenerating it always produces a diff; commit it when the
+results actually changed, not on every run.
+
 ## Prose
 
 Documentation is written, not generated. Keep the register of the surrounding text, keep claims

@@ -44,6 +44,8 @@ interface IuRWAFactory {
     function packageOf(bytes32 id) external view returns (IDiamond.FacetCut[] memory);
     function registerPreset(bytes32 id, address[] calldata rules, bytes32[] calldata groups) external;
     function presetOf(bytes32 id) external view returns (address[] memory rules, bytes32[] memory groups);
+    function packages() external view returns (bytes32[] memory);
+    function presets() external view returns (bytes32[] memory);
 
     // ── registry ────────────────────────────────────────────────────────────
 
@@ -54,6 +56,9 @@ interface IuRWAFactory {
     function isFactoryIssued(address token) external view returns (bool);
     function deploymentsOf(address issuer) external view returns (address[] memory);
     function allDeployments() external view returns (address[] memory);
+
+    /// @notice Who deployed this factory
+    function deployer() external view returns (address);
 
     // ── fee ─────────────────────────────────────────────────────────────────
 

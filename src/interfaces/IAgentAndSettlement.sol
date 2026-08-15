@@ -38,6 +38,9 @@ interface IAgentAuthority {
 
     function mandateOf(bytes32 mandateId) external view returns (Mandate memory);
     function consumed(bytes32 mandateId) external view returns (uint256 thisEpoch, uint64 epochEnds);
+
+    /// @notice Every mandate a principal has granted
+    function mandatesOf(address principal) external view returns (bytes32[] memory);
 }
 
 /// @notice A trade both sides have signed, off chain

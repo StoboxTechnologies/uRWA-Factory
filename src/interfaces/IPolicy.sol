@@ -49,6 +49,11 @@ interface IPolicySet {
     function rulesOf(bytes32 group) external view returns (address[] memory);
     function ruleCount() external view returns (uint256);
 
+    /// @notice The hard cap on rules
+    /// @dev Proof that an admin cannot gas-grief the token into unusability
+    ///      by attaching rules until a transfer no longer fits in a block.
+    function maxRules() external view returns (uint256);
+
     function addGroup(bytes32 group) external;
     function removeGroup(bytes32 group) external;
     function addRule(bytes32 group, address rule) external;

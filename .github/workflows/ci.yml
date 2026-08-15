@@ -86,3 +86,28 @@ jobs:
       # Phase 1 onward. Listed now so the job exists before the tests do.
       # - run: forge test --match-test invariant_
       # - run: forge coverage --report summary
+
+  report:
+    name: Collected results
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: foundry-rs/foundry-toolchain@v1
+      - run: forge install foundry-rs/forge-std --no-git
+
+      # Runs every tool and fails if any is red. It rewrites
+      # docs/33-test-results.md with a fresh timestamp, which is why this job
+      # does not check the build for staleness — that is docs-in-sync's job,
+      # on a clean checkout.
+      - name: Collect
+        run: python3 report.py
+
+      - name: Publish the report as a build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: docs/33-test-results.md

@@ -61,6 +61,10 @@ interface IErrors {
     error HardCapExceeded(uint256 requested, uint256 remaining);
     error AlreadyRefunded(uint256 purchaseId);
     error PaymentsAreLocked(uint256 offeringId);
+    /// @dev The two guard errors that keep the permissionless calls honest:
+    ///      `beginRefunding` on a met soft cap, or `settle` on a missed one.
+    error SoftCapMet();
+    error SoftCapNotMet();
     error OnlyOfferingRegistry();
 
     // ── access ──────────────────────────────────────────────────────────────

@@ -19,6 +19,9 @@ interface ITreasury {
     function lockPayments(uint256 offeringId) external;
     function unlockPayments(uint256 offeringId) external;
 
+    /// @notice Payment currency held, as distinct from security tokens
+    function paymentBalance(address asset) external view returns (uint256);
+
     function withdrawERC20(address asset, address to, uint256 amount) external;
 }
 
@@ -82,6 +85,9 @@ interface IOfferingRegistry {
 
     /// @notice Refund yourself; the backstop that makes refunds a guarantee
     function claimRefund(uint256 purchaseId) external;
+
+    /// @notice Operator-pushed refund of a single purchase
+    function refundPurchase(uint256 purchaseId) external;
 
     function addRule(uint256 id, address rule) external;
     function removeRule(uint256 id, address rule) external;

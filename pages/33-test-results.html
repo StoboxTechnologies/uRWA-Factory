@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>13 — Treasury — uRWA Factory</title>
+<title>33 — Test results — uRWA Factory</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -378,7 +378,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="10-rules.html"><span class="n">10</span>Rules</a>
 <a href="11-passport.html"><span class="n">11</span>Asset Passport</a>
 <a href="12-offering.html"><span class="n">12</span>Offerings</a>
-<a href="13-treasury.html" aria-current="page"><span class="n">13</span>Treasury</a>
+<a href="13-treasury.html"><span class="n">13</span>Treasury</a>
 <a href="14-events-errors.html"><span class="n">14</span>Events and errors</a>
 <a href="15-standards.html"><span class="n">15</span>Standards</a>
 <a href="16-deployment.html"><span class="n">16</span>Deployment</a>
@@ -398,7 +398,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
 <a href="31-verification.html"><span class="n">31</span>Verification framework</a>
 <a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
-<a href="33-test-results.html"><span class="n">33</span>Test results</a>
+<a href="33-test-results.html" aria-current="page"><span class="n">33</span>Test results</a>
 <a href="author.html"><span class="n">—</span>The author</a>
 <p class="t s">Surfaces</p>
 <a href="../prototypes/"><span class="n">—</span>All prototypes</a>
@@ -411,52 +411,26 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
 </nav>
 <article>
-<header class="slim"><a href="../index.html">uRWA Factory documentation</a><span>Treasury</span></header>
-<section class="doc" id="doc-13"><h2 id="sec-13">13 — Treasury</h2>
-<h3 id="13-purpose">Purpose</h3>
-<p>One treasury per token. It holds issued supply before distribution and investor payments during an offering. It is deployed as a minimal clone by the factory and is not upgradeable.</p>
-<h3 id="13-why-one-per-token">Why one per token</h3>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Property</th><th style="text-align:left">Consequence</th></tr></thead><tbody><tr><td style="text-align:left">Isolation</td><td style="text-align:left">A compromise reaches one asset, not an issuer&#x27;s whole portfolio</td></tr><tr><td style="text-align:left">Accounting</td><td style="text-align:left">Per-asset balances need no attribution logic</td></tr><tr><td style="text-align:left">Failure domain</td><td style="text-align:left">One asset&#x27;s offering cannot lock another&#x27;s funds</td></tr><tr><td style="text-align:left">Cost</td><td style="text-align:left">A minimal clone on Base is negligible</td></tr></tbody></table></div>
-<p>A shared multi-token vault was rejected: it saves a trivial amount of gas and concentrates every asset&#x27;s custody in one contract.</p>
-<h3 id="13-what-it-holds">What it holds</h3>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Asset</th><th style="text-align:left">Purpose</th></tr></thead><tbody><tr><td style="text-align:left">The security token</td><td style="text-align:left">Issued supply awaiting distribution; returned tokens after refunds</td></tr><tr><td style="text-align:left">Payment tokens (USDC and similar)</td><td style="text-align:left">Investor payments during offerings</td></tr><tr><td style="text-align:left">Any other ERC-20</td><td style="text-align:left">Rescue path for mistaken transfers</td></tr></tbody></table></div>
-<h3 id="13-trust-status">Trust status</h3>
-<p>The treasury is added to the token&#x27;s trust list at deployment, with <code>trust(treasury, &quot;treasury&quot;)</code>. This lets it move supply without running the full rule set on both sides.</p>
-<p>It does <strong>not</strong> bypass the pause check or the frozen-balance check. A compromised treasury cannot drain locked supply and cannot move anything while the token is paused — this is precisely why those two checks sit outside the trust bypass.</p>
-<h3 id="13-reservation-accounting">Reservation accounting</h3>
-<p>During an offering the treasury tracks three quantities per asset:</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Quantity</th><th style="text-align:left">Meaning</th></tr></thead><tbody><tr><td style="text-align:left"><code>balance</code></td><td style="text-align:left">Total held</td></tr><tr><td style="text-align:left"><code>reserved</code></td><td style="text-align:left">Committed to active offerings</td></tr><tr><td style="text-align:left"><code>available</code></td><td style="text-align:left"><code>balance − reserved</code>, the only part freely withdrawable</td></tr></tbody></table></div>
-<p><code>reserve</code> and <code>release</code> are callable only by the offering registry. <code>availableBalance()</code> is what <code>withdrawERC20</code> checks against.</p>
-<h3 id="13-payment-locking">Payment locking</h3>
-<p><code>withdrawERC20</code> reverts while any offering holding that asset is in <code>Active</code> or <code>Closed</code> state with its soft cap unmet.</p>
-<p>This is enforced by the treasury itself, not by operator discipline. An operator who wants the funds early cannot get them by calling in a different order, and an operator who forgets cannot accidentally break refundability.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Offering state</th><th style="text-align:left">Payment tokens</th></tr></thead><tbody><tr><td style="text-align:left">Active</td><td style="text-align:left">Locked</td></tr><tr><td style="text-align:left">Closed, soft cap unmet</td><td style="text-align:left">Locked</td></tr><tr><td style="text-align:left">Settled</td><td style="text-align:left">Available to <code>SUPPLY_OPERATOR</code></td></tr><tr><td style="text-align:left">Refunding / Cancelled</td><td style="text-align:left">Reserved for refunds; not withdrawable</td></tr></tbody></table></div>
-<h3 id="13-distribution">Distribution</h3>
-<p><code>distributeFromTreasury(to, amount, unlockAt)</code> moves tokens to a holder and optionally applies a lockup in the same transaction. It runs the full compliance pipeline on the receiving side — the treasury being trusted does not make the recipient eligible.</p>
-<p>Passing <code>unlockAt = 0</code> applies no lockup.</p>
-<h3 id="13-refund-handling">Refund handling</h3>
-<p>On refund the treasury performs both legs:</p>
-<ol>
-<li>Payment tokens return to the investor.</li>
-<li>Security tokens return from the investor to the treasury.</li>
-</ol>
-<p>The second leg is a compliance-checked transfer like any other. If the investor has since become ineligible to send — a blocked DID, for example — the transfer would fail and strand the refund. The registry therefore performs the token return leg through the trusted path, treating a refund as a system operation rather than an investor transfer.</p>
-<h3 id="13-functions">Functions</h3>
-<p>See <a href="07-functions.html">07 — Function reference</a> for the complete list. Summary:</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Group</th><th style="text-align:left">Functions</th></tr></thead><tbody><tr><td style="text-align:left">Custody</td><td style="text-align:left"><code>deposit</code>, <code>withdrawERC20</code></td></tr><tr><td style="text-align:left">Offering support</td><td style="text-align:left"><code>reserve</code>, <code>release</code>, <code>lockPayments</code>, <code>unlockPayments</code></td></tr><tr><td style="text-align:left">Views</td><td style="text-align:left"><code>token</code>, <code>reservedOf</code>, <code>availableBalance</code>, <code>paymentBalance</code></td></tr></tbody></table></div>
-<h3 id="13-invariants">Invariants</h3>
-<ol>
-<li><code>availableBalance() == balance − reserved</code>, never negative.</li>
-<li><code>withdrawERC20</code> cannot reduce the balance below <code>reserved</code>.</li>
-<li>Payment tokens for an unmet-soft-cap offering are never withdrawable.</li>
-<li>Only the offering registry may call <code>reserve</code> and <code>release</code>.</li>
-<li>Only <code>SUPPLY_OPERATOR</code> may call <code>withdrawERC20</code>.</li>
-</ol>
-<h3 id="13-related-documents">Related documents</h3>
+<header class="slim"><a href="../index.html">uRWA Factory documentation</a><span>Test results</span></header>
+<section class="doc" id="doc-33"><h2 id="sec-33">33 — Test results</h2>
+<p>Generated by <a href="../report.py"><code>report.py</code></a>; do not edit by hand.</p>
+<p><strong>Run at 15 August 2026, 20:28 UTC.</strong></p>
+<p>Everything the project verifies, in one place. Three tools check different things and each prints its own format, so on their own nobody reads all three.</p>
+<h3 id="33-summary">Summary</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left"></th><th style="text-align:left">Tool</th><th style="text-align:left">Checks</th><th style="text-align:left">Result</th></tr></thead><tbody><tr><td style="text-align:left">✅</td><td style="text-align:left"><code>verify.py</code></td><td style="text-align:left">Documentation, models, code against specification</td><td style="text-align:left">42 passed, 0 failed</td></tr><tr><td style="text-align:left">✅</td><td style="text-align:left"><code>verify.py --self-test</code></td><td style="text-align:left">Every check fails on its own broken fixture</td><td style="text-align:left">42 of 42 alive</td></tr><tr><td style="text-align:left">✅</td><td style="text-align:left"><code>forge build</code></td><td style="text-align:left">Interfaces and storage layout compile</td><td style="text-align:left">clean</td></tr><tr><td style="text-align:left">✅</td><td style="text-align:left"><code>forge test</code></td><td style="text-align:left">Contract tests</td><td style="text-align:left">6 passed, 0 failed</td></tr><tr><td style="text-align:left">✅</td><td style="text-align:left"><code>forge fmt --check</code></td><td style="text-align:left">Formatting</td><td style="text-align:left">clean</td></tr><tr><td style="text-align:left">✅</td><td style="text-align:left">Open boundary</td><td style="text-align:left">No Stobox address in contract source</td><td style="text-align:left">clean</td></tr><tr><td style="text-align:left">✅</td><td style="text-align:left">Open boundary</td><td style="text-align:left">No STBU reference in contract source</td><td style="text-align:left">clean</td></tr></tbody></table></div>
+<h3 id="33-checks-by-level">Checks by level</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Level</th><th style="text-align:left">Passing</th></tr></thead><tbody><tr><td style="text-align:left">L0</td><td style="text-align:left">14</td></tr><tr><td style="text-align:left">L1</td><td style="text-align:left">7</td></tr><tr><td style="text-align:left">L2</td><td style="text-align:left">16</td></tr><tr><td style="text-align:left">L3</td><td style="text-align:left">5</td></tr></tbody></table></div>
+<h3 id="33-contract-tests">Contract tests</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Test</th><th style="text-align:left"></th><th style="text-align:left">Gas</th></tr></thead><tbody><tr><td style="text-align:left"><code>test_erc7943InterfaceIdIsAsDocumented</code></td><td style="text-align:left">✅</td><td style="text-align:left">324</td></tr><tr><td style="text-align:left"><code>test_euAndUsEligibilityAreSeparateKeys</code></td><td style="text-align:left">✅</td><td style="text-align:left">239</td></tr><tr><td style="text-align:left"><code>test_micaKeysAreDeclared</code></td><td style="text-align:left">✅</td><td style="text-align:left">437</td></tr><tr><td style="text-align:left"><code>test_roleIdentifiersAreDistinct</code></td><td style="text-align:left">✅</td><td style="text-align:left">3,376</td></tr><tr><td style="text-align:left"><code>test_storageSlotsAreDistinct</code></td><td style="text-align:left">✅</td><td style="text-align:left">9,445</td></tr><tr><td style="text-align:left"><code>test_storageSlotsDeriveFromTheDocumentedStrings</code></td><td style="text-align:left">✅</td><td style="text-align:left">283</td></tr></tbody></table></div>
+<h3 id="33-what-is-not-covered">What is not covered</h3>
+<p>Stated because a green table invites the opposite reading.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Not covered</th><th style="text-align:left">Arrives with</th></tr></thead><tbody><tr><td style="text-align:left">Runtime behaviour — the fifteen invariants in <a href="17-security.html">17</a></td><td style="text-align:left">The implementation, Phase 1</td></tr><tr><td style="text-align:left">Access modifiers against the documented roles — <code>L3.6</code></td><td style="text-align:left">The implementation</td></tr><tr><td style="text-align:left">Storage growth against a previous release — <code>L3.7</code></td><td style="text-align:left">The first tagged release</td></tr><tr><td style="text-align:left">Whether the specification is <em>right</em></td><td style="text-align:left">Review and the audit. No level can</td></tr></tbody></table></div>
+<h3 id="33-related">Related</h3>
 <ul>
-<li><a href="12-offering.html">12 — Offerings</a></li>
-<li><a href="07-functions.html">07 — Function reference</a></li>
-</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="12-offering.html">← Offerings</a><a class="pn n" href="14-events-errors.html">Events and errors →</a></nav></section>
+<li><a href="31-verification.html">31 — Verification framework</a> — what each level checks and cannot check</li>
+<li><a href="23-testing-plan.html">23 — Testing plan</a> — what each phase must prove</li>
+<li><a href="20-development-plan.html">20 — Development plan</a> — when the rest arrives</li>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="32-faq.html">← Frequently asked questions</a><a class="pn n" href="author.html">The author →</a></nav></section>
 <footer>
 <p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
 Edit the Markdown, not this file.</p>
@@ -465,7 +439,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 <aside class="rail" aria-label="Section reference">
-<div class="railsec" data-sec="sec-13"><p class="railt">On this page</p><a href="#13-purpose">Purpose</a><a href="#13-why-one-per-token">Why one per token</a><a href="#13-what-it-holds">What it holds</a><a href="#13-trust-status">Trust status</a><a href="#13-reservation-accounting">Reservation accounting</a><a href="#13-payment-locking">Payment locking</a><a href="#13-distribution">Distribution</a><a href="#13-refund-handling">Refund handling</a><a href="#13-functions">Functions</a><a href="#13-invariants">Invariants</a><p class="railt s">Related</p><a href="12-offering.html">12 — Offerings</a><a href="07-functions.html">07 — Function reference</a></div>
+<div class="railsec" data-sec="sec-33"><p class="railt">On this page</p><a href="#33-summary">Summary</a><a href="#33-checks-by-level">Checks by level</a><a href="#33-contract-tests">Contract tests</a><a href="#33-what-is-not-covered">What is not covered</a><p class="railt s">Related</p><a href="31-verification.html">31 — Verification framework</a><a href="23-testing-plan.html">23 — Testing plan</a><a href="20-development-plan.html">20 — Development plan</a></div>
 <div class="railfix">
 <p class="railt s">Reference</p>
 <a href="../prototypes/">Prototypes</a>

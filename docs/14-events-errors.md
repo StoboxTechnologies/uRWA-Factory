@@ -78,6 +78,7 @@ compute the current frozen total from `LockupAdded` events plus the current time
 event Issued(address indexed to, uint256 amount, uint256 totalIssued);
 event Redeemed(uint256 amount, uint256 totalIssued);
 event MaxSupplyChanged(uint256 previous, uint256 current);
+event CapLocked();
 event TreasuryChanged(address indexed previous, address indexed current);
 event OfferingRegistryChanged(address indexed previous, address indexed current);
 ```
@@ -129,8 +130,16 @@ event AgentActed(
 );
 ```
 
+```solidity
+event Settled(bytes32 indexed settlementId, address indexed seller, address indexed buyer, bytes32 tradeRef);
+```
+
 `AgentActed` names the **principal** as well as the agent, because the accountable party for an
 automated action is the person who granted the mandate, not the software that executed it.
+
+`Settled` carries `tradeRef` unchanged from the signed instruction. The contract never interprets it;
+it exists so a trade on chain can be matched to the same trade in a reporting system that knows
+nothing about blockchains.
 
 ## Factory
 
@@ -215,7 +224,7 @@ error ERC20InvalidSpender(address spender);
 ```solidity
 error ProtocolPaused();
 error RuleLimitExceeded(uint256 count, uint256 max);
-error CapLocked();
+error CapIsLocked();
 error MaxSupplyExceeded(uint256 supplyAfterMint, uint256 maxSupply);
 error ZeroAddress();
 error NotAuthorized(address caller, bytes32 role);
@@ -243,6 +252,22 @@ error AboveMaximum(uint256 amount, uint256 maximum);
 error HardCapExceeded(uint256 raised, uint256 hardCap);
 error AllocationExceeded(bytes32 subject, uint256 allocated, uint256 requested);
 error AlreadyRefunded(uint256 purchaseId);
+error AddressIsPaused(address account);
+
+error CannotReplaceImmutableFunction(bytes4 selector);
+error FunctionNotFound(bytes4 selector);
+error UpgradeNotScheduled(bytes32 cutHash);
+error UpgradeNotReady(bytes32 cutHash, uint64 executableAt);
+
+error MandateExpired(bytes32 mandateId, uint64 expiredAt);
+error MandateRevoked(bytes32 mandateId);
+error OutOfScope(bytes32 mandateId, bytes32 scope);
+error PerActionLimitExceeded(uint256 requested, uint256 limit);
+error PerEpochLimitExceeded(uint256 requested, uint256 remaining);
+error InstructionExpired(uint64 validUntil);
+error NonceAlreadySettled(bytes32 nonce);
+error BadSignature(address expected);
+
 error SoftCapMet();              // beginRefunding called when it should settle
 error SoftCapNotMet();           // settle called when it should refund
 ```

@@ -46,11 +46,11 @@
 <text class="mos" x="506" y="153">16</text>
 <text class="fa" x="600" y="153">whether they match reality</text>
 
-<rect x="24" y="174" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
-<text class="lv grey" x="44" y="199">L3</text>
-<text class="st grey" x="78" y="199">Code vs spec</text>
+<rect x="24" y="174" width="560" height="40" rx="9" fill="#F5F5F7" stroke="#E2E4E9"/>
+<text class="lv" x="44" y="199">L3</text>
+<text class="st" x="78" y="199">Code vs spec</text>
 <text class="sm" x="238" y="199">signatures, storage, events, modifiers</text>
-<text class="mos" x="506" y="199">7 later</text>
+<text class="mos" x="506" y="199">5 of 7</text>
 <text class="fa" x="600" y="199">whether code behaves</text>
 
 <rect x="24" y="220" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>

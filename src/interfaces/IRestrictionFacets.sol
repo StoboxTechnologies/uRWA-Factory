@@ -75,6 +75,17 @@ interface IEmergencyFacet {
 }
 
 /// @title Offering entry point on the token side
+/// @notice Optional. A token with no primary sale never installs it.
 interface IPurchaseFacet {
-    function purchaseFrom(address investor, uint256 amount, uint64 unlockAt) external;
+    function purchase(uint256 offeringId, uint256 amount) external;
+
+    function previewPurchase(uint256 offeringId, uint256 amount)
+        external
+        view
+        returns (uint256 cost, uint256 tokens, uint64 unlockAt);
+
+    /// @notice Claim a refund yourself
+    /// @dev Operator-driven refunds are better UX, but an operator who is
+    ///      absent, unwilling or insolvent must not be able to strand funds.
+    function refundPurchase(uint256 purchaseId) external;
 }

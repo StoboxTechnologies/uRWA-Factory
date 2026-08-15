@@ -44,6 +44,17 @@ struct TokenLink {
 ///      retained is the work of maintaining an attested record, not the ability
 ///      to interoperate with one.
 interface IAssetPassport {
+    /// @notice Create a passport for an asset
+    /// @dev An asset gets a record before any token exists — the record is
+    ///      about the asset, not about the instrument wrapping it.
+    function mint(bytes32 passportId, address issuer) external;
+
+    /// @notice ERC-721 owner of the passport
+    function owner(bytes32 passportId) external view returns (address);
+
+    /// @notice Which passport a token is linked to, if any
+    function passportOf(address token) external view returns (bytes32);
+
     // ── the handshake ───────────────────────────────────────────────────────
 
     /// @notice Anyone may point a token at a passport

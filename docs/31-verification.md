@@ -14,14 +14,14 @@ commit.
 | **L0** | Syntax and structure | `verify.py`, CI | ✅ |
 | **L1** | Internal consistency of each document | `verify.py`, CI | ✅ |
 | **L2** | Consistency **between** models | `verify.py`, CI | ✅ |
-| **L3** | Code against specification | Foundry | ✅ once code exists |
+| **L3** | Code against specification | `verify.py`, Foundry, CI | ✅ |
 | **L4** | Runtime behaviour and invariants | Foundry, fork tests | ✅ once code exists |
 | **L5** | **The checks themselves** | `verify.py --self-test`, CI | ✅ |
 
-![Six levels, each catching what the one below cannot — and each honest about its own blind spot. Thirty-six checks run today; L3 and L4 arrive with the code they test.](diagrams/verification-levels.svg)
+![Six levels, each catching what the one below cannot — and each honest about its own blind spot. Forty-two checks run today; L3 opened the moment code existed, and L4 arrives with the implementation.](diagrams/verification-levels.svg)
 
-**Thirty-six checks run today** — thirteen at L0, seven at L1, sixteen at L2 — and all thirty-six are
-re-run against their own broken fixtures at L5. The twenty-two L3 and L4 checks are specified below
+**Forty-two checks run today** — fourteen at L0, seven at L1, sixteen at L2, five at L3 — and all
+forty-two are re-run against their own broken fixtures at L5. The twenty-two L3 and L4 checks are specified below
 and implemented with the code they test.
 
 ## L0 — Structure
@@ -114,7 +114,16 @@ without the other fails.
 
 ## L3 — Code against specification
 
-Runs once code exists. Listed now so the checks are written before the code, not after.
+**Five of the seven run today.** They read the Solidity source rather than the compiled ABI, so
+`verify.py` stays dependency-free and needs no toolchain; Foundry checks the other direction — that
+what is declared here compiles and behaves.
+
+On their first run they found twenty-one disagreements between the interfaces and the documentation,
+including one that mattered: `publicLeaf` was still in the function reference, an API for reading a
+datapoint in clear. The passport had been changed to publish no values at all, and doc 11 said so,
+but doc 07 still offered the function. **No level below L3 could have found it** — both documents
+were internally consistent and consistent with every model. It took comparing the documentation with
+code that had to actually declare something.
 
 | Check | Rule |
 |---|---|
@@ -123,8 +132,10 @@ Runs once code exists. Listed now so the checks are written before the code, not
 | `L3.3` | Every storage struct matches [04](04-storage.md) field for field, in order |
 | `L3.4` | Slot constants match the documented strings exactly |
 | `L3.5` | Every event and error in [14](14-events-errors.md) exists in Solidity |
-| `L3.6` | Every access modifier matches the role in [07](07-functions.md) |
+| `L3.6` | Every access modifier matches the role in [07](07-functions.md) — with the implementation |
 | `L3.7` | Storage structs only ever grow — diffed against the previous release |
+
+`L3.6` needs implementation contracts and `L3.7` needs a previous release. Neither exists yet, so both stay specified rather than pretended.
 
 ## L4 — Runtime
 
