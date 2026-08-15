@@ -81,6 +81,30 @@ would break ordinary DeFi patterns without adding safety, because the transfer i
 
 ---
 
+## DiamondCutFacet and DiamondLoupeFacet
+
+**What this is.** The EIP-2535 machinery: one facet changes the function table, the other reads it.
+Both are installed on the token, the factory and the offering registry — every diamond in the system.
+
+**Who it is for.** `DiamondCutFacet` is for the upgrade admin. `DiamondLoupeFacet` is for **everyone
+else** — it is how an outsider proves which code a deployed token actually runs, without trusting
+anything we say about it.
+
+| Function | Does | Called by | Why |
+|---|---|---|---|
+| `diamondCut(cuts, init, calldata)` | Add, replace or remove selectors | `UPGRADE_ADMIN` | The only way the function table changes |
+| `facets() → Facet[]` | Every facet and its selectors | **Anyone** | The loupe report; independent verification |
+| `facetAddresses() → address[]` | Installed facet addresses | Anyone | Diff against the published package |
+| `facetAddress(selector) → address` | Which facet serves this call | Anyone | Proves an absent function is absent — `address(0)` |
+| `facetFunctionSelectors(facet) → bytes4[]` | Selectors of one facet | Anyone | Per-facet audit |
+| `supportsInterface(id) → bool` | ERC-165 | Anyone | How conformance is claimed and checked |
+
+**`diamondCut` cannot replace or remove the ERC-20 selectors.** They are immutable selectors —
+registered against the diamond itself — and `LibDiamond` reverts with
+`CannotReplaceImmutableFunction`. This is the mechanism behind the whole three-plane split, and the
+reason the ledger plane is genuinely immutable rather than immutable by policy. See
+[02](02-architecture.md).
+
 ## ComplianceFacet
 
 **What this is.** The part that decides whether value may move. Everything else in the system exists
@@ -385,6 +409,11 @@ implementations.
 
 **Who it is for.** Rules read it. Issuers choose which implementation to install.
 
+Three implementations ship, all behind this one interface: `AllowlistRegistry` (tier 0, own storage,
+the open-source default), `EASAdapter` (tier 1, Ethereum Attestation Service) and `StoboxDIDAdapter`
+(tier 2, StoboxDID). **The token neither knows nor cares which is installed** — swapping one for
+another is a single `setIdentityRegistry` call and moves no balance.
+
 | Function | Does | Called by | Why |
 |---|---|---|---|
 | `subjectOf(wallet) → bytes32` | Which identity owns this wallet | Token, rules | One person, many wallets |
@@ -435,6 +464,11 @@ accidentally break refundability.
 **What this is.** The deployer. Permissionless.
 
 **Who it is for.** Anyone issuing an asset.
+
+The factory is itself a diamond. `CreateFacet` serves the two creation calls; `PackageFacet` and
+`PresetFacet` hold the facet packages and policy presets they draw on; `RegistryFacet` records what
+was deployed and answers `isFactoryIssued`; `FeeFacet` holds the fee token and amount, **which are
+zero in the open distribution**; `DiamondCutFacet` and `DiamondLoupeFacet` are as above.
 
 | Function | Does | Called by | Why |
 |---|---|---|---|
@@ -522,6 +556,11 @@ keeps history intact.
 
 **Who it is for.** Issuers running a raise; investors buying.
 
+Also a diamond, split by concern so the read path can never be blocked by an upgrade to the write
+path: `OfferingGovernanceFacet` (create, activate, pause, close, cancel), `OfferingPurchaseFacet`
+(purchases, allocation, pricing), `OfferingRefundFacet` (operator push and investor pull),
+`OfferingRuleFacet` (offering-level rules) and `OfferingStorageFacet` (all reads).
+
 | Function | Does | Called by | Why |
 |---|---|---|---|
 | `createOffering(params) → id` | Defines a sale | OFFERING_OPERATOR | Price, caps, dates, rules, regime |
@@ -540,6 +579,13 @@ keeps history intact.
 | `purchasesOf(investor) → uint256[]` | All of an investor's purchases | Investor, UI | Portfolio |
 | `raisedOf(id) → uint256` | Progress | Anyone | Soft cap visibility |
 | `previewPurchase(id, amount) → (cost, tokens, unlockAt)` | Calculates | Anyone, UI | See price and lockup before signing |
+
+| `setDefaultPaymentTokens(tokens[])` | Chain-wide payment token list | REGISTRY_ADMIN | One list, not one per offering |
+| `forceStatus(id, status, reason)` | Overrides a stuck offering | REGISTRY_ADMIN | Recovery of last resort; reason mandatory and evented |
+
+`REGISTRY_ADMIN` administers the registry contract itself and can neither move a token nor touch a
+balance. Its two powers are chain-wide configuration and the recovery override — which is why
+`forceStatus` records a reason on chain rather than silently changing state.
 
 **Why `settle` and `beginRefunding` are permissionless.** Both are mechanical consequences of facts
 already true on chain — the soft cap was met or it was not. Requiring an operator to act would let an

@@ -63,12 +63,17 @@ guarantee**, and it is why the schema is a key-value registry rather than a fixe
 |---|---|---|
 | `urwa.identity.valid` | Existence, expiry, block status | `canSend`, `canReceive` — the base gate |
 | `urwa.jurisdiction.country` | Hashed ISO 3166-1 alpha-2 | `JurisdictionAllow` / `JurisdictionDeny` |
-| `urwa.investor.type` | Retail, professional, institutional | Holder caps, reporting |
+| `urwa.investor.type` | Retail, professional, institutional | Reporting only — no rule in the default library reads it |
 | `us.regd.accredited` | US accredited-investor status + expiry | `USAccreditedOnly` |
 | `eu.mifid2.professional` | MiFID II professional client + expiry | `EUProfessionalOnly` |
 | `eu.prospectus.qualified` | Qualified-investor status | `EUQualifiedExemption` |
 | `aml.sanctions.clear` | Screening result + timestamp | `SanctionsScreen` |
-| `iso17442.lei` | Hashed Legal Entity Identifier | Institutional reporting |
+| `iso17442.lei` | Hashed Legal Entity Identifier | Reporting only — no rule in the default library reads it |
+
+Two keys are marked **reporting only**. They are declared because issuers and supervisors ask for
+them and because a fork may write rules against them, but no rule in the default library reads either
+one. The distinction is recorded rather than hidden: a key that looks enforced but is not is worse
+than a key that is plainly informational, and `L2.12` fails if any other key lacks a consumer.
 
 ### EU and US eligibility are separate keys, deliberately
 

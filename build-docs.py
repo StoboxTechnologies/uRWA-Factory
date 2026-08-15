@@ -6,6 +6,7 @@ constructs used in this documentation set: headings, tables, fenced code, lists,
 task lists, blockquotes, horizontal rules, and inline code/bold/em/links.
 """
 
+import hashlib
 import html
 import re
 from pathlib import Path
@@ -13,6 +14,20 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 DOCS = ROOT / "docs"
 OUT = ROOT / "urwa-documentation.html"
+
+
+def source_digest():
+    """Digest of every input to this build.
+
+    Stamped into the output so verify.py L0.6 can tell a stale build from a
+    current one by content. File timestamps cannot do that — a fresh git
+    checkout gives every file the same mtime.
+    """
+    h = hashlib.sha256()
+    for p in sorted(DOCS.glob("*.md")) + [ROOT / "build-docs.py"]:
+        h.update(p.name.encode())
+        h.update(p.read_bytes())
+    return h.hexdigest()
 
 ORDER = [f"docs/{p.name}" for p in sorted(DOCS.glob("*.md"))]
 
@@ -406,6 +421,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 </div>
+<!-- source-digest: {source_digest()} -->
 """
     OUT.write_text(doc, encoding="utf-8")
     print(f"\n  wrote {OUT.relative_to(ROOT)}  ({len(doc):,} bytes, {len(sections)} sections)")

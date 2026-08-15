@@ -146,6 +146,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
 | OP-01 | CI: docs sync, anchors, open-boundary scan | **Done** | SP-07 | — |
+| OP-01a | Model and documentation verifier — L0, L1, L2 and the L5 self-test | **Done** | OP-01 | — |
 | OP-02 | CI: forge build, test, invariants, coverage, gas snapshot | Planned | IF-04 | 0.5 |
 | OP-03 | CI: fresh-chain deploy on a clean anvil | Planned | CO-10 | 0.5 |
 | OP-04 | Base Sepolia deployment and verification | Planned | CO-10 | 0.25 |

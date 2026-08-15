@@ -1,19 +1,27 @@
 # 21 — Interface specification
 
-Four surfaces, one shared connection layer. Wireframes are deliberately low-fidelity: this specifies
-structure, data and state, not visual design.
+Five screens and two non-screen surfaces, over one shared connection layer. Wireframes are
+deliberately low-fidelity: this specifies structure, data and state, not visual design.
 
 ## Surfaces
 
-| Surface | Audience | Auth | Public |
-|---|---|---|---|
-| **Public verifier** | Anyone — exchanges, custodians, journalists, agents | None | ✅ |
-| **Investor page** | Holders and prospective investors | Wallet | ✅ per token |
-| **Issuer console** | The issuing company | Wallet + role | ❌ |
-| **Compliance console** | Compliance officer | Wallet + role | ❌ |
+| Surface | Audience | Auth | Public | Specified in |
+|---|---|---|---|---|
+| **Public verifier** | Anyone — exchanges, custodians, journalists, agents | None | ✅ | Surface 1 |
+| **Investor page** | Holders and prospective investors | Wallet | ✅ per token | Surface 2 |
+| **Deploy console** | The issuing company, at creation | Wallet | ❌ | Surface 3, deploy flow |
+| **Token console** | The issuing company, thereafter | Wallet + role | ❌ | Surface 3, all other views |
+| **Compliance console** | Compliance officer | Wallet + role | ❌ | Surface 4 |
+| **SDK** | Integrators and agents | None to read | ✅ | Not a screen — [30](30-interaction-model.md) |
+| **Repository** | Forkers | None | ✅ | Not a screen — [19](19-open-boundary.md) |
 
-All four read the same contracts. None require a Stobox account — a fork's operators use the same
-interfaces against their own deployment.
+Surface 3 below covers the **deploy console** and the **token console** together, because they share
+one shell and one navigation; the deploy flow is the console's first-run path. They are separate
+surfaces in [28](28-product-model.md) because they serve different jobs at different times, and ship
+as separate prototypes.
+
+Every surface reads the same contracts. None require a Stobox account — a fork's operators use the
+same interfaces against their own deployment.
 
 ---
 
@@ -199,7 +207,7 @@ amount, not after approving a payment token.
 
 ---
 
-## Surface 3 — Issuer console
+## Surface 3 — Deploy console and token console
 
 ```
 ┌──────────┬─────────────────────────────────────────────────────┐

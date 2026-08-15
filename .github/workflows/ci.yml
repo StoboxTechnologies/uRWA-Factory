@@ -26,19 +26,22 @@ jobs:
             exit 1
           fi
 
-      - name: Check for broken in-page anchors
-        run: |
-          python3 - <<'PY'
-          import re, pathlib, sys
-          h = pathlib.Path('urwa-documentation.html').read_text()
-          ids = set(re.findall(r'id="([\w-]+)"', h))
-          links = set(re.findall(r'href="#([\w-]+)"', h))
-          broken = sorted(links - ids)
-          if broken:
-              print(f"::error::broken in-page anchors: {broken}")
-              sys.exit(1)
-          print(f"{len(links)} in-page links, none broken")
-          PY
+  verify:
+    name: Models and documentation verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # L5 first. If the checks themselves are dead, a green L0-L2 run means
+      # nothing, and reporting it as a pass would be worse than not checking.
+      - name: L5 — the checks are alive
+        run: python3 verify.py --self-test --verbose
+
+      - name: L0, L1, L2 — structure, documents, models
+        run: python3 verify.py --verbose
 
   open-boundary:
     name: Open boundary holds

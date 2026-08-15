@@ -277,3 +277,9 @@ place to restate them.
 | An integrator | [15 — Standards](15-standards.md), [07 — Function reference](07-functions.md) |
 | Assessing the open-source claim | [19 — Open boundary](19-open-boundary.md) |
 | Planning the work | [20 — Development plan](20-development-plan.md) |
+
+## Related
+
+- [01 — Overview](01-overview.md) — what the system is, in one document
+- [19 — Open boundary](19-open-boundary.md) — what is given away and what is not
+- [AUTHOR](AUTHOR.md) — who wrote this and in what capacity
