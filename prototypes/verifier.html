@@ -1,19 +1,19 @@
 <title>uRWA — Public Verifier</title>
 <style>
   :root{
-    --ground:#FAFAFC;--surface:#FFFFFF;--raised:#FFFFFF;--sunk:#F4F5F9;
-    --ink:#0E1017;--ink-2:#3A4050;--muted:#666E80;--faint:#949BAB;
-    --rule:#EFF1F6;--rule-strong:#E2E5EE;
-    --accent:#4338CA;--accent-2:#312BA0;--accent-wash:#F0F1FE;--accent-edge:#CFD2F9;
-    --ok:#0B7A5B;
-    --warn:#8A5B10;--warn-wash:#FDF4E6;--warn-edge:#F0DCB6;
-    --crit:#B3261E;--crit-wash:#FDEDEB;--crit-edge:#F4C9C5;
+    --ground:#F7F6F4;--surface:#FFFFFF;--raised:#FFFFFF;--sunk:#F1EFEC;
+    --ink:#111110;--ink-2:#3C3A37;--muted:#6E6B66;--faint:#9B9791;
+    --rule:#E9E6E2;--rule-strong:#DAD6D0;
+    --accent:#111110;--accent-2:#2E2C29;--accent-wash:#F1EFEC;--accent-edge:#DAD6D0;
+    --ok:#2F2E2B;
+    --warn:#7A6234;--warn-wash:#F6F2E9;--warn-edge:#E3D9C4;
+    --crit:#7A322A;--crit-wash:#F7EFED;--crit-edge:#E4CFCA;
     --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     --display:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     --mono:ui-monospace,'SF Mono','JetBrains Mono','IBM Plex Mono',Menlo,Consolas,monospace;
-    --r:10px;--r-lg:14px;--r-pill:999px;
-    --sh:0 1px 2px rgba(14,16,23,.05),0 1px 3px rgba(14,16,23,.03);
-    --sh-lg:0 2px 4px rgba(14,16,23,.04),0 12px 32px rgba(14,16,23,.06);
+    --r:8px;--r-lg:12px;--r-pill:999px;
+    --sh:0 1px 2px rgba(17,17,16,.04),0 1px 3px rgba(17,17,16,.025);
+    --sh-lg:0 2px 4px rgba(17,17,16,.03),0 12px 32px rgba(17,17,16,.05);
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -86,21 +86,30 @@
   .att .when{color:var(--faint);font-size:12px;margin-left:auto;text-align:right;font-family:var(--mono)}
   .hide{display:none!important}
 
-  /* --- light theme: shape and depth --- */
-  .btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary{border-radius:var(--r-pill);box-shadow:none;transition:background .14s,border-color .14s}
-  .btn.p,.btn.primary{color:#fff;box-shadow:var(--sh)}
-  .btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
+  /* --- milky monochrome: shape, weight, restraint --- */
+  .btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary{border-radius:var(--r-pill);box-shadow:none;transition:background .14s,border-color .14s,color .14s}
+  .btn{background:var(--surface);border-color:var(--rule-strong);color:var(--ink)}
+  .btn:hover{background:var(--sunk);border-color:var(--muted)}
+  .btn.p,.btn.primary{background:var(--ink);border-color:var(--ink);color:#FFFFFF;box-shadow:none}
+  .btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#FFFFFF}
+  .btn.d{border-color:var(--crit-edge);color:var(--crit);background:var(--surface)}
+  .btn.d:hover{background:var(--crit-wash)}
   .card,.figbox,.note,.k,.addrcard,.nextitem,.wal,.opt,.tscroll,pre{border-radius:var(--r-lg)}
   .card,.figbox,.k,.addrcard{box-shadow:var(--sh);border-color:var(--rule)}
-  .inp,input.inp,input,select{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none}
-  .inp:focus,input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-wash)}
+  .inp,input.inp,input,select{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
+  .inp:focus,input:focus,select:focus{border-color:var(--ink);box-shadow:0 0 0 3px var(--sunk)}
   .pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
-  .bar,.bar div{border-radius:0}
   .bar{border-radius:var(--r-pill);overflow:hidden}
-  table{border-color:var(--rule)}
-  th,td{border-color:var(--rule)}
+  .bar div{border-radius:0}
+  table,th,td{border-color:var(--rule)}
   .step .num,.prog .ic,.stg .i,.sg .i,.opt .mark{border-radius:var(--r-pill)}
-  a:focus-visible,button:focus-visible,input:focus-visible,.step:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r)}
+  .step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+  .stg.n .i,.sg.no .i{background:var(--crit);border-color:var(--crit);color:#FFFFFF}
+  .opt.sel .mark::after{background:var(--ink)}
+  .opt.sel{border-color:var(--ink);background:var(--sunk)}
+  a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
+  a:hover{text-decoration-color:var(--ink)}
+  a:focus-visible,button:focus-visible,input:focus-visible,.step:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:var(--r)}
 </style>
 
 <div class="banner">Prototype — reads are simulated. No account, no wallet, no permission is needed to use a verifier like this.</div>

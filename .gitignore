@@ -9,3 +9,8 @@ node_modules/
 *.log
 .DS_Store
 docs/deployments/*.local.json
+.aidesigner/*
+!.aidesigner/.gitkeep
+.claude/
+.agents/
+.mcp.json

@@ -5,35 +5,35 @@
 
 :root{
   /* ground and surfaces */
-  --ground:#FAFAFC;
+  --ground:#F7F6F4;
   --surface:#FFFFFF;
   --raised:#FFFFFF;
-  --sunk:#F4F5F9;
+  --sunk:#F1EFEC;
 
   /* ink */
-  --ink:#0E1017;
-  --ink-2:#3A4050;
-  --muted:#666E80;
-  --faint:#949BAB;
+  --ink:#111110;
+  --ink-2:#3C3A37;
+  --muted:#6E6B66;
+  --faint:#9B9791;
 
   /* lines — deliberately almost invisible */
-  --rule:#EFF1F6;
-  --rule-strong:#E2E5EE;
+  --rule:#E9E6E2;
+  --rule-strong:#DAD6D0;
 
   /* one accent, held back */
-  --accent:#4338CA;
-  --accent-2:#312BA0;
-  --accent-wash:#F0F1FE;
-  --accent-edge:#CFD2F9;
+  --accent:#111110;
+  --accent-2:#2E2C29;
+  --accent-wash:#F1EFEC;
+  --accent-edge:#DAD6D0;
 
   /* status */
-  --ok:#0B7A5B;
-  --warn:#8A5B10;
-  --warn-wash:#FDF4E6;
-  --warn-edge:#F0DCB6;
-  --crit:#B3261E;
-  --crit-wash:#FDEDEB;
-  --crit-edge:#F4C9C5;
+  --ok:#2F2E2B;
+  --warn:#7A6234;
+  --warn-wash:#F6F2E9;
+  --warn-edge:#E3D9C4;
+  --crit:#7A322A;
+  --crit-wash:#F7EFED;
+  --crit-edge:#E4CFCA;
 
   /* type */
   --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
@@ -41,13 +41,13 @@
   --mono:ui-monospace,'SF Mono','JetBrains Mono','IBM Plex Mono',Menlo,Consolas,monospace;
 
   /* shape */
-  --r:10px;
-  --r-lg:14px;
+  --r:8px;
+  --r-lg:12px;
   --r-pill:999px;
 
   /* depth — offset plus soft blur, never a flat halo */
-  --sh:0 1px 2px rgba(14,16,23,.05), 0 1px 3px rgba(14,16,23,.03);
-  --sh-lg:0 2px 4px rgba(14,16,23,.04), 0 12px 32px rgba(14,16,23,.06);
+  --sh:0 1px 2px rgba(17,17,16,.04), 0 1px 3px rgba(17,17,16,.025);
+  --sh-lg:0 2px 4px rgba(17,17,16,.03), 0 12px 32px rgba(17,17,16,.05);
 }
 
 /* Controls are pills. Cards are soft rectangles. Nothing is sharp. */

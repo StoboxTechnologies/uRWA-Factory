@@ -1,15 +1,15 @@
 <title>uRWA Factory — Complete Documentation</title>
 <style>
 :root{
-  --ground:#FAFAFC;--surface:#FFFFFF;--sunk:#F4F5F9;
-  --ink:#0E1017;--ink-2:#3A4050;--muted:#666E80;--faint:#949BAB;
-  --rule:#EFF1F6;--rule-strong:#E2E5EE;
-  --accent:#4338CA;--accent-2:#312BA0;--accent-wash:#F0F1FE;--accent-edge:#CFD2F9;
+  --ground:#F7F6F4;--surface:#FFFFFF;--sunk:#F1EFEC;
+  --ink:#111110;--ink-2:#3C3A37;--muted:#6E6B66;--faint:#9B9791;
+  --rule:#E9E6E2;--rule-strong:#DAD6D0;
+  --accent:#111110;--accent-2:#2E2C29;--accent-wash:#F1EFEC;--accent-edge:#DAD6D0;
   --display:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
   --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
   --mono:ui-monospace,'SF Mono','JetBrains Mono','IBM Plex Mono',Menlo,Consolas,monospace;
-  --r:10px;--r-lg:14px;--r-pill:999px;
-  --sh:0 1px 2px rgba(14,16,23,.05),0 1px 3px rgba(14,16,23,.03);
+  --r:8px;--r-lg:12px;--r-pill:999px;
+  --sh:0 1px 2px rgba(17,17,16,.04),0 1px 3px rgba(17,17,16,.025);
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.68;-webkit-font-smoothing:antialiased;letter-spacing:-.003em}
@@ -35,7 +35,8 @@ h3{font-weight:600;font-size:17px;letter-spacing:-.012em;margin:38px 0 12px;text
 h4{font-weight:600;font-size:15px;margin:30px 0 10px;scroll-margin-top:24px}
 h5{font-weight:600;font-size:12.5px;margin:24px 0 8px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;scroll-margin-top:24px}
 p{margin:0 0 15px;max-width:74ch;text-wrap:pretty}
-a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
+a:hover{text-decoration-color:var(--ink)}
 a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 strong{font-weight:600}
 code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
@@ -45,8 +46,8 @@ ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
 li{margin-bottom:8px}
 li::marker{color:var(--faint)}
 ul.task{list-style:none;padding-left:2px}
-ul.task .box{font-family:var(--mono);color:var(--accent);margin-right:9px}
-blockquote{border:1px solid var(--accent-edge);background:var(--accent-wash);padding:16px 20px;margin:0 0 22px;border-radius:var(--r-lg);max-width:74ch}
+ul.task .box{font-family:var(--mono);color:var(--ink);margin-right:9px}
+blockquote{border:1px solid var(--rule-strong);background:var(--sunk);padding:16px 20px;margin:0 0 22px;border-radius:var(--r-lg);max-width:74ch}
 blockquote p{margin:0}
 .tscroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh)}
 table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
@@ -2266,30 +2267,33 @@ merge → registry status updated in this document</pre>
 </ul></section><section class="doc" id="doc-25"><h2 id="sec-25">25 — Design system</h2>
 <p>One light theme, applied to the documentation site and every prototype. The canonical token file is <a href="../prototypes/theme.css"><code>prototypes/theme.css</code></a>; each surface inlines the same values so it stays self-contained and works when opened from disk.</p>
 <h3 id="25-the-decision">The decision</h3>
-<p><strong>A single committed light theme, not a light-and-dark pair.</strong></p>
+<p><strong>A single committed light theme in milky monochrome — black, white and grey, with no hue.</strong></p>
 <p>Dark mode was removed deliberately. A dual-theme system doubles every colour decision and is where most contrast bugs live — a value defined only inside a media query renders one theme&#x27;s text on the other theme&#x27;s ground. Committing to one theme means every colour is painted explicitly and there is one thing to get right.</p>
 <p>Every surface sets its own <code>background</code> and <code>color</code> from tokens rather than inheriting, so the page holds on any host background.</p>
 <h3 id="25-tokens">Tokens</h3>
 <h4 id="25-ground-and-surfaces">Ground and surfaces</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ground</code></td><td style="text-align:left"><code>#FAFAFC</code></td><td style="text-align:left">Page canvas</td></tr><tr><td style="text-align:left"><code>--surface</code></td><td style="text-align:left"><code>#FFFFFF</code></td><td style="text-align:left">Cards, panels, inputs</td></tr><tr><td style="text-align:left"><code>--sunk</code></td><td style="text-align:left"><code>#F4F5F9</code></td><td style="text-align:left">Inline code, hover states, quiet fills</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ground</code></td><td style="text-align:left"><code>#F7F6F4</code></td><td style="text-align:left">Page canvas</td></tr><tr><td style="text-align:left"><code>--surface</code></td><td style="text-align:left"><code>#FFFFFF</code></td><td style="text-align:left">Cards, panels, inputs</td></tr><tr><td style="text-align:left"><code>--sunk</code></td><td style="text-align:left"><code>#F1EFEC</code></td><td style="text-align:left">Inline code, hover states, quiet fills</td></tr></tbody></table></div>
 <h4 id="25-ink">Ink</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ink</code></td><td style="text-align:left"><code>#0E1017</code></td><td style="text-align:left">Primary text</td></tr><tr><td style="text-align:left"><code>--ink-2</code></td><td style="text-align:left"><code>#3A4050</code></td><td style="text-align:left">Body copy in tables and cards</td></tr><tr><td style="text-align:left"><code>--muted</code></td><td style="text-align:left"><code>#666E80</code></td><td style="text-align:left">Supporting text</td></tr><tr><td style="text-align:left"><code>--faint</code></td><td style="text-align:left"><code>#949BAB</code></td><td style="text-align:left">Labels, captions, metadata</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ink</code></td><td style="text-align:left"><code>#111110</code></td><td style="text-align:left">Primary text</td></tr><tr><td style="text-align:left"><code>--ink-2</code></td><td style="text-align:left"><code>#3C3A37</code></td><td style="text-align:left">Body copy in tables and cards</td></tr><tr><td style="text-align:left"><code>--muted</code></td><td style="text-align:left"><code>#6E6B66</code></td><td style="text-align:left">Supporting text</td></tr><tr><td style="text-align:left"><code>--faint</code></td><td style="text-align:left"><code>#9B9791</code></td><td style="text-align:left">Labels, captions, metadata</td></tr></tbody></table></div>
 <p><code>--faint</code> on <code>--ground</code> is the tightest pairing in the system and clears 4.5:1. Nothing lighter is used for text.</p>
 <h4 id="25-lines">Lines</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--rule</code></td><td style="text-align:left"><code>#EFF1F6</code></td><td style="text-align:left">Default hairline. Almost invisible, on purpose</td></tr><tr><td style="text-align:left"><code>--rule-strong</code></td><td style="text-align:left"><code>#E2E5EE</code></td><td style="text-align:left">Input borders, emphasis</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--rule</code></td><td style="text-align:left"><code>#E9E6E2</code></td><td style="text-align:left">Default hairline. Almost invisible, on purpose</td></tr><tr><td style="text-align:left"><code>--rule-strong</code></td><td style="text-align:left"><code>#DAD6D0</code></td><td style="text-align:left">Input borders, emphasis</td></tr></tbody></table></div>
 <p>Separation comes from space first, a hairline second, and a border only when a boundary is genuinely structural. Depth comes from <code>--sh</code>, never from a heavy line.</p>
-<h4 id="25-accent">Accent</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--accent</code></td><td style="text-align:left"><code>#4338CA</code></td><td style="text-align:left">Links, active state, primary action</td></tr><tr><td style="text-align:left"><code>--accent-2</code></td><td style="text-align:left"><code>#312BA0</code></td><td style="text-align:left">Hover on the primary action</td></tr><tr><td style="text-align:left"><code>--accent-wash</code></td><td style="text-align:left"><code>#F0F1FE</code></td><td style="text-align:left">Selected rows, focus ring, quiet accent fills</td></tr><tr><td style="text-align:left"><code>--accent-edge</code></td><td style="text-align:left"><code>#CFD2F9</code></td><td style="text-align:left">Border on accent surfaces</td></tr></tbody></table></div>
-<p><strong>One accent, held back.</strong> At most one accent-filled control per view; everything else is neutral. The accent earns attention because it is rare.</p>
+<h4 id="25-emphasis">Emphasis</h4>
+<p>There is no accent hue. Emphasis is carried by <strong>weight and value</strong>, not colour.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--accent</code></td><td style="text-align:left"><code>#111110</code></td><td style="text-align:left">Primary buttons, active state, links</td></tr><tr><td style="text-align:left"><code>--accent-2</code></td><td style="text-align:left"><code>#2E2C29</code></td><td style="text-align:left">Hover — black lifts rather than darkens</td></tr><tr><td style="text-align:left"><code>--accent-wash</code></td><td style="text-align:left"><code>#F1EFEC</code></td><td style="text-align:left">Selected rows, quiet fills</td></tr><tr><td style="text-align:left"><code>--accent-edge</code></td><td style="text-align:left"><code>#DAD6D0</code></td><td style="text-align:left">Border on emphasised surfaces</td></tr></tbody></table></div>
+<p>Buttons are <strong>black, white or grey</strong>: a filled black pill for the one primary action, a white pill with a hairline for everything else. When nothing on screen is coloured, the single black control is unmistakable — and colour is not spent on decoration.</p>
+<p>The neutrals are very slightly warm. A cold blue-grey reads as software chrome; a milky, faintly warm grey reads as considered.</p>
 <h4 id="25-status">Status</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Meaning</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ok</code></td><td style="text-align:left"><code>#0B7A5B</code></td><td style="text-align:left">Passed, verified, eligible</td></tr><tr><td style="text-align:left"><code>--warn</code></td><td style="text-align:left"><code>#8A5B10</code></td><td style="text-align:left">Needs attention, irreversible, locked</td></tr><tr><td style="text-align:left"><code>--crit</code></td><td style="text-align:left"><code>#B3261E</code></td><td style="text-align:left">Refused, failed, unverified</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Meaning</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ok</code></td><td style="text-align:left"><code>#2F2E2B</code></td><td style="text-align:left">Passed, verified, eligible — near-black, no hue</td></tr><tr><td style="text-align:left"><code>--warn</code></td><td style="text-align:left"><code>#7A6234</code></td><td style="text-align:left">Needs attention, irreversible, locked — muted ochre</td></tr><tr><td style="text-align:left"><code>--crit</code></td><td style="text-align:left"><code>#7A322A</code></td><td style="text-align:left">Refused, failed, unverified — muted oxblood</td></tr></tbody></table></div>
+<p>Success carries <strong>no hue at all</strong>: a passing state is the normal state, and normal is black on white. Only the two failure states carry the faintest warmth, desaturated far enough to sit inside the monochrome rather than interrupt it.</p>
 <p>Status is never encoded in colour alone. Every status carries a word, a mark, or both — required for accessibility and for anyone reading a screenshot in greyscale.</p>
 <h4 id="25-shape">Shape</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Applied to</th></tr></thead><tbody><tr><td style="text-align:left"><code>--r</code></td><td style="text-align:left"><code>10px</code></td><td style="text-align:left">Inputs, small controls, nav items</td></tr><tr><td style="text-align:left"><code>--r-lg</code></td><td style="text-align:left"><code>14px</code></td><td style="text-align:left">Cards, notes, tables, code blocks</td></tr><tr><td style="text-align:left"><code>--r-pill</code></td><td style="text-align:left"><code>999px</code></td><td style="text-align:left"><strong>Every button</strong>, chips, pills, status dots, step markers</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Applied to</th></tr></thead><tbody><tr><td style="text-align:left"><code>--r</code></td><td style="text-align:left"><code>8px</code></td><td style="text-align:left">Inputs, small controls, nav items</td></tr><tr><td style="text-align:left"><code>--r-lg</code></td><td style="text-align:left"><code>12px</code></td><td style="text-align:left">Cards, notes, tables, code blocks</td></tr><tr><td style="text-align:left"><code>--r-pill</code></td><td style="text-align:left"><code>999px</code></td><td style="text-align:left"><strong>Every button</strong>, chips, pills, status dots, step markers</td></tr></tbody></table></div>
 <p>Controls are pills. Containers are soft rectangles. Nothing in the system has a sharp corner.</p>
 <h4 id="25-depth">Depth</h4>
-<pre>--sh:    0 1px 2px rgba(14,16,23,.05), 0 1px 3px rgba(14,16,23,.03);
---sh-lg: 0 2px 4px rgba(14,16,23,.04), 0 12px 32px rgba(14,16,23,.06);</pre>
+<pre>--sh:    0 1px 2px rgba(17,17,16,.04), 0 1px 3px rgba(17,17,16,.025);
+--sh-lg: 0 2px 4px rgba(17,17,16,.03), 0 12px 32px rgba(17,17,16,.05);</pre>
 <p>Two layers each: a tight contact shadow and a soft diffused one. Both carry a vertical offset — a zero-offset halo is decoration, not depth.</p>
 <h4 id="25-type">Type</h4>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Role</th><th style="text-align:left">Stack</th></tr></thead><tbody><tr><td style="text-align:left"><code>--display</code></td><td style="text-align:left">SF Pro Display → Inter → system sans</td></tr><tr><td style="text-align:left"><code>--body</code></td><td style="text-align:left">SF Pro Text → Inter → system sans</td></tr><tr><td style="text-align:left"><code>--mono</code></td><td style="text-align:left">SF Mono → JetBrains Mono → IBM Plex Mono → system mono</td></tr></tbody></table></div>
@@ -2298,7 +2302,7 @@ merge → registry status updated in this document</pre>
 <h3 id="25-rules">Rules</h3>
 <ol>
 <li><strong>Space before lines.</strong> Reach for a gap before a border.</li>
-<li><strong>One accent per view.</strong> Every other control is neutral.</li>
+<li><strong>No hue for emphasis.</strong> Weight and value carry it. One black control per view.</li>
 <li><strong>Never colour alone.</strong> Status carries a word or a mark as well.</li>
 <li><strong>Every button is a pill.</strong> No exceptions in this system.</li>
 <li><strong>Focus is always visible.</strong> A 2px accent outline at 3px offset, on every interactive element.</li>
