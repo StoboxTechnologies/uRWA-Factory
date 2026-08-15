@@ -1,61 +1,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" width="760" height="380" class="d-dvp">
 <style>
-.d-dvp text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-dvp .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-dvp text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-dvp .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-dvp .st{font-size:13px;font-weight:600}
-.d-dvp .sm{font-size:11.5px;fill:#6E6B66}
-.d-dvp .fa{font-size:10.5px;fill:#9B9791}
-.d-dvp .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
+.d-dvp .sm{font-size:11.5px;fill:#57575B}
+.d-dvp .fa{font-size:10.5px;fill:#6E6E73}
+.d-dvp .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
 .d-dvp .i-st{fill:#FFFFFF}
-.d-dvp .i-sm{fill:#9B9791}
-.d-dvp .bad{fill:#7A322A;font-size:11.5px;font-weight:600}
-.d-dvp .badf{fill:#7A322A;font-size:10.5px}
+.d-dvp .i-sm{fill:#6E6E73}
+.d-dvp .bad{fill:#B42318;font-size:11.5px;font-weight:600}
+.d-dvp .badf{fill:#B42318;font-size:10.5px}
 </style>
 <defs>
 <marker id="va" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 <marker id="vb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#C9A6A0"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#F5CFCA"/>
 </marker>
 </defs>
 <rect width="760" height="380" fill="#FFFFFF"/>
 
 <!-- conventional -->
 <text class="lbl" x="24" y="24">CONVENTIONAL SETTLEMENT · TWO TRANSACTIONS</text>
-<rect x="24" y="36" width="342" height="140" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="44" y="58" width="120" height="30" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="36" width="342" height="140" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="44" y="58" width="120" height="30" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="mo" x="58" y="78">payment leg</text>
-<path d="M170 73 L214 73" stroke="#C9A6A0" stroke-width="1.3" marker-end="url(#vb)" fill="none"/>
-<rect x="222" y="58" width="120" height="30" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/>
+<path d="M170 73 L214 73" stroke="#F5CFCA" stroke-width="1.3" marker-end="url(#vb)" fill="none"/>
+<rect x="222" y="58" width="120" height="30" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="mo" x="236" y="78">security leg</text>
-<rect x="44" y="100" width="298" height="56" rx="8" fill="#FFFFFF" stroke="#C9A6A0" stroke-dasharray="4 3"/>
+<rect x="44" y="100" width="298" height="56" rx="8" fill="#FFFFFF" stroke="#F5CFCA" stroke-dasharray="4 3"/>
 <text class="bad" x="60" y="122">The gap between them is settlement risk</text>
 <text class="badf" x="60" y="142">One party has paid. The other has not delivered.</text>
 
 <!-- atomic -->
 <text class="lbl" x="394" y="24">ATOMIC DvP · ONE TRANSACTION</text>
-<rect x="394" y="36" width="342" height="140" rx="12" fill="#111110"/>
-<rect x="414" y="58" width="120" height="30" rx="8" fill="#2E2C29"/>
+<rect x="394" y="36" width="342" height="140" rx="12" fill="#0C0C0F"/>
+<rect x="414" y="58" width="120" height="30" rx="8" fill="#1D1D1F"/>
 <text class="mo i-sm" x="428" y="78">payment leg</text>
-<rect x="558" y="58" width="120" height="30" rx="8" fill="#2E2C29"/>
+<rect x="558" y="58" width="120" height="30" rx="8" fill="#1D1D1F"/>
 <text class="mo i-sm" x="572" y="78">security leg</text>
-<path d="M540 73 L552 73" stroke="#9B9791" stroke-width="1.3" fill="none"/>
-<rect x="414" y="100" width="264" height="56" rx="8" fill="#2E2C29"/>
+<path d="M540 73 L552 73" stroke="#6E6E73" stroke-width="1.3" fill="none"/>
+<rect x="414" y="100" width="264" height="56" rx="8" fill="#1D1D1F"/>
 <text class="st i-st" x="430" y="122">Both, or neither</text>
 <text class="fa i-sm" x="430" y="142">There is no block in which one has moved.</text>
 
 <!-- sequence -->
 <text class="lbl" x="24" y="212">WHAT settle() DOES, IN ORDER</text>
-<rect x="24" y="224" width="712" height="60" rx="10" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="224" width="712" height="60" rx="10" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="mo" x="44" y="248">not expired · nonce unused · both EIP-712 signatures valid · token.canTransfer(seller, buyer, amount)</text>
 <text class="mo" x="44" y="270">payment: buyer → seller · security: seller → buyer through the full compliance pipeline · mark settled</text>
 
-<rect x="24" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="44" y="322">Compliance is checked inside settlement</text>
 <text class="fa" x="44" y="344">Not before it, where the answer could go stale in between.</text>
 
-<rect x="388" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="388" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="408" y="322">Any failure reverts everything</text>
 <text class="fa" x="408" y="344">Settlement risk cannot occur, rather than being managed.</text>
 </svg>

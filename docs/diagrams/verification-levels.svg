@@ -1,59 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 372" width="760" height="372" class="d-ver">
 <style>
-.d-ver text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-ver .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-ver text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-ver .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-ver .st{font-size:13px;font-weight:600}
-.d-ver .sm{font-size:11.5px;fill:#6E6B66}
-.d-ver .fa{font-size:10.5px;fill:#9B9791}
-.d-ver .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#6E6B66}
+.d-ver .sm{font-size:11.5px;fill:#57575B}
+.d-ver .fa{font-size:10.5px;fill:#6E6E73}
+.d-ver .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#57575B}
 .d-ver .lv{font-size:13px;font-weight:700}
 .d-ver .i-lv{fill:#FFFFFF}
 .d-ver .i-st{fill:#FFFFFF}
-.d-ver .i-sm{fill:#9B9791}
-.d-ver .i-mos{fill:#F1EFEC}
-.d-ver .grey{fill:#9B9791}
+.d-ver .i-sm{fill:#6E6E73}
+.d-ver .i-mos{fill:#F0F2F8}
+.d-ver .grey{fill:#6E6E73}
 </style>
 <rect width="760" height="372" fill="#FFFFFF"/>
 
 <text class="lbl" x="24" y="24">EACH LEVEL VERIFIES WHAT THE ONE BELOW CANNOT</text>
 <text class="lbl" x="600" y="24">BLIND TO</text>
 
-<rect x="24" y="36" width="560" height="40" rx="9" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="36" width="560" height="40" rx="9" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="lv" x="44" y="61">L0</text>
 <text class="st" x="78" y="61">Structure</text>
 <text class="sm" x="238" y="61">links, anchors, staleness, encoding</text>
 <text class="mos" x="506" y="61">11</text>
 <text class="fa" x="600" y="61">whether the prose is true</text>
 
-<rect x="24" y="82" width="560" height="40" rx="9" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="82" width="560" height="40" rx="9" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="lv" x="44" y="107">L1</text>
 <text class="st" x="78" y="107">Each document</text>
 <text class="sm" x="238" y="107">tables, fences, registry IDs, totals</text>
 <text class="mos" x="506" y="107">7</text>
 <text class="fa" x="600" y="107">whether documents agree</text>
 
-<rect x="24" y="128" width="560" height="40" rx="9" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="128" width="560" height="40" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="lv" x="44" y="153">L2</text>
 <text class="st" x="78" y="153">Between models</text>
 <text class="sm" x="238" y="153">contracts, roles, entities, claim keys</text>
 <text class="mos" x="506" y="153">16</text>
 <text class="fa" x="600" y="153">whether they match reality</text>
 
-<rect x="24" y="174" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#DAD6D0" stroke-dasharray="4 3"/>
+<rect x="24" y="174" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
 <text class="lv grey" x="44" y="199">L3</text>
 <text class="st grey" x="78" y="199">Code vs spec</text>
 <text class="sm" x="238" y="199">signatures, storage, events, modifiers</text>
 <text class="mos" x="506" y="199">7 later</text>
 <text class="fa" x="600" y="199">whether code behaves</text>
 
-<rect x="24" y="220" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#DAD6D0" stroke-dasharray="4 3"/>
+<rect x="24" y="220" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
 <text class="lv grey" x="44" y="245">L4</text>
 <text class="st grey" x="78" y="245">Runtime</text>
 <text class="sm" x="238" y="245">the fifteen invariants, fuzzed and forked</text>
 <text class="mos" x="506" y="245">15 later</text>
 <text class="fa" x="600" y="245">whether the spec was right</text>
 
-<rect x="24" y="266" width="560" height="56" rx="9" fill="#111110"/>
+<rect x="24" y="266" width="560" height="56" rx="9" fill="#0C0C0F"/>
 <text class="lv i-lv" x="44" y="288">L5</text>
 <text class="st i-st" x="78" y="288">The checks themselves</text>
 <text class="sm i-sm" x="238" y="288">every check must fail its own fixture</text>
@@ -61,6 +61,6 @@
 <text class="fa i-sm" x="78" y="310">A check that passes its broken input is reported dead, not counted as a pass.</text>
 <text class="fa" x="600" y="288">what the checks miss</text>
 
-<rect x="24" y="332" width="712" height="30" rx="8" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="332" width="712" height="30" rx="8" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="sm" x="44" y="352">L5 found six dead checks on its first run. All six passed L0 through L2 and looked healthy. Nothing below L5 could have found them.</text>
 </svg>

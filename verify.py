@@ -325,7 +325,24 @@ def _(c):
         if re.search(r'(?:href|src)="https?://', svg):
             out.append(f"diagrams/{n} references an external resource")
         out += _overflow(n, svg)
+        off = _off_palette(svg)
+        if off:
+            out.append(f"diagrams/{n} uses colours outside the design tokens: {', '.join(off)}")
     return out
+
+
+def _off_palette(svg):
+    """Colour literals that are not design tokens.
+
+    A diagram drawn in a near-but-not-equal grey reads as an off-brand tint
+    against the page it sits in, and nothing else would catch it.
+    """
+    sources = [ROOT / "build-docs.py", PROTO / "theme.css"]
+    tokens = {c.upper() for s in sources if s.exists()
+              for c in re.findall(r"#[0-9A-Fa-f]{6}", s.read_text(encoding="utf-8"))}
+    tokens.add("#FFFFFF")
+    used = {c.upper() for c in re.findall(r"#[0-9A-Fa-f]{6}", svg)}
+    return sorted(used - tokens)
 
 
 # Advance widths as a fraction of font size, calibrated against rendered output.

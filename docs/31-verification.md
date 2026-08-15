@@ -38,6 +38,10 @@ words longer does not error and does not wrap — the words are simply not on th
 diagram still looks finished. The check measures each label against the viewBox using advance widths
 calibrated from rendered output.
 
+It also pins every colour literal to the design tokens. The sixteen diagrams were first drawn in a
+warm grey family against pages built from a cool one — near enough to look deliberate, far enough to
+read as an off-brand tint. Nothing else in the pipeline would have caught it.
+
 | Check | Rule |
 |---|---|
 | `L0.1` | Every `docs/*.md` appears in the README index |
@@ -50,7 +54,7 @@ calibrated from rendered output.
 | `L0.8` | Every HTML tag balances |
 | `L0.9` | Every page is reachable from every other — the documentation links each surface, each surface links back and sideways |
 | `L0.10` | Every page declares its character set and viewport |
-| `L0.11` | Every diagram resolves, parses, carries a `viewBox`, sets no `fill` on `<text>`, fetches nothing, and has no label running off the canvas |
+| `L0.11` | Every diagram resolves, parses, carries a `viewBox`, sets no `fill` on `<text>`, fetches nothing, keeps to the design tokens, and has no label running off the canvas |
 
 ## L1 — Document consistency
 

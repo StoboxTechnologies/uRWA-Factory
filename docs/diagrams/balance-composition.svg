@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 292" width="760" height="292" class="d-bal">
 <style>
-.d-bal text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-bal .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-bal text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-bal .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-bal .st{font-size:12.5px;font-weight:600}
-.d-bal .sm{font-size:11px;fill:#6E6B66}
-.d-bal .fa{font-size:10.5px;fill:#9B9791}
-.d-bal .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-bal .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-bal .sm{font-size:11px;fill:#57575B}
+.d-bal .fa{font-size:10.5px;fill:#6E6E73}
+.d-bal .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-bal .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-bal .i-st{fill:#FFFFFF}
-.d-bal .i-sm{fill:#9B9791}
+.d-bal .i-sm{fill:#6E6E73}
 .d-bal .num{font-size:12px;font-weight:600}
 .d-bal .i-num{fill:#FFFFFF;font-size:12px;font-weight:600}
 </style>
@@ -17,32 +17,32 @@
 <text class="lbl" x="24" y="24">balanceOf(holder) = 100,000</text>
 
 <!-- the bar -->
-<rect x="24" y="36" width="304" height="52" rx="9" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="36" width="304" height="52" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="num" x="44" y="60">40,000</text>
 <text class="sm" x="44" y="78">transferable now</text>
 
-<rect x="336" y="36" width="200" height="52" rx="9" fill="#111110"/>
+<rect x="336" y="36" width="200" height="52" rx="9" fill="#0C0C0F"/>
 <text class="i-num" x="356" y="60">35,000</text>
 <text class="sm i-sm" x="356" y="78">admin freeze</text>
 
-<rect x="544" y="36" width="192" height="52" rx="9" fill="#2E2C29"/>
+<rect x="544" y="36" width="192" height="52" rx="9" fill="#1D1D1F"/>
 <text class="i-num" x="564" y="60">25,000</text>
 <text class="sm i-sm" x="564" y="78">lockups, unexpired</text>
 
 <!-- derivations -->
-<rect x="24" y="104" width="348" height="112" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="104" width="348" height="112" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="44" y="128">DERIVED ON READ, NEVER STORED</text>
 <text class="mo" x="44" y="152">getFrozenTokens = freeze + Σ unexpired lockups</text>
 <text class="mo" x="44" y="174">unfrozenBalanceOf = max(0, balance − frozen)</text>
 <text class="fa" x="44" y="200">Storing either would create a second source of truth that drifts.</text>
 
-<rect x="388" y="104" width="348" height="112" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="388" y="104" width="348" height="112" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="lbl" x="408" y="128">TWO PROPERTIES THAT SURPRISE PEOPLE</text>
 <text class="sm" x="408" y="152">Lockups expire by timestamp — no keeper, no</text>
 <text class="sm" x="408" y="168">transaction, no stale state to clean up.</text>
 <text class="sm" x="408" y="192">getFrozenTokens may exceed the balance and</text>
 <text class="sm" x="408" y="208">must not revert. The standard requires it.</text>
 
-<rect x="24" y="234" width="712" height="42" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="234" width="712" height="42" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="sm" x="44" y="260">A seizure moves tokens regardless of the freeze, but still checks canReceive — a forced transfer to an ineligible address is still illegal.</text>
 </svg>

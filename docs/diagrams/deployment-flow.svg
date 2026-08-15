@@ -1,63 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 336" width="760" height="336" class="d-dep">
 <style>
-.d-dep text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-dep .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-dep text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-dep .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-dep .st{font-size:12.5px;font-weight:600}
-.d-dep .sm{font-size:11px;fill:#6E6B66}
-.d-dep .fa{font-size:10.5px;fill:#9B9791}
-.d-dep .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-dep .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-dep .sm{font-size:11px;fill:#57575B}
+.d-dep .fa{font-size:10.5px;fill:#6E6E73}
+.d-dep .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-dep .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-dep .i-st{fill:#FFFFFF}
-.d-dep .i-sm{fill:#9B9791}
+.d-dep .i-sm{fill:#6E6E73}
 .d-dep .num{font-size:10.5px;font-weight:700;fill:#FFFFFF}
 </style>
 <defs>
 <marker id="ea" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="336" fill="#FFFFFF"/>
 
-<rect x="24" y="16" width="136" height="46" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="16" width="136" height="46" rx="10" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="st" x="42" y="38">Issuer</text>
 <text class="fa" x="42" y="54">anyone, permissionless</text>
-<path d="M168 39 L198 39" stroke="#9B9791" stroke-width="1.3" marker-end="url(#ea)" fill="none"/>
-<rect x="206" y="16" width="290" height="46" rx="10" fill="#111110"/>
+<path d="M168 39 L198 39" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#ea)" fill="none"/>
+<rect x="206" y="16" width="290" height="46" rx="10" fill="#0C0C0F"/>
 <text class="mo i-sm" x="224" y="45">factory.createToken(params)</text>
-<rect x="516" y="16" width="220" height="46" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="516" y="16" width="220" height="46" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="sm" x="534" y="38">One transaction, from nothing</text>
 <text class="sm" x="534" y="54">to a working compliant token.</text>
 
 <text class="lbl" x="24" y="94">WHAT THE FACTORY DOES, IN ORDER</text>
 
-<circle cx="38" cy="118" r="10" fill="#111110"/><text class="num" x="35" y="122">1</text>
+<circle cx="38" cy="118" r="10" fill="#0C0C0F"/><text class="num" x="35" y="122">1</text>
 <text class="mo" x="58" y="122">deploy the diamond, cut facets from the named package</text>
 
-<circle cx="38" cy="146" r="10" fill="#111110"/><text class="num" x="35" y="150">2</text>
+<circle cx="38" cy="146" r="10" fill="#0C0C0F"/><text class="num" x="35" y="150">2</text>
 <text class="mo" x="58" y="150">clone the treasury — one per token, never shared</text>
 
-<circle cx="38" cy="174" r="10" fill="#111110"/><text class="num" x="35" y="178">3</text>
+<circle cx="38" cy="174" r="10" fill="#0C0C0F"/><text class="num" x="35" y="178">3</text>
 <text class="mo" x="58" y="178">setTreasury · setOfferingRegistry · setIdentityRegistry</text>
 
-<circle cx="38" cy="202" r="10" fill="#111110"/><text class="num" x="35" y="206">4</text>
+<circle cx="38" cy="202" r="10" fill="#0C0C0F"/><text class="num" x="35" y="206">4</text>
 <text class="mo" x="58" y="206">deploy the PolicySet from the chosen regime preset</text>
 
-<circle cx="38" cy="230" r="10" fill="#111110"/><text class="num" x="35" y="234">5</text>
+<circle cx="38" cy="230" r="10" fill="#0C0C0F"/><text class="num" x="35" y="234">5</text>
 <text class="mo" x="58" y="234">trust(treasury, "treasury") — named, with its reason on chain</text>
 
-<circle cx="38" cy="258" r="10" fill="#111110"/><text class="num" x="35" y="262">6</text>
+<circle cx="38" cy="258" r="10" fill="#0C0C0F"/><text class="num" x="35" y="262">6</text>
 <text class="mo" x="58" y="262">grant the four roles to the four addresses given</text>
 
-<circle cx="38" cy="286" r="10" fill="#2F2E2B"/><text class="num" x="35" y="290">7</text>
+<circle cx="38" cy="286" r="10" fill="#1D1D1F"/><text class="num" x="35" y="290">7</text>
 <text class="mo" x="58" y="290">register the deployment, emit TokenCreated</text>
 
-<rect x="470" y="104" width="266" height="94" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="470" y="104" width="266" height="94" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="490" y="128">Then it lets go</text>
 <text class="sm" x="490" y="150">The factory retains no role, no key</text>
 <text class="sm" x="490" y="166">and no upgrade right over the token</text>
 <text class="sm" x="490" y="182">it just created.</text>
 
-<rect x="470" y="212" width="266" height="94" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="470" y="212" width="266" height="94" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="st" x="490" y="236">Why that is deliberate</text>
 <text class="fa" x="490" y="258">A factory that keeps admin rights over</text>
 <text class="fa" x="490" y="274">every token it issues is a single point</text>

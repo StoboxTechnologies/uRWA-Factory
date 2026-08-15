@@ -279,7 +279,7 @@ def render(md, sec):
 STYLE = """
 :root{
   --ground:#F5F5F7;--surface:#FFFFFF;--sunk:#F0F2F8;--dark:#0C0C0F;
-  --ink:#1D1D1F;--ink-2:#3C3C43;--muted:#6E6E73;--faint:#86868B;
+  --ink:#1D1D1F;--ink-2:#3C3C43;--muted:#57575B;--faint:#6E6E73;
   --rule:#E2E4E9;--rule-strong:#D2D5DB;
   --accent:#0C0C0F;--accent-2:#1D1D1F;--accent-wash:#F5F5F7;--accent-edge:#E2E4E9;
   --spot:#22D3EE;--spot-2:#0EBDD9;--spot-ink:#0C2E33;--spot-text:#0E7490;

@@ -7,7 +7,7 @@
 <style>
 :root{
   --ground:#F5F5F7;--surface:#FFFFFF;--sunk:#F0F2F8;--dark:#0C0C0F;
-  --ink:#1D1D1F;--ink-2:#3C3C43;--muted:#6E6E73;--faint:#86868B;
+  --ink:#1D1D1F;--ink-2:#3C3C43;--muted:#57575B;--faint:#6E6E73;
   --rule:#E2E4E9;--rule-strong:#D2D5DB;
   --accent:#0C0C0F;--accent-2:#1D1D1F;--accent-wash:#F5F5F7;--accent-edge:#E2E4E9;
   --spot:#22D3EE;--spot-2:#0EBDD9;--spot-ink:#0C2E33;--spot-text:#0E7490;
@@ -343,42 +343,42 @@ footer p{max-width:76ch;margin:0 0 8px}
 <p>The system is split into three planes with different mutability rules. Every requirement maps onto exactly one plane.</p>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 432" class="d-planes">
 <style>
-.d-planes text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-planes .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6B66}
+.d-planes text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-planes .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#57575B}
 .d-planes .nm{font-size:16px;font-weight:600;letter-spacing:-.01em}
-.d-planes .it{font-size:12.5px;fill:#3C3A37}
-.d-planes .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;fill:#3C3A37}
-.d-planes .sm{font-size:11.5px;fill:#6E6B66}
-.d-planes .fa{font-size:11px;fill:#9B9791}
-.d-planes .arw{stroke:#9B9791;stroke-width:1.4;fill:none}
+.d-planes .it{font-size:12.5px;fill:#3C3C43}
+.d-planes .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;fill:#3C3C43}
+.d-planes .sm{font-size:11.5px;fill:#57575B}
+.d-planes .fa{font-size:11px;fill:#6E6E73}
+.d-planes .arw{stroke:#6E6E73;stroke-width:1.4;fill:none}
 /* Inverted text needs its own class: a CSS rule beats a fill="" attribute,
    so setting the colour inline would be silently overridden. */
 .d-planes .i-nm{fill:#FFFFFF}
-.d-planes .i-lbl{fill:#F1EFEC}
-.d-planes .i-sm{fill:#9B9791}
-.d-planes .i-mo{fill:#F1EFEC}
+.d-planes .i-lbl{fill:#F0F2F8}
+.d-planes .i-sm{fill:#6E6E73}
+.d-planes .i-mo{fill:#F0F2F8}
 </style>
 <defs>
 <marker id="pa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="432" fill="#FFFFFF"/>
 
 
-<rect x="24" y="16" width="470" height="112" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
-<rect x="40" y="30" width="86" height="18" rx="9" fill="#FFFFFF" stroke="#DAD6D0"/>
+<rect x="24" y="16" width="470" height="112" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
+<rect x="40" y="30" width="86" height="18" rx="9" fill="#FFFFFF" stroke="#D2D5DB"/>
 <text class="lbl" x="52" y="42.5">EXTENSIBLE</text>
 <text class="nm" x="40" y="72">Claims</text>
 <text class="sm" x="118" y="72">who someone is</text>
-<rect x="40" y="86" width="128" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="40" y="86" width="128" height="28" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mo" x="54" y="104">Allowlist</text>
-<rect x="176" y="86" width="128" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="176" y="86" width="128" height="28" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mo" x="190" y="104">EAS</text>
-<rect x="312" y="86" width="166" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="312" y="86" width="166" height="28" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mo" x="326" y="104">StoboxDID</text>
 
-<rect x="510" y="16" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="510" y="16" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="528" y="42.5">IF IT BREAKS</text>
 <text class="it" x="528" y="68">Claims stop resolving.</text>
 <text class="it" x="528" y="86">Transfers block.</text>
@@ -388,17 +388,17 @@ footer p{max-width:76ch;margin:0 0 8px}
 <text class="fa" x="271" y="143">rules read claims</text>
 
 
-<rect x="24" y="152" width="470" height="112" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
-<rect x="40" y="166" width="94" height="18" rx="9" fill="#FFFFFF" stroke="#DAD6D0"/>
+<rect x="24" y="152" width="470" height="112" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
+<rect x="40" y="166" width="94" height="18" rx="9" fill="#FFFFFF" stroke="#D2D5DB"/>
 <text class="lbl" x="52" y="178.5">REPLACEABLE</text>
 <text class="nm" x="40" y="208">Policy</text>
 <text class="sm" x="112" y="208">what they may do</text>
-<rect x="40" y="222" width="150" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="40" y="222" width="150" height="28" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mo" x="54" y="240">PolicySet</text>
-<rect x="198" y="222" width="280" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="198" y="222" width="280" height="28" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mo" x="212" y="240">12 stateless rules · groups AND-ed</text>
 
-<rect x="510" y="152" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="510" y="152" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="528" y="178.5">IF IT BREAKS</text>
 <text class="it" x="528" y="204">Trading halts.</text>
 <text class="it" x="528" y="222">Balances are untouched.</text>
@@ -408,15 +408,15 @@ footer p{max-width:76ch;margin:0 0 8px}
 <text class="fa" x="271" y="279">the hook calls the policy set</text>
 
 
-<rect x="24" y="288" width="470" height="112" rx="12" fill="#111110"/>
-<rect x="40" y="302" width="82" height="18" rx="9" fill="#2E2C29"/>
+<rect x="24" y="288" width="470" height="112" rx="12" fill="#0C0C0F"/>
+<rect x="40" y="302" width="82" height="18" rx="9" fill="#1D1D1F"/>
 <text class="lbl i-lbl" x="52" y="314.5">IMMUTABLE</text>
 <text class="nm i-nm" x="40" y="344">Ledger</text>
 <text class="sm i-sm" x="122" y="344">who owns what</text>
-<rect x="40" y="358" width="438" height="28" rx="8" fill="#2E2C29"/>
+<rect x="40" y="358" width="438" height="28" rx="8" fill="#1D1D1F"/>
 <text class="mo i-mo" x="54" y="376">ERC-20 core · balances · supply · allowances</text>
 
-<rect x="510" y="288" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="510" y="288" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="528" y="314.5">IF IT BREAKS</text>
 <text class="it" x="528" y="340">It cannot.</text>
 <text class="fa" x="528" y="364">Selectors are registered against</text>
@@ -504,84 +504,84 @@ footer p{max-width:76ch;margin:0 0 8px}
 <p>Facets share the token&#x27;s storage through <code>delegatecall</code>. Each owns one namespaced storage struct.</p>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" class="d-dia">
 <style>
-.d-dia text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-dia .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-dia text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-dia .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-dia .st{font-size:13px;font-weight:600}
-.d-dia .sm{font-size:11px;fill:#6E6B66}
-.d-dia .fa{font-size:10px;fill:#9B9791}
-.d-dia .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-dia .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;fill:#6E6B66}
+.d-dia .sm{font-size:11px;fill:#57575B}
+.d-dia .fa{font-size:10px;fill:#6E6E73}
+.d-dia .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-dia .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;fill:#57575B}
 .d-dia .i-st{fill:#FFFFFF}
-.d-dia .i-sm{fill:#9B9791}
-.d-dia .i-mo{fill:#F1EFEC}
-.d-dia .no{fill:#7A322A;font-size:10px;font-weight:600}
+.d-dia .i-sm{fill:#6E6E73}
+.d-dia .i-mo{fill:#F0F2F8}
+.d-dia .no{fill:#B42318;font-size:10px;font-weight:600}
 </style>
 <defs>
 <marker id="da" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="430" fill="#FFFFFF"/>
 
 
-<rect x="24" y="16" width="180" height="30" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="16" width="180" height="30" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="mo" x="38" y="35">any call to the token</text>
-<path d="M114 50 L114 68" stroke="#9B9791" stroke-width="1.3" marker-end="url(#da)" fill="none"/>
+<path d="M114 50 L114 68" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#da)" fill="none"/>
 
 
-<rect x="24" y="72" width="712" height="60" rx="10" fill="#111110"/>
+<rect x="24" y="72" width="712" height="60" rx="10" fill="#0C0C0F"/>
 <text class="lbl i-sm" x="44" y="96">FALLBACK ROUTER · THE DIAMOND ITSELF</text>
 <text class="mo i-mo" x="44" y="118">selector → facet → delegatecall · unknown selector reverts FunctionNotFound</text>
-<rect x="560" y="86" width="156" height="32" rx="8" fill="#2E2C29"/>
+<rect x="560" y="86" width="156" height="32" rx="8" fill="#1D1D1F"/>
 <text class="sm i-st" x="576" y="106">Fails closed by design</text>
 
 
-<rect x="24" y="146" width="712" height="66" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="146" width="712" height="66" rx="10" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="lbl" x="44" y="170">ERC-20 CORE · REGISTERED AGAINST THE DIAMOND</text>
 <text class="mo" x="44" y="192">balanceOf · transfer · transferFrom · approve · allowance · totalSupply</text>
-<rect x="556" y="160" width="160" height="34" rx="8" fill="#FFFFFF" stroke="#DAD6D0"/>
+<rect x="556" y="160" width="160" height="34" rx="8" fill="#FFFFFF" stroke="#D2D5DB"/>
 <text class="no" x="572" y="176">diamondCut CANNOT</text>
 <text class="no" x="572" y="189">REPLACE OR REMOVE</text>
 
 
 <text class="lbl" x="24" y="242">FACETS · EACH OWNS ONE NAMESPACED STORAGE STRUCT</text>
 
-<rect x="24" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="40" y="276">ComplianceFacet</text>
 <text class="mos" x="40" y="294">ComplianceStorage</text>
 <text class="fa" x="40" y="312">the hook · ERC-7943 views</text>
 
-<rect x="204" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="204" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="220" y="276">FreezeFacet</text>
 <text class="mos" x="220" y="294">FreezeStorage</text>
 <text class="fa" x="220" y="312">admin freeze · totals</text>
 
-<rect x="384" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="384" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="400" y="276">LockupFacet</text>
 <text class="mos" x="400" y="294">LockupStorage</text>
 <text class="fa" x="400" y="312">schedules · expire by time</text>
 
-<rect x="564" y="254" width="172" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="564" y="254" width="172" height="70" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="580" y="276">MonetaryFacet</text>
 <text class="mos" x="580" y="294">MonetaryStorage</text>
 <text class="fa" x="580" y="312">issue · redeem · caps</text>
 
-<rect x="24" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="40" y="356">RolesFacet</text>
 <text class="mos" x="40" y="374">RolesStorage</text>
 <text class="fa" x="40" y="392">grant · revoke</text>
 
-<rect x="204" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="204" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="220" y="356">PurchaseFacet</text>
 <text class="mos" x="220" y="374">— optional</text>
 <text class="fa" x="220" y="392">offering entry point</text>
 
-<rect x="384" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#DAD6D0" stroke-dasharray="4 3"/>
+<rect x="384" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
 <text class="st" x="400" y="356">EmergencyFacet</text>
 <text class="no" x="400" y="374">NOT INSTALLED BY DEFAULT</text>
 <text class="fa" x="400" y="392">forced transfer · mint</text>
 
-<rect x="564" y="334" width="172" height="70" rx="10" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="564" y="334" width="172" height="70" rx="10" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="st" x="580" y="356">Cut &amp; Loupe</text>
 <text class="mos" x="580" y="374">— no storage</text>
 <text class="fa" x="580" y="392">upgrade · introspection</text>
@@ -747,43 +747,43 @@ bytes32 constant SUPPLY_OPERATOR    = keccak256(&quot;urwa.role.supply&quot;);
 bytes32 constant COMPLIANCE_OFFICER = keccak256(&quot;urwa.role.compliance&quot;);</pre>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" class="d-role">
 <style>
-.d-role text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-role .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-role text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-role .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-role .st{font-size:12.5px;font-weight:600}
-.d-role .sm{font-size:11px;fill:#6E6B66}
-.d-role .fa{font-size:10.5px;fill:#9B9791}
-.d-role .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-role .sm{font-size:11px;fill:#57575B}
+.d-role .fa{font-size:10.5px;fill:#6E6E73}
+.d-role .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-role .i-st{fill:#FFFFFF}
-.d-role .i-sm{fill:#9B9791}
-.d-role .no{fill:#7A322A;font-size:10.5px;font-weight:600}
-.d-role .warn{fill:#7A6234;font-size:10.5px;font-weight:600}
+.d-role .i-sm{fill:#6E6E73}
+.d-role .no{fill:#B42318;font-size:10.5px;font-weight:600}
+.d-role .warn{fill:#B45309;font-size:10.5px;font-weight:600}
 </style>
 <rect width="760" height="320" fill="#FFFFFF"/>
 
 <text class="lbl" x="24" y="24">FOUR ROLES · SEPARATED SO NO ONE OF THEM CAN ACT ALONE</text>
 
-<rect x="24" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="42" y="60">UPGRADE_ADMIN</text>
 <text class="st" x="42" y="84">Changes the code</text>
 <text class="sm" x="42" y="106">Facets, policy set,</text>
 <text class="sm" x="42" y="122">identity registry.</text>
 <text class="no" x="42" y="144">Cannot touch a balance</text>
 
-<rect x="206" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="206" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="224" y="60">SUPPLY_OPERATOR</text>
 <text class="st" x="224" y="84">Moves supply</text>
 <text class="sm" x="224" y="106">Issue, redeem,</text>
 <text class="sm" x="224" y="122">distribute.</text>
 <text class="no" x="224" y="144">Cannot freeze or seize</text>
 
-<rect x="388" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="388" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="406" y="60">COMPLIANCE_OFFICER</text>
 <text class="st" x="406" y="84">Restricts holders</text>
 <text class="sm" x="406" y="106">Freeze, lockup, pause,</text>
 <text class="sm" x="406" y="122">forced transfer.</text>
 <text class="no" x="406" y="144">Cannot mint</text>
 
-<rect x="570" y="36" width="166" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="570" y="36" width="166" height="118" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="588" y="60">ISSUER_ADMIN</text>
 <text class="st" x="588" y="84">Configures</text>
 <text class="sm" x="588" y="106">Trust list, metadata,</text>
@@ -791,7 +791,7 @@ bytes32 constant COMPLIANCE_OFFICER = keccak256(&quot;urwa.role.compliance&quot;
 <text class="no" x="588" y="144">Cannot upgrade</text>
 
 
-<rect x="24" y="174" width="356" height="126" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="24" y="174" width="356" height="126" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="warn" x="44" y="198">THE PAIRING THE CONSOLE WARNS ABOUT</text>
 <text class="st" x="44" y="224">SUPPLY_OPERATOR = COMPLIANCE_OFFICER</text>
 <text class="sm" x="44" y="248">Together they can mint to an address and freeze</text>
@@ -799,7 +799,7 @@ bytes32 constant COMPLIANCE_OFFICER = keccak256(&quot;urwa.role.compliance&quot;
 <text class="sm" x="44" y="280">provides on the other.</text>
 <text class="fa" x="44" y="296">The deploy console warns. It does not block: small issuers exist.</text>
 
-<rect x="396" y="174" width="340" height="126" rx="10" fill="#111110"/>
+<rect x="396" y="174" width="340" height="126" rx="10" fill="#0C0C0F"/>
 <text class="lbl i-sm" x="416" y="198">THE INVARIANT THAT MAKES THIS HOLD</text>
 <text class="st i-st" x="416" y="226">A compromised upgrade admin</text>
 <text class="st i-st" x="416" y="244">cannot change a balance</text>
@@ -1087,87 +1087,87 @@ unfrozenBalanceOf(a)  =  600</pre>
 <h3 id="08-the-pipeline">The pipeline</h3>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470" class="d-pipe">
 <style>
-.d-pipe text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
+.d-pipe text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
 .d-pipe .st{font-size:13.5px;font-weight:600}
-.d-pipe .sub{font-size:11.5px;fill:#6E6B66}
-.d-pipe .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#7A322A}
-.d-pipe .mk{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
+.d-pipe .sub{font-size:11.5px;fill:#57575B}
+.d-pipe .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#B42318}
+.d-pipe .mk{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
 .d-pipe .num{font-size:11.5px;font-weight:700;fill:#FFFFFF}
-.d-pipe .fa{font-size:11px;fill:#9B9791}
-.d-pipe .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-pipe .fa{font-size:11px;fill:#6E6E73}
+.d-pipe .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 /* A CSS rule beats a fill="" attribute, so variants get their own class. */
-.d-pipe .mk.q{fill:#6E6B66}
+.d-pipe .mk.q{fill:#57575B}
 </style>
 <defs>
 <marker id="ta" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 <marker id="tr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#C9A6A0"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#F5CFCA"/>
 </marker>
 </defs>
 <rect width="760" height="470" fill="#FFFFFF"/>
 
 <text class="lbl" x="24" y="26">CALLER</text>
-<rect x="96" y="12" width="212" height="26" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="96" y="12" width="212" height="26" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="mk" x="110" y="29">token.transfer(to, amount)</text>
 <text class="lbl" x="432" y="26">REVERTS WITH</text>
 
 
-<path d="M78 52 L78 424" stroke="#E9E6E2" stroke-width="2" fill="none"/>
+<path d="M78 52 L78 424" stroke="#E2E4E9" stroke-width="2" fill="none"/>
 
 
-<circle cx="78" cy="70" r="13" fill="#111110"/><text class="num" x="74.5" y="74">1</text>
+<circle cx="78" cy="70" r="13" fill="#0C0C0F"/><text class="num" x="74.5" y="74">1</text>
 <text class="st" x="104" y="67">Paused?</text>
 <text class="sub" x="104" y="83">One storage read. Trusted addresses do not escape it.</text>
-<path d="M414 70 L428 70" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<path d="M414 70 L428 70" stroke="#F5CFCA" stroke-width="1.2" marker-end="url(#tr)"/>
 <text class="mo" x="436" y="74">ProtocolPaused</text>
 
 
-<circle cx="78" cy="124" r="13" fill="#111110"/><text class="num" x="74.5" y="128">2</text>
+<circle cx="78" cy="124" r="13" fill="#0C0C0F"/><text class="num" x="74.5" y="128">2</text>
 <text class="st" x="104" y="121">Both addresses trusted?</text>
 <text class="sub" x="104" y="137">Treasury, offering registry — named, with a reason on chain.</text>
-<path d="M414 124 L428 124" stroke="#DAD6D0" stroke-width="1.2" marker-end="url(#ta)"/>
+<path d="M414 124 L428 124" stroke="#D2D5DB" stroke-width="1.2" marker-end="url(#ta)"/>
 <text class="mk q" x="436" y="128">skip to 7</text>
 
 
-<circle cx="78" cy="178" r="13" fill="#111110"/><text class="num" x="74.5" y="182">3</text>
+<circle cx="78" cy="178" r="13" fill="#0C0C0F"/><text class="num" x="74.5" y="182">3</text>
 <text class="st" x="104" y="175">canSend(from)</text>
 <text class="sub" x="104" y="191">Identity active, base claim valid. Every call try/catch.</text>
-<path d="M414 178 L428 178" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<path d="M414 178 L428 178" stroke="#F5CFCA" stroke-width="1.2" marker-end="url(#tr)"/>
 <text class="mo" x="436" y="182">ERC7943CannotSend</text>
 
 
-<circle cx="78" cy="232" r="13" fill="#111110"/><text class="num" x="74.5" y="236">4</text>
+<circle cx="78" cy="232" r="13" fill="#0C0C0F"/><text class="num" x="74.5" y="236">4</text>
 <text class="st" x="104" y="229">canReceive(to)</text>
 <text class="sub" x="104" y="245">The same question about the counterparty.</text>
-<path d="M414 232 L428 232" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<path d="M414 232 L428 232" stroke="#F5CFCA" stroke-width="1.2" marker-end="url(#tr)"/>
 <text class="mo" x="436" y="236">ERC7943CannotReceive</text>
 
 
-<circle cx="78" cy="286" r="13" fill="#111110"/><text class="num" x="74.5" y="290">5</text>
+<circle cx="78" cy="286" r="13" fill="#0C0C0F"/><text class="num" x="74.5" y="290">5</text>
 <text class="st" x="104" y="283">amount ≤ balance − frozen</text>
 <text class="sub" x="104" y="299">Admin freeze plus every unexpired lockup.</text>
-<path d="M414 286 L428 286" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<path d="M414 286 L428 286" stroke="#F5CFCA" stroke-width="1.2" marker-end="url(#tr)"/>
 <text class="mo" x="436" y="290">ERC7943InsufficientUnfrozenBalance</text>
 
 
-<circle cx="78" cy="340" r="13" fill="#111110"/><text class="num" x="74.5" y="344">6</text>
+<circle cx="78" cy="340" r="13" fill="#0C0C0F"/><text class="num" x="74.5" y="344">6</text>
 <text class="st" x="104" y="337">PolicySet.evaluate</text>
 <text class="sub" x="104" y="353">Each rule under a gas ceiling. A revert counts as a refusal.</text>
-<path d="M414 340 L428 340" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<path d="M414 340 L428 340" stroke="#F5CFCA" stroke-width="1.2" marker-end="url(#tr)"/>
 <text class="mo" x="436" y="344">ERC7943CannotTransfer</text>
 
 
-<circle cx="78" cy="410" r="13" fill="#2F2E2B"/><text class="num" x="74.5" y="414">7</text>
+<circle cx="78" cy="410" r="13" fill="#1D1D1F"/><text class="num" x="74.5" y="414">7</text>
 <text class="st" x="104" y="407">Execute</text>
 <text class="sub" x="104" y="423">Balances, holder count, subject balance, Transfer event.</text>
 
 
-<path d="M60 133 C 26 170, 26 372, 58 404" stroke="#DAD6D0" stroke-width="1.3" fill="none" stroke-dasharray="4 3" marker-end="url(#ta)"/>
+<path d="M60 133 C 26 170, 26 372, 58 404" stroke="#D2D5DB" stroke-width="1.3" fill="none" stroke-dasharray="4 3" marker-end="url(#ta)"/>
 
 
-<rect x="436" y="376" width="300" height="80" rx="10" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="436" y="376" width="300" height="80" rx="10" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="lbl" x="452" y="398">ORDER IS A COST DECISION</text>
 <text class="fa" x="452" y="418">Cheap storage reads first, the one</text>
 <text class="fa" x="452" y="434">unbounded external call last. Refusing a</text>
@@ -1270,57 +1270,57 @@ return (true, address(0), &quot;&quot;)</pre>
 <p>The token depends on <code>IIdentityRegistry</code> as an interface. Any implementation works. This single indirection is what lets Stobox ship StoboxDID as its own default while the same code, forked, runs with no Stobox contract in the dependency graph.</p>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" class="d-tier">
 <style>
-.d-tier text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-tier .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-tier text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-tier .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-tier .st{font-size:13.5px;font-weight:600}
-.d-tier .sm{font-size:11.5px;fill:#6E6B66}
-.d-tier .fa{font-size:10.5px;fill:#9B9791}
-.d-tier .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-tier .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-tier .sm{font-size:11.5px;fill:#57575B}
+.d-tier .fa{font-size:10.5px;fill:#6E6E73}
+.d-tier .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-tier .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-tier .i-st{fill:#FFFFFF}
-.d-tier .i-sm{fill:#9B9791}
-.d-tier .i-mo{fill:#F1EFEC}
+.d-tier .i-sm{fill:#6E6E73}
+.d-tier .i-mo{fill:#F0F2F8}
 </style>
 <defs>
 <marker id="ia" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="300" fill="#FFFFFF"/>
 
-<rect x="230" y="16" width="300" height="54" rx="10" fill="#111110"/>
+<rect x="230" y="16" width="300" height="54" rx="10" fill="#0C0C0F"/>
 <text class="lbl i-sm" x="250" y="40">THE TOKEN DEPENDS ON AN INTERFACE</text>
 <text class="mo i-mo" x="250" y="60">IIdentityRegistry — never an implementation</text>
 
-<path d="M310 76 L200 108" stroke="#DAD6D0" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
-<path d="M380 76 L380 108" stroke="#DAD6D0" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
-<path d="M450 76 L560 108" stroke="#DAD6D0" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+<path d="M310 76 L200 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+<path d="M380 76 L380 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+<path d="M450 76 L560 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
 
-<rect x="24" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="44" y="134" width="52" height="19" rx="9" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="44" y="134" width="52" height="19" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="lbl" x="56" y="147">TIER 0</text>
 <text class="st" x="44" y="176">AllowlistRegistry</text>
 <text class="sm" x="44" y="196">Its own storage</text>
 <text class="fa" x="44" y="216">The open-source default. Any fork</text>
 <text class="fa" x="44" y="230">runs the whole stack on this alone.</text>
 
-<rect x="270" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="290" y="134" width="52" height="19" rx="9" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="270" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="290" y="134" width="52" height="19" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="lbl" x="302" y="147">TIER 1</text>
 <text class="st" x="290" y="176">EASAdapter</text>
 <text class="sm" x="290" y="196">Ethereum Attestation Service</text>
 <text class="fa" x="290" y="216">Attestations issued by anyone,</text>
 <text class="fa" x="290" y="230">readable by everyone.</text>
 
-<rect x="516" y="116" width="220" height="120" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
-<rect x="536" y="134" width="52" height="19" rx="9" fill="#FFFFFF" stroke="#DAD6D0"/>
+<rect x="516" y="116" width="220" height="120" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
+<rect x="536" y="134" width="52" height="19" rx="9" fill="#FFFFFF" stroke="#D2D5DB"/>
 <text class="lbl" x="548" y="147">TIER 2</text>
 <text class="st" x="536" y="176">StoboxDIDAdapter</text>
 <text class="sm" x="536" y="196">StoboxDID, already deployed</text>
 <text class="fa" x="536" y="216">Every call wrapped in try/catch —</text>
 <text class="fa" x="536" y="230">its getters revert on unknown wallets.</text>
 
-<rect x="24" y="250" width="712" height="38" rx="9" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="250" width="712" height="38" rx="9" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="sm" x="44" y="274">All three expose the identical interface. Switching is one setIdentityRegistry call: no balance moves, no migration, no redeployment.</text>
 </svg>
 <figcaption>Three interchangeable identity sources behind one interface. A fork runs on tier 0 alone, with no dependency on Stobox or on any attestation service.</figcaption></figure>
@@ -1379,55 +1379,55 @@ struct Linker {
 <p>The mechanism the whole subject-based accounting rests on, stated exactly as the deployed contract implements it.</p>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 488" class="d-link">
 <style>
-.d-link text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-link .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-link text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-link .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-link .st{font-size:13px;font-weight:600}
-.d-link .sm{font-size:11.5px;fill:#6E6B66}
-.d-link .fa{font-size:10.5px;fill:#9B9791}
-.d-link .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-link .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#6E6B66}
+.d-link .sm{font-size:11.5px;fill:#57575B}
+.d-link .fa{font-size:10.5px;fill:#6E6E73}
+.d-link .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-link .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#57575B}
 .d-link .i-st{fill:#FFFFFF}
-.d-link .i-sm{fill:#9B9791}
-.d-link .warn{fill:#7A322A;font-size:11.5px;font-weight:600}
+.d-link .i-sm{fill:#6E6E73}
+.d-link .warn{fill:#B42318;font-size:11.5px;font-weight:600}
 </style>
 <defs>
 <marker id="la" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="488" fill="#FFFFFF"/>
 
 
 <text class="lbl" x="24" y="24">1 · THE OPERATOR CREATES THE SUBJECT</text>
-<rect x="24" y="36" width="330" height="86" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="24" y="36" width="330" height="86" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="mo" x="40" y="60">createDID(uDID, wallet, validTo, blocked)</text>
-<rect x="40" y="72" width="112" height="22" rx="11" fill="#111110"/>
+<rect x="40" y="72" width="112" height="22" rx="11" fill="#0C0C0F"/>
 <text class="fa i-sm" x="52" y="87">WRITER_ROLE ONLY</text>
 <text class="sm" x="40" y="112">After KYC. Creates the subject and links the first wallet.</text>
 
-<rect x="392" y="36" width="344" height="86" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
-<circle cx="424" cy="72" r="15" fill="#111110"/>
+<rect x="392" y="36" width="344" height="86" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<circle cx="424" cy="72" r="15" fill="#0C0C0F"/>
 <text class="st i-st" x="418.5" y="76">S</text>
 <text class="st" x="452" y="68">Subject</text>
 <text class="mos" x="452" y="86">keccak256(uDID) — one person, one key</text>
 <text class="fa" x="452" y="106">Balances, caps and reports are counted against this.</text>
 
-<path d="M380 79 L390 79" stroke="#9B9791" stroke-width="1.3" marker-end="url(#la)" fill="none"/>
+<path d="M380 79 L390 79" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#la)" fill="none"/>
 
 
 <text class="lbl" x="24" y="164">2 · THE HOLDER ADDS THEIR OWN WALLETS</text>
-<rect x="24" y="176" width="330" height="104" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="24" y="176" width="330" height="104" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="mo" x="40" y="200">linkAddressToDID(existing, new)</text>
-<rect x="40" y="212" width="196" height="22" rx="11" fill="#2F2E2B"/>
+<rect x="40" y="212" width="196" height="22" rx="11" fill="#1D1D1F"/>
 <text class="fa i-sm" x="52" y="227">WRITER_ROLE — OR THE DID OWNER</text>
 <text class="sm" x="40" y="252">No operator, no ticket, no fee. The caller's own wallet</text>
 <text class="sm" x="40" y="268">must resolve to the same subject and not be deactivated.</text>
 
-<rect x="392" y="176" width="344" height="104" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
-<circle cx="424" cy="212" r="13" fill="#F1EFEC" stroke="#DAD6D0"/><text class="mos" x="418" y="216">A</text>
-<circle cx="460" cy="212" r="13" fill="#F1EFEC" stroke="#DAD6D0"/><text class="mos" x="454" y="216">B</text>
-<circle cx="496" cy="212" r="13" fill="#F1EFEC" stroke="#DAD6D0"/><text class="mos" x="490" y="216">C</text>
-<circle cx="532" cy="212" r="13" fill="#111110"/><text class="mos i-st" x="526" y="216">D</text>
+<rect x="392" y="176" width="344" height="104" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<circle cx="424" cy="212" r="13" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="418" y="216">A</text>
+<circle cx="460" cy="212" r="13" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="454" y="216">B</text>
+<circle cx="496" cy="212" r="13" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="490" y="216">C</text>
+<circle cx="532" cy="212" r="13" fill="#0C0C0F"/><text class="mos i-st" x="526" y="216">D</text>
 <text class="fa" x="556" y="216">…up to 10</text>
 <text class="mos" x="408" y="248">linker[D] = [D, A, B, C]   the new wallet, complete</text>
 <text class="mos" x="408" y="266">linker[A…C].push(D)        each existing one gains D</text>
@@ -1435,7 +1435,7 @@ struct Linker {
 
 <text class="lbl" x="24" y="322">3 · LEAVING — THREE OPERATIONS, THREE AUTHORITIES</text>
 
-<rect x="24" y="334" width="232" height="136" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="334" width="232" height="136" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mo" x="40" y="358">deactivateAddressOfDID</text>
 <text class="sm" x="40" y="378">Writer or the holder</text>
 <text class="warn" x="40" y="400">Holder can undo it</text>
@@ -1443,7 +1443,7 @@ struct Linker {
 <text class="fa" x="40" y="436">the same guard, so this is never</text>
 <text class="fa" x="40" y="452">an enforcement signal.</text>
 
-<rect x="272" y="334" width="232" height="136" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="272" y="334" width="232" height="136" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mo" x="288" y="358">removeLinkedAddress</text>
 <text class="sm" x="288" y="378">WRITER_ROLE only</text>
 <text class="st" x="288" y="400">Authoritative</text>
@@ -1451,7 +1451,7 @@ struct Linker {
 <text class="fa" x="288" y="436">last wallet, so a subject can</text>
 <text class="fa" x="288" y="452">never become unreachable.</text>
 
-<rect x="520" y="334" width="216" height="136" rx="10" fill="#111110"/>
+<rect x="520" y="334" width="216" height="136" rx="10" fill="#0C0C0F"/>
 <text class="mo i-sm" x="536" y="358">blockDID</text>
 <text class="sm i-sm" x="536" y="378">WRITER_ROLE only</text>
 <text class="st i-st" x="536" y="400">Stops the person</text>
@@ -1505,21 +1505,21 @@ struct Linker {
 <h3 id="09-wallets-and-subjects">Wallets and subjects</h3>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 356" class="d-subj">
 <style>
-.d-subj text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-subj .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-subj text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-subj .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-subj .st{font-size:13.5px;font-weight:600}
 .d-subj .big{font-size:24px;font-weight:600;letter-spacing:-.02em}
-.d-subj .sm{font-size:11.5px;fill:#6E6B66}
-.d-subj .fa{font-size:10.5px;fill:#9B9791}
-.d-subj .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#6E6B66}
-.d-subj .bad{fill:#7A322A}
-.d-subj .ok{fill:#2F2E2B}
+.d-subj .sm{font-size:11.5px;fill:#57575B}
+.d-subj .fa{font-size:10.5px;fill:#6E6E73}
+.d-subj .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#57575B}
+.d-subj .bad{fill:#B42318}
+.d-subj .ok{fill:#1D1D1F}
 .d-subj .i-st{fill:#FFFFFF}
-.d-subj .i-sm{fill:#9B9791}
+.d-subj .i-sm{fill:#6E6E73}
 </style>
 <defs>
 <marker id="sa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="356" fill="#FFFFFF"/>
@@ -1527,9 +1527,9 @@ struct Linker {
 <text class="lbl" x="24" y="24">THE CAP: NO MORE THAN 2 HOLDERS</text>
 
 
-<rect x="24" y="40" width="200" height="196" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="24" y="40" width="200" height="196" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="st" x="40" y="66">One investor</text>
-<circle cx="56" cy="98" r="16" fill="#111110"/><text class="st i-st" x="50" y="103">I</text>
+<circle cx="56" cy="98" r="16" fill="#0C0C0F"/><text class="st i-st" x="50" y="103">I</text>
 <text class="mos" x="82" y="94">subject</text>
 <text class="mos" x="82" y="110">0x9f3c…</text>
 <text class="sm" x="40" y="146">Opens three wallets. Nothing</text>
@@ -1539,31 +1539,31 @@ struct Linker {
 <text class="fa" x="40" y="222">wallet. Two people in total.</text>
 
 
-<rect x="252" y="40" width="180" height="196" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="252" y="40" width="180" height="196" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="268" y="64">WALLETS ON CHAIN</text>
-<rect x="268" y="76" width="148" height="26" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/><text class="mos" x="282" y="93">0xA1…  investor 1</text>
-<rect x="268" y="108" width="148" height="26" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/><text class="mos" x="282" y="125">0xB2…  investor 1</text>
-<rect x="268" y="140" width="148" height="26" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/><text class="mos" x="282" y="157">0xC3…  investor 1</text>
-<rect x="268" y="172" width="148" height="26" rx="8" fill="#FFFFFF" stroke="#DAD6D0"/><text class="mos" x="282" y="189">0xD4…  investor 2</text>
+<rect x="268" y="76" width="148" height="26" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="282" y="93">0xA1…  investor 1</text>
+<rect x="268" y="108" width="148" height="26" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="282" y="125">0xB2…  investor 1</text>
+<rect x="268" y="140" width="148" height="26" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/><text class="mos" x="282" y="157">0xC3…  investor 1</text>
+<rect x="268" y="172" width="148" height="26" rx="8" fill="#FFFFFF" stroke="#D2D5DB"/><text class="mos" x="282" y="189">0xD4…  investor 2</text>
 <text class="fa" x="268" y="220">Four addresses, two people.</text>
 
-<path d="M436 138 L462 138" stroke="#9B9791" stroke-width="1.3" marker-end="url(#sa)" fill="none"/>
+<path d="M436 138 L462 138" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#sa)" fill="none"/>
 
 
-<rect x="470" y="40" width="266" height="92" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="470" y="40" width="266" height="92" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="486" y="64">COUNT ADDRESSES</text>
 <text class="big bad" x="486" y="98">4 &gt; 2</text>
 <text class="sm" x="556" y="98">cap appears breached</text>
 <text class="fa" x="486" y="120">The honest investor is refused; the evasion is missed.</text>
 
-<rect x="470" y="144" width="266" height="92" rx="12" fill="#111110"/>
+<rect x="470" y="144" width="266" height="92" rx="12" fill="#0C0C0F"/>
 <text class="lbl" x="486" y="168">COUNT SUBJECTS</text>
 <text class="big i-st" x="486" y="202">2 = 2</text>
 <text class="sm i-sm" x="556" y="202">cap correctly held</text>
 <text class="fa i-sm" x="486" y="224">Splitting across wallets changes nothing.</text>
 
 
-<rect x="24" y="256" width="712" height="76" rx="12" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="256" width="712" height="76" rx="12" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="st" x="44" y="282">Why this cannot be added later</text>
 <text class="sm" x="44" y="304">Subject balances and subject holder counts are maintained inside transfer accounting, because they</text>
 <text class="sm" x="44" y="322">cannot be derived at read time within gas limits — and cannot be reconstructed from history afterwards.</text>
@@ -1583,25 +1583,25 @@ struct Linker {
 <p>Rules are organised into groups. <strong>Groups AND together; rules within a group OR.</strong></p>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 328" class="d-pol">
 <style>
-.d-pol text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-pol .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-pol text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-pol .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-pol .st{font-size:12.5px;font-weight:600}
-.d-pol .sm{font-size:11px;fill:#6E6B66}
-.d-pol .fa{font-size:10.5px;fill:#9B9791}
-.d-pol .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
-.d-pol .op{font-size:12px;font-weight:700;fill:#9B9791;letter-spacing:.06em}
+.d-pol .sm{font-size:11px;fill:#57575B}
+.d-pol .fa{font-size:10.5px;fill:#6E6E73}
+.d-pol .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
+.d-pol .op{font-size:12px;font-weight:700;fill:#6E6E73;letter-spacing:.06em}
 .d-pol .i-st{fill:#FFFFFF}
-.d-pol .i-sm{fill:#9B9791}
-.d-pol .bad{fill:#7A322A;font-size:10.5px;font-weight:600}
+.d-pol .i-sm{fill:#6E6E73}
+.d-pol .bad{fill:#B42318;font-size:10.5px;font-weight:600}
 </style>
 <rect width="760" height="328" fill="#FFFFFF"/>
 
 <text class="lbl" x="24" y="24">GROUPS ARE AND-ED · RULES INSIDE A GROUP ARE ANY-OF</text>
 
 
-<rect x="24" y="36" width="222" height="146" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="24" y="36" width="222" height="146" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="st" x="44" y="60">Group 1 — identity</text>
-<rect x="44" y="72" width="182" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="44" y="72" width="182" height="28" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="58" y="90">HasValidIdentity</text>
 <text class="fa" x="44" y="122">One rule. It must pass.</text>
 <text class="fa" x="44" y="140">The base gate every regime</text>
@@ -1610,12 +1610,12 @@ struct Linker {
 <text class="op" x="256" y="114">AND</text>
 
 
-<rect x="300" y="36" width="222" height="146" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="300" y="36" width="222" height="146" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="st" x="320" y="60">Group 2 — eligibility</text>
-<rect x="320" y="72" width="182" height="26" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="320" y="72" width="182" height="26" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="334" y="89">USAccreditedOnly</text>
 <text class="op" x="320" y="112">OR</text>
-<rect x="320" y="120" width="182" height="26" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="320" y="120" width="182" height="26" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="334" y="137">EUProfessionalOnly</text>
 <text class="fa" x="320" y="162">Either route qualifies — one</text>
 <text class="fa" x="320" y="176">token, two eligible populations.</text>
@@ -1623,23 +1623,23 @@ struct Linker {
 <text class="op" x="532" y="114">AND</text>
 
 
-<rect x="576" y="36" width="160" height="146" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="576" y="36" width="160" height="146" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="st" x="596" y="60">Group 3 — limits</text>
-<rect x="596" y="72" width="122" height="26" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="596" y="72" width="122" height="26" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="610" y="89">MaxHolders</text>
-<rect x="596" y="104" width="122" height="26" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="596" y="104" width="122" height="26" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="610" y="121">HoldPeriod</text>
 <text class="fa" x="596" y="150">Both apply; each is its</text>
 <text class="fa" x="596" y="166">own group in practice.</text>
 
 
-<rect x="24" y="204" width="348" height="106" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="204" width="348" height="106" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="44" y="228">HOW EACH RULE IS CALLED</text>
 <text class="mos" x="44" y="252">try Rule.check{gas: CEILING}(from, to, amount)</text>
 <text class="sm" x="44" y="276">Stateless. Never writes. Shared across every token</text>
 <text class="sm" x="44" y="292">on the chain, deployed once.</text>
 
-<rect x="388" y="204" width="348" height="106" rx="10" fill="#111110"/>
+<rect x="388" y="204" width="348" height="106" rx="10" fill="#0C0C0F"/>
 <text class="lbl i-sm" x="408" y="228">IF A RULE REVERTS OR RUNS OUT OF GAS</text>
 <text class="st i-st" x="408" y="254">It counts as a refusal</text>
 <text class="fa i-sm" x="408" y="278">RuleFailed is emitted so the failure is visible, and the</text>
@@ -1750,72 +1750,72 @@ interface IRule {
 <p><strong>Commitments and signatures, never content.</strong> One 32-byte snapshot root anchors the entire record.</p>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" class="d-pass">
 <style>
-.d-pass text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-pass .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-pass text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-pass .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-pass .st{font-size:13px;font-weight:600}
-.d-pass .sm{font-size:11.5px;fill:#6E6B66}
-.d-pass .fa{font-size:10.5px;fill:#9B9791}
-.d-pass .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-pass .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-pass .sm{font-size:11.5px;fill:#57575B}
+.d-pass .fa{font-size:10.5px;fill:#6E6E73}
+.d-pass .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-pass .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-pass .i-st{fill:#FFFFFF}
-.d-pass .i-sm{fill:#9B9791}
-.d-pass .i-mo{fill:#F1EFEC}
+.d-pass .i-sm{fill:#6E6E73}
+.d-pass .i-mo{fill:#F0F2F8}
 </style>
 <defs>
 <marker id="pa2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="420" fill="#FFFFFF"/>
 
 
-<rect x="24" y="16" width="330" height="228" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="24" y="16" width="330" height="228" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="lbl" x="44" y="42">OFF CHAIN · THE VALUES THEMSELVES</text>
-<rect x="44" y="54" width="290" height="30" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="44" y="54" width="290" height="30" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="58" y="73">valuation = 4,200,000 EUR   salt 0x8c1f…</text>
-<rect x="44" y="90" width="290" height="30" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="44" y="90" width="290" height="30" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="58" y="109">jurisdiction = EE            salt 0x2b70…</text>
-<rect x="44" y="126" width="290" height="30" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="44" y="126" width="290" height="30" rx="8" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="58" y="145">title deed hash              salt 0xd4a9…</text>
 <text class="sm" x="44" y="180">Every leaf carries 32 bytes of unique salt.</text>
 <text class="fa" x="44" y="200">Without it, a boolean or an enum commitment is broken by</text>
 <text class="fa" x="44" y="216">hashing every candidate — which is most of a passport.</text>
 <text class="fa" x="44" y="234">Documents and personal data never leave this box.</text>
 
-<path d="M362 130 L392 130" stroke="#9B9791" stroke-width="1.3" marker-end="url(#pa2)" fill="none"/>
+<path d="M362 130 L392 130" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#pa2)" fill="none"/>
 <text class="fa" x="358" y="120">hash</text>
 
 
-<rect x="400" y="16" width="336" height="228" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="400" y="16" width="336" height="228" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="420" y="42">SPARSE MERKLE TREE</text>
-<circle cx="568" cy="72" r="16" fill="#111110"/><text class="mos i-mo" x="556" y="76">root</text>
-<path d="M556 85 L512 108" stroke="#DAD6D0" stroke-width="1.2" fill="none"/>
-<path d="M580 85 L624 108" stroke="#DAD6D0" stroke-width="1.2" fill="none"/>
-<circle cx="504" cy="118" r="12" fill="#F1EFEC" stroke="#DAD6D0"/>
-<circle cx="632" cy="118" r="12" fill="#F1EFEC" stroke="#DAD6D0"/>
-<path d="M494 127 L468 148" stroke="#DAD6D0" stroke-width="1.2" fill="none"/>
-<path d="M514 127 L540 148" stroke="#DAD6D0" stroke-width="1.2" fill="none"/>
-<path d="M622 127 L596 148" stroke="#DAD6D0" stroke-width="1.2" fill="none"/>
-<path d="M642 127 L668 148" stroke="#DAD6D0" stroke-width="1.2" fill="none"/>
-<rect x="450" y="152" width="36" height="20" rx="5" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="522" y="152" width="36" height="20" rx="5" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="578" y="152" width="36" height="20" rx="5" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="650" y="152" width="36" height="20" rx="5" fill="#F7F6F4" stroke="#E9E6E2" stroke-dasharray="3 2"/>
+<circle cx="568" cy="72" r="16" fill="#0C0C0F"/><text class="mos i-mo" x="556" y="76">root</text>
+<path d="M556 85 L512 108" stroke="#D2D5DB" stroke-width="1.2" fill="none"/>
+<path d="M580 85 L624 108" stroke="#D2D5DB" stroke-width="1.2" fill="none"/>
+<circle cx="504" cy="118" r="12" fill="#F0F2F8" stroke="#D2D5DB"/>
+<circle cx="632" cy="118" r="12" fill="#F0F2F8" stroke="#D2D5DB"/>
+<path d="M494 127 L468 148" stroke="#D2D5DB" stroke-width="1.2" fill="none"/>
+<path d="M514 127 L540 148" stroke="#D2D5DB" stroke-width="1.2" fill="none"/>
+<path d="M622 127 L596 148" stroke="#D2D5DB" stroke-width="1.2" fill="none"/>
+<path d="M642 127 L668 148" stroke="#D2D5DB" stroke-width="1.2" fill="none"/>
+<rect x="450" y="152" width="36" height="20" rx="5" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="522" y="152" width="36" height="20" rx="5" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="578" y="152" width="36" height="20" rx="5" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="650" y="152" width="36" height="20" rx="5" fill="#F5F5F7" stroke="#E2E4E9" stroke-dasharray="3 2"/>
 <text class="fa" x="420" y="196">The tree spans the whole key space, so a leaf that was</text>
 <text class="fa" x="420" y="212">never written is provably empty. Absence is provable —</text>
 <text class="fa" x="420" y="228">"we hold no environmental report" is a verifiable claim.</text>
 
 
-<rect x="24" y="260" width="712" height="66" rx="12" fill="#111110"/>
+<rect x="24" y="260" width="712" height="66" rx="12" fill="#0C0C0F"/>
 <text class="lbl i-sm" x="44" y="284">ON CHAIN · ONE SNAPSHOT PER VERSION</text>
 <text class="mo i-mo" x="44" y="308">root · revocationRoot · version · takenAt · schemaVersion — and nothing else</text>
 
 
-<rect x="24" y="340" width="348" height="64" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="340" width="348" height="64" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="44" y="364">Anyone verifies without asking us</text>
 <text class="mos" x="44" y="386">verify(id, code, value, salt, proof) → bool</text>
 
-<rect x="388" y="340" width="348" height="64" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="388" y="340" width="348" height="64" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="408" y="364">A proof binds to one root</text>
 <text class="fa" x="408" y="386">Re-snapshot and old proofs stop verifying. That is the point.</text>
 </svg>
@@ -1913,19 +1913,19 @@ struct Tier {
      │◀── tokens + lockup applied ─────────────────────────────── │</pre>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" class="d-off">
 <style>
-.d-off text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-off .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-off text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-off .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-off .st{font-size:12.5px;font-weight:600}
-.d-off .sm{font-size:11px;fill:#6E6B66}
-.d-off .fa{font-size:10px;fill:#9B9791}
-.d-off .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;fill:#6E6B66}
+.d-off .sm{font-size:11px;fill:#57575B}
+.d-off .fa{font-size:10px;fill:#6E6E73}
+.d-off .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;fill:#57575B}
 .d-off .i-st{fill:#FFFFFF}
-.d-off .i-sm{fill:#9B9791}
-.d-off .free{fill:#2F2E2B;font-size:10px;font-weight:600}
+.d-off .i-sm{fill:#6E6E73}
+.d-off .free{fill:#1D1D1F;font-size:10px;font-weight:600}
 </style>
 <defs>
 <marker id="oa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="340" fill="#FFFFFF"/>
@@ -1933,56 +1933,56 @@ struct Tier {
 <text class="lbl" x="24" y="24">OFFERING LIFECYCLE · EXACTLY ONE TERMINAL STATE</text>
 
 
-<rect x="24" y="40" width="124" height="52" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="40" width="124" height="52" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="44" y="64">Draft</text>
 <text class="mos" x="44" y="80">createOffering</text>
-<path d="M156 66 L186 66" stroke="#9B9791" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
+<path d="M156 66 L186 66" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
 
-<rect x="194" y="40" width="124" height="52" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="194" y="40" width="124" height="52" rx="10" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="st" x="214" y="64">Active</text>
 <text class="mos" x="214" y="80">activate</text>
-<path d="M326 66 L356 66" stroke="#9B9791" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
+<path d="M326 66 L356 66" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
 
-<rect x="364" y="40" width="124" height="52" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="364" y="40" width="124" height="52" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="384" y="64">Paused</text>
 <text class="mos" x="384" y="80">pause / resume</text>
 
-<rect x="534" y="40" width="202" height="52" rx="10" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="534" y="40" width="202" height="52" rx="10" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="sm" x="552" y="62">Purchases run the offering rules,</text>
 <text class="sm" x="552" y="80">then the full token pipeline.</text>
 
-<path d="M256 96 L256 122" stroke="#9B9791" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
+<path d="M256 96 L256 122" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
 <text class="mos" x="266" y="114">endAt or close</text>
 
 
-<rect x="194" y="128" width="124" height="52" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="194" y="128" width="124" height="52" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="214" y="152">Closed</text>
 <text class="mos" x="214" y="168">window over</text>
 
-<path d="M256 184 L256 210" stroke="#9B9791" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
-<path d="M326 154 L400 154" stroke="#9B9791" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
+<path d="M256 184 L256 210" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
+<path d="M326 154 L400 154" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
 <text class="mos" x="330" y="146">soft cap met</text>
 
-<rect x="408" y="128" width="150" height="52" rx="10" fill="#111110"/>
+<rect x="408" y="128" width="150" height="52" rx="10" fill="#0C0C0F"/>
 <text class="st i-st" x="428" y="152">Settled</text>
 <text class="mos i-sm" x="428" y="168">issuer receives payment</text>
 
 <text class="mos" x="120" y="216">soft cap missed</text>
-<rect x="194" y="216" width="150" height="52" rx="10" fill="#111110"/>
+<rect x="194" y="216" width="150" height="52" rx="10" fill="#0C0C0F"/>
 <text class="st i-st" x="214" y="240">Refunding</text>
 <text class="mos i-sm" x="214" y="256">investors get money back</text>
 
-<rect x="408" y="216" width="150" height="52" rx="10" fill="#111110"/>
+<rect x="408" y="216" width="150" height="52" rx="10" fill="#0C0C0F"/>
 <text class="st i-st" x="428" y="240">Cancelled</text>
 <text class="mos i-sm" x="428" y="256">before any purchase</text>
 
-<path d="M566 242 L596 242" stroke="#9B9791" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
-<rect x="604" y="216" width="132" height="52" rx="10" fill="#F7F6F4" stroke="#E9E6E2"/>
+<path d="M566 242 L596 242" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#oa)" fill="none"/>
+<rect x="604" y="216" width="132" height="52" rx="10" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="st" x="622" y="240">Archived</text>
 <text class="mos" x="622" y="256">read-only</text>
 
 
-<rect x="24" y="284" width="712" height="44" rx="10" fill="#FFFFFF" stroke="#DAD6D0"/>
+<rect x="24" y="284" width="712" height="44" rx="10" fill="#FFFFFF" stroke="#D2D5DB"/>
 <text class="free" x="44" y="302">settle AND beginRefunding ARE PERMISSIONLESS</text>
 <text class="sm" x="44" y="320">Both are mechanical consequences of facts already on chain. Requiring an operator would let an absent one hold funds hostage.</text>
 </svg>
@@ -2255,64 +2255,64 @@ error OnlyOfferingRegistry();</pre>
 15  createOffering(...) → activate(...)         // optional</pre>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 336" class="d-dep">
 <style>
-.d-dep text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-dep .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-dep text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-dep .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-dep .st{font-size:12.5px;font-weight:600}
-.d-dep .sm{font-size:11px;fill:#6E6B66}
-.d-dep .fa{font-size:10.5px;fill:#9B9791}
-.d-dep .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-dep .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-dep .sm{font-size:11px;fill:#57575B}
+.d-dep .fa{font-size:10.5px;fill:#6E6E73}
+.d-dep .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-dep .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-dep .i-st{fill:#FFFFFF}
-.d-dep .i-sm{fill:#9B9791}
+.d-dep .i-sm{fill:#6E6E73}
 .d-dep .num{font-size:10.5px;font-weight:700;fill:#FFFFFF}
 </style>
 <defs>
 <marker id="ea" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="336" fill="#FFFFFF"/>
 
-<rect x="24" y="16" width="136" height="46" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="16" width="136" height="46" rx="10" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="st" x="42" y="38">Issuer</text>
 <text class="fa" x="42" y="54">anyone, permissionless</text>
-<path d="M168 39 L198 39" stroke="#9B9791" stroke-width="1.3" marker-end="url(#ea)" fill="none"/>
-<rect x="206" y="16" width="290" height="46" rx="10" fill="#111110"/>
+<path d="M168 39 L198 39" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#ea)" fill="none"/>
+<rect x="206" y="16" width="290" height="46" rx="10" fill="#0C0C0F"/>
 <text class="mo i-sm" x="224" y="45">factory.createToken(params)</text>
-<rect x="516" y="16" width="220" height="46" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="516" y="16" width="220" height="46" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="sm" x="534" y="38">One transaction, from nothing</text>
 <text class="sm" x="534" y="54">to a working compliant token.</text>
 
 <text class="lbl" x="24" y="94">WHAT THE FACTORY DOES, IN ORDER</text>
 
-<circle cx="38" cy="118" r="10" fill="#111110"/><text class="num" x="35" y="122">1</text>
+<circle cx="38" cy="118" r="10" fill="#0C0C0F"/><text class="num" x="35" y="122">1</text>
 <text class="mo" x="58" y="122">deploy the diamond, cut facets from the named package</text>
 
-<circle cx="38" cy="146" r="10" fill="#111110"/><text class="num" x="35" y="150">2</text>
+<circle cx="38" cy="146" r="10" fill="#0C0C0F"/><text class="num" x="35" y="150">2</text>
 <text class="mo" x="58" y="150">clone the treasury — one per token, never shared</text>
 
-<circle cx="38" cy="174" r="10" fill="#111110"/><text class="num" x="35" y="178">3</text>
+<circle cx="38" cy="174" r="10" fill="#0C0C0F"/><text class="num" x="35" y="178">3</text>
 <text class="mo" x="58" y="178">setTreasury · setOfferingRegistry · setIdentityRegistry</text>
 
-<circle cx="38" cy="202" r="10" fill="#111110"/><text class="num" x="35" y="206">4</text>
+<circle cx="38" cy="202" r="10" fill="#0C0C0F"/><text class="num" x="35" y="206">4</text>
 <text class="mo" x="58" y="206">deploy the PolicySet from the chosen regime preset</text>
 
-<circle cx="38" cy="230" r="10" fill="#111110"/><text class="num" x="35" y="234">5</text>
+<circle cx="38" cy="230" r="10" fill="#0C0C0F"/><text class="num" x="35" y="234">5</text>
 <text class="mo" x="58" y="234">trust(treasury, "treasury") — named, with its reason on chain</text>
 
-<circle cx="38" cy="258" r="10" fill="#111110"/><text class="num" x="35" y="262">6</text>
+<circle cx="38" cy="258" r="10" fill="#0C0C0F"/><text class="num" x="35" y="262">6</text>
 <text class="mo" x="58" y="262">grant the four roles to the four addresses given</text>
 
-<circle cx="38" cy="286" r="10" fill="#2F2E2B"/><text class="num" x="35" y="290">7</text>
+<circle cx="38" cy="286" r="10" fill="#1D1D1F"/><text class="num" x="35" y="290">7</text>
 <text class="mo" x="58" y="290">register the deployment, emit TokenCreated</text>
 
-<rect x="470" y="104" width="266" height="94" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="470" y="104" width="266" height="94" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="490" y="128">Then it lets go</text>
 <text class="sm" x="490" y="150">The factory retains no role, no key</text>
 <text class="sm" x="490" y="166">and no upgrade right over the token</text>
 <text class="sm" x="490" y="182">it just created.</text>
 
-<rect x="470" y="212" width="266" height="94" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="470" y="212" width="266" height="94" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="st" x="490" y="236">Why that is deliberate</text>
 <text class="fa" x="490" y="258">A factory that keeps admin rights over</text>
 <text class="fa" x="490" y="274">every token it issues is a single point</text>
@@ -2457,21 +2457,21 @@ FACTORY_ADDRESS=</pre>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Component</th><th style="text-align:left">Why it must be open</th></tr></thead><tbody><tr><td style="text-align:left"><code>uRWAToken</code> and all facets</td><td style="text-align:left">The token is the standard. A closed token is not a reference implementation.</td></tr><tr><td style="text-align:left"><code>PolicySet</code>, <code>IRule</code>, the rule library</td><td style="text-align:left">Third parties must be able to write and attach rules without permission.</td></tr><tr><td style="text-align:left">Three identity adapters</td><td style="text-align:left">A fork must run with no Stobox contract in the graph.</td></tr><tr><td style="text-align:left"><code>Treasury</code>, <code>uRWAFactory</code>, <code>OfferingRegistry</code></td><td style="text-align:left">Issuance machinery is the product being given away.</td></tr><tr><td style="text-align:left"><code>IAssetPassport</code> interface</td><td style="text-align:left">Integrators must be able to read a passport without our SDK.</td></tr><tr><td style="text-align:left"><code>PassportLink</code> — the handshake contract</td><td style="text-align:left">Provenance must be verifiable by anyone.</td></tr><tr><td style="text-align:left"><code>ReferencePassport</code></td><td style="text-align:left">A fork needs a working passport or the system is crippled.</td></tr><tr><td style="text-align:left">Snapshot format, proof format, verifier library</td><td style="text-align:left">A proof only we can verify is worth nothing.</td></tr><tr><td style="text-align:left"><code>PassportValidRule</code></td><td style="text-align:left">Optional; lets an issuer gate transfers on passport state if they choose.</td></tr><tr><td style="text-align:left">Conformance kit</td><td style="text-align:left">The reputational centrepiece.</td></tr></tbody></table></div>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 350" class="d-bnd">
 <style>
-.d-bnd text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-bnd .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-bnd text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-bnd .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-bnd .st{font-size:13px;font-weight:600}
-.d-bnd .sm{font-size:11.5px;fill:#6E6B66}
-.d-bnd .fa{font-size:10.5px;fill:#9B9791}
-.d-bnd .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#6E6B66}
+.d-bnd .sm{font-size:11.5px;fill:#57575B}
+.d-bnd .fa{font-size:10.5px;fill:#6E6E73}
+.d-bnd .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#57575B}
 .d-bnd .i-st{fill:#FFFFFF}
-.d-bnd .i-sm{fill:#9B9791}
-.d-bnd .i-mos{fill:#F1EFEC}
+.d-bnd .i-sm{fill:#6E6E73}
+.d-bnd .i-mos{fill:#F0F2F8}
 </style>
 <rect width="760" height="350" fill="#FFFFFF"/>
 
 
-<rect x="24" y="16" width="352" height="238" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="44" y="36" width="76" height="20" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="16" width="352" height="238" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="44" y="36" width="76" height="20" rx="10" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="lbl" x="56" y="49.5">MIT · FREE</text>
 <text class="st" x="44" y="80">Everything that makes a token work</text>
 <text class="mos" x="44" y="106">Token diamond and every facet</text>
@@ -2483,8 +2483,8 @@ FACTORY_ADDRESS=</pre>
 <text class="fa" x="44" y="234">Fork it, deploy it, compete with us. Fee hook returns zero.</text>
 
 
-<rect x="392" y="16" width="344" height="238" rx="12" fill="#111110"/>
-<rect x="412" y="36" width="112" height="20" rx="10" fill="#2E2C29"/>
+<rect x="392" y="16" width="344" height="238" rx="12" fill="#0C0C0F"/>
+<rect x="412" y="36" width="112" height="20" rx="10" fill="#1D1D1F"/>
 <text class="lbl i-sm" x="424" y="49.5">NOT GIVEN AWAY</text>
 <text class="st i-st" x="412" y="80">The Asset Passport service</text>
 <text class="mos i-mos" x="412" y="106">The attestor network and its agreements</text>
@@ -2496,7 +2496,7 @@ FACTORY_ADDRESS=</pre>
 <text class="fa i-sm" x="412" y="236">What is retained is the work, not the ability to interoperate.</text>
 
 
-<rect x="24" y="272" width="712" height="62" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="24" y="272" width="712" height="62" rx="12" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="st" x="44" y="296">The test the boundary has to pass</text>
 <text class="sm" x="44" y="320">Deploy the whole stack on a chain where no Stobox contract exists, and every function still works. It runs in CI.</text>
 </svg>
@@ -2879,62 +2879,62 @@ FACTORY_ADDRESS=</pre>
 <h3 id="22-atomicdvp">AtomicDvP</h3>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" class="d-dvp">
 <style>
-.d-dvp text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-dvp .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-dvp text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-dvp .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-dvp .st{font-size:13px;font-weight:600}
-.d-dvp .sm{font-size:11.5px;fill:#6E6B66}
-.d-dvp .fa{font-size:10.5px;fill:#9B9791}
-.d-dvp .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
+.d-dvp .sm{font-size:11.5px;fill:#57575B}
+.d-dvp .fa{font-size:10.5px;fill:#6E6E73}
+.d-dvp .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
 .d-dvp .i-st{fill:#FFFFFF}
-.d-dvp .i-sm{fill:#9B9791}
-.d-dvp .bad{fill:#7A322A;font-size:11.5px;font-weight:600}
-.d-dvp .badf{fill:#7A322A;font-size:10.5px}
+.d-dvp .i-sm{fill:#6E6E73}
+.d-dvp .bad{fill:#B42318;font-size:11.5px;font-weight:600}
+.d-dvp .badf{fill:#B42318;font-size:10.5px}
 </style>
 <defs>
 <marker id="va" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 <marker id="vb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#C9A6A0"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#F5CFCA"/>
 </marker>
 </defs>
 <rect width="760" height="380" fill="#FFFFFF"/>
 
 
 <text class="lbl" x="24" y="24">CONVENTIONAL SETTLEMENT · TWO TRANSACTIONS</text>
-<rect x="24" y="36" width="342" height="140" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="44" y="58" width="120" height="30" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="36" width="342" height="140" rx="12" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="44" y="58" width="120" height="30" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="mo" x="58" y="78">payment leg</text>
-<path d="M170 73 L214 73" stroke="#C9A6A0" stroke-width="1.3" marker-end="url(#vb)" fill="none"/>
-<rect x="222" y="58" width="120" height="30" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/>
+<path d="M170 73 L214 73" stroke="#F5CFCA" stroke-width="1.3" marker-end="url(#vb)" fill="none"/>
+<rect x="222" y="58" width="120" height="30" rx="8" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="mo" x="236" y="78">security leg</text>
-<rect x="44" y="100" width="298" height="56" rx="8" fill="#FFFFFF" stroke="#C9A6A0" stroke-dasharray="4 3"/>
+<rect x="44" y="100" width="298" height="56" rx="8" fill="#FFFFFF" stroke="#F5CFCA" stroke-dasharray="4 3"/>
 <text class="bad" x="60" y="122">The gap between them is settlement risk</text>
 <text class="badf" x="60" y="142">One party has paid. The other has not delivered.</text>
 
 
 <text class="lbl" x="394" y="24">ATOMIC DvP · ONE TRANSACTION</text>
-<rect x="394" y="36" width="342" height="140" rx="12" fill="#111110"/>
-<rect x="414" y="58" width="120" height="30" rx="8" fill="#2E2C29"/>
+<rect x="394" y="36" width="342" height="140" rx="12" fill="#0C0C0F"/>
+<rect x="414" y="58" width="120" height="30" rx="8" fill="#1D1D1F"/>
 <text class="mo i-sm" x="428" y="78">payment leg</text>
-<rect x="558" y="58" width="120" height="30" rx="8" fill="#2E2C29"/>
+<rect x="558" y="58" width="120" height="30" rx="8" fill="#1D1D1F"/>
 <text class="mo i-sm" x="572" y="78">security leg</text>
-<path d="M540 73 L552 73" stroke="#9B9791" stroke-width="1.3" fill="none"/>
-<rect x="414" y="100" width="264" height="56" rx="8" fill="#2E2C29"/>
+<path d="M540 73 L552 73" stroke="#6E6E73" stroke-width="1.3" fill="none"/>
+<rect x="414" y="100" width="264" height="56" rx="8" fill="#1D1D1F"/>
 <text class="st i-st" x="430" y="122">Both, or neither</text>
 <text class="fa i-sm" x="430" y="142">There is no block in which one has moved.</text>
 
 
 <text class="lbl" x="24" y="212">WHAT settle() DOES, IN ORDER</text>
-<rect x="24" y="224" width="712" height="60" rx="10" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="224" width="712" height="60" rx="10" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="mo" x="44" y="248">not expired · nonce unused · both EIP-712 signatures valid · token.canTransfer(seller, buyer, amount)</text>
 <text class="mo" x="44" y="270">payment: buyer → seller · security: seller → buyer through the full compliance pipeline · mark settled</text>
 
-<rect x="24" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="44" y="322">Compliance is checked inside settlement</text>
 <text class="fa" x="44" y="344">Not before it, where the answer could go stale in between.</text>
 
-<rect x="388" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="388" y="298" width="348" height="62" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="408" y="322">Any failure reverts everything</text>
 <text class="fa" x="408" y="344">Settlement risk cannot occur, rather than being managed.</text>
 </svg>
@@ -2978,56 +2978,56 @@ interface IAtomicDvP {
 <p>Agents act <strong>for a principal</strong>, never in their own right. The agent&#x27;s wallet is linked to the principal&#x27;s DID subject, so it inherits the principal&#x27;s eligibility — and, because holder caps count subjects, adding agent wallets never inflates the holder register.</p>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 366" class="d-mand">
 <style>
-.d-mand text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-mand .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-mand text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-mand .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-mand .st{font-size:13px;font-weight:600}
-.d-mand .sm{font-size:11.5px;fill:#6E6B66}
-.d-mand .fa{font-size:10.5px;fill:#9B9791}
-.d-mand .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-mand .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-mand .sm{font-size:11.5px;fill:#57575B}
+.d-mand .fa{font-size:10.5px;fill:#6E6E73}
+.d-mand .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-mand .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-mand .i-st{fill:#FFFFFF}
-.d-mand .i-sm{fill:#9B9791}
-.d-mand .no{fill:#7A322A;font-size:10.5px}
-.d-mand .nob{fill:#7A322A;font-size:11.5px;font-weight:600}
+.d-mand .i-sm{fill:#6E6E73}
+.d-mand .no{fill:#B42318;font-size:10.5px}
+.d-mand .nob{fill:#B42318;font-size:11.5px;font-weight:600}
 </style>
 <defs>
 <marker id="ma" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 <marker id="mb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#C9A6A0"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#F5CFCA"/>
 </marker>
 </defs>
 <rect width="760" height="366" fill="#FFFFFF"/>
 
-<rect x="24" y="16" width="150" height="60" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="16" width="150" height="60" rx="10" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="st" x="42" y="40">Agent</text>
 <text class="fa" x="42" y="60">automated operator</text>
 
-<path d="M182 46 L216 46" stroke="#9B9791" stroke-width="1.3" marker-end="url(#ma)" fill="none"/>
+<path d="M182 46 L216 46" stroke="#6E6E73" stroke-width="1.3" marker-end="url(#ma)" fill="none"/>
 <text class="mos" x="186" y="38">acts</text>
 
-<rect x="224" y="16" width="512" height="60" rx="10" fill="#111110"/>
+<rect x="224" y="16" width="512" height="60" rx="10" fill="#0C0C0F"/>
 <text class="lbl i-sm" x="244" y="40">AGENTAUTHORITY · CHECKED BEFORE ANY STATE CHANGES</text>
 <text class="mo i-sm" x="244" y="62">check(mandate, scope, token, counterparty, amount) → (bool, reason)</text>
 
 
 <text class="lbl" x="24" y="112">WHAT A MANDATE BOUNDS</text>
-<rect x="24" y="124" width="230" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="124" width="230" height="118" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="mos" x="42" y="148">scopes[]         which actions</text>
 <text class="mos" x="42" y="168">tokens[]         which assets</text>
 <text class="mos" x="42" y="188">counterparties[] whom with</text>
 <text class="mos" x="42" y="208">maxPerAction     per call</text>
 <text class="mos" x="42" y="228">maxPerEpoch      per window</text>
 
-<rect x="266" y="124" width="230" height="118" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="266" y="124" width="230" height="118" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="st" x="284" y="148">Every mandate expires</text>
 <text class="sm" x="284" y="170">There is no perpetual mandate</text>
 <text class="sm" x="284" y="186">in the type — it is a required</text>
 <text class="sm" x="284" y="202">field, not a default.</text>
 <text class="mos" x="284" y="228">revoke() takes effect next call</text>
 
-<rect x="508" y="124" width="228" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="508" y="124" width="228" height="118" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="526" y="148">NO SCOPE EVER GRANTS</text>
 <text class="no" x="526" y="170">minting · role changes</text>
 <text class="no" x="526" y="190">upgrades · freezing</text>
@@ -3035,12 +3035,12 @@ interface IAtomicDvP {
 <text class="fa" x="526" y="232">Not configurable. Absent from the type.</text>
 
 
-<rect x="24" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="st" x="44" y="286">Inside the mandate</text>
 <text class="mo" x="44" y="308">consume(mandate, amount) · action proceeds</text>
 <text class="fa" x="44" y="330">AgentActed logged with principal, selector, token, amount.</text>
 
-<rect x="388" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#C9A6A0"/>
+<rect x="388" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#F5CFCA"/>
 <text class="nob" x="408" y="286">Outside it</text>
 <text class="mo" x="408" y="308">reverts before any state change</text>
 <text class="fa" x="408" y="330">The agent is not trusted to respect its mandate. It cannot exceed it.</text>
@@ -3316,47 +3316,55 @@ merge → registry status updated in this document</pre>
 </ul></section><section class="doc" id="doc-25"><h2 id="sec-25">25 — Design system</h2>
 <p>One light theme, applied to the documentation site and every prototype. The canonical token file is <a href="../prototypes/theme.css"><code>prototypes/theme.css</code></a>; each surface inlines the same values so it stays self-contained and works when opened from disk.</p>
 <h3 id="25-the-decision">The decision</h3>
-<p><strong>A single committed light theme in milky monochrome — black, white and grey, with no hue.</strong></p>
+<p><strong>A single committed light theme: near-black type on Apple grey, with one aqua spot colour.</strong></p>
 <p>Dark mode was removed deliberately. A dual-theme system doubles every colour decision and is where most contrast bugs live — a value defined only inside a media query renders one theme&#x27;s text on the other theme&#x27;s ground. Committing to one theme means every colour is painted explicitly and there is one thing to get right.</p>
 <p>Every surface sets its own <code>background</code> and <code>color</code> from tokens rather than inheriting, so the page holds on any host background.</p>
 <h3 id="25-tokens">Tokens</h3>
 <h4 id="25-ground-and-surfaces">Ground and surfaces</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ground</code></td><td style="text-align:left"><code>#F7F6F4</code></td><td style="text-align:left">Page canvas</td></tr><tr><td style="text-align:left"><code>--surface</code></td><td style="text-align:left"><code>#FFFFFF</code></td><td style="text-align:left">Cards, panels, inputs</td></tr><tr><td style="text-align:left"><code>--sunk</code></td><td style="text-align:left"><code>#F1EFEC</code></td><td style="text-align:left">Inline code, hover states, quiet fills</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ground</code></td><td style="text-align:left"><code>#F5F5F7</code></td><td style="text-align:left">Page canvas</td></tr><tr><td style="text-align:left"><code>--surface</code></td><td style="text-align:left"><code>#FFFFFF</code></td><td style="text-align:left">Cards, panels, inputs</td></tr><tr><td style="text-align:left"><code>--sunk</code></td><td style="text-align:left"><code>#F0F2F8</code></td><td style="text-align:left">Inline code, hover states, quiet fills</td></tr><tr><td style="text-align:left"><code>--dark</code></td><td style="text-align:left"><code>#0C0C0F</code></td><td style="text-align:left">Inverted sections and filled controls</td></tr></tbody></table></div>
 <h4 id="25-ink">Ink</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ink</code></td><td style="text-align:left"><code>#111110</code></td><td style="text-align:left">Primary text</td></tr><tr><td style="text-align:left"><code>--ink-2</code></td><td style="text-align:left"><code>#3C3A37</code></td><td style="text-align:left">Body copy in tables and cards</td></tr><tr><td style="text-align:left"><code>--muted</code></td><td style="text-align:left"><code>#6E6B66</code></td><td style="text-align:left">Supporting text</td></tr><tr><td style="text-align:left"><code>--faint</code></td><td style="text-align:left"><code>#9B9791</code></td><td style="text-align:left">Labels, captions, metadata</td></tr></tbody></table></div>
-<p><code>--faint</code> on <code>--ground</code> is the tightest pairing in the system and clears 4.5:1. Nothing lighter is used for text.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Contrast on <code>--ground</code></th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ink</code></td><td style="text-align:left"><code>#1D1D1F</code></td><td style="text-align:left">15.4:1</td><td style="text-align:left">Headings and primary text</td></tr><tr><td style="text-align:left"><code>--ink-2</code></td><td style="text-align:left"><code>#3C3C43</code></td><td style="text-align:left">10.1:1</td><td style="text-align:left">Body copy in tables and cards</td></tr><tr><td style="text-align:left"><code>--muted</code></td><td style="text-align:left"><code>#57575B</code></td><td style="text-align:left">6.6:1</td><td style="text-align:left">Supporting text</td></tr><tr><td style="text-align:left"><code>--faint</code></td><td style="text-align:left"><code>#6E6E73</code></td><td style="text-align:left">4.7:1</td><td style="text-align:left">Labels, captions, metadata</td></tr></tbody></table></div>
+<p><code>--faint</code> is the lightest ink in the system and still clears 4.5:1 on both <code>--ground</code> and <code>--surface</code>. Nothing lighter is used for text. The two lightest greys are one step darker than the Apple originals they are drawn from, which sit at roughly 3.3:1 and fail at caption sizes.</p>
 <h4 id="25-lines">Lines</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--rule</code></td><td style="text-align:left"><code>#E9E6E2</code></td><td style="text-align:left">Default hairline. Almost invisible, on purpose</td></tr><tr><td style="text-align:left"><code>--rule-strong</code></td><td style="text-align:left"><code>#DAD6D0</code></td><td style="text-align:left">Input borders, emphasis</td></tr></tbody></table></div>
-<p>Separation comes from space first, a hairline second, and a border only when a boundary is genuinely structural. Depth comes from <code>--sh</code>, never from a heavy line.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--rule</code></td><td style="text-align:left"><code>#E2E4E9</code></td><td style="text-align:left">Default hairline. Almost invisible, on purpose</td></tr><tr><td style="text-align:left"><code>--rule-strong</code></td><td style="text-align:left"><code>#D2D5DB</code></td><td style="text-align:left">Input borders, emphasis</td></tr></tbody></table></div>
+<p>Separation comes from space first, a hairline second, and a border only when a boundary is genuinely structural. Depth comes from <code>--sh-card</code>, never from a heavy line.</p>
 <h4 id="25-emphasis">Emphasis</h4>
-<p>There is no accent hue. Emphasis is carried by <strong>weight and value</strong>, not colour.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--accent</code></td><td style="text-align:left"><code>#111110</code></td><td style="text-align:left">Primary buttons, active state, links</td></tr><tr><td style="text-align:left"><code>--accent-2</code></td><td style="text-align:left"><code>#2E2C29</code></td><td style="text-align:left">Hover — black lifts rather than darkens</td></tr><tr><td style="text-align:left"><code>--accent-wash</code></td><td style="text-align:left"><code>#F1EFEC</code></td><td style="text-align:left">Selected rows, quiet fills</td></tr><tr><td style="text-align:left"><code>--accent-edge</code></td><td style="text-align:left"><code>#DAD6D0</code></td><td style="text-align:left">Border on emphasised surfaces</td></tr></tbody></table></div>
-<p>Buttons are <strong>black, white or grey</strong>: a filled black pill for the one primary action, a white pill with a hairline for everything else. When nothing on screen is coloured, the single black control is unmistakable — and colour is not spent on decoration.</p>
-<p>The neutrals are very slightly warm. A cold blue-grey reads as software chrome; a milky, faintly warm grey reads as considered.</p>
+<p>The primary action is <strong>black</strong>, not coloured. Colour is reserved for the one thing on a screen that should be seen before anything else.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--accent</code></td><td style="text-align:left"><code>#0C0C0F</code></td><td style="text-align:left">Primary buttons, active state, links</td></tr><tr><td style="text-align:left"><code>--accent-2</code></td><td style="text-align:left"><code>#1D1D1F</code></td><td style="text-align:left">Hover — black lifts rather than darkens</td></tr><tr><td style="text-align:left"><code>--accent-wash</code></td><td style="text-align:left"><code>#F5F5F7</code></td><td style="text-align:left">Selected rows, quiet fills</td></tr><tr><td style="text-align:left"><code>--accent-edge</code></td><td style="text-align:left"><code>#E2E4E9</code></td><td style="text-align:left">Border on emphasised surfaces</td></tr></tbody></table></div>
+<h4 id="25-the-spot-colour">The spot colour</h4>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Use</th></tr></thead><tbody><tr><td style="text-align:left"><code>--spot</code></td><td style="text-align:left"><code>#22D3EE</code></td><td style="text-align:left">Eyebrow badges, the highlighted phrase, one emphasised quantity</td></tr><tr><td style="text-align:left"><code>--spot-2</code></td><td style="text-align:left"><code>#0EBDD9</code></td><td style="text-align:left">Hover on a spot-filled control</td></tr><tr><td style="text-align:left"><code>--spot-ink</code></td><td style="text-align:left"><code>#0C2E33</code></td><td style="text-align:left">Text on a spot fill — 8.0:1</td></tr><tr><td style="text-align:left"><code>--spot-text</code></td><td style="text-align:left"><code>#0E7490</code></td><td style="text-align:left">Spot-family text on white — 5.4:1</td></tr><tr><td style="text-align:left"><code>--spot-wash</code></td><td style="text-align:left"><code>rgba(34,211,238,.22)</code></td><td style="text-align:left">Selected option, active navigation, quiet strips</td></tr><tr><td style="text-align:left"><code>--spot-edge</code></td><td style="text-align:left"><code>#A5E9F4</code></td><td style="text-align:left">Border on a washed surface</td></tr></tbody></table></div>
+<p>Aqua appears at most twice per view: one badge and one highlight. The moment it decorates a third element it stops meaning anything. <code>--spot</code> is never used for text on white — that is what <code>--spot-text</code> is for.</p>
 <h4 id="25-status">Status</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Meaning</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ok</code></td><td style="text-align:left"><code>#2F2E2B</code></td><td style="text-align:left">Passed, verified, eligible — near-black, no hue</td></tr><tr><td style="text-align:left"><code>--warn</code></td><td style="text-align:left"><code>#7A6234</code></td><td style="text-align:left">Needs attention, irreversible, locked — muted ochre</td></tr><tr><td style="text-align:left"><code>--crit</code></td><td style="text-align:left"><code>#7A322A</code></td><td style="text-align:left">Refused, failed, unverified — muted oxblood</td></tr></tbody></table></div>
-<p>Success carries <strong>no hue at all</strong>: a passing state is the normal state, and normal is black on white. Only the two failure states carry the faintest warmth, desaturated far enough to sit inside the monochrome rather than interrupt it.</p>
-<p>Status is never encoded in colour alone. Every status carries a word, a mark, or both — required for accessibility and for anyone reading a screenshot in greyscale.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Meaning</th></tr></thead><tbody><tr><td style="text-align:left"><code>--ok</code></td><td style="text-align:left"><code>#0F7A5F</code></td><td style="text-align:left">Passed, verified, eligible — 5.3:1</td></tr><tr><td style="text-align:left"><code>--warn</code></td><td style="text-align:left"><code>#B45309</code></td><td style="text-align:left">Needs attention, irreversible, locked — 5.0:1</td></tr><tr><td style="text-align:left"><code>--crit</code></td><td style="text-align:left"><code>#B42318</code></td><td style="text-align:left">Refused, failed, unverified — 6.6:1</td></tr></tbody></table></div>
+<p>Status is never encoded in colour alone. Every status carries a word, a mark, or both — required for accessibility and for anyone reading a screenshot in greyscale. Status green is deliberately distinct from the aqua spot colour: one reports a fact, the other draws an eye.</p>
 <h4 id="25-shape">Shape</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Applied to</th></tr></thead><tbody><tr><td style="text-align:left"><code>--r</code></td><td style="text-align:left"><code>8px</code></td><td style="text-align:left">Inputs, small controls, nav items</td></tr><tr><td style="text-align:left"><code>--r-lg</code></td><td style="text-align:left"><code>12px</code></td><td style="text-align:left">Cards, notes, tables, code blocks</td></tr><tr><td style="text-align:left"><code>--r-pill</code></td><td style="text-align:left"><code>999px</code></td><td style="text-align:left"><strong>Every button</strong>, chips, pills, status dots, step markers</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Token</th><th style="text-align:left">Value</th><th style="text-align:left">Applied to</th></tr></thead><tbody><tr><td style="text-align:left"><code>--r</code></td><td style="text-align:left"><code>10px</code></td><td style="text-align:left">Inputs, small controls, nav items</td></tr><tr><td style="text-align:left"><code>--r-md</code></td><td style="text-align:left"><code>12px</code></td><td style="text-align:left">Notes, code blocks, small panels</td></tr><tr><td style="text-align:left"><code>--r-lg</code></td><td style="text-align:left"><code>20px</code></td><td style="text-align:left">Cards, tables, figures</td></tr><tr><td style="text-align:left"><code>--r-pill</code></td><td style="text-align:left"><code>980px</code></td><td style="text-align:left"><strong>Every button</strong>, chips, pills, status dots, step markers</td></tr></tbody></table></div>
 <p>Controls are pills. Containers are soft rectangles. Nothing in the system has a sharp corner.</p>
 <h4 id="25-depth">Depth</h4>
-<pre>--sh:    0 1px 2px rgba(17,17,16,.04), 0 1px 3px rgba(17,17,16,.025);
---sh-lg: 0 2px 4px rgba(17,17,16,.03), 0 12px 32px rgba(17,17,16,.05);</pre>
-<p>Two layers each: a tight contact shadow and a soft diffused one. Both carry a vertical offset — a zero-offset halo is decoration, not depth.</p>
+<pre>--sh:      0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);
+--sh-lg:   0 8px 20px -4px rgba(0,0,0,.1), 0 4px 8px -2px rgba(0,0,0,.05);
+--sh-card: 0 10px 30px -24px rgba(0,0,0,.3);</pre>
+<p><code>--sh-card</code> is the default on cards: a heavily negative spread, so the shadow reads as the card sitting on the page rather than floating above it. <code>--sh-lg</code> is reserved for hover.</p>
 <h4 id="25-type">Type</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Role</th><th style="text-align:left">Stack</th></tr></thead><tbody><tr><td style="text-align:left"><code>--display</code></td><td style="text-align:left">SF Pro Display → Inter → system sans</td></tr><tr><td style="text-align:left"><code>--body</code></td><td style="text-align:left">SF Pro Text → Inter → system sans</td></tr><tr><td style="text-align:left"><code>--mono</code></td><td style="text-align:left">SF Mono → JetBrains Mono → IBM Plex Mono → system mono</td></tr></tbody></table></div>
-<p>All sans. The earlier serif display face was warm and editorial; this system is quiet and technical, and a serif fought that. Display sizes carry tight negative tracking (<code>-.026em</code> to <code>-.032em</code>); body text sits at <code>-.003em</code>.</p>
-<p>Measure stays at 74 characters. Line height is 1.68 in body copy — more air than a typical interface, because most of these surfaces are read rather than scanned.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Role</th><th style="text-align:left">Stack</th></tr></thead><tbody><tr><td style="text-align:left"><code>--display</code></td><td style="text-align:left">SF Pro Display → Inter → system sans</td></tr><tr><td style="text-align:left"><code>--body</code></td><td style="text-align:left">SF Pro Display → SF Pro Text → Inter → system sans</td></tr><tr><td style="text-align:left"><code>--mono</code></td><td style="text-align:left">JetBrains Mono → SF Mono → IBM Plex Mono → system mono</td></tr></tbody></table></div>
+<p>All sans. Inter is loaded from Google Fonts per surface so non-Apple platforms get the same shapes; on macOS and iOS the system face wins and nothing is fetched for the visible text.</p>
+<p>Headings run at weight 700 with tight negative tracking that scales with size: <code>-.038em</code> on the masthead, <code>-.034em</code> on section titles, <code>-.022em</code> at 20px. Body text sits at <code>-.005em</code>. Measure stays at 74 characters; line height is 1.7 in body copy, because most of these surfaces are read rather than scanned.</p>
 <h3 id="25-rules">Rules</h3>
 <ol>
 <li><strong>Space before lines.</strong> Reach for a gap before a border.</li>
-<li><strong>No hue for emphasis.</strong> Weight and value carry it. One black control per view.</li>
+<li><strong>Black is the emphasis; aqua is the exception.</strong> One black control per view, one spot colour at</li>
+</ol>
+<p>   most twice.</p>
+<ol>
 <li><strong>Never colour alone.</strong> Status carries a word or a mark as well.</li>
 <li><strong>Every button is a pill.</strong> No exceptions in this system.</li>
-<li><strong>Focus is always visible.</strong> A 2px accent outline at 3px offset, on every interactive element.</li>
-<li><strong>No gradients, no glass, no glow.</strong> Depth comes from two-layer shadows and nothing else.</li>
+<li><strong>Focus is always visible.</strong> A 2px black outline at 2px offset plus an aqua ring, on every</li>
 </ol>
+<p>   interactive element. The ring alone is not enough contrast to carry focus by itself.</p>
+<ol>
+<li><strong>No gradients, no glow.</strong> Depth comes from shadows and nothing else. The one blurred surface is</li>
+</ol>
+<p>   the sticky site navigation, which is translucent so the page reads through it.</p>
 <h3 id="25-where-it-is-applied">Where it is applied</h3>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Surface</th><th style="text-align:left">File</th></tr></thead><tbody><tr><td style="text-align:left">Documentation site</td><td style="text-align:left"><code>build-docs.py</code> → <code>urwa-documentation.html</code></td></tr><tr><td style="text-align:left">Prototype index</td><td style="text-align:left"><code>prototypes/index.html</code></td></tr><tr><td style="text-align:left">Deploy console</td><td style="text-align:left"><code>prototypes/deploy-console.html</code></td></tr><tr><td style="text-align:left">Token console</td><td style="text-align:left"><code>prototypes/token-console.html</code></td></tr><tr><td style="text-align:left">Public verifier</td><td style="text-align:left"><code>prototypes/verifier.html</code></td></tr><tr><td style="text-align:left">Investor page</td><td style="text-align:left"><code>prototypes/investor.html</code></td></tr><tr><td style="text-align:left">Canonical tokens</td><td style="text-align:left"><code>prototypes/theme.css</code></td></tr></tbody></table></div>
 <p>When the production interfaces are built in Phase 5, <code>theme.css</code> is the source. The prototypes inline it only so each file opens standalone.</p>
@@ -3681,15 +3689,15 @@ revoked     bool</pre>
 <h4 id="29-e-02-balance-and-e-06-e-07-restrictions">E-02 Balance and E-06/E-07 restrictions</h4>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 292" class="d-bal">
 <style>
-.d-bal text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-bal .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-bal text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-bal .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-bal .st{font-size:12.5px;font-weight:600}
-.d-bal .sm{font-size:11px;fill:#6E6B66}
-.d-bal .fa{font-size:10.5px;fill:#9B9791}
-.d-bal .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-bal .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-bal .sm{font-size:11px;fill:#57575B}
+.d-bal .fa{font-size:10.5px;fill:#6E6E73}
+.d-bal .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-bal .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-bal .i-st{fill:#FFFFFF}
-.d-bal .i-sm{fill:#9B9791}
+.d-bal .i-sm{fill:#6E6E73}
 .d-bal .num{font-size:12px;font-weight:600}
 .d-bal .i-num{fill:#FFFFFF;font-size:12px;font-weight:600}
 </style>
@@ -3698,33 +3706,33 @@ revoked     bool</pre>
 <text class="lbl" x="24" y="24">balanceOf(holder) = 100,000</text>
 
 
-<rect x="24" y="36" width="304" height="52" rx="9" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="36" width="304" height="52" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="num" x="44" y="60">40,000</text>
 <text class="sm" x="44" y="78">transferable now</text>
 
-<rect x="336" y="36" width="200" height="52" rx="9" fill="#111110"/>
+<rect x="336" y="36" width="200" height="52" rx="9" fill="#0C0C0F"/>
 <text class="i-num" x="356" y="60">35,000</text>
 <text class="sm i-sm" x="356" y="78">admin freeze</text>
 
-<rect x="544" y="36" width="192" height="52" rx="9" fill="#2E2C29"/>
+<rect x="544" y="36" width="192" height="52" rx="9" fill="#1D1D1F"/>
 <text class="i-num" x="564" y="60">25,000</text>
 <text class="sm i-sm" x="564" y="78">lockups, unexpired</text>
 
 
-<rect x="24" y="104" width="348" height="112" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="104" width="348" height="112" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="lbl" x="44" y="128">DERIVED ON READ, NEVER STORED</text>
 <text class="mo" x="44" y="152">getFrozenTokens = freeze + Σ unexpired lockups</text>
 <text class="mo" x="44" y="174">unfrozenBalanceOf = max(0, balance − frozen)</text>
 <text class="fa" x="44" y="200">Storing either would create a second source of truth that drifts.</text>
 
-<rect x="388" y="104" width="348" height="112" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="388" y="104" width="348" height="112" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
 <text class="lbl" x="408" y="128">TWO PROPERTIES THAT SURPRISE PEOPLE</text>
 <text class="sm" x="408" y="152">Lockups expire by timestamp — no keeper, no</text>
 <text class="sm" x="408" y="168">transaction, no stale state to clean up.</text>
 <text class="sm" x="408" y="192">getFrozenTokens may exceed the balance and</text>
 <text class="sm" x="408" y="208">must not revert. The standard requires it.</text>
 
-<rect x="24" y="234" width="712" height="42" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="234" width="712" height="42" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="sm" x="44" y="260">A seizure moves tokens regardless of the freeze, but still checks canReceive — a forced transfer to an ineligible address is still illegal.</text>
 </svg>
 <figcaption>What a balance is made of. Neither the frozen total nor the transferable amount is stored — both are composed on read, so they cannot drift from the parts they are made of.</figcaption></figure>
@@ -3988,60 +3996,60 @@ Grantee → passport.verifyAbsence(passportId, code, proof)         → bool</pr
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Level</th><th style="text-align:left">Verifies</th><th style="text-align:left">Runs</th><th style="text-align:left">Fails the build</th></tr></thead><tbody><tr><td style="text-align:left"><strong>L0</strong></td><td style="text-align:left">Syntax and structure</td><td style="text-align:left"><code>verify.py</code>, CI</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left"><strong>L1</strong></td><td style="text-align:left">Internal consistency of each document</td><td style="text-align:left"><code>verify.py</code>, CI</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left"><strong>L2</strong></td><td style="text-align:left">Consistency <strong>between</strong> models</td><td style="text-align:left"><code>verify.py</code>, CI</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left"><strong>L3</strong></td><td style="text-align:left">Code against specification</td><td style="text-align:left">Foundry</td><td style="text-align:left">✅ once code exists</td></tr><tr><td style="text-align:left"><strong>L4</strong></td><td style="text-align:left">Runtime behaviour and invariants</td><td style="text-align:left">Foundry, fork tests</td><td style="text-align:left">✅ once code exists</td></tr><tr><td style="text-align:left"><strong>L5</strong></td><td style="text-align:left"><strong>The checks themselves</strong></td><td style="text-align:left"><code>verify.py --self-test</code>, CI</td><td style="text-align:left">✅</td></tr></tbody></table></div>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 372" class="d-ver">
 <style>
-.d-ver text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-ver .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-ver text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-ver .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-ver .st{font-size:13px;font-weight:600}
-.d-ver .sm{font-size:11.5px;fill:#6E6B66}
-.d-ver .fa{font-size:10.5px;fill:#9B9791}
-.d-ver .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#6E6B66}
+.d-ver .sm{font-size:11.5px;fill:#57575B}
+.d-ver .fa{font-size:10.5px;fill:#6E6E73}
+.d-ver .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#57575B}
 .d-ver .lv{font-size:13px;font-weight:700}
 .d-ver .i-lv{fill:#FFFFFF}
 .d-ver .i-st{fill:#FFFFFF}
-.d-ver .i-sm{fill:#9B9791}
-.d-ver .i-mos{fill:#F1EFEC}
-.d-ver .grey{fill:#9B9791}
+.d-ver .i-sm{fill:#6E6E73}
+.d-ver .i-mos{fill:#F0F2F8}
+.d-ver .grey{fill:#6E6E73}
 </style>
 <rect width="760" height="372" fill="#FFFFFF"/>
 
 <text class="lbl" x="24" y="24">EACH LEVEL VERIFIES WHAT THE ONE BELOW CANNOT</text>
 <text class="lbl" x="600" y="24">BLIND TO</text>
 
-<rect x="24" y="36" width="560" height="40" rx="9" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="36" width="560" height="40" rx="9" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="lv" x="44" y="61">L0</text>
 <text class="st" x="78" y="61">Structure</text>
 <text class="sm" x="238" y="61">links, anchors, staleness, encoding</text>
 <text class="mos" x="506" y="61">11</text>
 <text class="fa" x="600" y="61">whether the prose is true</text>
 
-<rect x="24" y="82" width="560" height="40" rx="9" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="82" width="560" height="40" rx="9" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="lv" x="44" y="107">L1</text>
 <text class="st" x="78" y="107">Each document</text>
 <text class="sm" x="238" y="107">tables, fences, registry IDs, totals</text>
 <text class="mos" x="506" y="107">7</text>
 <text class="fa" x="600" y="107">whether documents agree</text>
 
-<rect x="24" y="128" width="560" height="40" rx="9" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="128" width="560" height="40" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="lv" x="44" y="153">L2</text>
 <text class="st" x="78" y="153">Between models</text>
 <text class="sm" x="238" y="153">contracts, roles, entities, claim keys</text>
 <text class="mos" x="506" y="153">16</text>
 <text class="fa" x="600" y="153">whether they match reality</text>
 
-<rect x="24" y="174" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#DAD6D0" stroke-dasharray="4 3"/>
+<rect x="24" y="174" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
 <text class="lv grey" x="44" y="199">L3</text>
 <text class="st grey" x="78" y="199">Code vs spec</text>
 <text class="sm" x="238" y="199">signatures, storage, events, modifiers</text>
 <text class="mos" x="506" y="199">7 later</text>
 <text class="fa" x="600" y="199">whether code behaves</text>
 
-<rect x="24" y="220" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#DAD6D0" stroke-dasharray="4 3"/>
+<rect x="24" y="220" width="560" height="40" rx="9" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
 <text class="lv grey" x="44" y="245">L4</text>
 <text class="st grey" x="78" y="245">Runtime</text>
 <text class="sm" x="238" y="245">the fifteen invariants, fuzzed and forked</text>
 <text class="mos" x="506" y="245">15 later</text>
 <text class="fa" x="600" y="245">whether the spec was right</text>
 
-<rect x="24" y="266" width="560" height="56" rx="9" fill="#111110"/>
+<rect x="24" y="266" width="560" height="56" rx="9" fill="#0C0C0F"/>
 <text class="lv i-lv" x="44" y="288">L5</text>
 <text class="st i-st" x="78" y="288">The checks themselves</text>
 <text class="sm i-sm" x="238" y="288">every check must fail its own fixture</text>
@@ -4049,7 +4057,7 @@ Grantee → passport.verifyAbsence(passportId, code, proof)         → bool</pr
 <text class="fa i-sm" x="78" y="310">A check that passes its broken input is reported dead, not counted as a pass.</text>
 <text class="fa" x="600" y="288">what the checks miss</text>
 
-<rect x="24" y="332" width="712" height="30" rx="8" fill="#F7F6F4" stroke="#E9E6E2"/>
+<rect x="24" y="332" width="712" height="30" rx="8" fill="#F5F5F7" stroke="#E2E4E9"/>
 <text class="sm" x="44" y="352">L5 found six dead checks on its first run. All six passed L0 through L2 and looked healthy. Nothing below L5 could have found them.</text>
 </svg>
 <figcaption>Six levels, each catching what the one below cannot — and each honest about its own blind spot. Thirty-four checks run today; L3 and L4 arrive with the code they test.</figcaption></figure>
@@ -4058,7 +4066,8 @@ Grantee → passport.verifyAbsence(passportId, code, proof)         → bool</pr
 <p>Cheap, mechanical, catches rot before anyone reads.</p>
 <p><code>L0.6</code> compares a SHA-256 digest of every source file against a digest stamped into the built HTML. Timestamps would be useless here: a fresh clone gives every file the same mtime, so an mtime comparison passes in CI no matter how stale the build is — a check that is green precisely where it matters least.</p>
 <p><code>L0.11</code> includes a text-overflow estimate, because SVG does not wrap. A caption edited to be two words longer does not error and does not wrap — the words are simply not on the canvas, and the diagram still looks finished. The check measures each label against the viewBox using advance widths calibrated from rendered output.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><code>L0.1</code></td><td style="text-align:left">Every <code>docs/*.md</code> appears in the README index</td></tr><tr><td style="text-align:left"><code>L0.2</code></td><td style="text-align:left">Every document in the index exists on disk</td></tr><tr><td style="text-align:left"><code>L0.3</code></td><td style="text-align:left">Document numbers are contiguous with no gaps or duplicates</td></tr><tr><td style="text-align:left"><code>L0.4</code></td><td style="text-align:left">Every internal link resolves to a real file or anchor</td></tr><tr><td style="text-align:left"><code>L0.5</code></td><td style="text-align:left">The built HTML has no broken in-page anchors</td></tr><tr><td style="text-align:left"><code>L0.6</code></td><td style="text-align:left">The built HTML is not stale relative to the sources — by content digest, not timestamp</td></tr><tr><td style="text-align:left"><code>L0.7</code></td><td style="text-align:left">No raw Markdown leaks into the HTML — no <code>![</code>, no <code>](</code>, no escaped block tags</td></tr><tr><td style="text-align:left"><code>L0.8</code></td><td style="text-align:left">Every HTML tag balances</td></tr><tr><td style="text-align:left"><code>L0.9</code></td><td style="text-align:left">Every page is reachable from every other — the documentation links each surface, each surface links back and sideways</td></tr><tr><td style="text-align:left"><code>L0.10</code></td><td style="text-align:left">Every page declares its character set and viewport</td></tr><tr><td style="text-align:left"><code>L0.11</code></td><td style="text-align:left">Every diagram resolves, parses, carries a <code>viewBox</code>, sets no <code>fill</code> on <code>&lt;text&gt;</code>, fetches nothing, and has no label running off the canvas</td></tr></tbody></table></div>
+<p>It also pins every colour literal to the design tokens. The sixteen diagrams were first drawn in a warm grey family against pages built from a cool one — near enough to look deliberate, far enough to read as an off-brand tint. Nothing else in the pipeline would have caught it.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><code>L0.1</code></td><td style="text-align:left">Every <code>docs/*.md</code> appears in the README index</td></tr><tr><td style="text-align:left"><code>L0.2</code></td><td style="text-align:left">Every document in the index exists on disk</td></tr><tr><td style="text-align:left"><code>L0.3</code></td><td style="text-align:left">Document numbers are contiguous with no gaps or duplicates</td></tr><tr><td style="text-align:left"><code>L0.4</code></td><td style="text-align:left">Every internal link resolves to a real file or anchor</td></tr><tr><td style="text-align:left"><code>L0.5</code></td><td style="text-align:left">The built HTML has no broken in-page anchors</td></tr><tr><td style="text-align:left"><code>L0.6</code></td><td style="text-align:left">The built HTML is not stale relative to the sources — by content digest, not timestamp</td></tr><tr><td style="text-align:left"><code>L0.7</code></td><td style="text-align:left">No raw Markdown leaks into the HTML — no <code>![</code>, no <code>](</code>, no escaped block tags</td></tr><tr><td style="text-align:left"><code>L0.8</code></td><td style="text-align:left">Every HTML tag balances</td></tr><tr><td style="text-align:left"><code>L0.9</code></td><td style="text-align:left">Every page is reachable from every other — the documentation links each surface, each surface links back and sideways</td></tr><tr><td style="text-align:left"><code>L0.10</code></td><td style="text-align:left">Every page declares its character set and viewport</td></tr><tr><td style="text-align:left"><code>L0.11</code></td><td style="text-align:left">Every diagram resolves, parses, carries a <code>viewBox</code>, sets no <code>fill</code> on <code>&lt;text&gt;</code>, fetches nothing, keeps to the design tokens, and has no label running off the canvas</td></tr></tbody></table></div>
 <h3 id="31-l1-document-consistency">L1 — Document consistency</h3>
 <p>Each document must be internally coherent.</p>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Check</th><th style="text-align:left">Rule</th></tr></thead><tbody><tr><td style="text-align:left"><code>L1.1</code></td><td style="text-align:left">Every table has a header separator and uniform column count</td></tr><tr><td style="text-align:left"><code>L1.2</code></td><td style="text-align:left">Every fenced code block is closed</td></tr><tr><td style="text-align:left"><code>L1.3</code></td><td style="text-align:left">Every document ends with a Related section linking at least one other</td></tr><tr><td style="text-align:left"><code>L1.4</code></td><td style="text-align:left">No document references a registry ID that does not exist in <a href="#sec-24">24</a></td></tr><tr><td style="text-align:left"><code>L1.5</code></td><td style="text-align:left">Registry IDs are unique</td></tr><tr><td style="text-align:left"><code>L1.6</code></td><td style="text-align:left">Every registry item has a status from the declared vocabulary</td></tr><tr><td style="text-align:left"><code>L1.7</code></td><td style="text-align:left">Artifact register totals match the row counts they claim, per register and overall</td></tr></tbody></table></div>
@@ -4145,4 +4154,4 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 </div>
-<!-- source-digest: b4ed2352f55b1ccf9b95a8bb24dcc46631afa3fc9fce71bbeaad5abd52a70a33 -->
+<!-- source-digest: 0f95db5d6ff91969b9d2ac6d9ee0c9d930ebe8dcd38736f7dcb3f0a488080636 -->

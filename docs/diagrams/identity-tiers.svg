@@ -1,55 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760" height="300" class="d-tier">
 <style>
-.d-tier text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
-.d-tier .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-tier text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-tier .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
 .d-tier .st{font-size:13.5px;font-weight:600}
-.d-tier .sm{font-size:11.5px;fill:#6E6B66}
-.d-tier .fa{font-size:10.5px;fill:#9B9791}
-.d-tier .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
-.d-tier .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-tier .sm{font-size:11.5px;fill:#57575B}
+.d-tier .fa{font-size:10.5px;fill:#6E6E73}
+.d-tier .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3C43}
+.d-tier .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
 .d-tier .i-st{fill:#FFFFFF}
-.d-tier .i-sm{fill:#9B9791}
-.d-tier .i-mo{fill:#F1EFEC}
+.d-tier .i-sm{fill:#6E6E73}
+.d-tier .i-mo{fill:#F0F2F8}
 </style>
 <defs>
 <marker id="ia" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
 <rect width="760" height="300" fill="#FFFFFF"/>
 
-<rect x="230" y="16" width="300" height="54" rx="10" fill="#111110"/>
+<rect x="230" y="16" width="300" height="54" rx="10" fill="#0C0C0F"/>
 <text class="lbl i-sm" x="250" y="40">THE TOKEN DEPENDS ON AN INTERFACE</text>
 <text class="mo i-mo" x="250" y="60">IIdentityRegistry — never an implementation</text>
 
-<path d="M310 76 L200 108" stroke="#DAD6D0" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
-<path d="M380 76 L380 108" stroke="#DAD6D0" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
-<path d="M450 76 L560 108" stroke="#DAD6D0" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+<path d="M310 76 L200 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+<path d="M380 76 L380 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
+<path d="M450 76 L560 108" stroke="#D2D5DB" stroke-width="1.3" marker-end="url(#ia)" fill="none"/>
 
-<rect x="24" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="44" y="134" width="52" height="19" rx="9" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="24" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="44" y="134" width="52" height="19" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="lbl" x="56" y="147">TIER 0</text>
 <text class="st" x="44" y="176">AllowlistRegistry</text>
 <text class="sm" x="44" y="196">Its own storage</text>
 <text class="fa" x="44" y="216">The open-source default. Any fork</text>
 <text class="fa" x="44" y="230">runs the whole stack on this alone.</text>
 
-<rect x="270" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
-<rect x="290" y="134" width="52" height="19" rx="9" fill="#F1EFEC" stroke="#DAD6D0"/>
+<rect x="270" y="116" width="222" height="120" rx="10" fill="#FFFFFF" stroke="#E2E4E9"/>
+<rect x="290" y="134" width="52" height="19" rx="9" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="lbl" x="302" y="147">TIER 1</text>
 <text class="st" x="290" y="176">EASAdapter</text>
 <text class="sm" x="290" y="196">Ethereum Attestation Service</text>
 <text class="fa" x="290" y="216">Attestations issued by anyone,</text>
 <text class="fa" x="290" y="230">readable by everyone.</text>
 
-<rect x="516" y="116" width="220" height="120" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
-<rect x="536" y="134" width="52" height="19" rx="9" fill="#FFFFFF" stroke="#DAD6D0"/>
+<rect x="516" y="116" width="220" height="120" rx="10" fill="#F5F5F7" stroke="#D2D5DB"/>
+<rect x="536" y="134" width="52" height="19" rx="9" fill="#FFFFFF" stroke="#D2D5DB"/>
 <text class="lbl" x="548" y="147">TIER 2</text>
 <text class="st" x="536" y="176">StoboxDIDAdapter</text>
 <text class="sm" x="536" y="196">StoboxDID, already deployed</text>
 <text class="fa" x="536" y="216">Every call wrapped in try/catch —</text>
 <text class="fa" x="536" y="230">its getters revert on unknown wallets.</text>
 
-<rect x="24" y="250" width="712" height="38" rx="9" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="24" y="250" width="712" height="38" rx="9" fill="#FFFFFF" stroke="#E2E4E9"/>
 <text class="sm" x="44" y="274">All three expose the identical interface. Switching is one setIdentityRegistry call: no balance moves, no migration, no redeployment.</text>
 </svg>
