@@ -158,8 +158,8 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| ST-01 | Ethereum Magicians thread on the specification | **Ready** | SP-06 | 0.25 |
-| ST-02 | ERC-7943 errata: the revert-on-unknown-subject failure mode | **Ready** | SP-03 | 0.25 |
+| ST-01 | Ethereum Magicians thread on the specification | **Parked** | SP-06 | 0.25 |
+| ST-02 | ERC-7943 errata: the revert-on-unknown-subject failure mode | **Parked** | TO-01 | 0.25 |
 | ST-03 | Run the conformance kit against CMTAT, publish the result | Planned | TO-01 | 0.5 |
 | ST-04 | Draft ERC — diagnostic interface | Planned | CO-03, TO-01 | 1 |
 | ST-05 | Draft ERC — agent mandates | Planned | AG-01 | 1 |
@@ -183,9 +183,11 @@ a runnable test is an opinion.
 
 ## What can start today
 
-`IF-01` · `IF-02` · `IF-03` · `IF-04` · `ST-01` · `ST-02`
+`IF-01` · `IF-02` · `IF-03` · `IF-04`
 
-Everything else is gated behind the storage layout.
+Everything else is gated behind the storage layout. Standards work (`ST-*`) is parked for this cycle
+by decision of 15 August 2026 — see [26 — Handoff](26-handoff.md#this-week-no-dependencies). The
+critical path never ran through it.
 
 ---
 
@@ -286,8 +288,8 @@ merge → registry status updated in this document
 | UI — Interfaces | 9 | 2 | 0 | 9 |
 | TO — Tooling | 5 | 0 | 0 | 2.75 |
 | OP — Operations | 8 | 1 | 0 | 2.75 |
-| ST — Standards | 6 | 0 | 2 | 3.5 |
-| **Total** | **79** | **10** | **6** | **≈54 engineer-weeks** |
+| ST — Standards | 6 | 0 | 0 | 3.5 |
+| **Total** | **79** | **10** | **4** | **≈54 engineer-weeks** |
 
 At two Solidity engineers and one front-end engineer, with UI overlapping, that is roughly **five to
 six months to audit**, plus the audit and remediation window.

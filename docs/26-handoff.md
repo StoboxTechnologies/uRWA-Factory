@@ -121,8 +121,8 @@ Everything deliberately left undone, with the reason.
 
 | Gap | Action |
 |---|---|
-| **The public STV3 documentation claims ERC-7943 support that the deployed tokens do not have** | Verified on Arbitrum One: every ERC-7943 selector resolves to the zero address and `supportsInterface(0x3edbb4c4)` returns false. Correcting the claim is a same-week documentation fix and should not wait for this project. |
-| **AIDesigner not authorised** | `init` installed the tooling; the MCP sign-in has not been completed. Run `/mcp` in an interactive session and sign in. |
+| **The public STV3 documentation claims ERC-7943 support that the deployed tokens do not have** | Verified on Arbitrum One: every ERC-7943 selector resolves to the zero address and `supportsInterface(0x3edbb4c4)` returns false. **Correction deferred by the issuer, 15 August 2026.** Recorded here so the finding survives the decision. |
+| **AIDesigner not used** | Dropped 15 August 2026. The design system is settled by hand and documented in [25](25-design-system.md). |
 | **Grant programme names unverified** | Base and Optimism programme names, eligibility and windows were not checked. Confirm before any of it reaches a plan or a deck. See `PUBLICATION-PLAN.md`. |
 
 ### Parked with reasons
@@ -162,8 +162,11 @@ Everything deliberately left undone, with the reason.
    │                ├──▶ TO  2.75w      conformance kit first         │
    │                └──▶ UI  9w         (overlaps CO through PA)      │
    │
-   └─ ST-01, ST-02  standards, in parallel, starting today
+   └─ ST-02  parked to the end of Phase 1, when the conformance kit backs it
 ```
+
+Standards outreach is stood down for this cycle. The critical path is unaffected: it never ran
+through `ST-*`.
 
 | Phase | Registry | Delivers | Effort | Gate |
 |---|---|---|---|---|
@@ -184,13 +187,25 @@ overlapping — five to six months, plus the audit and remediation window.
 
 ### This week, no dependencies
 
-| # | Action | Owner | Why now |
+**Decisions of 15 August 2026 — four of the five original items are stood down.**
+
+| # | Action | Status | Note |
 |---|---|---|---|
-| 1 | **Correct the ERC-7943 claim in the STV3 documentation** | Whoever owns those docs | Independent of this project; a public technical claim an explorer contradicts in four seconds, while a securities campaign is live |
-| 2 | `ST-01` — open the Ethereum Magicians thread | Gene | The specification is ready; feedback is cheapest before code exists |
-| 3 | `ST-02` — file the ERC-7943 errata | Gene | The revert-on-unknown-subject failure mode is a real contribution we hit in production, not in theory |
-| 4 | Confirm the claim schema | Gene + compliance | Gates `PO-02`; cheapest hour in the whole project |
-| 5 | Complete AIDesigner sign-in | Gene | `/mcp` in an interactive session |
+| 1 | Correct the ERC-7943 claim in the STV3 documentation | **Not now** | Deferred by the issuer. The finding stays recorded in part 5 and in [09 — Identity](09-identity-did.md); nothing is lost by waiting, and the exposure is theirs to weigh. |
+| 2 | `ST-01` — Ethereum Magicians thread | **Dropped** | No standards outreach in this cycle. |
+| 3 | `ST-02` — ERC-7943 errata | **Parked to Phase 1** | See below. |
+| 4 | **Confirm the claim schema** | **Active — the only open item** | Gates `PO-02`. Cheapest hour in the project. |
+| 5 | AIDesigner sign-in | **Dropped** | Not used. The design system is settled and documented in [25](25-design-system.md). |
+
+#### Why `ST-02` is parked rather than dropped
+
+Filing errata now would cost attention and deliver nothing, because the argument lands far harder with
+a runnable test behind it. Once `TO-01` — the conformance kit — exists, the same contribution arrives
+as *"here is a failure mode, here is the test that catches it, here is the wording that prevents it"*.
+That is a different class of contribution from a prose observation.
+
+The finding itself is already written down in [09 — Identity](09-identity-did.md) and part 5 of this
+handoff, so it cannot be lost. Revisit at the end of Phase 1.
 
 ### Then, in order
 
