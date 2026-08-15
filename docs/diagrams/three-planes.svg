@@ -26,7 +26,7 @@
 </defs>
 <rect width="760" height="524" fill="#FFFFFF"/>
 <!-- header -->
-<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M12 2.5 21.5 8 12 13.5 2.5 8Z"/><path d="M2.5 12 12 17.5 21.5 12"/><path d="M2.5 16 12 21.5 21.5 16"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Three planes</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M12 2.5 21.5 8 12 13.5 2.5 8Z"/><path d="M2.5 12 12 17.5 21.5 12"/><path d="M2.5 16 12 21.5 21.5 16"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Three planes</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
 <g transform="translate(0,92)">
 
 <!-- claims plane -->

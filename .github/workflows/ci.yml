@@ -20,9 +20,9 @@ jobs:
 
       - name: Fail if the committed build is stale
         run: |
-          if ! git diff --quiet -- index.html all.html pages/; then
+          if ! git diff --quiet -- index.html start.html pages/; then
             echo "::error::the built site is stale. Run 'python3 build-docs.py' and commit the result."
-            git diff --stat -- index.html all.html pages/
+            git diff --stat -- index.html start.html pages/
             exit 1
           fi
 

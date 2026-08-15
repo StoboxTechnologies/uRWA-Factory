@@ -24,8 +24,8 @@ from xml.etree import ElementTree
 ROOT = Path(__file__).parent
 DOCS = ROOT / "docs"
 PROTO = ROOT / "prototypes"
-HTML = ROOT / "index.html"
-ALL = ROOT / "all.html"
+HTML = ROOT / "index.html"       # the whole documentation, one page
+HUB = ROOT / "start.html"        # one card per document
 PAGES = ROOT / "pages"
 README = ROOT / "README.md"
 
@@ -70,12 +70,12 @@ class Corpus:
         self.proto = {p.name: p.read_text(encoding="utf-8") for p in sorted(PROTO.glob("*.html"))}
         self.diagrams = {p.name: p.read_text(encoding="utf-8")
                          for p in sorted((DOCS / "diagrams").glob("*.svg"))}
-        self.all = ALL.read_text(encoding="utf-8") if ALL.exists() else ""
+        self.hub = HUB.read_text(encoding="utf-8") if HUB.exists() else ""
         self.pages = {p.name: p.read_text(encoding="utf-8") for p in sorted(PAGES.glob("*.html"))}
         # Every built surface, for the checks that must hold on all of them.
-        self.built = {"index.html": self.html, "all.html": self.all}
+        self.built = {"index.html": self.html, "start.html": self.hub}
         self.built.update({f"pages/{n}": v for n, v in self.pages.items()})
-        self.html_exists = HTML.exists() and ALL.exists()
+        self.html_exists = HTML.exists() and HUB.exists()
         # Content, not timestamps: a fresh git checkout gives every file the
         # same mtime, so an mtime comparison would be meaningless in CI.
         h = hashlib.sha256()
@@ -291,7 +291,7 @@ def _(c):
     return c
 
 
-@check("L0.13", 0, "Every document has a page, and the site is navigable between them")
+@check("L0.13", 0, "Every document has a page, and every surface links the others")
 def _(c):
     if not c.pages:
         return ["no per-document pages were built"]
@@ -300,20 +300,66 @@ def _(c):
     out = [f"{n} has no page" for n in sorted(expected - built)]
     out += [f"pages/{n} corresponds to no document" for n in sorted(built - expected)]
     for name, page in c.pages.items():
-        if f'href="pages/{name}"' not in c.html:
-            out.append(f"the landing page does not link pages/{name}")
+        if f'href="pages/{name}"' not in c.hub:
+            out.append(f"start.html does not link pages/{name}")
         if 'href="../index.html"' not in page:
-            out.append(f"pages/{name} does not link back to the landing page")
+            out.append(f"pages/{name} does not link back to the complete documentation")
         if 'class="pnav"' not in page:
             out.append(f"pages/{name} has no adjacent-document navigation")
-    if 'href="all.html"' not in c.html:
-        out.append("the landing page does not link the combined documentation")
+    if 'href="index.html"' not in c.hub:
+        out.append("start.html does not link the complete documentation")
+    if 'href="start.html"' not in c.html:
+        out.append("the complete documentation does not link the per-document index")
     return out
 
 
 @breaks("L0.13")
 def _(c):
     c.pages.pop(next(iter(sorted(c.pages))))
+    return c
+
+
+def _page_css(text):
+    """Every rule a surface declares for itself."""
+    return "".join(re.findall(r"<style>(.*?)</style>", text, re.S))
+
+
+@check("L0.14", 0, "No surface invents a colour, a face, a radius or a shadow")
+def _(c):
+    """Consistency, enforced rather than asserted.
+
+    Spacing is a page's own business; colour, type, shape and depth are the
+    system's. A literal here is how two surfaces start drifting apart.
+    """
+    theme = (ROOT / "theme.css").read_text(encoding="utf-8")
+    palette = {h.upper() for h in re.findall(r"#[0-9A-Fa-f]{6}", theme)}
+    build = ROOT / "build-docs.py"
+    styles = {n: _page_css(t) for n, t in c.proto.items()}
+    if build.exists():
+        m = re.search(r'STYLE = """(.*?)"""', build.read_text(encoding="utf-8"), re.S)
+        styles["build-docs.py"] = m.group(1) if m else ""
+
+    out = []
+    for name, css in styles.items():
+        for h in sorted({x.upper() for x in re.findall(r"#[0-9A-Fa-f]{3,6}", css)}):
+            if h not in palette:
+                out.append(f"{name} paints {h}, which is not a token")
+        for f in re.findall(r"font-family:\s*([^;}]+)", css):
+            if "var(--" not in f:
+                out.append(f"{name} declares its own font stack")
+        for r in re.findall(r"border-radius:\s*([^;}]+)", css):
+            if "var(--" not in r and r.strip() not in ("50%", "0", "inherit"):
+                out.append(f"{name} sets border-radius:{r.strip()} instead of a shape token")
+        for b in re.findall(r"box-shadow:\s*([^;}]+)", css):
+            if "var(--" not in b and b.strip() != "none":
+                out.append(f"{name} sets its own box-shadow")
+    return sorted(set(out))
+
+
+@breaks("L0.14")
+def _(c):
+    c.proto["verifier.html"] = c.proto["verifier.html"].replace(
+        "<style>", "<style>\n.drift{color:#BADA55;border-radius:7px}", 1)
     return c
 
 
@@ -364,11 +410,19 @@ def _(c):
             out.append(f"diagrams/{n} references an external resource")
         if 'class="hdt"' not in svg or 'class="ico"' not in svg:
             out.append(f"diagrams/{n} has no header icon or title")
+        elif HEADER not in svg:
+            out.append(f"diagrams/{n} draws its header off the common geometry")
         out += _overflow(n, svg)
         off = _off_palette(svg)
         if off:
             out.append(f"diagrams/{n} uses colours outside the design tokens: {', '.join(off)}")
     return out
+
+
+# The header every diagram opens with. Identical to the pixel across all of
+# them, so a set of sixteen reads as one set rather than sixteen drawings.
+HEADER = ('<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/>'
+          '<g class="ico" transform="translate(36,28) scale(1.3333)">')
 
 
 def _off_palette(svg):

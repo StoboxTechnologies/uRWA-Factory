@@ -30,8 +30,8 @@ jobs:
       - name: Assemble site
         run: |
           mkdir -p _site
-          cp index.html _site/index.html
-          cp all.html _site/all.html        # the combined corpus, for search and print
+          cp index.html _site/index.html    # the whole documentation, one page
+          cp start.html _site/start.html    # one card per document
           cp -r pages _site/pages           # one page per document
           cp -r docs _site/docs
           cp -r prototypes _site/prototypes

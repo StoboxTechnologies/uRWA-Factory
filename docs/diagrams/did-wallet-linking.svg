@@ -22,7 +22,7 @@
 </defs>
 <rect width="760" height="580" fill="#FFFFFF"/>
 <!-- header -->
-<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M9.5 14.5 14.5 9.5"/><path d="M8 12.2 5.6 14.6a3.9 3.9 0 0 0 5.5 5.5l2.4-2.4"/><path d="M10.5 6.3 12.9 3.9a3.9 3.9 0 0 1 5.5 5.5L16 11.8"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Wallet to DID</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M9.5 14.5 14.5 9.5"/><path d="M8 12.2 5.6 14.6a3.9 3.9 0 0 0 5.5 5.5l2.4-2.4"/><path d="M10.5 6.3 12.9 3.9a3.9 3.9 0 0 1 5.5 5.5L16 11.8"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Wallet to DID</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
 <g transform="translate(0,92)">
 
 <!-- step 1 -->

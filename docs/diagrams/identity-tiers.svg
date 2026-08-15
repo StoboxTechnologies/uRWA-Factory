@@ -22,7 +22,7 @@
 </defs>
 <rect width="760" height="392" fill="#FFFFFF"/>
 <!-- header -->
-<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><circle cx="12" cy="7" r="3.2"/><path d="M6 14.5h12"/><path d="M8 18h8"/><path d="M10 21.2h4"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Identity tiers</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><circle cx="12" cy="7" r="3.2"/><path d="M6 14.5h12"/><path d="M8 18h8"/><path d="M10 21.2h4"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Identity tiers</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
 <g transform="translate(0,92)">
 
 <rect x="230" y="16" width="300" height="54" rx="10" fill="#0C0C0F"/>

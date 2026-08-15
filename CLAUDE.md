@@ -40,9 +40,19 @@ a value; update it in the same commit if you do.
 python3 build-docs.py && python3 verify.py && python3 verify.py --self-test
 ```
 
-`build-docs.py` regenerates `index.html` from `README.md`, `docs/*.md` and `theme.css`.
-The built file is committed, and CI fails if it is stale — so rebuild in the same commit as any
-change to a document or to the theme. Never hand-edit `index.html`.
+`build-docs.py` regenerates three surfaces from `docs/*.md` and `theme.css`:
+
+| Output | What it is |
+|---|---|
+| `index.html` | The whole documentation on one page — what the folder opens on |
+| `start.html` | One card per document, for people who know what they want |
+| `pages/*.html` | Each document as its own page, with previous/next |
+
+All three are committed, and CI fails if they are stale — so rebuild in the same commit as any change
+to a document or to the theme. Never hand-edit them.
+
+The masthead, the author and the reason the work is given away belong to `index.html` alone; the other
+surfaces open with a one-line breadcrumb. Anything added to the shared chrome lands on 36 pages.
 
 Every check in `verify.py` must appear in [docs/31-verification.md](docs/31-verification.md) and must
 fail on its own fixture (`--self-test`). A new check needs both, or L2.16 and L5 fail.

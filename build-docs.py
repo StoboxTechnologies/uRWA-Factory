@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 DOCS = ROOT / "docs"
-OUT = ROOT / "index.html"
+OUT = ROOT / "index.html"        # the whole documentation, one page
 THEME = ROOT / "theme.css"
 
 
@@ -303,7 +303,7 @@ body{font-size:17.5px;line-height:1.7}
 nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
 .shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
 @media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
-@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,black calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,black calc(100% - 36px),transparent)}}
 nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
 nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
 nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
@@ -347,8 +347,20 @@ article{min-width:0}
 .wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
 .wxy strong,.wxy b{color:var(--ink)}
-.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
-.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
+.intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin:0 0 14px;align-items:start}
+@media(max-width:1000px){.intro{grid-template-columns:1fr}}
+.why{border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card)}
+.why h4{margin:0 0 14px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.why ol{margin:0 0 16px;padding-left:0;list-style:none;max-width:none;counter-reset:w}
+.why li{position:relative;margin:0 0 12px;padding-left:30px;font-size:14.5px;line-height:1.55;color:var(--ink-2);counter-increment:w}
+.why li::before{content:counter(w);position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:var(--r-pill);
+  background:var(--sunk);color:var(--muted);font-family:var(--mono);font-size:11px;display:grid;place-items:center}
+.why li b{color:var(--ink);font-weight:600}
+.why .pull{margin:0 0 14px;padding:14px 16px;border-radius:var(--r-md);background:var(--spot-wash);
+  font-size:14.5px;line-height:1.5;color:var(--accent);max-width:none}
+.why .more{font-size:13.5px}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFFFFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
 .author .b{flex:1;min-width:240px}
 .author .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.022em;margin:0 0 2px}
 .author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
@@ -360,9 +372,15 @@ article{min-width:0}
 .startat a{font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:9px 20px;color:var(--ink);background:var(--surface);transition:background .18s,border-color .18s,transform .12s}
 .startat a:hover{background:var(--sunk);border-color:var(--rule-strong)}
 .startat a:active{transform:translateY(1px)}
-.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
+.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
 .startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
 section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
+header.slim{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;margin:0 0 26px}
+header.slim a{color:var(--muted);text-decoration:none;font-weight:500}
+header.slim a:hover{color:var(--ink)}
+header.slim a::after{content:"/";margin-left:10px;color:var(--faint)}
+header.slim span{color:var(--ink);font-weight:600}
+article>header.slim+section.doc{margin-top:0;padding-top:0;border-top:0}
 section.doc:first-of-type{margin-top:44px}
 h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
 h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
@@ -372,9 +390,9 @@ p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
 article{--measure:74ch}
 a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
 a:hover{text-decoration-color:var(--accent)}
-a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm);box-shadow:var(--sh-focus)}
 strong{font-weight:600}
-code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
+code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:var(--r-sm);color:var(--ink)}
 pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh-card)}
 pre code{background:none;padding:0;font-size:inherit}
 ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
@@ -531,7 +549,7 @@ def title_of(md, fallback):
 
 
 PAGES = ROOT / "pages"
-ALL = ROOT / "all.html"
+HUB = ROOT / "start.html"        # the same corpus, one card per document
 
 
 def page_file(sec, rel):
@@ -589,7 +607,7 @@ def main():
         for s, t in toc
     )
 
-    def shell(BODY, NAV, RAIL, TITLE):
+    def shell(BODY, NAV, RAIL, TITLE, LEAD=""):
         return f"""<!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
@@ -610,6 +628,7 @@ def main():
 <a href="#sec-32">FAQ</a>
 <a href="#sec-author">Author</a>
 <span class="div"></span>
+<a href="start.html">By document</a>
 <a href="prototypes/index.html">Prototypes</a>
 <a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
 </nav>
@@ -628,54 +647,7 @@ def main():
 <a href="LICENSE"><span class="n">—</span>Licence — MIT</a>
 </nav>
 <article>
-<header class="mast">
-<h1>uRWA Factory</h1>
-<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
-<div class="meta">
-<span><b>Status</b> Specification · no code yet</span>
-<span><b>Licence</b> MIT</span>
-<span><b>Chain</b> Base</span>
-<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
-</div>
-</header>
-
-<div class="hero">
-
-<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
-<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
-
-<div class="wxy">
-<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
-<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
-<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
-<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
-</div>
-
-<div class="author">
-<div class="ini">GD</div>
-<div class="b">
-<p class="nm">Gene Deyev</p>
-<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
-<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
-<div class="lk">
-<a href="https://stobox.io/team/gene-deyev">Profile</a>
-<a href="https://github.com/genedeyev">GitHub</a>
-<a href="mailto:gd@stoboxplatform.com">Email</a>
-<a href="https://stobox.io">Stobox</a>
-</div>
-</div>
-</div>
-
-<div class="startat">
-<a class="k" href="#sec-00">Why this exists</a>
-<a href="#sec-02">Architecture</a>
-<a href="#sec-07">Function reference</a>
-<a href="prototypes/">Prototypes</a>
-<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
-</div>
-
-</div>
-
+{LEAD}
 {BODY}
 <footer>
 <p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
@@ -698,12 +670,74 @@ architecture and is not legal, financial or investment advice.</p>
 {SPY}
 <!-- source-digest: {source_digest()} -->
 """
+    LEAD = """<header class="mast">
+<h1>uRWA Factory</h1>
+<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
+<div class="meta">
+<span><b>Status</b> Specification · no code yet</span>
+<span><b>Licence</b> MIT</span>
+<span><b>Chain</b> Base</span>
+<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
+</div>
+</header>
+
+<div class="hero">
+
+<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
+<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
+
+<div class="intro">
+<div class="author">
+<div class="ini">GD</div>
+<div class="b">
+<p class="nm">Gene Deyev</p>
+<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
+<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
+<div class="lk">
+<a href="https://stobox.io/team/gene-deyev">Profile</a>
+<a href="https://github.com/genedeyev">GitHub</a>
+<a href="mailto:gd@stoboxplatform.com">Email</a>
+<a href="https://stobox.io">Stobox</a>
+</div>
+</div>
+</div>
+<div class="why">
+<h4>Why it is given away</h4>
+<ol>
+<li><b>The primitive is commoditised either way.</b> A compliant token contract will exist as open source in 2026 whether or not this one is published. Charging for it is a delay, not a business model.</li>
+<li><b>A standard with one implementer is not a standard.</b> ERC-7943 becomes useful when many issuers use it and many platforms read it.</li>
+<li><b>Value does not live in the contract.</b> What is hard to reproduce is knowing what is true about an asset and being able to prove it.</li>
+<li><b>Trust is earned by publishing, not by claiming.</b> A compliance system nobody can inspect is a compliance system nobody should trust.</li>
+<li><b>It is verifiable, not rhetorical.</b> On every commit, CI deploys the whole stack to a clean chain with no Stobox contract present and runs an end-to-end sale.</li>
+</ol>
+<p class="pull">The token says who may hold it. The passport says what it actually is. The first is a public good; the second is a service.</p>
+<p class="more"><a href="#sec-00">The full answer, in 00 — Why this exists</a></p>
+</div>
+</div>
+
+<div class="wxy">
+<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
+<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
+<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
+<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
+</div>
+
+<div class="startat">
+<a class="k" href="#sec-00">Why this exists</a>
+<a href="#sec-02">Architecture</a>
+<a href="#sec-07">Function reference</a>
+<a href="prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
+</div>
+
+</div>"""
+
     # ── the combined corpus ──────────────────────────────────────────────
     # Kept because splitting the site costs full-corpus Ctrl+F, which is how
     # people actually find a term across thirty-three documents. Also what
     # prints, and what reads offline.
-    ALL.write_text(shell("".join(sections), nav, "".join(rails),
-                         "uRWA Factory — Complete Documentation"), encoding="utf-8")
+    OUT.write_text(shell("".join(sections), nav, "".join(rails),
+                         "uRWA Factory — Complete Documentation", LEAD), encoding="utf-8")
 
     # ── one page per document ────────────────────────────────────────────
     PAGES.mkdir(exist_ok=True)
@@ -727,12 +761,16 @@ architecture and is not legal, financial or investment advice.</p>
             prev_next.append(f'<a class="pn n" href="{files[order[i+1]]}">{html.escape(docs[order[i+1]]["label"])} →</a>')
         body = d["body"] + f'<nav class="pnav" aria-label="Adjacent documents">{"".join(prev_next)}</nav>'
         page = shell(f'<section class="doc" id="doc-{sec}">{body}</section>',
-                     page_nav, d["rail"], f'{d["title"]} — uRWA Factory')
+                     page_nav, d["rail"], f'{d["title"]} — uRWA Factory',
+                     '<header class="slim"><a href="index.html">uRWA Factory documentation</a>'
+                     f'<span>{html.escape(d["label"])}</span></header>')
         # Rewrite across the whole page, not just the body: the masthead and the
         # rail carry section anchors too, and a page has no other section to
         # anchor into.
         page = to_pages(page, files)
         page = page.replace('href="prototypes/', 'href="../prototypes/')
+        page = page.replace('href="start.html"', 'href="../start.html"')
+        page = page.replace('href="index.html"', 'href="../index.html"')
         page = page.replace('href="LICENSE"', 'href="../LICENSE"')
         page = page.replace('<style>', '<base href=".">\n<style>', 1)
         (PAGES / files[sec]).write_text(page, encoding="utf-8")
@@ -747,14 +785,17 @@ architecture and is not legal, financial or investment advice.</p>
         f'<a href="pages/{files[s]}"><span class="n">{s if s.isdigit() else "—"}</span>{html.escape(lbl)}</a>'
         for s, lbl in toc
     )
-    landing = (f'<div class="cards">{cards}</div>'
-               f'<p class="allnote">Every document on one page, for searching and printing: '
-               f'<a href="all.html">the complete documentation</a>.</p>')
-    index = shell(landing, index_nav, "", "uRWA Factory — Documentation")
-    index = to_pages(index, files, prefix="pages/")
-    OUT.write_text(index, encoding="utf-8")
+    landing = (f'<p class="allnote">One card per document. The whole corpus on a single page — '
+               f'which is what search, print and offline reading want — is '
+               f'<a href="index.html">the complete documentation</a>.</p>'
+               f'<div class="cards">{cards}</div>')
+    hub = shell(landing, index_nav, "", "uRWA Factory — Documents",
+                '<header class="slim"><a href="index.html">uRWA Factory documentation</a>'
+                '<span>Every document</span></header>')
+    hub = to_pages(hub, files, prefix="pages/")
+    HUB.write_text(hub, encoding="utf-8")
 
-    print(f"\n  wrote {OUT.name}, {ALL.name} and {len(order)} pages in {PAGES.name}/")
+    print(f"\n  wrote {OUT.name}, {HUB.name} and {len(order)} pages in {PAGES.name}/")
 
 
 if __name__ == "__main__":

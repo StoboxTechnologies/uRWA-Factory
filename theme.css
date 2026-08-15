@@ -70,6 +70,8 @@
   --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
 
   /* shape */
+  --r-xs:4px;
+  --r-sm:6px;
   --r:10px;
   --r-md:12px;
   --r-lg:20px;
@@ -136,7 +138,7 @@ table,th,td{border-color:var(--rule)}
 
 /* Aqua marks emphasis and nothing else. Status is green, ochre or oxblood,
    and always carries a word or a symbol as well as its colour. */
-.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;
+.hl{background:var(--spot);color:var(--spot-ink);border-radius:var(--r-sm);padding:1px 10px;
   -webkit-box-decoration-break:clone;box-decoration-break:clone}
 .banner{background:var(--spot-wash);border-bottom:1px solid var(--spot-edge);color:var(--accent)}
 .tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}

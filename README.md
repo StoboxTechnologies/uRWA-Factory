@@ -60,9 +60,11 @@ paused? → both trusted? → canSend(from)? → canReceive(to)? → enough unfr
 
 ## Documentation
 
-Everything is in [`docs/`](docs/), rendered one page per document at the
-**[documentation site](https://stoboxtechnologies.github.io/uRWA-Factory/)** — with the whole corpus
-on [a single page](https://stoboxtechnologies.github.io/uRWA-Factory/all.html) for searching and printing.
+Everything is in [`docs/`](docs/), rendered as one continuous page at the
+**[documentation site](https://stoboxtechnologies.github.io/uRWA-Factory/)** — which is what search,
+print and offline reading want. There is also a
+[card per document](https://stoboxtechnologies.github.io/uRWA-Factory/start.html) and one page per
+document, with previous and next.
 
 <table>
 <tr><td valign="top" width="50%">

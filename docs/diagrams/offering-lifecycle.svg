@@ -21,7 +21,7 @@
 </defs>
 <rect width="760" height="432" fill="#FFFFFF"/>
 <!-- header -->
-<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M20.4 12A8.4 8.4 0 1 1 12 3.6"/><path d="M11.8 1.2 15.4 4l-3.6 2.8"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Offering lifecycle</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M20.4 12A8.4 8.4 0 1 1 12 3.6"/><path d="M11.8 1.2 15.4 4l-3.6 2.8"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Offering lifecycle</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
 <g transform="translate(0,92)">
 
 <text class="lbl" x="24" y="24">OFFERING LIFECYCLE · EXACTLY ONE TERMINAL STATE</text>

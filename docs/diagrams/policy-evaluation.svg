@@ -17,7 +17,7 @@
 </style>
 <rect width="760" height="420" fill="#FFFFFF"/>
 <!-- header -->
-<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M2.8 4h18.4l-7.2 8.2V20l-4-2.2v-5.6Z"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Policy evaluation</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M2.8 4h18.4l-7.2 8.2V20l-4-2.2v-5.6Z"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Policy evaluation</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
 <g transform="translate(0,92)">
 
 <text class="lbl" x="24" y="24">GROUPS ARE AND-ED · RULES INSIDE A GROUP ARE ANY-OF</text>

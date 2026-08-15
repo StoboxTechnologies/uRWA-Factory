@@ -47,6 +47,11 @@ file: the pages are what people read and link to, the combined file is what full
 printing need. Both come from one source, so the check that matters is that no document loses its
 page and no page loses its way back — every page links the landing page and its two neighbours.
 
+`L0.14` is the other half of `L0.12`. Linking `theme.css` is not the same as obeying it: a page can
+link the system and still paint its own grey, set its own radius, or load its own face, and the two
+surfaces then drift a shade apart every time one is edited. Spacing and layout stay the page's own
+business — colour, type, shape and depth do not.
+
 `L0.12` keeps the design system single-sourced. Every surface used to inline its own copy of the
 tokens, which is a system only until one copy is edited and the others are not. The tokens now live
 in `theme.css` alone: the prototypes link it, the documentation build inlines it, and this check
@@ -64,8 +69,9 @@ fails a page that links nothing, declares a token of its own, or pulls in its ow
 | `L0.8` | Every HTML tag balances |
 | `L0.9` | Every page is reachable from every other — the documentation links each surface, each surface links back and sideways |
 | `L0.10` | Every page declares its character set and viewport |
-| `L0.11` | Every diagram resolves, parses, carries a `viewBox` and a header icon, sets no `fill` on `<text>`, fetches nothing, keeps to the design tokens, and has no label running off the canvas |
+| `L0.11` | Every diagram resolves, parses, carries a `viewBox` and a header icon drawn on the common geometry, sets no `fill` on `<text>`, fetches nothing, keeps to the design tokens, and has no label running off the canvas |
 | `L0.13` | Every document has its own page, the landing page links each one, and every page links back and to its neighbours |
+| `L0.14` | No surface invents a colour, a face, a radius or a shadow — every one is a token from `theme.css` |
 | `L0.12` | Every page inherits the design system — each prototype links `theme.css`, none declares its own tokens or loads its own web font, and the built documentation carries the tokens inline |
 
 ## L1 — Document consistency

@@ -22,7 +22,7 @@
 </defs>
 <rect width="760" height="512" fill="#FFFFFF"/>
 <!-- header -->
-<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M1.8 12C4.9 6.4 8.7 4.2 12 4.2s7.1 2.2 10.2 7.8c-3.1 5.6-6.9 7.8-10.2 7.8S4.9 17.6 1.8 12Z"/><circle cx="12" cy="12" r="3.1"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Passport disclosure</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M1.8 12C4.9 6.4 8.7 4.2 12 4.2s7.1 2.2 10.2 7.8c-3.1 5.6-6.9 7.8-10.2 7.8S4.9 17.6 1.8 12Z"/><circle cx="12" cy="12" r="3.1"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Passport disclosure</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
 <g transform="translate(0,92)">
 
 <!-- off chain -->

@@ -79,6 +79,8 @@
   --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
 
   /* shape */
+  --r-xs:4px;
+  --r-sm:6px;
   --r:10px;
   --r-md:12px;
   --r-lg:20px;
@@ -145,7 +147,7 @@ table,th,td{border-color:var(--rule)}
 
 /* Aqua marks emphasis and nothing else. Status is green, ochre or oxblood,
    and always carries a word or a symbol as well as its colour. */
-.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;
+.hl{background:var(--spot);color:var(--spot-ink);border-radius:var(--r-sm);padding:1px 10px;
   -webkit-box-decoration-break:clone;box-decoration-break:clone}
 .banner{background:var(--spot-wash);border-bottom:1px solid var(--spot-edge);color:var(--accent)}
 .tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
@@ -223,7 +225,7 @@ body{font-size:17.5px;line-height:1.7}
 nav.sitenav{padding-left:clamp(18px,2.2vw,40px);padding-right:clamp(18px,2.2vw,40px)}
 .shell{max-width:none;margin:0;padding:clamp(24px,2.5vw,44px) clamp(18px,2.2vw,40px) 120px;display:grid;grid-template-columns:250px minmax(0,1fr) 268px;gap:clamp(24px,2.6vw,56px);align-items:start}
 @media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
-@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,black calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,black calc(100% - 36px),transparent)}}
 nav.toc{position:sticky;top:86px;max-height:calc(100vh - 116px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
 nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
 nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
@@ -267,8 +269,20 @@ article{min-width:0}
 .wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
 .wxy strong,.wxy b{color:var(--ink)}
-.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
-.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
+.intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin:0 0 14px;align-items:start}
+@media(max-width:1000px){.intro{grid-template-columns:1fr}}
+.why{border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card)}
+.why h4{margin:0 0 14px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.why ol{margin:0 0 16px;padding-left:0;list-style:none;max-width:none;counter-reset:w}
+.why li{position:relative;margin:0 0 12px;padding-left:30px;font-size:14.5px;line-height:1.55;color:var(--ink-2);counter-increment:w}
+.why li::before{content:counter(w);position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:var(--r-pill);
+  background:var(--sunk);color:var(--muted);font-family:var(--mono);font-size:11px;display:grid;place-items:center}
+.why li b{color:var(--ink);font-weight:600}
+.why .pull{margin:0 0 14px;padding:14px 16px;border-radius:var(--r-md);background:var(--spot-wash);
+  font-size:14.5px;line-height:1.5;color:var(--accent);max-width:none}
+.why .more{font-size:13.5px}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFFFFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
 .author .b{flex:1;min-width:240px}
 .author .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.022em;margin:0 0 2px}
 .author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
@@ -280,9 +294,15 @@ article{min-width:0}
 .startat a{font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:9px 20px;color:var(--ink);background:var(--surface);transition:background .18s,border-color .18s,transform .12s}
 .startat a:hover{background:var(--sunk);border-color:var(--rule-strong)}
 .startat a:active{transform:translateY(1px)}
-.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
+.startat a.k{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
 .startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
 section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:86px}
+header.slim{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;margin:0 0 26px}
+header.slim a{color:var(--muted);text-decoration:none;font-weight:500}
+header.slim a:hover{color:var(--ink)}
+header.slim a::after{content:"/";margin-left:10px;color:var(--faint)}
+header.slim span{color:var(--ink);font-weight:600}
+article>header.slim+section.doc{margin-top:0;padding-top:0;border-top:0}
 section.doc:first-of-type{margin-top:44px}
 h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:86px}
 h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:86px}
@@ -292,9 +312,9 @@ p{margin:0 0 17px;max-width:74ch;text-wrap:pretty}
 article{--measure:74ch}
 a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
 a:hover{text-decoration-color:var(--accent)}
-a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;box-shadow:var(--sh-focus)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm);box-shadow:var(--sh-focus)}
 strong{font-weight:600}
-code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
+code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:var(--r-sm);color:var(--ink)}
 pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh-card)}
 pre code{background:none;padding:0;font-size:inherit}
 ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
@@ -337,6 +357,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="32-faq.html">FAQ</a>
 <a href="author.html">Author</a>
 <span class="div"></span>
+<a href="../start.html">By document</a>
 <a href="../prototypes/index.html">Prototypes</a>
 <a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
 </nav>
@@ -389,54 +410,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
 </nav>
 <article>
-<header class="mast">
-<h1>uRWA Factory</h1>
-<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
-<div class="meta">
-<span><b>Status</b> Specification · no code yet</span>
-<span><b>Licence</b> MIT</span>
-<span><b>Chain</b> Base</span>
-<span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
-</div>
-</header>
-
-<div class="hero">
-
-<p class="q">May this specific person hold this specific asset, <span class="hl">right now, in this amount?</span>
-<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
-
-<div class="wxy">
-<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
-<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
-<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
-<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
-</div>
-
-<div class="author">
-<div class="ini">GD</div>
-<div class="b">
-<p class="nm">Gene Deyev</p>
-<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
-<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
-<div class="lk">
-<a href="https://stobox.io/team/gene-deyev">Profile</a>
-<a href="https://github.com/genedeyev">GitHub</a>
-<a href="mailto:gd@stoboxplatform.com">Email</a>
-<a href="https://stobox.io">Stobox</a>
-</div>
-</div>
-</div>
-
-<div class="startat">
-<a class="k" href="00-why-this-exists.html">Why this exists</a>
-<a href="02-architecture.html">Architecture</a>
-<a href="07-functions.html">Function reference</a>
-<a href="../prototypes/">Prototypes</a>
-<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
-</div>
-
-</div>
-
+<header class="slim"><a href="../index.html">uRWA Factory documentation</a><span>Function reference</span></header>
 <section class="doc" id="doc-07"><h2 id="sec-07">07 — Function reference</h2>
 <p>Every function in the system, with four things stated for each: <strong>what it does</strong>, <strong>who calls it</strong>, <strong>why it exists</strong>, and where relevant, <strong>how to use it correctly</strong>.</p>
 <h3 id="07-how-to-read-this">How to read this</h3>
@@ -683,4 +657,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 8d55bc03834c551232f3d706aa41aa2bc5b855b967fcfe67dcb4b89013a94c13 -->
+<!-- source-digest: 33692fdff92a79ae1ec4ee49e0cc4d9cbd8d2aec4390c7f016af56a2b28b4e71 -->

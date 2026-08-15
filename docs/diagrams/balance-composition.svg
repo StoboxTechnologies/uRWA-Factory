@@ -18,7 +18,7 @@
 </style>
 <rect width="760" height="384" fill="#FFFFFF"/>
 <!-- header -->
-<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><ellipse cx="12" cy="5.8" rx="8.2" ry="3.1"/><path d="M3.8 5.8v6.1c0 1.7 3.7 3.1 8.2 3.1s8.2-1.4 8.2-3.1V5.8"/><path d="M3.8 11.9V18c0 1.7 3.7 3.1 8.2 3.1s8.2-1.4 8.2-3.1v-6.1"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Balance composition</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><ellipse cx="12" cy="5.8" rx="8.2" ry="3.1"/><path d="M3.8 5.8v6.1c0 1.7 3.7 3.1 8.2 3.1s8.2-1.4 8.2-3.1V5.8"/><path d="M3.8 11.9V18c0 1.7 3.7 3.1 8.2 3.1s8.2-1.4 8.2-3.1v-6.1"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Balance composition</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
 <g transform="translate(0,92)">
 
 <text class="lbl" x="24" y="24">balanceOf(holder) = 100,000</text>

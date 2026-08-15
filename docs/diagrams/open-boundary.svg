@@ -16,7 +16,7 @@
 </style>
 <rect width="760" height="442" fill="#FFFFFF"/>
 <!-- header -->
-<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><rect x="3.8" y="10.6" width="16.4" height="10.6" rx="2.6"/><path d="M8 10.6V7a4 4 0 0 1 7.6-1.7"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">The open boundary</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><rect x="3.8" y="10.6" width="16.4" height="10.6" rx="2.6"/><path d="M8 10.6V7a4 4 0 0 1 7.6-1.7"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">The open boundary</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
 <g transform="translate(0,92)">
 
 <!-- open -->

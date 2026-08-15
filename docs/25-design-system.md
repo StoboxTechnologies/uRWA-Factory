@@ -112,6 +112,8 @@ from the aqua spot colour: one reports a fact, the other draws an eye.
 
 | Token | Value | Applied to |
 |---|---|---|
+| `--r-xs` | `4px` | Legend swatches and other marks under 12px |
+| `--r-sm` | `6px` | Inline code, focus rings, the highlight mark |
 | `--r` | `10px` | Inputs, small controls, nav items |
 | `--r-md` | `12px` | Notes, code blocks, small panels |
 | `--r-lg` | `20px` | Cards, tables, figures |
@@ -175,7 +177,8 @@ because a scoped `text{fill:…}` rule silently beats an inline fill.
 | Surface | File | How it gets the system |
 |---|---|---|
 | Design system | `theme.css` | — it *is* the system |
-| Documentation site | `build-docs.py` → `index.html` | Inlined at build time |
+| Documentation, one page | `build-docs.py` → `index.html` | Inlined at build time |
+| Documentation, per document | `build-docs.py` → `start.html`, `pages/*.html` | Inlined at build time |
 | Prototype index | `prototypes/index.html` | `<link href="../theme.css">` |
 | Deploy console | `prototypes/deploy-console.html` | `<link href="../theme.css">` |
 | Token console | `prototypes/token-console.html` | `<link href="../theme.css">` |
