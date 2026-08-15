@@ -130,7 +130,7 @@ def render(md, sec):
             close_lists()
             lvl, txt = len(m.group(1)), m.group(2)
             if lvl == 1:
-                if sec == "00":
+                if sec == "readme":
                     # The page masthead already carries this title; emitting it
                     # again reads as a duplication bug. Keep only the anchor.
                     out.append(f'<span id="sec-{sec}"></span>')
@@ -297,9 +297,9 @@ def main():
             continue
         md = path.read_text(encoding="utf-8")
         m = re.match(r"^(\d{2})-", Path(rel).name)
-        sec = m.group(1) if m else "00"
+        sec = m.group(1) if m else "readme"
         raw = title_of(md, rel)
-        if sec == "00":
+        if sec == "readme":
             label = "Introduction & index"
         else:
             label = raw.split("—", 1)[1].strip() if "—" in raw else raw
@@ -308,7 +308,7 @@ def main():
         print(f"  {rel}  →  #sec-{sec}")
 
     nav = "\n".join(
-        f'<a href="#sec-{s}"><span class="n">{"—" if s=="00" else s}</span>{html.escape(t)}</a>'
+        f'<a href="#sec-{s}"><span class="n">{"—" if s=="readme" else s}</span>{html.escape(t)}</a>'
         for s, t in toc
     )
 

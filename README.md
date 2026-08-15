@@ -41,6 +41,7 @@ architecture, and it is already enforced by the STV3 base this work builds on.
 
 | # | Document | Covers |
 |---|---|---|
+| 00 | [Why this exists](docs/00-why-this-exists.md) | The problem, what Stobox provides, why the factory is free |
 | 01 | [Overview](docs/01-overview.md) | What this is, who it is for, what it does not do |
 | 02 | [Architecture](docs/02-architecture.md) | The three planes and why the boundaries fall there |
 | 03 | [Contracts](docs/03-contracts.md) | Every contract and sub-contract |
