@@ -1,0 +1,466 @@
+<title>uRWA Factory — Deploy Console</title>
+<style>
+  :root{
+    --ground:#EEF2F1; --surface:#FFFFFF; --sunk:#E4EAE8; --raised:#FBFCFC;
+    --ink:#0F1E1C; --ink-2:#33443F; --muted:#4A5C58; --faint:#5C6E6A;
+    --rule:#D4DEDB; --rule-strong:#A9BAB6;
+    --accent:#166B5C; --accent-2:#0E4C41; --accent-wash:#DEECE7; --accent-edge:#9CC6BB;
+    --warn:#8A5712; --warn-wash:#F7EEDD; --warn-edge:#DCC08A;
+    --crit:#8E2F39; --crit-wash:#F8E7E8; --crit-edge:#DDAFB3;
+    --ok:#166B5C;
+    --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+    --r:3px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0A1312; --surface:#111E1B; --sunk:#182B27; --raised:#162622;
+    --ink:#E4EDEA; --ink-2:#BCCCC8; --muted:#9FB2AE; --faint:#839893;
+    --rule:#233734; --rule-strong:#3B534E;
+    --accent:#57B9A3; --accent-2:#87D3C0; --accent-wash:#14312B; --accent-edge:#2C5A50;
+    --warn:#D3A054; --warn-wash:#2C2313; --warn-edge:#57432A;
+    --crit:#E08C93; --crit-wash:#31191C; --crit-edge:#5A3135;
+    --ok:#57B9A3;
+  }}
+  :root[data-theme="dark"]{
+    --ground:#0A1312; --surface:#111E1B; --sunk:#182B27; --raised:#162622;
+    --ink:#E4EDEA; --ink-2:#BCCCC8; --muted:#9FB2AE; --faint:#839893;
+    --rule:#233734; --rule-strong:#3B534E;
+    --accent:#57B9A3; --accent-2:#87D3C0; --accent-wash:#14312B; --accent-edge:#2C5A50;
+    --warn:#D3A054; --warn-wash:#2C2313; --warn-edge:#57432A;
+    --crit:#E08C93; --crit-wash:#31191C; --crit-edge:#5A3135;
+    --ok:#57B9A3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit;cursor:pointer}
+  input,select{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+
+  /* ---------- shell ---------- */
+  .app{max-width:1200px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+  .topbar{display:flex;align-items:center;gap:16px;padding:12px clamp(14px,2.5vw,26px);border-bottom:1px solid var(--rule);background:var(--surface)}
+  .brand{font-weight:700;letter-spacing:-.01em;font-size:15px}
+  .brand span{color:var(--accent)}
+  .chainchip{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--rule-strong);border-radius:99px;padding:3px 10px}
+  .spacer{flex:1}
+
+  /* ---------- wallet ---------- */
+  .wallet{display:flex;align-items:center;gap:9px;border:1px solid var(--rule-strong);border-radius:var(--r);padding:6px 11px;background:var(--raised);font-size:12.5px;max-width:340px}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--faint)}
+  .wallet.ok .dot{background:var(--ok)}
+  .wallet.warn .dot{background:var(--warn)}
+  .wallet .addr{font-family:var(--mono);font-size:12px}
+  .wallet .sub{color:var(--faint);font-size:11.5px}
+  .btn{border:1px solid var(--rule-strong);background:var(--surface);border-radius:var(--r);padding:8px 15px;font-size:13.5px;font-weight:550;transition:background .12s}
+  .btn:hover{background:var(--sunk)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  :root[data-theme="dark"] .btn.primary,
+  :root:not([data-theme="light"]) .btn.primary{color:#06110F}
+  @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn.primary{color:#fff}}
+  .btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
+  .btn[disabled]{opacity:.42;cursor:not-allowed}
+  .btn.ghost{border-color:transparent;background:transparent}
+  .btn.ghost:hover{background:var(--sunk)}
+
+  /* ---------- layout ---------- */
+  .main{flex:1;display:grid;grid-template-columns:212px minmax(0,1fr) 296px;gap:0;align-items:stretch}
+  @media(max-width:1080px){.main{grid-template-columns:180px minmax(0,1fr)}.summary{display:none}}
+  @media(max-width:760px){.main{grid-template-columns:1fr}.stepper{display:none}}
+
+  .stepper{border-right:1px solid var(--rule);padding:22px 16px;background:var(--surface)}
+  .steplabel{font-size:10.5px;font-weight:650;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+  .step{display:flex;gap:11px;align-items:flex-start;padding:8px 8px;border-radius:var(--r);border:0;background:none;width:100%;text-align:left;margin-bottom:1px}
+  .step:hover:not([disabled]){background:var(--sunk)}
+  .step .num{width:20px;height:20px;border-radius:50%;border:1px solid var(--rule-strong);display:grid;place-items:center;font-size:11px;font-family:var(--mono);flex:none;margin-top:1px;color:var(--faint)}
+  .step .t{font-size:13px;color:var(--muted)}
+  .step.done .num{background:var(--accent-wash);border-color:var(--accent-edge);color:var(--accent)}
+  .step.done .t{color:var(--ink-2)}
+  .step.active .num{background:var(--accent);border-color:var(--accent);color:#fff}
+  :root[data-theme="dark"] .step.active .num,:root:not([data-theme="light"]) .step.active .num{color:#06110F}
+  @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .step.active .num{color:#fff}}
+  .step.active .t{color:var(--ink);font-weight:600}
+  .step[disabled]{opacity:.5;cursor:default}
+
+  .panel{padding:26px clamp(16px,3vw,34px) 40px;min-width:0}
+  h1{font-size:22px;line-height:1.2;letter-spacing:-.015em;margin:0 0 6px;font-weight:680}
+  .lede{color:var(--muted);margin:0 0 24px;font-size:14px;max-width:62ch}
+
+  .field{margin-bottom:18px;max-width:560px}
+  .field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px}
+  .field .hint{font-size:12px;color:var(--faint);margin-top:5px;line-height:1.45}
+  .inp{width:100%;padding:9px 11px;border:1px solid var(--rule-strong);border-radius:var(--r);background:var(--surface);font-size:14px}
+  .inp:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-wash)}
+  .inp.mono{font-family:var(--mono);font-size:13px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row .field{flex:1;min-width:150px}
+
+  .opts{display:grid;gap:8px;max-width:640px}
+  .opt{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--rule-strong);border-radius:var(--r);padding:12px 13px;background:var(--surface);text-align:left;width:100%}
+  .opt:hover{background:var(--raised)}
+  .opt.sel{border-color:var(--accent);background:var(--accent-wash)}
+  .opt .mark{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--rule-strong);flex:none;margin-top:2px;display:grid;place-items:center}
+  .opt.sel .mark{border-color:var(--accent)}
+  .opt.sel .mark::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .opt .n{font-weight:620;font-size:13.5px;display:block;margin-bottom:2px}
+  .opt .d{font-size:12.5px;color:var(--muted);line-height:1.45}
+  .opt .tag{font-family:var(--mono);font-size:10.5px;color:var(--accent);border:1px solid var(--accent-edge);border-radius:99px;padding:1px 7px;margin-left:7px;vertical-align:1px}
+
+  .note{border:1px solid var(--accent-edge);background:var(--accent-wash);border-radius:var(--r);padding:11px 13px;font-size:12.5px;line-height:1.5;margin:0 0 16px;max-width:640px}
+  .note.warn{border-color:var(--warn-edge);background:var(--warn-wash)}
+  .note.crit{border-color:var(--crit-edge);background:var(--crit-wash)}
+  .note b{display:block;margin-bottom:3px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+  .note.warn b{color:var(--warn)} .note.crit b{color:var(--crit)}
+
+  .check{display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-top:10px;cursor:pointer;max-width:600px}
+  .check input{margin-top:2px;accent-color:var(--accent);width:15px;height:15px}
+
+  .ruleprev{border:1px solid var(--rule);border-radius:var(--r);background:var(--sunk);padding:12px 14px;margin-top:12px;max-width:640px}
+  .ruleprev .h{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:650;margin-bottom:8px}
+  .ruleprev ul{margin:0;padding-left:16px;font-size:12.5px;color:var(--ink-2)}
+  .ruleprev li{margin-bottom:3px}
+  .ruleprev code{font-family:var(--mono);font-size:11.5px}
+
+  .nav{display:flex;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid var(--rule);max-width:640px}
+
+  /* ---------- summary ---------- */
+  .summary{border-left:1px solid var(--rule);padding:22px 18px;background:var(--surface)}
+  .summary h2{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;font-weight:650}
+  .srow{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:12.5px}
+  .srow:last-of-type{border-bottom:0}
+  .srow .k{color:var(--faint);flex:none}
+  .srow .v{text-align:right;font-weight:550;word-break:break-word}
+  .srow .v.mono{font-family:var(--mono);font-size:11.5px;font-weight:500}
+  .srow .v.dim{color:var(--faint);font-weight:400}
+  .cost{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule-strong)}
+
+  /* ---------- deploy / result ---------- */
+  .center{max-width:600px;margin:0 auto;padding-top:8px}
+  .prog{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--rule)}
+  .prog:last-child{border-bottom:0}
+  .prog .ic{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--rule-strong);flex:none;margin-top:1px;display:grid;place-items:center;font-size:11px}
+  .prog.run .ic{border-color:var(--accent);border-right-color:transparent;animation:spin .7s linear infinite}
+  .prog.ok .ic{background:var(--accent);border-color:var(--accent);color:#fff}
+  :root[data-theme="dark"] .prog.ok .ic,:root:not([data-theme="light"]) .prog.ok .ic{color:#06110F}
+  @media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .prog.ok .ic{color:#fff}}
+  .prog .pt{font-size:13.5px;font-weight:550}
+  .prog .ps{font-size:12px;color:var(--faint);margin-top:1px}
+  .prog.idle{opacity:.45}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.prog.run .ic{animation:none;border-right-color:var(--accent)}}
+
+  .addrcard{border:1px solid var(--rule-strong);border-radius:var(--r);padding:13px 15px;margin-bottom:10px;background:var(--surface)}
+  .addrcard .k{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:650;margin-bottom:5px}
+  .addrcard .a{font-family:var(--mono);font-size:12.5px;word-break:break-all;color:var(--ink)}
+
+  .next{display:grid;gap:8px;margin-top:20px}
+  .nextitem{display:flex;gap:11px;align-items:center;border:1px solid var(--rule);border-radius:var(--r);padding:11px 13px;font-size:13px;background:var(--surface)}
+  .nextitem .n{width:19px;height:19px;border-radius:50%;background:var(--sunk);display:grid;place-items:center;font-size:11px;font-family:var(--mono);color:var(--muted);flex:none}
+
+  .banner{background:var(--accent-wash);border-bottom:1px solid var(--accent-edge);padding:9px clamp(14px,2.5vw,26px);font-size:12.5px;color:var(--accent-2)}
+  :root[data-theme="dark"] .banner,:root:not([data-theme="light"]) .banner{color:var(--accent-2)}
+  .hide{display:none!important}
+</style>
+
+<div class="app">
+
+  <div class="banner">Prototype — no wallet is connected and no transaction is sent. Every value shown maps to a real parameter in the specification.</div>
+
+  <div class="topbar">
+    <div class="brand">uRWA <span>Factory</span></div>
+    <div class="chainchip">Base</div>
+    <div class="spacer"></div>
+    <div id="walletArea">
+      <button class="btn" id="connectBtn">Connect wallet</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <nav class="stepper" aria-label="Deployment steps">
+      <p class="steplabel">Deploy a token</p>
+      <div id="steps"></div>
+    </nav>
+
+    <div class="panel" id="panel"></div>
+
+    <aside class="summary" id="summary"></aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  const PRESETS = {
+    RegD506c:{name:"Reg D 506(c)",desc:"US private placement to accredited investors",rules:["HasValidIdentity","USAccreditedOnly","SanctionsScreen","MaxHolders(2000)","HoldPeriod"]},
+    RegS:{name:"Reg S",desc:"Offshore only — US persons excluded",rules:["HasValidIdentity","JurisdictionDeny(US)","SanctionsScreen","HoldPeriod"]},
+    MiFID2:{name:"MiFID II — Professional",desc:"EU professional clients; retail excluded",rules:["HasValidIdentity","EUProfessionalOnly","SanctionsScreen"]},
+    Dual:{name:"Dual EU + US private",desc:"Professional in the EU or accredited in the US",rules:["HasValidIdentity","(EUProfessionalOnly OR USAccreditedOnly)","SanctionsScreen","MaxHolders"]},
+    MiCAART:{name:"MiCA — asset-referenced",desc:"Commodity-backed and basket-referenced tokens",rules:["HasValidIdentity","SanctionsScreen","ReserveAttestationFresh"]},
+    Open:{name:"Open / utility",desc:"Non-security crypto-assets",rules:["HasValidIdentity","SanctionsScreen"]}
+  };
+  const IDENTITY = {
+    allowlist:{name:"Allowlist",tier:"Tier 0",desc:"A plain permitted-address list. No jurisdiction or accreditation data, so most rules cannot run.",can:["HasValidIdentity"]},
+    eas:{name:"EAS attestations",tier:"Tier 1",desc:"Base-native attestations with issuer, expiry and revocation. Supports accreditation claims.",can:["HasValidIdentity","USAccreditedOnly","EUProfessionalOnly","SanctionsScreen"]},
+    did:{name:"StoboxDID",tier:"Tier 2",desc:"Full identity: subject binding across wallets, jurisdiction, investor type, all claims.",can:["everything"]}
+  };
+
+  const S = {
+    step:0, connected:false, deploying:false, deployed:false, deployStage:-1,
+    name:"", symbol:"", decimals:"18",
+    maxSupply:"", capLocked:false,
+    preset:"RegD506c", identity:"did",
+    issuerAdmin:"", upgradeAdmin:"", supplyOp:"", complianceOp:"",
+    ackCap:false, ackImmutable:false
+  };
+  const STEPS = ["Identity","Supply","Regime","Verification","Roles","Review"];
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const short = a => a && a.length>12 ? a.slice(0,6)+"…"+a.slice(-4) : (a||"");
+
+  function stepDone(i){
+    if(i===0) return S.name.trim().length>1 && /^[A-Z0-9]{2,6}$/.test(S.symbol);
+    if(i===1) return String(S.maxSupply).replace(/\D/g,"").length>0 && (!S.capLocked || S.ackCap);
+    if(i===2) return !!S.preset;
+    if(i===3) return !!S.identity;
+    if(i===4) return [S.issuerAdmin,S.upgradeAdmin,S.supplyOp,S.complianceOp].every(a=>/^0x[a-fA-F0-9]{40}$/.test(a));
+    if(i===5) return S.ackImmutable;
+    return false;
+  }
+  const reachable = i => i===0 || Array.from({length:i},(_,k)=>stepDone(k)).every(Boolean);
+
+  function fmt(n){ const d=String(n).replace(/\D/g,""); return d ? Number(d).toLocaleString("en-US") : ""; }
+
+  /* ---------- wallet ---------- */
+  function renderWallet(){
+    const a = $("#walletArea");
+    if(!S.connected){ a.innerHTML = `<button class="btn" id="connectBtn">Connect wallet</button>`;
+      $("#connectBtn").onclick = ()=>{ S.connected=true;
+        S.issuerAdmin="0x4b2fA1c93e07Dd9b8Ae5210c3f77e6412Db09c1a";
+        S.upgradeAdmin="0x8Ee1477Bc0a4f3d2591A6e5C0b3D91aC2f7E4402";
+        render(); };
+      return;
+    }
+    a.innerHTML = `<div class="wallet ok"><span class="dot"></span><div>
+      <div class="addr">${short(S.issuerAdmin)}</div>
+      <div class="sub">Verified · subject 0x8e…42</div></div></div>`;
+  }
+
+  /* ---------- stepper ---------- */
+  function renderSteps(){
+    $("#steps").innerHTML = STEPS.map((t,i)=>{
+      // a tick means "you have been through this step", not "this field has a default value"
+      const passed = i < S.step && stepDone(i);
+      const cls = S.deployed||S.deploying ? "" : (i===S.step?"active":(passed?"done":""));
+      const dis = (S.deploying||S.deployed||!reachable(i)) ? "disabled" : "";
+      return `<button class="step ${cls}" ${dis} data-i="${i}">
+        <span class="num">${passed?"✓":i+1}</span><span class="t">${t}</span></button>`;
+    }).join("");
+    $("#steps").querySelectorAll(".step").forEach(b=>b.onclick=()=>{S.step=+b.dataset.i;render();});
+  }
+
+  /* ---------- summary ---------- */
+  function renderSummary(){
+    const p = PRESETS[S.preset], id = IDENTITY[S.identity];
+    const rows = [
+      ["Name", S.name || "—", !S.name],
+      ["Symbol", S.symbol || "—", !S.symbol],
+      ["Decimals", S.decimals, false],
+      ["Max supply", S.maxSupply ? fmt(S.maxSupply) : "—", !S.maxSupply],
+      ["Cap", S.capLocked ? "Locked permanently" : "Adjustable", false],
+      ["Regime", p?p.name:"—", false],
+      ["Identity", id?`${id.name} · ${id.tier}`:"—", false],
+      ["Package", "base", false]
+    ];
+    const addr = [
+      ["Issuer admin", S.issuerAdmin],
+      ["Upgrade admin", S.upgradeAdmin],
+      ["Supply operator", S.supplyOp],
+      ["Compliance officer", S.complianceOp]
+    ];
+    $("#summary").innerHTML = `<h2>Deployment</h2>
+      ${rows.map(([k,v,dim])=>`<div class="srow"><span class="k">${k}</span><span class="v ${dim?"dim":""}">${esc(v)}</span></div>`).join("")}
+      <h2 style="margin-top:22px">Roles</h2>
+      ${addr.map(([k,v])=>`<div class="srow"><span class="k">${k}</span><span class="v mono ${v?"":"dim"}">${v?short(v):"not set"}</span></div>`).join("")}
+      <div class="cost">
+        <div class="srow"><span class="k">Contracts</span><span class="v">Token + Treasury</span></div>
+        <div class="srow"><span class="k">Estimated gas</span><span class="v">~0.4 M</span></div>
+        <div class="srow"><span class="k">Factory fee</span><span class="v" style="color:var(--accent)">0</span></div>
+      </div>`;
+  }
+
+  /* ---------- panels ---------- */
+  function panelIdentity(){
+    return `<h1>Token identity</h1>
+    <p class="lede">Name, symbol and decimals are written into the contract at deployment and can never be changed afterwards.</p>
+    <div class="field"><label for="f-name">Token name</label>
+      <input class="inp" id="f-name" value="${esc(S.name)}" placeholder="Manhattan Office Tower Token" autocomplete="off">
+      <div class="hint">Shown in wallets and explorers.</div></div>
+    <div class="row">
+      <div class="field"><label for="f-sym">Symbol</label>
+        <input class="inp mono" id="f-sym" value="${esc(S.symbol)}" placeholder="MOTT" maxlength="6" autocomplete="off">
+        <div class="hint">2–6 characters, A–Z and digits.</div></div>
+      <div class="field"><label for="f-dec">Decimals</label>
+        <select class="inp" id="f-dec">${[18,6,2,0].map(d=>`<option ${S.decimals==d?"selected":""}>${d}</option>`).join("")}</select>
+        <div class="hint">18 unless there is a reason.</div></div>
+    </div>
+    <div class="note warn"><b>Permanent</b>These three values are part of the immutable ledger plane. There is no function to change them later — a rename means a new token and a migration of every holder.</div>`;
+  }
+
+  function panelSupply(){
+    return `<h1>Supply</h1>
+    <p class="lede">The maximum number of tokens that can ever exist, and whether that limit can be raised later.</p>
+    <div class="field"><label for="f-max">Maximum supply</label>
+      <input class="inp mono" id="f-max" value="${fmt(S.maxSupply)}" placeholder="10,000,000" inputmode="numeric" autocomplete="off">
+      <div class="hint">Whole tokens. Leave blank for unlimited.</div></div>
+    <div class="opts" style="margin-bottom:14px">
+      <button class="opt ${!S.capLocked?"sel":""}" data-cap="0"><span class="mark"></span><span>
+        <span class="n">Adjustable cap</span>
+        <span class="d">The issuer admin can raise the maximum later. Useful for follow-on rounds; investors cannot rely on a hard limit.</span></span></button>
+      <button class="opt ${S.capLocked?"sel":""}" data-cap="1"><span class="mark"></span><span>
+        <span class="n">Locked permanently <span class="tag">irreversible</span></span>
+        <span class="d">The maximum can never be raised by anyone. The strongest dilution guarantee you can give an investor.</span></span></button>
+    </div>
+    ${S.capLocked?`<div class="note crit"><b>This cannot be undone</b>Locking the cap sets <code>capLocked = true</code> permanently. No role, no upgrade and no governance vote can reverse it. A larger raise would require issuing a separate token.
+      <label class="check"><input type="checkbox" id="ack-cap" ${S.ackCap?"checked":""}><span>I understand the cap can never be raised on this token.</span></label></div>`:""}`;
+  }
+
+  function panelRegime(){
+    const p = PRESETS[S.preset];
+    return `<h1>Regulatory regime</h1>
+    <p class="lede">Selecting a regime configures the policy set. Rules can be changed after deployment without moving holders or re-minting.</p>
+    <div class="opts">${Object.entries(PRESETS).map(([k,v])=>`
+      <button class="opt ${S.preset===k?"sel":""}" data-preset="${k}"><span class="mark"></span><span>
+        <span class="n">${v.name}</span><span class="d">${v.desc}</span></span></button>`).join("")}</div>
+    <div class="ruleprev"><div class="h">Resulting policy set</div>
+      <ul>${p.rules.map(r=>`<li><code>${esc(r)}</code></li>`).join("")}</ul></div>
+    <div class="note"><b>Not a legal determination</b>Presets are templates that configure the rule engine. Whether this regime is the right one for your asset is your decision with your counsel.</div>`;
+  }
+
+  function panelVerification(){
+    const id = IDENTITY[S.identity], p = PRESETS[S.preset];
+    let warn = "";
+    if(S.identity==="allowlist"){
+      const blocked = p.rules.filter(r=>!/HasValidIdentity/.test(r));
+      if(blocked.length) warn = `<div class="note crit"><b>Incompatible with the selected regime</b>
+        An allowlist stores only "permitted / not permitted". It cannot supply jurisdiction or accreditation data, so these rules in <b>${esc(p.name)}</b> could never pass:
+        <ul style="margin:7px 0 0;padding-left:17px">${blocked.map(r=>`<li><code>${esc(r)}</code></li>`).join("")}</ul></div>`;
+    }
+    return `<h1>Identity source</h1>
+    <p class="lede">Where the token learns what is verified about a wallet. This determines which rules can actually run.</p>
+    <div class="opts">${Object.entries(IDENTITY).map(([k,v])=>`
+      <button class="opt ${S.identity===k?"sel":""}" data-id="${k}"><span class="mark"></span><span>
+        <span class="n">${v.name} <span class="tag">${v.tier}</span></span><span class="d">${v.desc}</span></span></button>`).join("")}</div>
+    ${warn}
+    <div class="note"><b>Swappable later</b>The identity source is an external contract behind one interface. Changing it is a single <code>setIdentityRegistry</code> call — balances are untouched.</div>`;
+  }
+
+  function panelRoles(){
+    const same = S.supplyOp && S.complianceOp && S.supplyOp.toLowerCase()===S.complianceOp.toLowerCase();
+    const f = (id,label,val,hint)=>`<div class="field"><label for="${id}">${label}</label>
+      <input class="inp mono" id="${id}" value="${esc(val)}" placeholder="0x…" spellcheck="false" autocomplete="off">
+      <div class="hint">${hint}</div></div>`;
+    return `<h1>Roles</h1>
+    <p class="lede">Four separated roles ship as the default. Each can do exactly one class of thing, and none can do another's job.</p>
+    ${f("f-ia","Issuer admin",S.issuerAdmin,"Grants the two operational roles and configures the token. Cannot upgrade, mint or seize.")}
+    ${f("f-ua","Upgrade admin",S.upgradeAdmin,"Facet upgrades and module swaps. <b>Cannot move value or change any balance.</b> A multisig is strongly recommended.")}
+    ${f("f-so","Supply operator",S.supplyOp,"Issues, redeems and distributes. Cannot freeze, seize or upgrade.")}
+    ${f("f-co","Compliance officer",S.complianceOp,"Freezes, applies lockups and pauses. Cannot mint or upgrade.")}
+    ${same?`<div class="note warn"><b>Separation of duties</b>The supply operator and the compliance officer are the same wallet. Together those two roles can mint tokens and then freeze them, which removes the check each provides on the other. Permitted, but it should be a deliberate choice.</div>`:""}`;
+  }
+
+  function panelReview(){
+    const p=PRESETS[S.preset], id=IDENTITY[S.identity];
+    const line=(k,v)=>`<div class="srow"><span class="k">${k}</span><span class="v">${esc(v)}</span></div>`;
+    return `<h1>Review</h1>
+    <p class="lede">One transaction deploys the token and its treasury, wires the identity source and policy set, and registers the deployment.</p>
+    <div style="max-width:600px">
+      ${line("Name",S.name)}${line("Symbol",S.symbol)}${line("Decimals",S.decimals)}
+      ${line("Max supply",fmt(S.maxSupply)||"unlimited")}
+      ${line("Cap",S.capLocked?"Locked permanently":"Adjustable by issuer admin")}
+      ${line("Regime",p.name)}${line("Identity",id.name+" · "+id.tier)}
+      <div class="srow"><span class="k">Rules</span><span class="v" style="max-width:330px">${p.rules.map(esc).join(", ")}</span></div>
+      <div class="srow"><span class="k">Emergency facet</span><span class="v">Not installed</span></div>
+    </div>
+    <div class="note"><b>What happens on chain</b>Deploys the token diamond and a treasury clone, trusts the treasury, grants the four roles, registers the deployment in the factory, and emits <code>TokenCreated</code>. The factory retains no control over the token afterwards.</div>
+    <label class="check"><input type="checkbox" id="ack-imm" ${S.ackImmutable?"checked":""}>
+      <span>I understand that name, symbol and decimals${S.capLocked?", and the supply cap,":""} can never be changed after deployment.</span></label>`;
+  }
+
+  function panelDeploy(){
+    const stages=[["Deploying token diamond","Core plus 7 facets"],["Deploying treasury","Minimal clone"],
+      ["Wiring identity and policy","setIdentityRegistry, setPolicySet"],["Trusting the treasury","trust(treasury)"],
+      ["Granting roles","4 role assignments"],["Registering deployment","TokenCreated emitted"]];
+    return `<div class="center"><h1>${S.deployed?"Deployed":"Deploying"}</h1>
+      <p class="lede">${S.deployed?"Your token and treasury are live on Base.":"One transaction. Do not close this window."}</p>
+      <div style="margin-bottom:22px">${stages.map((s,i)=>{
+        const st = S.deployStage>i||S.deployed ? "ok" : (S.deployStage===i?"run":"idle");
+        return `<div class="prog ${st}"><span class="ic">${st==="ok"?"✓":""}</span>
+          <span><span class="pt">${s[0]}</span><span class="ps">${s[1]}</span></span></div>`;}).join("")}</div>
+      ${S.deployed?`
+        <div class="addrcard"><div class="k">Token</div><div class="a">0x7A3f9c02Bd48E1a56Cf0913dE24b7A18cc5E0d92</div></div>
+        <div class="addrcard"><div class="k">Treasury</div><div class="a">0xC15b840Ee7a2934D0f81aB6539cE72b4d0917Af3</div></div>
+        <div class="note" style="margin-top:16px"><b>Verify it yourself</b><code>supportsInterface(0x3edbb4c4)</code> returns <b>true</b> — the token is ERC-7943 conformant and any integrator can confirm that without asking anyone.</div>
+        <div class="next">
+          <div class="nextitem"><span class="n">1</span><span>Issue supply to the treasury</span></div>
+          <div class="nextitem"><span class="n">2</span><span>Link an asset passport — optional</span></div>
+          <div class="nextitem"><span class="n">3</span><span>Create an offering</span></div>
+        </div>
+        <div class="nav"><button class="btn primary" id="again">Deploy another token</button>
+          <button class="btn ghost" id="open">Open token console</button></div>`:""}
+    </div>`;
+  }
+
+  /* ---------- render ---------- */
+  function render(){
+    renderWallet(); renderSteps(); renderSummary();
+    const P=$("#panel");
+
+    if(!S.connected){
+      P.innerHTML = `<div class="center" style="padding-top:40px">
+        <h1>Connect a wallet to begin</h1>
+        <p class="lede">Deploying a token needs an account to receive the administrative roles. Everything on this page is readable without connecting — only the deployment itself requires a wallet.</p>
+        <button class="btn primary" id="c2">Connect wallet</button>
+        <div class="note" style="margin-top:22px"><b>Permissionless</b>The factory has no access control on <code>createToken</code>. There is no allowlist, no approval, and no fee in this build — <code>fee()</code> returns 0.</div></div>`;
+      $("#c2").onclick=()=>{S.connected=true;
+        S.issuerAdmin="0x4b2fA1c93e07Dd9b8Ae5210c3f77e6412Db09c1a";
+        S.upgradeAdmin="0x8Ee1477Bc0a4f3d2591A6e5C0b3D91aC2f7E4402"; render();};
+      return;
+    }
+
+    if(S.deploying||S.deployed){ P.innerHTML=panelDeploy();
+      if(S.deployed){ $("#again").onclick=()=>{Object.assign(S,{step:0,deploying:false,deployed:false,deployStage:-1,name:"",symbol:"",maxSupply:"",capLocked:false,ackCap:false,ackImmutable:false,supplyOp:"",complianceOp:""});render();};
+        $("#open").onclick=()=>alert("Token console — outside this prototype."); }
+      return; }
+
+    const panels=[panelIdentity,panelSupply,panelRegime,panelVerification,panelRoles,panelReview];
+    const last = S.step===5;
+    P.innerHTML = panels[S.step]() + `<div class="nav">
+      ${S.step>0?`<button class="btn" id="back">Back</button>`:""}
+      <button class="btn primary" id="next" ${stepDone(S.step)?"":"disabled"}>${last?"Deploy token and treasury":"Continue"}</button></div>`;
+
+    // bindings
+    const on=(sel,ev,fn)=>{const e=$(sel); if(e) e.addEventListener(ev,fn);};
+    on("#f-name","input",e=>{S.name=e.target.value;renderSummary();syncNext();});
+    on("#f-sym","input",e=>{S.symbol=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"");e.target.value=S.symbol;renderSummary();syncNext();});
+    on("#f-dec","change",e=>{S.decimals=e.target.value;renderSummary();});
+    on("#f-max","input",e=>{S.maxSupply=e.target.value.replace(/\D/g,"");e.target.value=fmt(S.maxSupply);renderSummary();syncNext();});
+    on("#ack-cap","change",e=>{S.ackCap=e.target.checked;syncNext();});
+    on("#ack-imm","change",e=>{S.ackImmutable=e.target.checked;syncNext();});
+    ["ia|issuerAdmin","ua|upgradeAdmin","so|supplyOp","co|complianceOp"].forEach(pair=>{
+      const [id,key]=pair.split("|");
+      on("#f-"+id,"input",e=>{S[key]=e.target.value.trim();renderSummary();syncNext();
+        if(key==="supplyOp"||key==="complianceOp"){const c=e.target.selectionStart;render();const el=$("#f-"+id);if(el){el.focus();el.setSelectionRange(c,c);}}});
+    });
+    P.querySelectorAll("[data-cap]").forEach(b=>b.onclick=()=>{S.capLocked=b.dataset.cap==="1";if(!S.capLocked)S.ackCap=false;render();});
+    P.querySelectorAll("[data-preset]").forEach(b=>b.onclick=()=>{S.preset=b.dataset.preset;render();});
+    P.querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>{S.identity=b.dataset.id;render();});
+    on("#back","click",()=>{S.step--;render();});
+    on("#next","click",()=>{ if(!stepDone(S.step))return;
+      if(last){ S.deploying=true;S.deployStage=0;render();
+        const t=setInterval(()=>{S.deployStage++; if(S.deployStage>=6){clearInterval(t);S.deploying=false;S.deployed=true;} render();},620);
+      } else {S.step++;render();} });
+    function syncNext(){const n=$("#next"); if(n) n.disabled=!stepDone(S.step); renderSteps();}
+  }
+
+  render();
+})();
+</script>

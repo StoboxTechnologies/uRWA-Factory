@@ -1,0 +1,249 @@
+<title>uRWA — Public Verifier</title>
+<style>
+  :root{
+    --ground:#EEF2F1;--surface:#FFFFFF;--sunk:#E4EAE8;--raised:#FBFCFC;
+    --ink:#0F1E1C;--ink-2:#33443F;--muted:#4A5C58;--faint:#5C6E6A;
+    --rule:#D4DEDB;--rule-strong:#A9BAB6;
+    --accent:#166B5C;--accent-2:#0E4C41;--accent-wash:#DEECE7;--accent-edge:#9CC6BB;
+    --warn:#8A5712;--warn-wash:#F7EEDD;--warn-edge:#DCC08A;
+    --crit:#8E2F39;--crit-wash:#F8E7E8;--crit-edge:#DDAFB3;
+    --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;--r:3px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0A1312;--surface:#111E1B;--sunk:#182B27;--raised:#162622;
+    --ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;
+    --rule:#233734;--rule-strong:#3B534E;
+    --accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#14312B;--accent-edge:#2C5A50;
+    --warn:#D3A054;--warn-wash:#2C2313;--warn-edge:#57432A;
+    --crit:#E08C93;--crit-wash:#31191C;--crit-edge:#5A3135;}}
+  :root[data-theme="dark"]{
+    --ground:#0A1312;--surface:#111E1B;--sunk:#182B27;--raised:#162622;
+    --ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;
+    --rule:#233734;--rule-strong:#3B534E;
+    --accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#14312B;--accent-edge:#2C5A50;
+    --warn:#D3A054;--warn-wash:#2C2313;--warn-edge:#57432A;
+    --crit:#E08C93;--crit-wash:#31191C;--crit-edge:#5A3135;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit;cursor:pointer}input{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+  .wrap{max-width:840px;margin:0 auto;padding:0 clamp(14px,3vw,24px) 70px}
+  .banner{background:var(--accent-wash);border-bottom:1px solid var(--accent-edge);padding:8px clamp(14px,3vw,24px);font-size:12px;color:var(--accent-2);text-align:center}
+  header{padding:34px 0 22px;border-bottom:1px solid var(--rule);margin-bottom:24px}
+  h1{font-size:26px;font-weight:680;letter-spacing:-.02em;margin:0 0 7px}
+  .sub{color:var(--muted);margin:0;font-size:14.5px;max-width:64ch}
+  .noacct{font-size:12.5px;color:var(--faint);margin-top:12px}
+  .search{display:flex;gap:9px;margin:22px 0 0;flex-wrap:wrap}
+  .search input{flex:1;min-width:230px;padding:10px 13px;border:1px solid var(--rule-strong);border-radius:var(--r);background:var(--surface);font-family:var(--mono);font-size:13px}
+  .search input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-wash)}
+  .btn{border:1px solid var(--rule-strong);background:var(--surface);border-radius:var(--r);padding:9px 16px;font-size:13.5px;font-weight:550}
+  .btn:hover{background:var(--sunk)}
+  .btn.p{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  :root[data-theme="dark"] .btn.p,:root:not([data-theme="light"]) .btn.p{color:#06110F}
+  @media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn.p{color:#fff}}
+  .btn.s{padding:6px 11px;font-size:12.5px}
+  .ex{font-size:12px;color:var(--faint);margin-top:9px}
+  .ex button{border:0;background:none;color:var(--accent);font-family:var(--mono);font-size:12px;padding:0;text-decoration:underline;text-underline-offset:2px}
+  h2{font-size:11px;font-weight:650;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:28px 0 10px}
+  .card{border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);margin-bottom:12px;overflow:hidden}
+  .card .bd{padding:14px 16px}
+  .hero{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;padding:16px}
+  .hero .nm{font-size:19px;font-weight:660;letter-spacing:-.01em}
+  .hero .tk{font-family:var(--mono);color:var(--accent);font-size:14px;margin-left:8px}
+  .hero .ad{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:3px;word-break:break-all}
+  .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+  .pill{font-size:11px;font-family:var(--mono);border:1px solid var(--rule-strong);border-radius:99px;padding:2px 9px;color:var(--muted)}
+  .pill.ok{border-color:var(--accent-edge);color:var(--accent);background:var(--accent-wash)}
+  .pill.no{border-color:var(--crit-edge);color:var(--crit);background:var(--crit-wash)}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:9px 16px;border-bottom:1px solid var(--rule);font-size:13px}
+  .kv:last-child{border-bottom:0}
+  .kv .k{color:var(--faint)}
+  .kv .v{text-align:right;font-weight:550}
+  .kv .v.m{font-family:var(--mono);font-size:12px;font-weight:500;word-break:break-all}
+  .st{display:inline-flex;align-items:center;gap:6px;font-size:12.5px}
+  .st::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--faint)}
+  .st.ok::before{background:var(--accent)}.st.ok{color:var(--accent)}
+  .st.no::before{background:var(--crit)}.st.no{color:var(--crit)}
+  .st.wa::before{background:var(--warn)}.st.wa{color:var(--warn)}
+  .rules{padding:4px 16px 14px}
+  .rl{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:13px;align-items:flex-start}
+  .rl:last-child{border-bottom:0}
+  .rl .b{color:var(--accent);font-family:var(--mono);font-size:11px;margin-top:2px}
+  .rl .d{color:var(--faint);font-size:12px;margin-top:1px}
+  .sim{display:grid;grid-template-columns:1fr 1fr 110px;gap:9px;margin-bottom:12px}
+  @media(max-width:640px){.sim{grid-template-columns:1fr}}
+  .sim label{display:block;font-size:11.5px;font-weight:600;margin-bottom:4px;color:var(--muted)}
+  .sim input{width:100%;padding:8px 10px;border:1px solid var(--rule-strong);border-radius:var(--r);background:var(--surface);font-family:var(--mono);font-size:12px}
+  .sim input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-wash)}
+  .stages{margin-top:13px}
+  .sg{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:13px;border-bottom:1px solid var(--rule)}
+  .sg:last-child{border-bottom:0}
+  .sg .i{width:17px;height:17px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;margin-top:2px;border:1.5px solid var(--rule-strong);color:var(--faint)}
+  .sg.ok .i{background:var(--accent);border-color:var(--accent);color:#fff}
+  :root[data-theme="dark"] .sg.ok .i,:root:not([data-theme="light"]) .sg.ok .i{color:#06110F}
+  @media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .sg.ok .i{color:#fff}}
+  .sg.no .i{background:var(--crit);border-color:var(--crit);color:#fff}
+  .sg.skip{opacity:.4}
+  .sg .r{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint);text-align:right}
+  .verdict{padding:13px 16px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px}
+  .verdict.ok{background:var(--accent-wash);color:var(--accent);border-bottom:1px solid var(--accent-edge)}
+  .verdict.no{background:var(--crit-wash);color:var(--crit);border-bottom:1px solid var(--crit-edge)}
+  .note{border:1px solid var(--accent-edge);background:var(--accent-wash);border-radius:var(--r);padding:11px 13px;font-size:12.5px;margin:12px 0 0;line-height:1.55}
+  .note.w{border-color:var(--warn-edge);background:var(--warn-wash)}
+  .note b{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:3px;color:var(--accent)}
+  .note.w b{color:var(--warn)}
+  .att{display:flex;gap:11px;padding:10px 16px;border-bottom:1px solid var(--rule);font-size:13px;align-items:center}
+  .att:last-child{border-bottom:0}
+  .att .who{font-weight:600;min-width:96px}
+  .att .when{color:var(--faint);font-size:12px;margin-left:auto;text-align:right;font-family:var(--mono)}
+  .hide{display:none!important}
+</style>
+
+<div class="banner">Prototype — reads are simulated. No account, no wallet, no permission is needed to use a verifier like this.</div>
+
+<div class="wrap">
+<header>
+  <h1>Verify a uRWA token</h1>
+  <p class="sub">Paste any token address. Everything below is a public read — the token answers for itself, and nothing here depends on trusting its issuer or us.</p>
+  <div class="search">
+    <input id="q" placeholder="0x… token address" spellcheck="false" value="0x7A3f9c02Bd48E1a56Cf0913dE24b7A18cc5E0d92">
+    <button class="btn p" id="go">Check</button>
+  </div>
+  <p class="ex">Try <button data-ex="0x7A3f9c02Bd48E1a56Cf0913dE24b7A18cc5E0d92">a conformant token</button> · <button data-ex="0x00Bad1a5e0F91c2D4a7b83Ee15C0d6297aB4f118">one that only claims to be</button></p>
+  <p class="noacct">No account. No wallet. No cookies.</p>
+</header>
+<div id="out"></div>
+</div>
+
+<script>
+(function(){
+const GOOD={
+ ok:true,name:"Manhattan Office Tower",sym:"MOTT",addr:"0x7A3f9c02Bd48E1a56Cf0913dE24b7A18cc5E0d92",
+ chain:"Base",supply:"2,400,000",max:"10,000,000",capLocked:true,holders:"412",wallets:"486",top10:"34%",
+ paused:false,iface:true,i1404:true,factory:true,passport:"0x9f3c…a71e",confirmed:true,snapDays:11,snapVer:14,
+ identity:"StoboxDID · tier 2",
+ rules:[["Valid identity","every party must have an unexpired, unblocked identity record"],
+   ["United States excluded","jurisdiction claim is checked against a deny list"],
+   ["Accredited investors only","US accreditation claim required, unexpired"],
+   ["Sanctions screening","must be cleared within the last 30 days"],
+   ["At most 2,000 holders","counted per identity, not per wallet"],
+   ["12-month hold period","enforced through the frozen balance"]],
+ atts:[["Deloitte","Reserves","11 days ago","valid 90 days"],
+   ["CBRE","Valuation","34 days ago","valid 12 months"],
+   ["Hacken","Smart contract audit","6 months ago","valid 18 months"]]
+};
+const BAD={
+ ok:false,name:"Premium Estate Token",sym:"PET",addr:"0x00Bad1a5e0F91c2D4a7b83Ee15C0d6297aB4f118",
+ chain:"Base",supply:"50,000,000",max:"unlimited",capLocked:false,holders:"—",wallets:"1,204",top10:"91%",
+ paused:false,iface:false,i1404:false,factory:false,passport:null,confirmed:false,snapDays:null,
+ identity:"none installed",rules:[],atts:[]
+};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let T=GOOD, sim={from:"0x4b2fA1c93e07Dd9b8Ae5210c3f77e6412Db09c1a",to:"0x77a0B4e2Dc519f36Ab08e17C5490dE2b31fA6027",amt:"5,000",run:false};
+
+function head(t){
+ return `<div class="card"><div class="hero"><div style="flex:1;min-width:220px">
+   <div><span class="nm">${esc(t.name)}</span><span class="tk">${esc(t.sym)}</span></div>
+   <div class="ad">${esc(t.addr)}</div>
+   <div class="pills">
+     <span class="pill">${t.chain}</span>
+     ${t.iface?`<span class="pill ok">ERC-7943 ✓</span>`:`<span class="pill no">not ERC-7943</span>`}
+     ${t.paused?`<span class="pill no">paused</span>`:`<span class="pill ok">active</span>`}
+     ${t.factory?`<span class="pill ok">factory-issued</span>`:`<span class="pill no">unknown origin</span>`}
+   </div></div></div></div>`;
+}
+
+function conformance(t){
+ const row=(k,v,ok,note)=>`<div class="kv"><span class="k">${k}</span><span class="v">
+   <span class="st ${ok?'ok':'no'}">${v}</span>${note?`<div style="font-size:11.5px;color:var(--faint);font-weight:400;margin-top:2px">${note}</div>`:""}</span></div>`;
+ return `<h2>Standard conformance</h2><div class="card">
+  ${row("supportsInterface(0x3edbb4c4)",t.iface?"true":"false",t.iface,t.iface?"":"the token does not declare ERC-7943, so no integrator can rely on its compliance functions")}
+  ${row("ERC-20",true,"0x36372b07"?true:true)}
+  ${row("ERC-1404 fallback",t.i1404?"true":"false",t.i1404,t.i1404?"":"legacy platforms cannot read a restriction reason either")}
+  ${row("Conformance suite",t.iface?"42 of 42 checks pass":"cannot run — interface absent",t.iface)}
+ </div>`;
+}
+
+function facts(t){
+ return `<h2>The instrument</h2><div class="card">
+  <div class="kv"><span class="k">Supply</span><span class="v">${t.supply}</span></div>
+  <div class="kv"><span class="k">Maximum</span><span class="v">${t.max} ${t.capLocked?'<span class="st ok" style="margin-left:6px">cap locked</span>':'<span class="st wa" style="margin-left:6px">raisable</span>'}</span></div>
+  <div class="kv"><span class="k">Holders</span><span class="v">${t.holders}${t.holders!=="—"?" identities · "+t.wallets+" wallets":""}</span></div>
+  <div class="kv"><span class="k">Top-10 concentration</span><span class="v">${t.top10}</span></div>
+  <div class="kv"><span class="k">Identity source</span><span class="v">${t.identity==="none installed"?'<span class="st no">none installed</span>':esc(t.identity)}</span></div>
+ </div>`;
+}
+
+function rules(t){
+ if(!t.rules.length) return `<h2>Transfer rules</h2><div class="card"><div class="bd">
+   <span class="st no">No compliance rules are configured.</span>
+   <div class="note w" style="margin-top:11px"><b>What this means</b>Anyone can send this token to anyone. Whatever its offering documents say about who may hold it, nothing on chain enforces it.</div>
+ </div></div>`;
+ return `<h2>Transfer rules — enforced on every transfer</h2><div class="card"><div class="rules">
+  ${t.rules.map(r=>`<div class="rl"><span class="b">✓</span><span><span>${esc(r[0])}</span><span class="d">${esc(r[1])}</span></span></div>`).join("")}
+ </div></div>
+ <div class="note"><b>Read before you buy, not after</b>These are public because an investor must be able to determine their own eligibility without asking the issuer.</div>`;
+}
+
+function simulator(t){
+ if(!t.iface) return `<h2>Simulate a transfer</h2><div class="card"><div class="bd">
+   <span class="st no">Unavailable — this token has no <code>canTransfer</code> function.</span>
+   <div class="note w" style="margin-top:11px"><b>This is the practical difference</b>A conformant token answers "would this transfer succeed" for free, before anyone signs. Here you would have to submit a transaction and find out by losing gas.</div></div></div>`;
+ const stages=[["Protocol paused",true,"not paused"],["Both parties trusted",null,"neither — rules apply"],
+  ["canSend(from)",true,"identity valid · Germany"],["canReceive(to)",true,"identity valid · United States"],
+  ["Unfrozen balance",true,"5,000 of 8,200 available"],["Compliance rules",false,"JurisdictionDeny · 0x5c8F…d9e2"]];
+ return `<h2>Simulate a transfer</h2><div class="card">
+  ${sim.run?`<div class="verdict no">This transfer would fail</div>`:""}
+  <div class="bd">
+   <div class="sim">
+     <div><label for="sf">From</label><input id="sf" value="${sim.from}" spellcheck="false"></div>
+     <div><label for="st2">To</label><input id="st2" value="${sim.to}" spellcheck="false"></div>
+     <div><label for="sa">Amount</label><input id="sa" value="${sim.amt}"></div>
+   </div>
+   <button class="btn ${sim.run?"":"p"}" id="simgo">${sim.run?"Run again":"Check this transfer"}</button>
+   ${sim.run?`<div class="stages">${stages.map(s=>{
+     const cls = s[1]===null?"skip":(s[1]?"ok":"no");
+     return `<div class="sg ${cls}"><span class="i">${s[1]===null?"–":(s[1]?"✓":"✕")}</span>
+       <span>${esc(s[0])}</span><span class="r">${esc(s[2])}</span></div>`;}).join("")}</div>
+    <div class="note w" style="margin-top:13px"><b>Reason returned by the token</b>"jurisdiction excluded" — from <code>whyBlocked</code>, stage 6. The rule that refused is named, so the recipient knows what to fix rather than guessing.</div>`:""}
+  </div></div>`;
+}
+
+function provenance(t){
+ return `<h2>Provenance</h2><div class="card">
+  <div class="kv"><span class="k">Issued through a known factory</span><span class="v">
+    <span class="st ${t.factory?"ok":"no"}">${t.factory?"isFactoryIssued → true":"no — origin unknown"}</span></span></div>
+  <div class="kv"><span class="k">Asset passport</span><span class="v">
+    ${t.passport?`<span class="st ok">confirmed both sides</span><div class="ad" style="margin-top:2px">${t.passport}</div>`:'<span class="st no">none</span>'}</span></div>
+  <div class="kv"><span class="k">Record freshness</span><span class="v">
+    ${t.snapDays!=null?`<span class="st ok">snapshot ${t.snapDays} days ago · v${t.snapVer}</span>`:'<span class="st no">no record</span>'}</span></div>
+ </div>
+ ${!t.factory?`<div class="note w"><b>Anyone can deploy a token</b>The code is open, which means a token existing proves nothing about who made it. These three checks are how a real issuance is told apart from something that merely looks like one — and they are public reads, so nobody has to take our word for it.</div>`:""}`;
+}
+
+function attest(t){
+ if(!t.atts.length) return "";
+ return `<h2>Attestations — who vouched, and when</h2><div class="card">
+  ${t.atts.map(a=>`<div class="att"><span class="who">${esc(a[0])}</span><span>${esc(a[1])}</span>
+    <span class="when">${esc(a[2])}<br>${esc(a[3])}</span></div>`).join("")}</div>
+ <div class="note"><b>Values are not shown, and that is the point</b>You can see that a named audit firm signed the reserve figure eleven days ago and that the attestation is still valid — without seeing the figure. Most of a diligence question is answered before anyone signs an NDA.</div>`;
+}
+
+function render(){
+ const t=T;
+ $("#out").innerHTML = head(t)+conformance(t)+facts(t)+rules(t)+simulator(t)+provenance(t)+attest(t);
+ const g=$("#simgo");
+ if(g) g.onclick=()=>{ sim.from=$("#sf").value; sim.to=$("#st2").value; sim.amt=$("#sa").value; sim.run=true; render(); };
+}
+
+$("#go").onclick=()=>{
+ const v=$("#q").value.trim().toLowerCase();
+ T = v===BAD.addr.toLowerCase() ? BAD : GOOD;
+ sim.run=false; render();
+};
+document.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>{ $("#q").value=b.dataset.ex; $("#go").click(); });
+render();
+})();
+</script>

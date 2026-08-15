@@ -10,7 +10,8 @@
 [![Chain: Base](https://img.shields.io/badge/Chain-Base-4A5C58.svg)](docs/16-deployment.md)
 [![Status: Specification](https://img.shields.io/badge/Status-Specification-8A5712.svg)](docs/20-development-plan.md)
 
-**[📖 Documentation site](https://stoboxtechnologies.github.io/uRWA-Factory/)** ·
+**[📖 Documentation](https://stoboxtechnologies.github.io/uRWA-Factory/)** ·
+**[🖥 Prototypes](https://stoboxtechnologies.github.io/uRWA-Factory/prototypes/)** ·
 [Why this exists](docs/00-why-this-exists.md) ·
 [Architecture](docs/02-architecture.md) ·
 [Function reference](docs/07-functions.md) ·
@@ -104,9 +105,13 @@ Everything is in [`docs/`](docs/), and rendered as a single page at the
 </td></tr>
 </table>
 
+## Prototypes
+
+Three clickable surfaces at **[the prototypes index](https://stoboxtechnologies.github.io/uRWA-Factory/prototypes/)** — deploy console, token console, public verifier. Nothing connects to a chain; every value maps to a real function in the specification.
+
 ## Status
 
-**Specification stage. No implementation yet.** The design is complete and reviewable; Phase 0 — the
+**Specification stage. No implementation yet.** The full work breakdown — 78 items with dependencies, handoff contracts and review gates — is in the [work registry](docs/24-work-registry.md). The design is complete and reviewable; Phase 0 — the
 compiling interface package — is next. See the [development plan](docs/20-development-plan.md).
 
 | Phase | Delivers | State |

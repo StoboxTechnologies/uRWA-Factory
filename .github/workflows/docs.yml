@@ -32,6 +32,7 @@ jobs:
           mkdir -p _site
           cp urwa-documentation.html _site/index.html
           cp -r docs _site/docs
+          cp -r prototypes _site/prototypes
           cp README.md LICENSE NOTICE AUTHORS CITATION.cff _site/
 
       - uses: actions/configure-pages@v5

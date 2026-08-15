@@ -1,0 +1,406 @@
+<title>uRWA — Token Console</title>
+<style>
+  :root{
+    --ground:#EEF2F1;--surface:#FFFFFF;--sunk:#E4EAE8;--raised:#FBFCFC;
+    --ink:#0F1E1C;--ink-2:#33443F;--muted:#4A5C58;--faint:#5C6E6A;
+    --rule:#D4DEDB;--rule-strong:#A9BAB6;
+    --accent:#166B5C;--accent-2:#0E4C41;--accent-wash:#DEECE7;--accent-edge:#9CC6BB;
+    --warn:#8A5712;--warn-wash:#F7EEDD;--warn-edge:#DCC08A;
+    --crit:#8E2F39;--crit-wash:#F8E7E8;--crit-edge:#DDAFB3;
+    --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;--r:3px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0A1312;--surface:#111E1B;--sunk:#182B27;--raised:#162622;
+    --ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;
+    --rule:#233734;--rule-strong:#3B534E;
+    --accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#14312B;--accent-edge:#2C5A50;
+    --warn:#D3A054;--warn-wash:#2C2313;--warn-edge:#57432A;
+    --crit:#E08C93;--crit-wash:#31191C;--crit-edge:#5A3135;}}
+  :root[data-theme="dark"]{
+    --ground:#0A1312;--surface:#111E1B;--sunk:#182B27;--raised:#162622;
+    --ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;
+    --rule:#233734;--rule-strong:#3B534E;
+    --accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#14312B;--accent-edge:#2C5A50;
+    --warn:#D3A054;--warn-wash:#2C2313;--warn-edge:#57432A;
+    --crit:#E08C93;--crit-wash:#31191C;--crit-edge:#5A3135;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit;cursor:pointer}input,select{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+  .app{max-width:1240px;margin:0 auto;min-height:100vh}
+  .banner{background:var(--accent-wash);border-bottom:1px solid var(--accent-edge);padding:8px clamp(12px,2vw,22px);font-size:12px;color:var(--accent-2)}
+  .top{display:flex;align-items:center;gap:14px;padding:11px clamp(12px,2vw,22px);border-bottom:1px solid var(--rule);background:var(--surface);flex-wrap:wrap}
+  .tk{font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .tk em{font-style:normal;color:var(--accent);font-family:var(--mono);font-size:13px;margin-left:7px}
+  .pill{font-family:var(--mono);font-size:11px;border:1px solid var(--rule-strong);border-radius:99px;padding:3px 9px;color:var(--muted)}
+  .pill.ok{border-color:var(--accent-edge);color:var(--accent);background:var(--accent-wash)}
+  .pill.warn{border-color:var(--warn-edge);color:var(--warn);background:var(--warn-wash)}
+  .sp{flex:1}
+  .main{display:grid;grid-template-columns:186px minmax(0,1fr)}
+  @media(max-width:820px){.main{grid-template-columns:1fr}.nav{display:flex;overflow-x:auto;border-right:0;border-bottom:1px solid var(--rule);padding:8px}.nav .grp{display:none}}
+  .nav{border-right:1px solid var(--rule);background:var(--surface);padding:16px 12px;gap:2px}
+  .grp{font-size:10px;font-weight:650;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:14px 0 6px;padding:0 8px}
+  .grp:first-child{margin-top:0}
+  .nb{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:0;background:none;padding:7px 8px;border-radius:var(--r);color:var(--muted);font-size:13px;white-space:nowrap}
+  .nb:hover{background:var(--sunk)}
+  .nb.on{background:var(--accent-wash);color:var(--accent);font-weight:600}
+  .nb .b{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  .nb.on .b{color:var(--accent)}
+  .pg{padding:22px clamp(12px,2.4vw,30px) 46px;min-width:0}
+  h1{font-size:20px;font-weight:680;letter-spacing:-.015em;margin:0 0 5px}
+  .sub{color:var(--muted);margin:0 0 20px;font-size:13.5px;max-width:70ch}
+  h2{font-size:13px;font-weight:650;margin:26px 0 10px;letter-spacing:.01em}
+  .card{border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);margin-bottom:14px;overflow:hidden}
+  .card .hd{padding:11px 14px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px;background:var(--raised)}
+  .card .hd .t{font-weight:620;font-size:13px}
+  .card .bd{padding:13px 14px}
+  .tw{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:560px}
+  th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:650;padding:9px 12px;border-bottom:1px solid var(--rule);white-space:nowrap}
+  td{padding:9px 12px;border-bottom:1px solid var(--rule);color:var(--ink-2);vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  td.m,th.m{font-family:var(--mono);font-size:11.5px}
+  td.nm{color:var(--ink);font-weight:600}
+  .st{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;white-space:nowrap}
+  .st::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--faint)}
+  .st.ok::before{background:var(--accent)}.st.ok{color:var(--accent)}
+  .st.no::before{background:var(--crit)}.st.no{color:var(--crit)}
+  .st.wa::before{background:var(--warn)}.st.wa{color:var(--warn)}
+  .btn{border:1px solid var(--rule-strong);background:var(--surface);border-radius:var(--r);padding:6px 12px;font-size:12.5px;font-weight:550}
+  .btn:hover{background:var(--sunk)}
+  .btn.p{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  :root[data-theme="dark"] .btn.p,:root:not([data-theme="light"]) .btn.p{color:#06110F}
+  @media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn.p{color:#fff}}
+  .btn.d{border-color:var(--crit-edge);color:var(--crit)}
+  .btn.d:hover{background:var(--crit-wash)}
+  .btn.s{padding:4px 9px;font-size:11.5px}
+  .btn[disabled]{opacity:.4;cursor:not-allowed}
+  .note{border:1px solid var(--accent-edge);background:var(--accent-wash);border-radius:var(--r);padding:10px 12px;font-size:12.5px;margin:0 0 14px;line-height:1.5}
+  .note.w{border-color:var(--warn-edge);background:var(--warn-wash)}
+  .note.c{border-color:var(--crit-edge);background:var(--crit-wash)}
+  .note b{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:3px;color:var(--accent)}
+  .note.w b{color:var(--warn)}.note.c b{color:var(--crit)}
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:10px;margin-bottom:18px}
+  .k{border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);padding:12px 13px}
+  .k .l{font-size:11px;color:var(--faint);margin-bottom:4px}
+  .k .v{font-size:19px;font-weight:640;letter-spacing:-.01em}
+  .k .v small{font-size:12px;font-weight:500;color:var(--faint)}
+  .fld{margin-bottom:13px;max-width:520px}
+  .fld label{display:block;font-size:12px;font-weight:600;margin-bottom:4px}
+  .fld .h{font-size:11.5px;color:var(--faint);margin-top:4px;line-height:1.45}
+  .inp{width:100%;padding:7px 10px;border:1px solid var(--rule-strong);border-radius:var(--r);background:var(--surface);font-size:13px}
+  .inp.m{font-family:var(--mono);font-size:12px}
+  .inp:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-wash)}
+  .rw{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .rw .fld{flex:1;min-width:140px;margin-bottom:0}
+  .sel{display:flex;flex-direction:column;gap:1px}
+  .bar{display:flex;height:26px;border-radius:2px;overflow:hidden;border:1px solid var(--rule-strong);margin:8px 0 6px}
+  .bar div{display:grid;place-items:center;font-size:10.5px;font-family:var(--mono)}
+  .lg{display:flex;gap:14px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+  .lg span{display:flex;align-items:center;gap:5px}
+  .sw{width:9px;height:9px;border-radius:2px;display:inline-block}
+  .hide{display:none!important}
+</style>
+
+<div class="app">
+<div class="banner" id="banner">Prototype — read-only. Values map to real functions in the specification; nothing is sent.</div>
+
+<div class="top">
+  <div class="tk">Manhattan Office Tower <em>MOTT</em></div>
+  <span class="pill ok" id="pStatus">active</span>
+  <span class="pill">Base</span>
+  <span class="pill m" id="pAddr">0x7A3f…0d92</span>
+  <div class="sp"></div>
+  <span class="pill ok">ERC-7943 ✓</span>
+  <span class="pill" id="pRole">compliance officer</span>
+</div>
+
+<div class="main">
+  <nav class="nav" id="nav"></nav>
+  <div class="pg" id="pg"></div>
+</div>
+</div>
+
+<script>
+(function(){
+const FACETS=[
+ {n:"DiamondCutFacet",v:"1.0.0",a:"0x3d5aE1c0…8b41",s:1,req:1,ver:1,d:"Adds, replaces and removes facets."},
+ {n:"DiamondLoupeFacet",v:"1.0.0",a:"0x91cc04dE…2a77",s:5,req:1,ver:1,d:"Introspection and ERC-165."},
+ {n:"ComplianceFacet",v:"1.0.0",a:"0x5c8Fd91b…d9e2",s:16,req:1,ver:1,d:"The transfer pipeline, ERC-7943 views, trust list, pause."},
+ {n:"FreezeFacet",v:"1.0.0",a:"0xA47b20cE…11f4",s:4,req:1,ver:1,d:"Admin freeze and the composed frozen total."},
+ {n:"LockupFacet",v:"1.0.0",a:"0xEe0913aD…6c30",s:6,req:1,ver:1,d:"Dated lockups that expire without a transaction."},
+ {n:"MonetaryFacet",v:"1.0.0",a:"0x2fB7c418…9a05",s:10,req:1,ver:1,d:"Issue, redeem, distribute, supply caps."},
+ {n:"RolesFacet",v:"1.0.0",a:"0xD81e5C93…4477",s:7,req:1,ver:1,d:"Role grant and revoke."},
+ {n:"PurchaseFacet",v:"1.0.0",a:"0x6a3E11bF…c8d1",s:3,req:0,ver:1,d:"Offering entry point on the token side."},
+ {n:"EmergencyFacet",v:"1.0.0",a:"—",s:4,req:0,ver:0,inst:0,d:"Forced transfer, mint and burn. Opt-in."}
+];
+const CONTRACTS=[
+ {n:"uRWAToken",k:"Token diamond",a:"0x7A3f9c02Bd48E1a56Cf0913dE24b7A18cc5E0d92",v:1,b:1,au:"pending"},
+ {n:"Treasury",k:"Clone",a:"0xC15b840Ee7a2934D0f81aB6539cE72b4d0917Af3",v:1,b:1,au:"pending"},
+ {n:"PolicySet",k:"Policy",a:"0x0B71fA3c9d2E48a1Cc70b5E2039fA84d1c7E6B20",v:1,b:1,au:"pending"},
+ {n:"StoboxDIDAdapter",k:"Identity",a:"0x44Ae0c17bB93De25f0a81C4e7739bd0E2A15cC38",v:1,b:1,au:"pending"},
+ {n:"HasValidIdentity",k:"Rule",a:"0x9d2C41fA0e7B85D3ac16E90f4472bA0d81cE5537",v:1,b:1,au:"pending"},
+ {n:"JurisdictionDeny",k:"Rule",a:"0x5c8Fd91bE207aC43d0f8615E92cB7a04dd11d9e2",v:1,b:1,au:"pending"},
+ {n:"USAccreditedOnly",k:"Rule",a:"0x2A7e15cD03bF9481Ee06a5C7130dB2f84c90aE61",v:1,b:1,au:"pending"},
+ {n:"SanctionsScreen",k:"Rule",a:"0x88bC0e14Fa27D590c3E1b7A6045fD82c19e04B73",v:0,b:0,au:"pending"},
+ {n:"MaxHolders",k:"Rule",a:"0xF30a92cE18Bd47a5D0c6E813b7290aF4c15dE082",v:1,b:1,au:"pending"},
+ {n:"HoldPeriod",k:"Rule",a:"0x1eD8b03Ca5F792640Ab13c7E80d5f26a91cB4470",v:1,b:1,au:"pending"}
+];
+const NAV=[
+ ["Token",[["ov","Overview"],["fa","Facets"],["ve","Verification"]]],
+ ["Configure",[["co","Compliance"],["su","Supply"],["ho","Holders"],["ro","Roles"]]],
+ ["Restricted",[["dz","Emergency"]]]
+];
+const S={p:"ov",facet:null,paused:false,inst:{EmergencyFacet:false},trust:[
+  ["0xC15b840Ee7a2934D0f81aB6539cE72b4d0917Af3","Treasury"],
+  ["0xB05cF4f652Eb5475c3e4246aB976785678a1806A","Offering registry"]]};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sh=a=>a&&a.length>14?a.slice(0,8)+"…"+a.slice(-4):a;
+
+function nav(){
+ $("#nav").innerHTML=NAV.map(([g,items])=>`<div class="grp">${g}</div>`+items.map(([k,t])=>{
+   let b="";
+   if(k==="fa")b=FACETS.filter(f=>f.inst!==0||S.inst[f.n]).length;
+   if(k==="ve")b=CONTRACTS.filter(c=>!c.v).length?"1":"";
+   return `<button class="nb ${S.p===k?"on":""}" data-p="${k}">${t}${b?`<span class="b">${b}</span>`:""}</button>`;
+ }).join("")).join("");
+ $("#nav").querySelectorAll(".nb").forEach(b=>b.onclick=()=>{S.p=b.dataset.p;S.facet=null;render();});
+}
+
+function ov(){
+ const inst=FACETS.filter(f=>f.inst!==0||S.inst[f.n]);
+ return `<h1>Overview</h1><p class="sub">Deployed 15 August 2026. The factory retains no control over this token.</p>
+ ${S.paused?`<div class="note c"><b>Token paused</b>All transfers are blocked, including from trusted addresses. Unpause from Compliance.</div>`:""}
+ <div class="kpi">
+  <div class="k"><div class="l">Total supply</div><div class="v">2,400,000</div></div>
+  <div class="k"><div class="l">Max supply</div><div class="v">10,000,000 <small>locked</small></div></div>
+  <div class="k"><div class="l">Holders</div><div class="v">412 <small>subjects</small></div></div>
+  <div class="k"><div class="l">Wallets</div><div class="v">486</div></div>
+ </div>
+ <div class="card"><div class="hd"><span class="t">Supply distribution</span></div><div class="bd">
+  <div class="bar">
+   <div style="width:46%;background:var(--accent-wash);color:var(--accent)">treasury 1.1M</div>
+   <div style="width:33%;background:var(--sunk);color:var(--ink-2)">circulating 800k</div>
+   <div style="width:21%;background:var(--warn-wash);color:var(--warn)">locked 500k</div>
+  </div>
+  <div class="lg"><span><i class="sw" style="background:var(--accent-wash);border:1px solid var(--accent-edge)"></i>Held by treasury</span>
+   <span><i class="sw" style="background:var(--sunk);border:1px solid var(--rule-strong)"></i>Freely transferable</span>
+   <span><i class="sw" style="background:var(--warn-wash);border:1px solid var(--warn-edge)"></i>Frozen or locked up</span></div>
+ </div></div>
+ <div class="card"><div class="hd"><span class="t">Last 30 days</span></div><div class="tw"><table>
+  <tr><td class="nm">Transfers executed</td><td>1,204</td><td></td></tr>
+  <tr><td class="nm">Blocked by rules</td><td>14</td><td><span class="st wa">8 jurisdiction · 4 hold period · 1 sanctions stale</span></td></tr>
+  <tr><td class="nm">RuleFailed events</td><td>1</td><td><span class="st no">MaxHolders 0xF30a…e082 reverted — operational fault, not a policy outcome</span></td></tr>
+ </table></div></div>
+ <div class="note"><b>Installed</b>${inst.length} of ${FACETS.length} facets · ${inst.reduce((a,f)=>a+f.s,0)} selectors routed. Emergency facet ${S.inst.EmergencyFacet?"installed":"not installed"}.</div>`;
+}
+
+function fa(){
+ if(S.facet) return facetDetail(S.facet);
+ return `<h1>Facets</h1><p class="sub">Every function the token exposes comes from one of these. The list is read from the diamond loupe, so it is what is actually installed — not what someone recorded.</p>
+ <div class="note"><b>The core is not here</b>ERC-20 accounting is registered against the diamond itself, so it cannot be replaced or removed by any cut. Nothing on this page can change a balance.</div>
+ <div class="card"><div class="tw"><table>
+  <thead><tr><th>Facet</th><th>Version</th><th class="m">Address</th><th>Selectors</th><th>Verified</th><th></th></tr></thead>
+  <tbody>${FACETS.map(f=>{
+    const on=f.inst!==0||S.inst[f.n];
+    return `<tr><td class="nm">${f.n}${f.req?"":'<span class="pill" style="font-size:10px;padding:1px 6px;margin-left:6px">optional</span>'}</td>
+    <td class="m">${f.v}</td><td class="m">${on?f.a:"—"}</td><td>${on?f.s:"—"}</td>
+    <td>${on?(f.ver?'<span class="st ok">verified</span>':'<span class="st no">unverified</span>'):'<span class="st">not installed</span>'}</td>
+    <td style="text-align:right"><button class="btn s" data-f="${f.n}">${on?"Settings":"Review"}</button></td></tr>`;}).join("")}</tbody>
+ </table></div></div>
+ <h2>Change the installed set</h2>
+ <div class="rw"><button class="btn" data-go="dz">Install emergency facet</button>
+  <button class="btn" disabled>Replace a facet</button><button class="btn" disabled>Remove a facet</button></div>
+ <div class="note w" style="margin-top:12px"><b>Upgrade admin only, timelocked</b>Diamond cuts pass through a timelock. Freeze, lockup and pause do not — a delay on an emergency brake defeats its purpose.</div>`;
+}
+
+function facetDetail(n){
+ const f=FACETS.find(x=>x.n===n), on=f.inst!==0||S.inst[f.n];
+ const map={ComplianceFacet:"co",FreezeFacet:"co",LockupFacet:"co",MonetaryFacet:"su",RolesFacet:"ro",EmergencyFacet:"dz"};
+ const sel={
+  ComplianceFacet:["canSend","canReceive","canTransfer","whyBlocked","detectTransferRestriction","messageForTransferRestriction","policySet","setPolicySet","identityRegistry","setIdentityRegistry","trust","distrust","isTrusted","trustList","pause","unpause"],
+  FreezeFacet:["getFrozenTokens","setFrozenTokens","unfrozenBalanceOf","adminFrozenOf"],
+  LockupFacet:["addLockup","clearLockups","releaseExpired","lockupsOf","lockedAmountOf","lockupCount"],
+  MonetaryFacet:["issue","redeem","distributeFromTreasury","totalIssued","setMaxSupply","capLocked","treasury","setTreasury","offeringRegistry","setOfferingRegistry"],
+  RolesFacet:["grantRole","revokeRole","renounceRole","hasRole","getRoleMember","getRoleMemberCount","roleAdmin"],
+  EmergencyFacet:["forcedTransfer","forcedTransfer(reason)","forcedMint","forcedBurn"],
+  DiamondCutFacet:["diamondCut"],
+  DiamondLoupeFacet:["facets","facetFunctionSelectors","facetAddresses","facetAddress","supportsInterface"],
+  PurchaseFacet:["purchase","previewPurchase","refundPurchase"]
+ }[n]||[];
+ return `<button class="btn s" data-go="fa" style="margin-bottom:14px">← All facets</button>
+ <h1>${f.n}</h1><p class="sub">${f.d}</p>
+ <div class="kpi"><div class="k"><div class="l">Version</div><div class="v">${f.v}</div></div>
+  <div class="k"><div class="l">Selectors</div><div class="v">${f.s}</div></div>
+  <div class="k"><div class="l">Status</div><div class="v" style="font-size:14px;padding-top:4px">${on?(f.ver?"Verified":"Unverified"):"Not installed"}</div></div></div>
+ ${on?`<div class="fld"><label>Address</label><input class="inp m" value="${f.a}" readonly></div>`:
+   `<div class="note c"><b>Not installed</b>These functions do not exist on this token. A call to any of them reverts with <code>FunctionNotFound</code> — which is a meaningful thing to be able to tell investors.</div>`}
+ <h2>Selectors routed here</h2>
+ <div class="card"><div class="bd" style="font-family:var(--mono);font-size:11.5px;line-height:1.9;color:var(--ink-2)">${sel.map(s=>esc(s)+"()").join(" · ")}</div></div>
+ ${map[n]?`<button class="btn p" data-go="${map[n]}">Open settings</button>`:""}`;
+}
+
+function co(){
+ return `<h1>Compliance</h1><p class="sub">What decides whether value may move. Swapping either module is one transaction and never touches a balance.</p>
+ ${S.paused?`<div class="note c"><b>Paused</b>Every transfer is blocked, including from trusted addresses.</div>`:""}
+ <div class="card"><div class="hd"><span class="t">Policy set</span><span class="sp"></span><span class="pill m">0x0B71fA3c…6B20</span></div><div class="bd">
+  <div style="font-size:12.5px;color:var(--ink-2);line-height:1.9">
+   <div>( <code>HasValidIdentity</code> )</div>
+   <div>AND ( <code>JurisdictionDeny(US)</code> )</div>
+   <div>AND ( <code>USAccreditedOnly</code> )</div>
+   <div>AND ( <code>SanctionsScreen</code> · 30-day freshness )</div>
+   <div>AND ( <code>MaxHolders(2000)</code> )</div>
+   <div>AND ( <code>HoldPeriod(12 months)</code> )</div>
+  </div>
+  <div class="rw" style="margin-top:13px"><button class="btn">Simulate a change</button><button class="btn">Swap policy set</button></div>
+  <div class="note" style="margin-top:12px"><b>Simulate first</b>A change shows how many current holders it would newly block — before it is applied.</div>
+ </div></div>
+ <div class="card"><div class="hd"><span class="t">Identity registry</span><span class="sp"></span><span class="pill ok">Tier 2 · StoboxDID</span></div><div class="bd">
+  <div class="fld"><label>Adapter</label><input class="inp m" value="0x44Ae0c17bB93De25f0a81C4e7739bd0E2A15cC38" readonly>
+   <div class="h">Supplies jurisdiction, accreditation, investor type and sanctions claims. Subject binding across wallets is what makes the holder cap count people rather than addresses.</div></div>
+  <button class="btn">Swap adapter</button></div></div>
+ <div class="card"><div class="hd"><span class="t">Trust list</span><span class="sp"></span><span class="pill">${S.trust.length} addresses</span></div>
+  <div class="tw"><table><thead><tr><th class="m">Address</th><th>Reason</th><th></th></tr></thead><tbody>
+   ${S.trust.map((t,i)=>`<tr><td class="m">${sh(t[0])}</td><td>${esc(t[1])}</td>
+    <td style="text-align:right"><button class="btn s" data-untrust="${i}">Distrust</button></td></tr>`).join("")}
+  </tbody></table></div>
+  <div class="bd"><div class="rw"><div class="fld"><label>Address</label><input class="inp m" id="tA" placeholder="0x…"></div>
+   <div class="fld"><label>Reason — required</label><input class="inp" id="tR" placeholder="Secondary market venue"></div>
+   <button class="btn" id="tAdd">Trust</button></div>
+  <div class="note" style="margin-top:12px"><b>Trust skips rules only</b>It never skips the pause check or the frozen-balance check. That is what stops a compromised treasury from draining locked supply.</div></div>
+ </div>
+ <div class="card"><div class="hd"><span class="t">Pause</span></div><div class="bd">
+  <p style="margin:0 0 11px;font-size:13px;color:var(--muted)">Halts every transfer immediately. No timelock — a delay on an emergency brake defeats its purpose.</p>
+  <button class="btn ${S.paused?"p":"d"}" id="pz">${S.paused?"Unpause token":"Pause token"}</button></div></div>`;
+}
+
+function su(){
+ return `<h1>Supply</h1><p class="sub">Creation, destruction and distribution. Supply operator only.</p>
+ <div class="kpi">
+  <div class="k"><div class="l">Total supply</div><div class="v">2,400,000</div></div>
+  <div class="k"><div class="l">Total issued</div><div class="v">2,600,000</div></div>
+  <div class="k"><div class="l">Max supply</div><div class="v">10,000,000</div></div>
+  <div class="k"><div class="l">In treasury</div><div class="v">1,100,000</div></div>
+ </div>
+ <div class="note w"><b>Cap is locked</b><code>capLocked = true</code> was set at deployment. <code>setMaxSupply</code> reverts with <code>CapLocked</code> for every caller, permanently. A larger raise needs a separate token.</div>
+ <div class="card"><div class="hd"><span class="t">Issue to treasury</span></div><div class="bd"><div class="rw">
+  <div class="fld"><label>Amount</label><input class="inp m" placeholder="500,000"></div>
+  <button class="btn p">Issue</button></div>
+  <div class="h" style="font-size:11.5px;color:var(--faint);margin-top:8px">Mints to the treasury and passes the full pipeline. 7,600,000 remain issuable against the cap.</div></div></div>
+ <div class="card"><div class="hd"><span class="t">Distribute</span></div><div class="bd"><div class="rw">
+  <div class="fld"><label>Recipient</label><input class="inp m" placeholder="0x…"></div>
+  <div class="fld"><label>Amount</label><input class="inp m" placeholder="10,000"></div>
+  <div class="fld"><label>Unlock date — optional</label><input class="inp" type="date"></div>
+  <button class="btn p">Distribute</button></div>
+  <div class="note" style="margin-top:12px"><b>Checked before sending</b>The recipient runs through the full pipeline. If they are ineligible you see the reason here — no signature is requested for a transfer that would revert.</div></div></div>
+ <div class="card"><div class="hd"><span class="t">Redeem from treasury</span></div><div class="bd"><div class="rw">
+  <div class="fld"><label>Amount</label><input class="inp m" placeholder="100,000"></div>
+  <button class="btn">Redeem</button></div>
+  <div class="h" style="font-size:11.5px;color:var(--faint);margin-top:8px">Burns from the treasury. Reduces total supply; <code>totalIssued</code> is monotonic and does not fall.</div></div></div>`;
+}
+
+function ho(){
+ const rows=[["0x8e…42","Germany","Professional","12,400","3","5,300"],
+  ["0x2a…91","Singapore","Institutional","310,000","2","310,000"],
+  ["0xc7…04","United States","Accredited","48,900","1","0"],
+  ["0x5f…bb","Netherlands","Professional","7,100","1","7,100"]];
+ return `<h1>Holders</h1><p class="sub">Grouped by identity subject. One person with several wallets is one holder — which is the only way a 2,000-holder cap means anything.</p>
+ <div class="kpi"><div class="k"><div class="l">Subjects</div><div class="v">412 <small>/ 2,000 cap</small></div></div>
+  <div class="k"><div class="l">Wallets</div><div class="v">486</div></div>
+  <div class="k"><div class="l">Top-10 share</div><div class="v">34%</div></div>
+  <div class="k"><div class="l">Cap headroom</div><div class="v">1,588</div></div></div>
+ <div class="card"><div class="tw"><table>
+  <thead><tr><th class="m">Subject</th><th>Jurisdiction</th><th>Category</th><th>Balance</th><th>Wallets</th><th>Transferable</th></tr></thead>
+  <tbody>${rows.map(r=>`<tr><td class="m nm">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="m">${r[3]}</td><td>${r[4]}</td><td class="m">${r[5]}</td></tr>`).join("")}</tbody>
+ </table></div></div>
+ <div class="note"><b>Why subjects and not addresses</b>If the cap counted addresses, one investor with three wallets would consume three slots — or evade the cap entirely while this page reported compliance. The counter cannot be retrofitted, because past addresses cannot be grouped by owner after the fact.</div>`;
+}
+
+function ro(){
+ const R=[["Upgrade admin","0x8Ee1477Bc0…4402","Facet cuts, module swaps","Cannot move value or change any balance","multisig"],
+  ["Issuer admin","0x4b2fA1c93e…9c1a","Grants operational roles, configures","Cannot upgrade, mint or seize",""],
+  ["Supply operator","0x33f1B0a7cE…8d05","Issue, redeem, distribute","Cannot freeze, seize or upgrade",""],
+  ["Compliance officer","0x9c04Ae1fB3…22e7","Freeze, lockups, pause","Cannot mint or upgrade","multisig"]];
+ return `<h1>Roles</h1><p class="sub">Four separated roles. Each does one class of thing and none can do another's job.</p>
+ <div class="card"><div class="tw"><table>
+  <thead><tr><th>Role</th><th class="m">Holder</th><th>Can</th><th>Cannot</th><th></th></tr></thead>
+  <tbody>${R.map(r=>`<tr><td class="nm">${r[0]}${r[4]?` <span class="pill ok" style="font-size:10px;padding:1px 6px">${r[4]}</span>`:""}</td>
+   <td class="m">${r[1]}</td><td>${r[2]}</td><td style="color:var(--faint)">${r[3]}</td>
+   <td style="text-align:right"><button class="btn s">Change</button></td></tr>`).join("")}</tbody>
+ </table></div></div>
+ <div class="note"><b>Separation is the default, not an option</b>The supply operator and the compliance officer are different wallets here. Together those two roles could mint and then freeze, which removes the check each provides on the other.</div>
+ <div class="note w"><b>Upgrade admin cannot touch balances</b>Even fully compromised, it cannot alter a balance or the supply — ERC-20 selectors are registered against the diamond itself and no cut can replace them. The worst case is that transfers stop.</div>`;
+}
+
+function ve(){
+ const bad=CONTRACTS.filter(c=>!c.v).length;
+ return `<h1>Verification</h1><p class="sub">Every contract this token depends on, and whether a third party can read its source. An unverified contract in the compliance path is a contract nobody can audit.</p>
+ ${bad?`<div class="note c"><b>${bad} contract unverified</b><code>SanctionsScreen</code> has no published source on the explorer. It is in the live policy set, so it is deciding transfers that nobody outside can inspect.</div>`:""}
+ <div class="card"><div class="tw"><table>
+  <thead><tr><th>Contract</th><th>Kind</th><th class="m">Address</th><th>Source</th><th>Bytecode</th><th>Audit</th></tr></thead>
+  <tbody>${CONTRACTS.map(c=>`<tr>
+   <td class="nm">${c.n}</td><td style="color:var(--faint)">${c.k}</td><td class="m">${sh(c.a)}</td>
+   <td>${c.v?'<span class="st ok">verified</span>':'<span class="st no">unverified</span>'}</td>
+   <td>${c.b?'<span class="st ok">matches</span>':'<span class="st no">unknown</span>'}</td>
+   <td><span class="st wa">${c.au}</span></td></tr>`).join("")}</tbody>
+ </table></div></div>
+ <h2>Interface conformance</h2>
+ <div class="card"><div class="tw"><table>
+  <tr><td class="nm">ERC-7943 fungible</td><td class="m">0x3edbb4c4</td><td><span class="st ok">supportsInterface returns true</span></td></tr>
+  <tr><td class="nm">ERC-20</td><td class="m">0x36372b07</td><td><span class="st ok">true</span></td></tr>
+  <tr><td class="nm">ERC-165</td><td class="m">0x01ffc9a7</td><td><span class="st ok">true</span></td></tr>
+  <tr><td class="nm">ERC-1404</td><td class="m">0xa9f8d181</td><td><span class="st ok">true</span></td></tr>
+  <tr><td class="nm">Conformance suite</td><td class="m">v0.1.0</td><td><span class="st ok">42 of 42 checks pass</span></td></tr>
+ </table></div></div>
+ <h2>Provenance</h2>
+ <div class="card"><div class="tw"><table>
+  <tr><td class="nm">Issued by factory</td><td><span class="st ok">isFactoryIssued → true</span></td></tr>
+  <tr><td class="nm">Asset passport</td><td><span class="st ok">confirmed both sides · 0x9f3c…a71e</span></td></tr>
+  <tr><td class="nm">Last snapshot</td><td><span class="st ok">11 days ago · v14 · current</span></td></tr>
+ </table></div></div>
+ <div class="rw"><button class="btn p">Verify all on Basescan</button><button class="btn">Download loupe report</button></div>
+ <div class="note" style="margin-top:12px"><b>Why the loupe report matters</b>Diamonds do not verify cleanly on explorers — a visitor sees a proxy with no functions. The loupe report lists every selector, its facet and its source, which is the human-readable answer to "what is actually installed here".</div>`;
+}
+
+function dz(){
+ const on=S.inst.EmergencyFacet;
+ return `<h1>Emergency</h1><p class="sub">Forced movement of tokens without the owner's consent. Compliance officer only.</p>
+ <div class="note c"><b>Not installed by default, deliberately</b>A token without this facet simply does not have these functions — a call reverts with <code>FunctionNotFound</code>. That is a meaningful thing to be able to tell investors, and it is why installing it is a separate decision rather than a default.</div>
+ <div class="card"><div class="hd"><span class="t">EmergencyFacet</span><span class="sp"></span>
+  <span class="pill ${on?"warn":""}">${on?"installed":"not installed"}</span></div><div class="bd">
+  <p style="margin:0 0 11px;font-size:13px;color:var(--muted)">Adds <code>forcedTransfer</code>, <code>forcedMint</code> and <code>forcedBurn</code>. Every call requires a reason string that is written on chain and cannot be removed.</p>
+  <button class="btn ${on?"d":""}" id="inst">${on?"Remove facet":"Install facet"}</button></div></div>
+ ${on?`
+ <div class="card"><div class="hd"><span class="t">Forced transfer</span></div><div class="bd"><div class="rw">
+  <div class="fld"><label>From</label><input class="inp m" placeholder="0x…"></div>
+  <div class="fld"><label>To</label><input class="inp m" placeholder="0x…"></div>
+  <div class="fld"><label>Amount</label><input class="inp m" placeholder="1,000"></div></div>
+  <div class="fld" style="margin-top:11px"><label>Reason — written on chain, permanent</label>
+   <input class="inp" placeholder="Court order ref. 2026/1184, District Court of…"></div>
+  <button class="btn d">Execute forced transfer</button>
+  <div class="note w" style="margin-top:12px"><b>What happens, in order</b>Unfreezes what it must and emits <code>Frozen</code> before the transfer event; enforces <code>canReceive</code> on the destination — a seizure to an unverified address is refused; moves the balance directly, bypassing the rules; emits <code>Transfer</code>, then <code>ForcedTransfer</code>, then <code>ForcedOperation</code> with your reason.</div>
+ </div></div>`:""}`;
+}
+
+function render(){
+ nav();
+ $("#pStatus").className="pill "+(S.paused?"warn":"ok");
+ $("#pStatus").textContent=S.paused?"paused":"active";
+ $("#pg").innerHTML=({ov,fa,co,su,ho,ro,ve,dz})[S.p]();
+ const P=$("#pg");
+ P.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{S.facet=b.dataset.f;render();});
+ P.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{S.p=b.dataset.go;S.facet=null;render();});
+ P.querySelectorAll("[data-untrust]").forEach(b=>b.onclick=()=>{S.trust.splice(+b.dataset.untrust,1);render();});
+ const pz=$("#pz"); if(pz)pz.onclick=()=>{S.paused=!S.paused;render();};
+ const ins=$("#inst"); if(ins)ins.onclick=()=>{S.inst.EmergencyFacet=!S.inst.EmergencyFacet;render();};
+ const ta=$("#tAdd"); if(ta)ta.onclick=()=>{
+   const a=$("#tA").value.trim(), r=$("#tR").value.trim();
+   if(!/^0x[a-fA-F0-9]{40}$/.test(a)){alert("Enter a valid address.");return;}
+   if(!r){alert("A reason is required. A privilege with no stated reason is a red flag.");return;}
+   S.trust.push([a,r]);render();};
+}
+render();
+})();
+</script>
