@@ -141,6 +141,7 @@ completely. See [22 — Agents and settlement](22-agents-and-settlement.md).
 | Function | Does | Called by | Why |
 |---|---|---|---|
 | `beforeUpdate(from, to, amount)` | Runs the seven gates and reverts with the reason | **The ledger, on itself** | Every movement of value passes through it |
+| `afterUpdate(from, to, amount)` | Updates holder counts and subject balances | **The ledger, on itself**, after the move | Subject accounting needs the identity registry, which the ledger plane must not depend on |
 
 **Not called by anyone else.** The token invokes it on its own address before touching a balance, so
 the fallback router resolves it. That indirection is what makes the system fail closed: remove the
@@ -150,6 +151,11 @@ no code anywhere stating that behaviour.
 The gate order is a cost decision — cheap storage reads first, the single unbounded external call
 last. Refusing a paused token or an unverified wallet costs almost nothing. See
 [08](08-compliance-pipeline.md).
+
+**`afterUpdate` runs after balances have moved and cannot refuse anything.** That is deliberate: it
+exists to maintain counts, and a bookkeeping function that could revert a transfer the pipeline
+already allowed would be a second, weaker compliance system. If no facet serves it, the token keeps
+working and simply does not maintain subject counts.
 
 ### Diagnostics
 

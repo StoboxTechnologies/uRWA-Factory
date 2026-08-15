@@ -223,6 +223,13 @@ contract uRWAToken is IuRWAToken, IEvents, IErrors {
             c.balances[from] = balance - value;
             c.balances[to] += value;
         }
+        // Holder accounting runs after the move, through the same router. It
+        // cannot refuse a transfer the pipeline already allowed; if no facet
+        // serves it, the token simply does not maintain subject counts.
+        (bool counted,) =
+            address(this).call(abi.encodeWithSignature("afterUpdate(address,address,uint256)", from, to, value));
+        counted;
+
         emit Transfer(from, to, value);
     }
 

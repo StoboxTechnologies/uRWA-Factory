@@ -54,6 +54,73 @@ contract ComplianceFacet is IErrors {
         revert ERC7943CannotTransfer(from, to, amount);
     }
 
+    /// @notice Called by the ledger after balances have moved
+    /// @dev Holder accounting lives here rather than in the ledger because it
+    ///      needs the identity registry, and the ledger plane must not depend
+    ///      on the claims plane. It runs after the fact, so it can never refuse
+    ///      a transfer the pipeline already allowed.
+    function afterUpdate(address from, address to, uint256 amount) external {
+        Layout.ComplianceStorage storage s = Layout.compliance();
+        Layout.CoreStorage storage core = Layout.core();
+
+        if (from != address(0)) {
+            _decrease(s, from, core.balances[from], amount);
+        }
+        if (to != address(0)) {
+            _increase(s, to, core.balances[to], amount);
+        }
+    }
+
+    /// @dev `balanceAfter` is read after the move, so the address-level count
+    ///      is derived from the balance rather than tracked separately — one
+    ///      source of truth, no drift.
+    function _increase(Layout.ComplianceStorage storage s, address who, uint256 balanceAfter, uint256 amount) private {
+        if (balanceAfter == amount && amount > 0) s.holderCount += 1;
+
+        bytes32 subject = _subjectOf(s.identityRegistry, who);
+        uint256 before = s.subjectBalance[subject];
+        s.subjectBalance[subject] = before + amount;
+
+        if (before == 0 && amount > 0 && !s.subjectIsHolder[subject]) {
+            s.subjectIsHolder[subject] = true;
+            s.subjectHolderCount += 1;
+            emit IEvents.SubjectHolderCountChanged(s.subjectHolderCount);
+        }
+    }
+
+    function _decrease(Layout.ComplianceStorage storage s, address who, uint256 balanceAfter, uint256 amount) private {
+        if (balanceAfter == 0 && amount > 0 && s.holderCount > 0) s.holderCount -= 1;
+
+        bytes32 subject = _subjectOf(s.identityRegistry, who);
+        uint256 remaining = s.subjectBalance[subject];
+        remaining = remaining > amount ? remaining - amount : 0;
+        s.subjectBalance[subject] = remaining;
+
+        if (remaining == 0 && s.subjectIsHolder[subject]) {
+            s.subjectIsHolder[subject] = false;
+            if (s.subjectHolderCount > 0) s.subjectHolderCount -= 1;
+            emit IEvents.SubjectHolderCountChanged(s.subjectHolderCount);
+        }
+    }
+
+    /// @notice Which identity owns this wallet
+    /// @dev A wallet the registry does not know gets a **synthetic** subject
+    ///      derived from its address, so the count never under-reports. The
+    ///      alternative — skipping unknown wallets — would let a cap be evaded
+    ///      by holding through addresses the registry has not seen.
+    function _subjectOf(address registry, address wallet) internal view returns (bytes32) {
+        if (registry != address(0)) {
+            try IIdentityRegistry(registry).subjectOf(wallet) returns (bytes32 subject) {
+                if (subject != bytes32(0)) return subject;
+            } catch {}
+        }
+        return keccak256(abi.encodePacked(wallet));
+    }
+
+    function subjectOf(address wallet) external view returns (bytes32) {
+        return _subjectOf(Layout.compliance().identityRegistry, wallet);
+    }
+
     /// @notice The one evaluation. Everything else is a view over it.
     /// @dev `view` and total: it answers for any input, including garbage, and
     ///      never reverts. That is what makes pre-flight possible.

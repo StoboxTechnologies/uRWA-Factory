@@ -52,7 +52,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | CO-02a | DiamondLoupeFacet — full introspection surface | Ready | CO-02 | 0.25 |
 | CO-03 | ComplianceFacet: pipeline, ERC-7943 views, `whyBlocked` | **Done** | CO-01 | — |
 | CO-04 | Trust list, global pause and per-address pause | **Done** | CO-03 | — |
-| CO-05 | Subject-level holder accounting | Planned | CO-03 | 1 |
+| CO-05 | Subject-level holder accounting | **Done** | CO-03 | — |
 | CO-06 | FreezeFacet and LockupFacet with composed frozen total | Planned | CO-01 | 1 |
 | CO-07 | MonetaryFacet: issue, redeem, distribute, caps | Planned | CO-01 | 1 |
 | CO-08 | RolesFacet | Planned | CO-01 | 0.5 |
