@@ -1,0 +1,303 @@
+<title>uRWA — Investor Page</title>
+<style>
+  :root{
+    --ground:#EEF2F1;--surface:#FFFFFF;--sunk:#E4EAE8;--raised:#FBFCFC;
+    --ink:#0F1E1C;--ink-2:#33443F;--muted:#4A5C58;--faint:#5C6E6A;
+    --rule:#D4DEDB;--rule-strong:#A9BAB6;
+    --accent:#166B5C;--accent-2:#0E4C41;--accent-wash:#DEECE7;--accent-edge:#9CC6BB;
+    --warn:#8A5712;--warn-wash:#F7EEDD;--warn-edge:#DCC08A;
+    --crit:#8E2F39;--crit-wash:#F8E7E8;--crit-edge:#DDAFB3;
+    --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;--r:3px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0A1312;--surface:#111E1B;--sunk:#182B27;--raised:#162622;
+    --ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;
+    --rule:#233734;--rule-strong:#3B534E;
+    --accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#14312B;--accent-edge:#2C5A50;
+    --warn:#D3A054;--warn-wash:#2C2313;--warn-edge:#57432A;
+    --crit:#E08C93;--crit-wash:#31191C;--crit-edge:#5A3135;}}
+  :root[data-theme="dark"]{
+    --ground:#0A1312;--surface:#111E1B;--sunk:#182B27;--raised:#162622;
+    --ink:#E4EDEA;--ink-2:#BCCCC8;--muted:#9FB2AE;--faint:#839893;
+    --rule:#233734;--rule-strong:#3B534E;
+    --accent:#57B9A3;--accent-2:#87D3C0;--accent-wash:#14312B;--accent-edge:#2C5A50;
+    --warn:#D3A054;--warn-wash:#2C2313;--warn-edge:#57432A;
+    --crit:#E08C93;--crit-wash:#31191C;--crit-edge:#5A3135;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit;cursor:pointer}input,select{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+  .banner{background:var(--accent-wash);border-bottom:1px solid var(--accent-edge);padding:8px 16px;font-size:12px;color:var(--accent-2);text-align:center}
+  .top{display:flex;align-items:center;gap:12px;padding:12px clamp(14px,3vw,22px);border-bottom:1px solid var(--rule);background:var(--surface);flex-wrap:wrap}
+  .tk{font-weight:700;font-size:15px}
+  .tk em{font-style:normal;color:var(--accent);font-family:var(--mono);font-size:13px;margin-left:7px}
+  .sp{flex:1}
+  .w{max-width:640px;margin:0 auto;padding:20px clamp(14px,3vw,22px) 70px}
+  .wal{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--rule-strong);border-radius:var(--r);padding:9px 12px;background:var(--surface);font-size:12.5px;margin-bottom:16px}
+  .wal .dot{width:7px;height:7px;border-radius:50%;flex:none;margin-top:5px;background:var(--faint)}
+  .wal.ok{border-color:var(--accent-edge);background:var(--accent-wash)}.wal.ok .dot{background:var(--accent)}
+  .wal.wa{border-color:var(--warn-edge);background:var(--warn-wash)}.wal.wa .dot{background:var(--warn)}
+  .wal .a{font-family:var(--mono);font-size:12px;font-weight:600}
+  .wal .s{color:var(--faint);margin-top:1px}
+  .wal.wa .s{color:var(--warn)}
+  .btn{border:1px solid var(--rule-strong);background:var(--surface);border-radius:var(--r);padding:9px 16px;font-size:14px;font-weight:550}
+  .btn:hover{background:var(--sunk)}
+  .btn.p{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  :root[data-theme="dark"] .btn.p,:root:not([data-theme="light"]) .btn.p{color:#06110F}
+  @media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn.p{color:#fff}}
+  .btn.s{padding:6px 12px;font-size:12.5px}
+  .btn[disabled]{opacity:.4;cursor:not-allowed}
+  .card{border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);margin-bottom:14px;overflow:hidden}
+  .card .hd{padding:11px 15px;border-bottom:1px solid var(--rule);font-size:11px;font-weight:650;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);background:var(--raised)}
+  .card .bd{padding:15px}
+  .big{font-size:32px;font-weight:660;letter-spacing:-.02em;line-height:1.1}
+  .big small{font-size:15px;font-weight:500;color:var(--faint);margin-left:5px}
+  .bar{display:flex;height:30px;border-radius:2px;overflow:hidden;border:1px solid var(--rule-strong);margin:14px 0 9px}
+  .bar div{display:grid;place-items:center;font-size:11px;font-family:var(--mono);min-width:0;overflow:hidden;white-space:nowrap}
+  .lg{display:flex;gap:8px;flex-direction:column;font-size:12.5px}
+  .lg span{display:flex;align-items:center;gap:8px;color:var(--muted)}
+  .lg i{width:10px;height:10px;border-radius:2px;flex:none;font-style:normal}
+  .lg b{color:var(--ink);font-weight:600;font-family:var(--mono);font-size:12px;margin-left:auto}
+  .el{display:flex;gap:10px;align-items:center;padding:9px 15px;border-bottom:1px solid var(--rule);font-size:13.5px}
+  .el:last-child{border-bottom:0}
+  .el .m{width:15px;flex:none;text-align:center;font-size:12px}
+  .el.y .m{color:var(--accent)}.el.n .m{color:var(--crit)}
+  .el .x{margin-left:auto;color:var(--faint);font-size:12px;font-family:var(--mono);text-align:right}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:9px 15px;border-bottom:1px solid var(--rule);font-size:13.5px}
+  .kv:last-child{border-bottom:0}
+  .kv .k{color:var(--faint)}
+  .kv .v{text-align:right;font-weight:550}
+  .kv .v.m{font-family:var(--mono);font-size:12px;font-weight:500}
+  .acts{display:flex;gap:9px;margin-bottom:18px;flex-wrap:wrap}
+  .note{border:1px solid var(--accent-edge);background:var(--accent-wash);border-radius:var(--r);padding:11px 13px;font-size:12.5px;margin:0 0 14px;line-height:1.55}
+  .note.w{border-color:var(--warn-edge);background:var(--warn-wash)}
+  .note.c{border-color:var(--crit-edge);background:var(--crit-wash)}
+  .note b{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:3px;color:var(--accent)}
+  .note.w b{color:var(--warn)}.note.c b{color:var(--crit)}
+  .fld{margin-bottom:12px}
+  .fld label{display:block;font-size:12px;font-weight:600;margin-bottom:4px}
+  .inp{width:100%;padding:9px 11px;border:1px solid var(--rule-strong);border-radius:var(--r);background:var(--surface);font-size:14px}
+  .inp.m{font-family:var(--mono);font-size:13px}
+  .inp:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-wash)}
+  .hint{font-size:11.5px;color:var(--faint);margin-top:4px}
+  .stg{display:flex;gap:9px;align-items:center;padding:7px 0;font-size:13px;border-bottom:1px solid var(--rule)}
+  .stg:last-child{border-bottom:0}
+  .stg .i{width:16px;height:16px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;border:1.5px solid var(--rule-strong);color:var(--faint)}
+  .stg.y .i{background:var(--accent);border-color:var(--accent);color:#fff}
+  :root[data-theme="dark"] .stg.y .i,:root:not([data-theme="light"]) .stg.y .i{color:#06110F}
+  @media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .stg.y .i{color:#fff}}
+  .stg.n .i{background:var(--crit);border-color:var(--crit);color:#fff}
+  .stg .r{margin-left:auto;font-size:11.5px;color:var(--faint);font-family:var(--mono)}
+  .steps{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .sp2{font-size:11px;font-family:var(--mono);padding:3px 9px;border:1px solid var(--rule-strong);border-radius:99px;color:var(--faint)}
+  .sp2.on{border-color:var(--accent);background:var(--accent-wash);color:var(--accent);font-weight:600}
+  .sp2.dn{border-color:var(--accent-edge);color:var(--accent)}
+  .ok{color:var(--accent)}.bad{color:var(--crit)}
+</style>
+
+<div class="banner">Prototype — nothing is signed or sent. Every check maps to a real function in the specification.</div>
+
+<div class="top">
+  <div class="tk">Manhattan Office Tower <em>MOTT</em></div>
+  <div class="sp"></div>
+  <div id="wtop"></div>
+</div>
+
+<div class="w" id="app"></div>
+
+<script>
+(function(){
+const S={conn:false,verified:true,view:"home",
+ bal:8200,adminFrozen:0,locks:[{a:1900,d:"1 June 2027"},{a:1000,d:"1 December 2027"}],
+ tAmt:"",tTo:"",tChecked:false,tOk:false,
+ bStep:0,bAmt:""};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const n=v=>Number(v).toLocaleString("en-US");
+const digits=v=>String(v).replace(/\D/g,"");
+const locked=()=>S.locks.reduce((a,l)=>a+l.a,0)+S.adminFrozen;
+const free=()=>S.bal-locked();
+
+function wtop(){
+ if(!S.conn){$("#wtop").innerHTML=`<button class="btn s" id="wc">Connect wallet</button>`;
+  $("#wc").onclick=()=>{S.conn=true;render();};return;}
+ $("#wtop").innerHTML=`<button class="btn s" id="wd">0x4b2f…9c1a</button>`;
+ $("#wd").onclick=()=>{S.verified=!S.verified;S.tChecked=false;render();};
+}
+
+function wallet(){
+ if(!S.conn) return `<div class="wal"><span class="dot"></span><div>
+   <div class="a">Not connected</div>
+   <div class="s">Everything on this page is readable. Connecting is only needed to act.</div></div></div>`;
+ if(!S.verified) return `<div class="wal wa"><span class="dot"></span><div>
+   <div class="a">0x4b2fA1c93e…9c1a — not verified</div>
+   <div class="s">This wallet has no identity record, so it cannot hold or receive this token. You can still read everything here.</div>
+   <button class="btn s" style="margin-top:8px" id="verify">How to get verified</button></div></div>`;
+ return `<div class="wal ok"><span class="dot"></span><div>
+   <div class="a">0x4b2fA1c93e…9c1a — verified</div>
+   <div class="s">Subject 0x8e…42 · 3 wallets · verification expires 12 March 2027</div></div></div>`;
+}
+
+function position(){
+ const f=free(), pct=v=>(v/S.bal*100);
+ const tones=[["var(--warn-wash)","var(--warn-edge)","var(--warn)"],
+              ["var(--sunk)","var(--rule-strong)","var(--muted)"],
+              ["var(--accent-wash)","var(--accent-edge)","var(--accent)"]];
+ const seg=(w,bg,fg,label)=>`<div style="width:${w}%;background:${bg};color:${fg}">${label}</div>`;
+ const bars=[seg(pct(f),"var(--accent-wash)","var(--accent)",n(f))]
+   .concat(S.locks.map((l,i)=>{const t2=tones[i%tones.length];return seg(pct(l.a),t2[0],t2[2],n(l.a));}));
+ const legs=[`<span><i style="background:var(--accent-wash);border:1px solid var(--accent-edge)"></i>Transferable now<b>${n(f)}</b></span>`]
+   .concat(S.locks.map((l,i)=>{const t2=tones[i%tones.length];
+     return `<span><i style="background:${t2[0]};border:1px solid ${t2[1]}"></i>Unlocks ${esc(l.d)}<b>${n(l.a)}</b></span>`;}));
+ return `<div class="card"><div class="hd">Your position</div><div class="bd">
+  <div class="big">${n(S.bal)} <small>MOTT</small></div>
+  <div class="bar">${bars.join("")}</div>
+  <div class="lg">${legs.join("")}</div>
+  <div class="note" style="margin-top:14px"><b>Locks release themselves</b>No transaction is needed and nobody has to approve it — the amounts become transferable on the dates shown.</div>
+ </div></div>`;
+}
+
+function eligibility(){
+ const rows=S.verified
+  ?[["y","Identity verified","expires 12 Mar 2027"],["y","Jurisdiction · Germany","permitted"],
+    ["y","Professional client","MiFID II"],["y","Sanctions screening","cleared 3 days ago"],
+    ["y","Holder limit","412 of 2,000"]]
+  :[["n","Identity verified","no record"],["n","Jurisdiction","unknown"],
+    ["n","Professional client","unknown"],["n","Sanctions screening","never run"],
+    ["y","Holder limit","412 of 2,000"]];
+ return `<div class="card"><div class="hd">Your eligibility</div>
+  ${rows.map(r=>`<div class="el ${r[0]}"><span class="m">${r[0]==="y"?"✓":"✕"}</span>
+   <span>${esc(r[1])}</span><span class="x">${esc(r[2])}</span></div>`).join("")}</div>`;
+}
+
+function asset(){
+ return `<div class="card"><div class="hd">The asset</div>
+  <div class="kv"><span class="k">Class</span><span class="v">Commercial real estate</span></div>
+  <div class="kv"><span class="k">Regime</span><span class="v">MiFID II · professional</span></div>
+  <div class="kv"><span class="k">Supply</span><span class="v">2,400,000 of 10,000,000 <span class="ok">cap locked</span></span></div>
+  <div class="kv"><span class="k">Holders</span><span class="v">412 identities</span></div>
+  <div class="kv"><span class="k">Reserves</span><span class="v">attested by Deloitte, 11 days ago</span></div>
+  <div class="kv"><span class="k">Passport</span><span class="v m">0x9f3c…a71e <span class="ok">confirmed</span></span></div>
+ </div>`;
+}
+
+function home(){
+ const can=S.conn&&S.verified;
+ return wallet()+position()+`<div class="acts">
+  <button class="btn p" id="goT" ${can?"":"disabled"}>Transfer</button>
+  <button class="btn" id="goB" ${can?"":"disabled"}>Buy more</button>
+  <button class="btn" id="goP">View passport</button></div>
+  ${!S.conn?`<div class="note"><b>Read freely</b>Nothing here is hidden behind a wallet. Connect only when you want to act.</div>`:""}
+  ${S.conn&&!S.verified?`<div class="note w"><b>Actions unavailable</b>Transfers and purchases need a verified identity. The rules below are why — you can read them before deciding to verify.</div>`:""}
+  `+eligibility()+asset();
+}
+
+function transfer(){
+ const f=free(), amt=Number(digits(S.tAmt)||0);
+ const tooMuch=amt>f, badTo=S.tTo&&!/^0x[a-fA-F0-9]{40}$/.test(S.tTo);
+ let res="";
+ if(S.tChecked){
+  const stages=S.tOk
+   ?[["y","Token not paused",""],["y","You may send","identity valid"],["y","Recipient may receive","identity valid · Netherlands"],
+     ["y","Unfrozen balance",n(amt)+" of "+n(f)],["y","Compliance rules","all pass"]]
+   :[["y","Token not paused",""],["y","You may send","identity valid"],["n","Recipient may receive","no identity record"],
+     ["","Unfrozen balance","not reached"],["","Compliance rules","not reached"]];
+  res=`<div class="card"><div class="hd">${S.tOk?"This transfer will succeed":"This transfer would fail"}</div><div class="bd">
+   ${stages.map(s=>`<div class="stg ${s[0]}"><span class="i">${s[0]==="y"?"✓":(s[0]==="n"?"✕":"")}</span>
+     <span>${esc(s[1])}</span><span class="r">${esc(s[2])}</span></div>`).join("")}
+   ${S.tOk?`<button class="btn p" style="margin-top:14px" id="sign">Sign and send</button>`:
+    `<div class="note c" style="margin-top:14px"><b>Reason from the token</b>The recipient is not verified and cannot receive this token. They need an identity record before you can send to them.</div>
+     <div class="note" style="margin-top:10px"><b>Nothing was signed</b>The token answered for free. You keep your gas, and the recipient learns exactly what to fix.</div>`}
+  </div></div>`;
+ }
+ return `<button class="btn s" id="back" style="margin-bottom:14px">← Back</button>
+ <div class="card"><div class="hd">Transfer MOTT</div><div class="bd">
+  <div class="fld"><label for="ta">Amount</label>
+   <input class="inp m" id="ta" value="${esc(S.tAmt)}" placeholder="5,000" inputmode="numeric">
+   <div class="hint ${tooMuch?"bad":""}">${tooMuch?`Only ${n(f)} is transferable — ${n(locked())} unlocks later.`:`${n(f)} transferable now.`}</div></div>
+  <div class="fld"><label for="tt">Recipient</label>
+   <input class="inp m" id="tt" value="${esc(S.tTo)}" placeholder="0x…" spellcheck="false">
+   <div class="hint ${badTo?"bad":""}">${badTo?"That is not a valid address.":"The recipient must be verified to hold this token."}</div></div>
+  <button class="btn p" id="chk" ${(amt>0&&!tooMuch&&/^0x[a-fA-F0-9]{40}$/.test(S.tTo))?"":"disabled"}>Check this transfer</button>
+  <div class="hint" style="margin-top:8px">Checking is free. No signature is requested until it passes.</div>
+ </div></div>${res}
+ <div class="note"><b>Try both</b>Any address ending in <code>…0000</code> simulates an unverified recipient. Anything else passes.</div>`;
+}
+
+function buy(){
+ const steps=["Eligibility","Amount","Payment","Review","Done"];
+ const amt=Number(digits(S.bAmt)||0), price=1.25, cost=(amt*price);
+ const nav=`<div class="steps">${steps.map((t,i)=>`<span class="sp2 ${i===S.bStep?"on":(i<S.bStep?"dn":"")}">${i<S.bStep?"✓ ":""}${t}</span>`).join("")}</div>`;
+ let body="";
+ if(S.bStep===0) body=`<div class="card"><div class="hd">Can you participate?</div>
+   ${eligibility().replace(/<div class="card">|<div class="hd">Your eligibility<\/div>|<\/div>$/g,"")}
+   <div class="bd"><div class="note"><b>Checked first, deliberately</b>You find out whether you can participate before entering an amount — not after approving a payment token.</div>
+   <button class="btn p" id="b1">Continue</button></div></div>`;
+ if(S.bStep===1) body=`<div class="card"><div class="hd">How much</div><div class="bd">
+   <div class="fld"><label for="ba">Tokens</label><input class="inp m" id="ba" value="${esc(S.bAmt)}" placeholder="20,000" inputmode="numeric">
+    <div class="hint">Minimum 8,000 · maximum 400,000 · your allocation remaining 380,000</div></div>
+   <div class="kv" style="padding-left:0;padding-right:0"><span class="k">Price</span><span class="v">1.25 USDC per token</span></div>
+   <div class="kv" style="padding-left:0;padding-right:0;border-bottom:0"><span class="k">Cost</span><span class="v">${amt?n(Math.round(cost)):"—"} USDC</span></div>
+   <button class="btn p" style="margin-top:12px" id="b2" ${amt>=8000?"":"disabled"}>Continue</button></div></div>`;
+ if(S.bStep===2) body=`<div class="card"><div class="hd">Payment</div><div class="bd">
+   <div class="kv" style="padding-left:0;padding-right:0"><span class="k">Paying with</span><span class="v">USDC on Base</span></div>
+   <div class="kv" style="padding-left:0;padding-right:0;border-bottom:0"><span class="k">Approval</span><span class="v ok">by signature — no extra transaction</span></div>
+   <div class="note" style="margin-top:12px"><b>ERC-2612 permit</b>USDC supports approval by signature, so this costs one transaction instead of two.</div>
+   <button class="btn p" id="b3">Continue</button></div></div>`;
+ if(S.bStep===3) body=`<div class="card"><div class="hd">Review</div>
+   <div class="kv"><span class="k">Tokens</span><span class="v">${n(amt)} MOTT</span></div>
+   <div class="kv"><span class="k">Cost</span><span class="v">${n(Math.round(cost))} USDC</span></div>
+   <div class="kv"><span class="k">Locked until</span><span class="v">1 September 2027</span></div>
+   <div class="kv"><span class="k">Payments held</span><span class="v">in treasury until the soft cap</span></div>
+   <div class="bd"><div class="note w"><b>Two things to expect</b>These tokens are locked for 12 months and will show as unavailable in your position until then. Your payment stays in the treasury until the offering reaches its soft cap — if it does not, you can claim a refund yourself without anyone's approval.</div>
+   <button class="btn p" id="b4">Sign and buy</button></div></div>`;
+ if(S.bStep===4) body=`<div class="card"><div class="hd">Purchase complete</div><div class="bd">
+   <div class="big">${n(amt)} <small>MOTT</small></div>
+   <p style="color:var(--muted);font-size:13.5px;margin:8px 0 0">Received and locked until 1 September 2027. Your position now shows them as unavailable, with the unlock date.</p>
+   <button class="btn p" style="margin-top:14px" id="b5">Back to position</button></div></div>`;
+ return `<button class="btn s" id="back" style="margin-bottom:14px">← Back</button>`+nav+body;
+}
+
+function passport(){
+ return `<button class="btn s" id="back" style="margin-bottom:14px">← Back</button>
+ <div class="card"><div class="hd">Asset passport</div>
+  <div class="kv"><span class="k">Identifier</span><span class="v m">0x9f3c…a71e</span></div>
+  <div class="kv"><span class="k">Link to this token</span><span class="v ok">confirmed both sides</span></div>
+  <div class="kv"><span class="k">Latest snapshot</span><span class="v">11 days ago · v14</span></div>
+ </div>
+ <div class="card"><div class="hd">Who has vouched, and when</div>
+  <div class="kv"><span class="k">Deloitte · reserves</span><span class="v">11 days ago<br><span style="font-weight:400;color:var(--faint);font-size:12px">valid 90 days</span></span></div>
+  <div class="kv"><span class="k">CBRE · valuation</span><span class="v">34 days ago<br><span style="font-weight:400;color:var(--faint);font-size:12px">valid 12 months</span></span></div>
+  <div class="kv"><span class="k">Hacken · contract audit</span><span class="v">6 months ago<br><span style="font-weight:400;color:var(--faint);font-size:12px">valid 18 months</span></span></div>
+ </div>
+ <div class="note"><b>Figures are not shown here, and that is deliberate</b>You can see that a named audit firm signed the reserve figure eleven days ago and that it is still valid — without the figure itself being public. Ask the issuer for access if you need the number.</div>`;
+}
+
+function render(){
+ wtop();
+ $("#app").innerHTML = S.view==="home"?home():S.view==="transfer"?transfer():S.view==="buy"?buy():passport();
+ const A=$("#app"), on=(s,f)=>{const e=$(s); if(e) e.onclick=f;};
+ on("#verify",()=>alert("Verification flow — outside this prototype."));
+ on("#goT",()=>{S.view="transfer";S.tChecked=false;render();});
+ on("#goB",()=>{S.view="buy";S.bStep=0;render();});
+ on("#goP",()=>{S.view="passport";render();});
+ on("#back",()=>{S.view="home";render();});
+ const ta=$("#ta"); if(ta) ta.oninput=e=>{const c=digits(e.target.value);S.tAmt=c?n(Number(c)):"";S.tChecked=false;
+   const p=e.target.selectionStart;render();const el=$("#ta");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}};
+ const tt=$("#tt"); if(tt) tt.oninput=e=>{S.tTo=e.target.value.trim();S.tChecked=false;
+   const p=e.target.selectionStart;render();const el=$("#tt");if(el){el.focus();el.setSelectionRange(p,p);}};
+ on("#chk",()=>{S.tChecked=true;S.tOk=!/0000$/.test(S.tTo);render();});
+ on("#sign",()=>{const a=Number(digits(S.tAmt));S.bal-=a;S.view="home";S.tChecked=false;S.tAmt="";S.tTo="";render();});
+ const ba=$("#ba"); if(ba) ba.oninput=e=>{const c=digits(e.target.value);S.bAmt=c?n(Number(c)):"";
+   render();const el=$("#ba");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}};
+ on("#b1",()=>{S.bStep=1;render();});
+ on("#b2",()=>{S.bStep=2;render();});
+ on("#b3",()=>{S.bStep=3;render();});
+ on("#b4",()=>{S.bStep=4;render();});
+ on("#b5",()=>{const a=Number(digits(S.bAmt)||0);if(a){S.bal+=a;S.locks.push({a:a,d:"1 September 2027"});}
+   S.view="home";S.bStep=0;S.bAmt="";render();});
+}
+render();
+})();
+</script>

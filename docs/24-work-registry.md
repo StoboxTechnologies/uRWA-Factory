@@ -121,12 +121,13 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| UI-00 | Prototypes: deploy, console, verifier | **Done** | SP-06 | — |
+| UI-00 | Prototypes: deploy, console, verifier, investor | **Done** | SP-06 | — |
 | UI-01 | Wallet connection and identity resolution module | Planned | TO-04 | 1 |
 | UI-02 | Deploy console | Planned | UI-01, CO-10 | 1.5 |
 | UI-03 | Token console: facets, compliance, supply, holders, roles, verification | Planned | UI-01, CO-* | 2.5 |
 | UI-04 | Public verifier and transfer simulator | Planned | UI-01, CO-03 | 1 |
 | UI-05 | Investor page: position, eligibility, purchase | Planned | UI-01, CU-03 | 1.5 |
+| UI-08 | Prototype: investor page | **Done** | SP-06 | — |
 | UI-06 | Compliance console | Planned | UI-01, CO-06 | 1 |
 | UI-07 | Passport proof verifier surface | Planned | PA-04 | 0.5 |
 
@@ -282,11 +283,11 @@ merge → registry status updated in this document
 | CU — Custody | 6 | 0 | 0 | 6 |
 | AG — Agents | 4 | 0 | 0 | 4 |
 | PA — Passport | 7 | 0 | 0 | 5.25 |
-| UI — Interfaces | 8 | 1 | 0 | 9 |
+| UI — Interfaces | 9 | 2 | 0 | 9 |
 | TO — Tooling | 5 | 0 | 0 | 2.75 |
 | OP — Operations | 8 | 1 | 0 | 2.75 |
 | ST — Standards | 6 | 0 | 2 | 3.5 |
-| **Total** | **78** | **9** | **6** | **≈54 engineer-weeks** |
+| **Total** | **79** | **10** | **6** | **≈54 engineer-weeks** |
 
 At two Solidity engineers and one front-end engineer, with UI overlapping, that is roughly **five to
 six months to audit**, plus the audit and remediation window.

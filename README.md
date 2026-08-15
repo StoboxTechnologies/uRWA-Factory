@@ -107,7 +107,7 @@ Everything is in [`docs/`](docs/), and rendered as a single page at the
 
 ## Prototypes
 
-Three clickable surfaces at **[the prototypes index](https://stoboxtechnologies.github.io/uRWA-Factory/prototypes/)** — deploy console, token console, public verifier. Nothing connects to a chain; every value maps to a real function in the specification.
+All four surfaces at **[the prototypes index](https://stoboxtechnologies.github.io/uRWA-Factory/prototypes/)** — deploy console, token console, public verifier and investor page. Nothing connects to a chain; every value maps to a real function in the specification.
 
 ## Status
 
