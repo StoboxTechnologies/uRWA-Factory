@@ -85,7 +85,16 @@ These are enforced, not merely intended.
 | Guardrail | Enforcement |
 |---|---|
 | No Stobox address in any contract | Test invariant scanning bytecode and source for known addresses |
-| No STBU reference | Test invariant; `fee()` returns zero and `feeToken()` returns `address(0)` |
+| No STBU reference | Test invariant; the default deployment returns `fee() == 0` and `feeToken() == address(0)` |
+
+### On the fee, precisely
+
+`FeeFacet` keeps a setter. **No fee is charged today, and any fee ever set is readable by anyone
+through `fee()` and `feeToken()` before they transact.** That is the claim — not that the factory is
+free forever, which would be a promise about the future that nothing in the code enforces.
+
+A fork is unaffected either way: it deploys its own factory, its own `FeeFacet` and its own
+configuration, and never calls ours. Our fee policy is not something a fork can be exposed to.
 | No datapoint schema in the reference passport | Code review checklist; `bytes32 code` must remain opaque |
 | The default identity adapter is the allowlist | Deployment default; StoboxDID is opt-in configuration |
 | A fork deploys with no external dependency | CI job deploys the full stack to a fresh anvil chain and runs an end-to-end sale |

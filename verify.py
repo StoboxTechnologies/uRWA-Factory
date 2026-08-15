@@ -72,7 +72,7 @@ class Corpus:
         # Content, not timestamps: a fresh git checkout gives every file the
         # same mtime, so an mtime comparison would be meaningless in CI.
         h = hashlib.sha256()
-        for p in sorted(DOCS.glob("*.md")) + [ROOT / "build-docs.py"]:
+        for p in sorted(DOCS.glob("*.md")) + [ROOT / "build-docs.py", ROOT / "theme.css"]:
             h.update(p.name.encode())
             h.update(p.read_bytes())
         self.source_digest = h.hexdigest()
@@ -324,6 +324,8 @@ def _(c):
             out.append(f"diagrams/{n} sets fill on a <text> element; the stylesheet overrides it")
         if re.search(r'(?:href|src)="https?://', svg):
             out.append(f"diagrams/{n} references an external resource")
+        if 'class="hdt"' not in svg or 'class="ico"' not in svg:
+            out.append(f"diagrams/{n} has no header icon or title")
         out += _overflow(n, svg)
         off = _off_palette(svg)
         if off:
@@ -337,7 +339,7 @@ def _off_palette(svg):
     A diagram drawn in a near-but-not-equal grey reads as an off-brand tint
     against the page it sits in, and nothing else would catch it.
     """
-    sources = [ROOT / "build-docs.py", PROTO / "theme.css"]
+    sources = [ROOT / "build-docs.py", ROOT / "theme.css"]
     tokens = {c.upper() for s in sources if s.exists()
               for c in re.findall(r"#[0-9A-Fa-f]{6}", s.read_text(encoding="utf-8"))}
     tokens.add("#FFFFFF")
@@ -374,6 +376,43 @@ def _overflow(name, svg):
 def _(c):
     c.diagrams["three-planes.svg"] = c.diagrams["three-planes.svg"].replace(
         '<text class="nm i-nm"', '<text class="nm" fill="#FFFFFF"', 1)
+    return c
+
+
+# Tokens a page must inherit rather than declare. A page that sets its own is
+# not styled by the design system; it merely resembles it until one changes.
+OWNED_TOKENS = ("--ground:", "--ink:", "--accent:", "--spot:", "--r-pill:", "--sh-card:")
+
+
+@check("L0.12", 0, "Every page inherits the design system from theme.css")
+def _(c):
+    theme = ROOT / "theme.css"
+    if not theme.exists():
+        return ["theme.css is missing — nothing declares the design system"]
+    css = theme.read_text(encoding="utf-8")
+    missing = [t for t in OWNED_TOKENS if t not in css]
+    if missing:
+        return [f"theme.css declares no {', '.join(missing)}"]
+
+    out = []
+    for name, text in c.proto.items():
+        if 'href="../theme.css"' not in text:
+            out.append(f"prototypes/{name} does not link ../theme.css")
+        own = [t for t in OWNED_TOKENS if t in text]
+        if own:
+            out.append(f"prototypes/{name} declares its own {', '.join(own)} instead of inheriting")
+        if "fonts.googleapis.com" in text:
+            out.append(f"prototypes/{name} loads its own web font; theme.css imports it")
+    # The built page is one artefact, so it inlines the file rather than linking it.
+    if c.html_exists and "--spot:#22D3EE" not in c.html:
+        out.append("urwa-documentation.html does not carry the design tokens")
+    return out
+
+
+@breaks("L0.12")
+def _(c):
+    c.proto["verifier.html"] = c.proto["verifier.html"].replace(
+        '<link rel="stylesheet" href="../theme.css">', "", 1)
     return c
 
 

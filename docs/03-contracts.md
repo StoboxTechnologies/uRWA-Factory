@@ -55,6 +55,10 @@ Stateless, shared across all tokens on a chain, deployed once.
 | `TransferWindow` | `block.timestamp` | Blackout periods |
 | `SanctionsScreen` | `aml.sanctions.clear` | Screening freshness window |
 | `TravelRuleThreshold` | amount, counterparty claim | FATF threshold gate |
+| `MiCAIssuerAuthorised` | `mica.issuer.authorised` | Issuer authorised, and still authorised |
+| `MiCATokenClass` | `mica.token.class` | Instrument is the declared MiCA class |
+| `MiCAWhitepaperNotified` | `mica.whitepaper.notified` | White paper notified before a public offer |
+| `MiCAReserveAttested` | `mica.reserve.attested` | Reserve attestation exists and is fresh |
 
 ## Identity adapters (sub-contracts implementing `IIdentityRegistry`)
 

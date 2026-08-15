@@ -112,6 +112,26 @@ No wallet required. The surface that makes the system credible to people who do 
 └────────────────────────────────────────────────────────────────┘
 ```
 
+### Four facts the verifier must always show
+
+Each is a property a holder would otherwise have to read from storage, and each materially changes
+what the instrument is.
+
+| Fact | Read from | Shown as |
+|---|---|---|
+| **Upgrade delay** | `upgradeDelay()` | "Upgrades take effect after 7 days" or "Upgrades take effect immediately" |
+| **Emergency facet** | `facetAddress(forcedTransfer.selector)` | "Seizure is possible" or "Seizure is impossible — the facet is not installed" |
+| **Fee** | `fee()`, `feeToken()` | "No fee" or the exact amount and token |
+| **Passport** | `isConfirmed(passportId, token)` | Confirmed · declared but unconfirmed · **not attached** |
+
+**"Not attached" is stated neutrally, with no warning styling.** A token without a passport is not
+defective; the passport is descriptive, never dispositive. Marking unattested tokens as suspect would
+turn an open instrument into a funnel for our proprietary service, and every claim this project makes
+about the boundary would be worth less.
+
+"Declared but unconfirmed" **is** flagged, because that is what a forgery looks like — someone
+pointing a token at a passport that has not agreed.
+
 ### Transfer simulator
 
 The most useful thing on the page. Enter two addresses and an amount; get the answer before anyone
@@ -229,16 +249,23 @@ amount, not after approving a payment token.
 
 ### Deploy flow
 
-Six steps, mapping directly onto `TokenParams`.
+Eight steps, mapping directly onto `TokenParams`.
 
 | Step | Fields | Warning shown |
 |---|---|---|
 | 1 Identity | name, symbol, decimals | Cannot be changed after deployment |
 | 2 Supply | max supply, **lock the cap** | Locking is irreversible |
-| 3 Regime | preset from [10](10-rules.md#presets) | Determines who may invest |
+| 3 Regime | preset from [10](10-rules.md#presets) | Determines who may invest; no EU securities preset ships |
 | 4 Identity source | allowlist, EAS, StoboxDID | Determines what rules can check |
 | 5 Roles | four addresses | Warn if any two are the same wallet |
-| 6 Review | full summary, estimated gas | Final |
+| 6 Upgrade delay | timelock in days, `0` for none | Both answers are shown in the public verifier |
+| 7 Emergency facet | install or not — **no default** | Installing grants seizure, minting and burning; not installing makes them impossible |
+| 8 Review | full summary, estimated gas | Final |
+
+**Steps 6 and 7 have no pre-selected answer.** Every other step has a sensible default; these two do
+not, because each is a governance decision an issuer must make knowingly. A pre-ticked emergency
+facet would be installed by everyone who clicked through, and a pre-filled delay would be accepted as
+advice the tool is not in a position to give.
 
 Step 5 must warn — not block — when `SUPPLY_OPERATOR` equals `COMPLIANCE_OFFICER`, because together
 they can mint and freeze, which removes the check each provides on the other.

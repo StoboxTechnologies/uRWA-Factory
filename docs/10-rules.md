@@ -160,28 +160,64 @@ cadences from the same claim.
 | **Passes when** | Below threshold, or counterparty data present |
 | **Reason** | `"counterparty data required above threshold"` |
 
+### MiCA rules — the four that read the instrument, not the holder
+
+| Rule | Reads | Passes when |
+|---|---|---|
+| `MiCAIssuerAuthorised` | `mica.issuer.authorised` | Authorisation exists, names a competent authority, unexpired |
+| `MiCATokenClass` | `mica.token.class` | The class matches what the token was configured as |
+| `MiCAWhitepaperNotified` | `mica.whitepaper.notified` | A notification date exists and precedes the offer |
+| `MiCAReserveAttested` | `mica.reserve.attested` | An attestation exists and is inside its freshness window |
+
+These four are structurally different from every other rule in the library: they read facts about the
+**issuer and the instrument**, not about the person transferring. The subject they query is the
+issuer's, fixed at deployment, so the answer is identical for every holder.
+
+That has a consequence worth stating. A stale reserve attestation blocks **every** transfer of the
+token at once, not one holder's. This is the intended behaviour for a backed instrument — a
+stablecoin whose reserve has not been attested for six months should stop moving — but an issuer who
+does not expect it will experience it as a total outage. The console warns at configuration time.
+
 ## Presets
 
 Named, audited compositions selected at deployment and extendable afterwards. Configurability without
 defaults is a trap: issuers misconfigure compliance and blame the tool.
 
+**Three presets ship, plus the open one.**
+
 | Preset | Composition |
 |---|---|
 | `RegD506c` | identity AND us.accredited AND sanctions AND MaxHolders(2000) AND HoldPeriod |
 | `RegS` | identity AND JurisdictionDeny(US) AND sanctions AND HoldPeriod |
-| `MiFID2-Professional` | identity AND eu.mifid2.professional AND sanctions |
-| `MiFID2-Retail` | identity AND JurisdictionAllow(EEA) AND sanctions |
-| `Dual-EU-US` | identity AND (eu.professional OR us.accredited) AND sanctions AND MaxHolders |
-| `MiCA-ART` | identity AND sanctions AND reserve-attestation-fresh |
-| `MiCA-EMT` | identity AND sanctions AND redemption-at-par-attested |
+| `MiCA-ART` | identity AND sanctions AND `MiCAIssuerAuthorised` AND `MiCATokenClass` AND `MiCAWhitepaperNotified` AND `MiCAReserveAttested` |
+| `MiCA-EMT` | identity AND sanctions AND `MiCAIssuerAuthorised` AND `MiCATokenClass` AND `MiCAWhitepaperNotified` AND `MiCAReserveAttested` |
 | `Open` | identity AND sanctions |
 
 MiCA presets exist because commodity-backed tokens and stablecoins fall under MiCA rather than under
 securities law. See [15 — Standards](15-standards.md#regulatory-regimes).
 
+### No EU securities preset, deliberately
+
+There is **no MiFID II preset**. EU security-token issuance is a later phase, and shipping a preset
+for a regime nobody has yet run an issuance under would be a claim rather than a tool.
+
+What exists is the capability, not the shortcut. `EUProfessionalOnly` and `EUQualifiedExemption` are
+in the rule library, `eu.mifid2.professional` and `eu.prospectus.qualified` are in the claim schema,
+and an EU issuer can compose them by hand today. Only the one-click regime is absent.
+
+Stated plainly because the omission looks like a gap and is not one: **MiCA does not cover security
+tokens.** An EU equity or debt token is a MiFID II instrument, and choosing a MiCA preset for it
+would be wrong in a way the tool cannot detect.
+
 ## Failure handling
 
-Each rule runs inside `try/catch` under a gas ceiling.
+Each rule runs inside `try/catch` under a gas ceiling of **100,000 gas**.
+
+The ceiling is a **constant in the code, identical for every token**, not a per-policy setting. A
+configurable ceiling is worse than a fixed one: set too low it turns a working rule into a silent
+refusal, and the failure looks like a compliance decision rather than a misconfiguration. One hundred
+thousand is enough for an external claim read plus arithmetic, and with the rule count capped the
+worst case stays well inside a block.
 
 | Condition | Result |
 |---|---|

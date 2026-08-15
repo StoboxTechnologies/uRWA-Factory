@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760" height="300" class="d-tier">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 392" width="760" height="392" class="d-tier">
 <style>
 .d-tier text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
 .d-tier .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
@@ -10,13 +10,20 @@
 .d-tier .i-st{fill:#FFFFFF}
 .d-tier .i-sm{fill:#6E6E73}
 .d-tier .i-mo{fill:#F0F2F8}
+
+.d-tier .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-tier .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-tier .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 </style>
 <defs>
 <marker id="ia" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
 <path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#6E6E73"/>
 </marker>
 </defs>
-<rect width="760" height="300" fill="#FFFFFF"/>
+<rect width="760" height="392" fill="#FFFFFF"/>
+<!-- header -->
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><circle cx="12" cy="7" r="3.2"/><path d="M6 14.5h12"/><path d="M8 18h8"/><path d="M10 21.2h4"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Identity tiers</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
 
 <rect x="230" y="16" width="300" height="54" rx="10" fill="#0C0C0F"/>
 <text class="lbl i-sm" x="250" y="40">THE TOKEN DEPENDS ON AN INTERFACE</text>
@@ -51,5 +58,5 @@
 <text class="fa" x="536" y="230">its getters revert on unknown wallets.</text>
 
 <rect x="24" y="250" width="712" height="38" rx="9" fill="#FFFFFF" stroke="#E2E4E9"/>
-<text class="sm" x="44" y="274">All three expose the identical interface. Switching is one setIdentityRegistry call: no balance moves, no migration, no redeployment.</text>
+<text class="sm" x="44" y="274">All three expose the identical interface. Switching is one setIdentityRegistry call: no balance moves, no migration, no redeployment.</text></g>
 </svg>

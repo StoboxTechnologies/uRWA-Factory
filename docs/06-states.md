@@ -19,6 +19,23 @@ possibility of two pause states disagreeing.
     └──────────────────────────────────────────┘
 ```
 
+### Per-address state, orthogonal to the token's
+
+One address can be halted without halting the token. This is a **separate** state, not a value of the
+one above — the token stays Active while a single address is stopped.
+
+| Address state | Sending | Receiving | Entered by | Left by |
+|---|:-:|:-:|---|---|
+| **Open** | ✅ subject to rules | ✅ subject to rules | Default | `pauseAddress` |
+| **Paused** | ❌ | ❌ | `pauseAddress` | `unpauseAddress` |
+
+The two dimensions compose: a paused address inside an active token cannot transact; an open address
+inside a paused token cannot either. **Pause always wins, at whichever level it is set**, so there is
+no combination in which a stopped party keeps moving value.
+
+Distinct from a freeze, which restricts sending only and takes an amount. See
+[05](05-roles.md#address-pause--and-how-it-differs-from-a-freeze).
+
 ## 2. Transfer outcome state
 
 A transfer occupies exactly one of these terminal states. The stage index is returned by `whyBlocked`.

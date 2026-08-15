@@ -6,12 +6,33 @@
 |---|---|
 | **Primary** | Base |
 | **Testnet** | Base Sepolia |
-| **Secondary** | Arbitrum One — for continuity with existing STV3 deployments and StoboxDID |
+| **Secondary** | Arbitrum One — existing STV3 deployments and the current StoboxDID |
 | **Cross-chain** | Seam retained (CCT-compatible mint/burn) but not wired in v1 |
 
-Base is primary because the settlement currency, the fee token and the identity attestation
-infrastructure all live there. A second chain is cheap under the adapter pattern and should not be
-allowed to atrophy.
+Base is primary because the settlement currency and the attestation infrastructure live there, and
+because EAS is Base-native, so tier 1 works with nothing deployed by us.
+
+### StoboxDID moves to Base
+
+Tier 2 was unreachable on Base: [StoboxDID](09-identity-did.md) is deployed on Arbitrum One, and an
+adapter cannot read across chains. **A fresh StoboxDID is deployed on Base.**
+
+| Decision | Consequence |
+|---|---|
+| Clean deployment, not a bulk migration | No personal attribute is copied between chains without the subject being re-onboarded |
+| Subjects re-created on first need | An issuer's first Base issuance drives onboarding; nothing is created speculatively |
+| The UDID string is preserved | `keccak256(uDID)` is unchanged, so **a subject keeps the same identity on both chains** with no bridge and no oracle |
+
+The last row is what makes this cheap. Subject identity is derived from the DID string, not from a
+contract address or a chain id, so the same person hashes to the same `bytes32` wherever they are
+registered. Holder caps, reports and balances line up across chains without anything being trusted to
+carry state between them.
+
+**What does not carry across is authority.** A `blockDID` on Arbitrum does not block the subject on
+Base — the two registries are independent contracts with independent writers. A compliance action
+that must apply everywhere has to be taken on every chain where the token exists. This is stated
+because the shared subject hash makes it look as though the registries are one system, and they are
+not.
 
 ## Infrastructure — once per chain
 

@@ -90,8 +90,35 @@ where `EmergencyFacet` is installed — `forcedTransfer`, `forcedMint`, `forcedB
 | Freeze, lockup, pause, forced operations | **Immediate** | A delay would blunt exactly the emergency response these roles exist for |
 | Issue, redeem, distribute | **Immediate** | Ordinary operations |
 
-Recommended, not enforced. The factory ships a timelock template and the documentation points at it;
-the issuer decides.
+**The delay is a deployment parameter, chosen by the issuer.** `TokenParams.upgradeDelay` sets it;
+`0` means no delay. It applies to the code-changing class only — the immediate class stays immediate
+whatever the issuer chose, because a timelock on `pause` would blunt the one response that has to be
+instant.
+
+Making it a parameter rather than a fixed policy is deliberate. A regulated fund with a board wants
+seven days. A stablecoin issuer patching a live reserve rule cannot wait seven days. Neither is
+wrong, and hard-coding either would push the other outside the tool.
+
+**The chosen delay is public.** The verifier displays it, because a token with no timelock and a
+token with a seven-day delay are materially different instruments, and a holder should not have to
+read storage to find out which one they own.
+
+## Address pause — and how it differs from a freeze
+
+| | Freeze | Address pause |
+|---|---|---|
+| **Affects** | An amount on one address | One address, entirely |
+| **Blocks sending** | ✅ | ✅ |
+| **Blocks receiving** | ❌ | ✅ |
+| **Partial** | ✅ any amount | ❌ all or nothing |
+| **Instrument for** | A compliance decision about a balance | An emergency about a counterparty |
+
+The distinction matters because otherwise the two are the same control wearing different names. A
+freeze restricts what a holder may send; it does not stop them being paid. An address pause stops
+both directions — the instrument for a compromised wallet or a counterparty under investigation,
+where continuing to receive is itself the problem.
+
+Global pause remains separate and remains total: it halts every transfer, trusted addresses included.
 
 ## Factory roles
 

@@ -99,7 +99,8 @@ shape implementation decisions:
 3. **Removing the compliance facet halts transfers.** The diamond fallback reverts `FunctionNotFound`,
    so the system fails closed by construction rather than by our code.
 4. **Trust bypasses rules only** — never the pause check, never the frozen-balance check.
-5. **The fee hook returns zero and no STBU reference exists anywhere in the open-source code.**
+5. **The fee is zero in the default deployment, any non-zero fee is publicly readable, and no STBU
+   reference exists anywhere in the open-source code.**
    Enforced by CI, not by review.
 
 ---

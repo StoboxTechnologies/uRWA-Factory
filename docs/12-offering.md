@@ -37,7 +37,9 @@ struct Tier {
 | **Pre-mint and reserve** | Supply minted to treasury and reserved when the offering is created | Pre-sold allocations; buyers see availability up front |
 | **Mint on purchase** | Tokens created as each investor buys | Open-ended raises; supply always equals what was actually sold |
 
-Both are supported and selected with the `preMint` flag.
+Both are supported and selected with the `preMint` flag. **There is no default** — the console
+requires a choice, because the two produce different `totalSupply` readings for the same raise and
+an issuer who did not choose will be surprised by whichever they got.
 
 ## Purchase flow
 
@@ -61,6 +63,20 @@ The registry evaluates **offering-level** rules before value moves. The token's 
 runs on the distribution leg. The two checks are independent by design: **passing an offering never
 implies the right to hold.** An investor who satisfies the offering but fails the token's rules cannot
 receive tokens.
+
+### A purchase larger than the remaining cap is refused outright
+
+No partial fill. If an investor asks for more than the hard cap still allows, the whole call reverts
+with the remaining amount in the error, and they submit a smaller one.
+
+The alternative — fill what is left and refund the difference — is friendlier for one transaction and
+worse everywhere else. It creates a partial-refund path on the money leg, which is the most sensitive
+code in the system and the place where a second refund route is most likely to be exploitable. It
+also means a purchase can succeed for an amount the investor never agreed to, which is a poor
+property for a regulated instrument.
+
+`previewPurchase` tells the investor the exact fillable amount before they sign, so the refusal is
+never a surprise — it is only reachable by racing another buyer in the same block.
 
 ## Payment locking
 

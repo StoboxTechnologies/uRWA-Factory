@@ -1,8 +1,7 @@
 # 25 — Design system
 
-One light theme, applied to the documentation site and every prototype. The canonical token file is
-[`prototypes/theme.css`](../prototypes/theme.css); each surface inlines the same values so it stays
-self-contained and works when opened from disk.
+One light theme, applied to the documentation site and every prototype, from one file:
+[`theme.css`](../theme.css). Nothing else declares a colour, a face, a radius or a shadow.
 
 ## The decision
 
@@ -73,9 +72,29 @@ should be seen before anything else.
 | `--spot-wash` | `rgba(34,211,238,.22)` | Selected option, active navigation, quiet strips |
 | `--spot-edge` | `#A5E9F4` | Border on a washed surface |
 
-Aqua appears at most twice per view: one badge and one highlight. The moment it decorates a third
-element it stops meaning anything. `--spot` is never used for text on white — that is what
-`--spot-text` is for.
+Aqua marks emphasis and nothing else: an eyebrow badge, the one highlighted phrase, the audience tag
+on a card, the free share of a position. It never carries status, never fills a large area, and is
+never used as text on white — that is what `--spot-text` is for. The moment it decorates something
+that is not the point of the screen it stops meaning anything.
+
+### You are here
+
+Every menu marks its selection, and marks it the same way — an aqua wash, an aqua ring and heavier
+text, so the mark is legible without relying on colour:
+
+```css
+background: var(--spot-wash);
+color: var(--accent);
+font-weight: 600;
+box-shadow: inset 0 0 0 1px var(--spot-edge);
+```
+
+It applies to the current page in the site navigation (`a[aria-current="page"]`), the open section in
+the token console (`.nb.on`), and the section being read in the documentation contents
+(`a[aria-current="true"]`, set as you scroll). The state is carried by `aria-current`, not by a class,
+so a screen reader announces it too. The documentation's contents list marks the section under a line
+a quarter down the viewport, and scrolls the mark into view inside the list without moving the page;
+without JavaScript the list behaves as a plain set of links.
 
 ### Status
 
@@ -119,20 +138,32 @@ sitting on the page rather than floating above it. `--sh-lg` is reserved for hov
 | `--body` | SF Pro Display → SF Pro Text → Inter → system sans |
 | `--mono` | JetBrains Mono → SF Mono → IBM Plex Mono → system mono |
 
-All sans. Inter is loaded from Google Fonts per surface so non-Apple platforms get the same shapes;
-on macOS and iOS the system face wins and nothing is fetched for the visible text.
+All sans. `theme.css` imports Inter from Google Fonts once, so non-Apple platforms get the same
+shapes; on macOS and iOS the system face wins and nothing is fetched for the visible text.
 
 Headings run at weight 700 with tight negative tracking that scales with size: `-.038em` on the
 masthead, `-.034em` on section titles, `-.022em` at 20px. Body text sits at `-.005em`. Measure stays
 at 74 characters; line height is 1.7 in body copy, because most of these surfaces are read rather
 than scanned.
 
+### Diagrams
+
+Every diagram opens with the same header band: a 56px tile in the spot colour at 16% carrying a 32px
+line glyph stroked in `--accent`, the word `DIAGRAM`, the subject, and a hairline under all three. The
+glyph is the diagram's one piece of ornament and it does the work of a title — the sixteen glyphs are
+distinct enough to tell the diagrams apart in a contact sheet.
+
+Diagrams are drawn only in the tokens above; `verify.py` `L0.11` pins every colour literal to one, and
+fails a diagram that has no header. Text colour is always set by a class, never by a `fill` attribute,
+because a scoped `text{fill:…}` rule silently beats an inline fill.
+
 ## Rules
 
 1. **Space before lines.** Reach for a gap before a border.
-2. **Black is the emphasis; aqua is the exception.** One black control per view, one spot colour at
-   most twice.
-3. **Never colour alone.** Status carries a word or a mark as well.
+2. **Black is the action; aqua is the emphasis.** One black control per view, and aqua only on what
+   the view is actually about.
+3. **Never colour alone.** Status carries a word or a mark as well, and the selected menu item
+   carries a ring and heavier text as well as its wash.
 4. **Every button is a pill.** No exceptions in this system.
 5. **Focus is always visible.** A 2px black outline at 2px offset plus an aqua ring, on every
    interactive element. The ring alone is not enough contrast to carry focus by itself.
@@ -141,18 +172,42 @@ than scanned.
 
 ## Where it is applied
 
-| Surface | File |
-|---|---|
-| Documentation site | `build-docs.py` → `urwa-documentation.html` |
-| Prototype index | `prototypes/index.html` |
-| Deploy console | `prototypes/deploy-console.html` |
-| Token console | `prototypes/token-console.html` |
-| Public verifier | `prototypes/verifier.html` |
-| Investor page | `prototypes/investor.html` |
-| Canonical tokens | `prototypes/theme.css` |
+| Surface | File | How it gets the system |
+|---|---|---|
+| Design system | `theme.css` | — it *is* the system |
+| Documentation site | `build-docs.py` → `urwa-documentation.html` | Inlined at build time |
+| Prototype index | `prototypes/index.html` | `<link href="../theme.css">` |
+| Deploy console | `prototypes/deploy-console.html` | `<link href="../theme.css">` |
+| Token console | `prototypes/token-console.html` | `<link href="../theme.css">` |
+| Public verifier | `prototypes/verifier.html` | `<link href="../theme.css">` |
+| Investor page | `prototypes/investor.html` | `<link href="../theme.css">` |
 
-When the production interfaces are built in Phase 5, `theme.css` is the source. The prototypes inline
-it only so each file opens standalone.
+The documentation page inlines the file rather than linking it, because it is meant to travel as one
+self-contained artefact. Everything else links it. When the production interfaces are built in
+Phase 5, they link the same file.
+
+## Adding a page
+
+A new page needs one line, and inherits everything — tokens, base, controls, containers, marks, site
+navigation, the web font, and the reduced-motion behaviour:
+
+```html
+<link rel="stylesheet" href="../theme.css">   <!-- prototypes/ -->
+<link rel="stylesheet" href="theme.css">      <!-- repository root -->
+```
+
+Its own `<style>` block carries only what is true of that page alone — its layout, its measure, its
+one-off components. Three things a page must never do, each of which `verify.py` `L0.12` fails:
+
+1. **Declare a token.** A page with its own `--ground` is not styled by the system; it resembles the
+   system until one of the two is edited.
+2. **Load a font.** `theme.css` imports Inter for non-Apple platforms. A second copy is a second
+   decision.
+3. **Restate a rule that already lives in `theme.css`.** If a button needs to look different, the
+   system is missing a variant — add it to `theme.css`, where every page gets it.
+
+Changing the look of everything is therefore one edit to one file. The documentation digest covers
+`theme.css`, so a theme change makes the committed build stale and CI asks for a rebuild.
 
 ## Related
 

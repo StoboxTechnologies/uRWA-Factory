@@ -71,6 +71,29 @@ guarantee**, and it is why the schema is a key-value registry rather than a fixe
 | `eu.prospectus.qualified` | Qualified-investor status | `EUQualifiedExemption` |
 | `aml.sanctions.clear` | Screening result + timestamp | `SanctionsScreen` |
 | `iso17442.lei` | Hashed Legal Entity Identifier | Reporting only — no rule in the default library reads it |
+| `mica.issuer.authorised` | Authorisation status + competent authority + expiry | `MiCAIssuerAuthorised` |
+| `mica.token.class` | ART, EMT or other crypto-asset | `MiCATokenClass` |
+| `mica.whitepaper.notified` | Notification date to the competent authority | `MiCAWhitepaperNotified` |
+| `mica.reserve.attested` | Reserve attestation date + attestor | `MiCAReserveAttested` |
+
+### The MiCA keys, and what they are for
+
+Four keys were added for the tokens that genuinely fall under MiCA — asset-referenced tokens and
+e-money tokens — because those obligations attach to the **issuer and the instrument**, not to the
+holder. That is the opposite of every other key here, and it is why they could not be folded into the
+existing set.
+
+| Key | Attaches to | Why a rule needs it |
+|---|---|---|
+| `mica.issuer.authorised` | The issuer | An unauthorised issuer may not offer the token at all |
+| `mica.token.class` | The instrument | Determines which obligations apply; ART and EMT differ |
+| `mica.whitepaper.notified` | The instrument | A public offer without notification is not permitted |
+| `mica.reserve.attested` | The instrument | ART and EMT must be backed; staleness is the risk |
+
+`mica.reserve.attested` is the one that ties the two halves of this system together. The claim carries
+a date and an attestor; the evidence behind it lives in the [Asset Passport](11-passport.md) as a
+committed datapoint. **The chain enforces that an attestation exists and is fresh. It never sees what
+the attestation says.**
 
 Two keys are marked **reporting only**. They are declared because issuers and supervisors ask for
 them and because a fork may write rules against them, but no rule in the default library reads either
@@ -205,6 +228,25 @@ reporting its own inconsistency.
 The fourth row is the reason the adapter never enumerates wallets. It derives the subject from
 `getLinker(wallet).uDID` and hashes it — one read, no list, and it works from a `view` context, which
 enumeration cannot.
+
+## Swapping the registry
+
+`setIdentityRegistry` replaces the claims source. **No balance moves and no holder loses anything.**
+
+| | |
+|---|---|
+| Existing balances | Untouched |
+| Existing holders | Re-checked at their next transfer, not retroactively |
+| A holder who fails the new registry | Keeps their tokens; cannot transfer until they are registered |
+| Trusted addresses | Unaffected — they skip claims entirely |
+
+This is the only defensible behaviour. Retro-checking would mean either seizing from holders who did
+nothing wrong, or maintaining a second eligibility state that drifts from the first. Deferring to the
+next transfer keeps one source of truth and puts the cost on the person who has to act.
+
+The transition is therefore visible rather than silent: a holder discovers the change when
+`canTransfer` returns false, and `whyBlocked` names the missing claim. The console warns the issuer
+that a swap will strand any holder not present in the new registry, with the count, before it runs.
 
 ## Blocking integration defect — must be handled in the adapter
 

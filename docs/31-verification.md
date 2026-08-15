@@ -18,9 +18,9 @@ commit.
 | **L4** | Runtime behaviour and invariants | Foundry, fork tests | ✅ once code exists |
 | **L5** | **The checks themselves** | `verify.py --self-test`, CI | ✅ |
 
-![Six levels, each catching what the one below cannot — and each honest about its own blind spot. Thirty-four checks run today; L3 and L4 arrive with the code they test.](diagrams/verification-levels.svg)
+![Six levels, each catching what the one below cannot — and each honest about its own blind spot. Thirty-five checks run today; L3 and L4 arrive with the code they test.](diagrams/verification-levels.svg)
 
-**Thirty-four checks run today** — eleven at L0, seven at L1, sixteen at L2 — and all thirty-four are
+**Thirty-five checks run today** — twelve at L0, seven at L1, sixteen at L2 — and all thirty-five are
 re-run against their own broken fixtures at L5. The twenty-two L3 and L4 checks are specified below
 and implemented with the code they test.
 
@@ -42,6 +42,11 @@ It also pins every colour literal to the design tokens. The sixteen diagrams wer
 warm grey family against pages built from a cool one — near enough to look deliberate, far enough to
 read as an off-brand tint. Nothing else in the pipeline would have caught it.
 
+`L0.12` keeps the design system single-sourced. Every surface used to inline its own copy of the
+tokens, which is a system only until one copy is edited and the others are not. The tokens now live
+in `theme.css` alone: the prototypes link it, the documentation build inlines it, and this check
+fails a page that links nothing, declares a token of its own, or pulls in its own web font.
+
 | Check | Rule |
 |---|---|
 | `L0.1` | Every `docs/*.md` appears in the README index |
@@ -54,7 +59,8 @@ read as an off-brand tint. Nothing else in the pipeline would have caught it.
 | `L0.8` | Every HTML tag balances |
 | `L0.9` | Every page is reachable from every other — the documentation links each surface, each surface links back and sideways |
 | `L0.10` | Every page declares its character set and viewport |
-| `L0.11` | Every diagram resolves, parses, carries a `viewBox`, sets no `fill` on `<text>`, fetches nothing, keeps to the design tokens, and has no label running off the canvas |
+| `L0.11` | Every diagram resolves, parses, carries a `viewBox` and a header icon, sets no `fill` on `<text>`, fetches nothing, keeps to the design tokens, and has no label running off the canvas |
+| `L0.12` | Every page inherits the design system — each prototype links `theme.css`, none declares its own tokens or loads its own web font, and the built documentation carries the tokens inline |
 
 ## L1 — Document consistency
 
@@ -125,7 +131,7 @@ The fifteen invariants in [17](17-security.md), plus the behaviour the standard 
 | `L4.9` | Trust never bypasses pause or frozen balance |
 | `L4.10` | A refunded purchase cannot be refunded twice |
 | `L4.11` | `getFrozenTokens` may exceed balance without reverting |
-| `L4.12` | The fee hook returns zero; no STBU reference exists |
+| `L4.12` | The default deployment charges zero; any fee is readable through the public interface; no STBU reference exists |
 | `L4.13` | The whole stack deploys on a clean chain with no Stobox contract |
 | `L4.14` | A payment leg cannot settle without its security leg |
 | `L4.15` | No agent action exceeds its mandate |

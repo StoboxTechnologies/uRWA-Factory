@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 DOCS = ROOT / "docs"
 OUT = ROOT / "urwa-documentation.html"
+THEME = ROOT / "theme.css"
 
 
 def source_digest():
@@ -24,7 +25,7 @@ def source_digest():
     checkout gives every file the same mtime.
     """
     h = hashlib.sha256()
-    for p in sorted(DOCS.glob("*.md")) + [ROOT / "build-docs.py"]:
+    for p in sorted(DOCS.glob("*.md")) + [ROOT / "build-docs.py", THEME]:
         h.update(p.name.encode())
         h.update(p.read_bytes())
     return h.hexdigest()
@@ -277,28 +278,13 @@ def render(md, sec):
 # ── assemble ────────────────────────────────────────────────────────────────
 
 STYLE = """
-:root{
-  --ground:#F5F5F7;--surface:#FFFFFF;--sunk:#F0F2F8;--dark:#0C0C0F;
-  --ink:#1D1D1F;--ink-2:#3C3C43;--muted:#57575B;--faint:#6E6E73;
-  --rule:#E2E4E9;--rule-strong:#D2D5DB;
-  --accent:#0C0C0F;--accent-2:#1D1D1F;--accent-wash:#F5F5F7;--accent-edge:#E2E4E9;
-  --spot:#22D3EE;--spot-2:#0EBDD9;--spot-ink:#0C2E33;--spot-text:#0E7490;
-  --spot-wash:rgba(34,211,238,.22);--spot-edge:#A5E9F4;
-  --ok:#0F7A5F;--warn:#B45309;--crit:#B42318;
-  --display:-apple-system,system-ui,'SF Pro Display','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
-  --body:-apple-system,system-ui,'SF Pro Display','SF Pro Text','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
-  --r:10px;--r-md:12px;--r-lg:20px;--r-pill:980px;
-  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
-  --sh-lg:0 8px 20px -4px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.05);
-  --sh-card:0 10px 30px -24px rgba(0,0,0,.3);
-  --sh-focus:0 0 0 3px rgba(34,211,238,.45);
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17.5px;line-height:1.7;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
-.hl{background:var(--spot);color:var(--spot-ink);border-radius:8px;padding:1px 10px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
-.shell{max-width:1240px;margin:0 auto;padding:clamp(30px,4vw,72px) clamp(18px,3vw,36px) 110px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:clamp(28px,4vw,64px);align-items:start}
-@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:none!important;border-right:0!important;border-bottom:1px solid var(--rule);padding-bottom:20px}}
+/* Page styles for the documentation site. Tokens, controls, containers, marks
+   and the site navigation come from theme.css, which is inlined above this
+   block at build time — never restate them here. */
+body{font-size:17.5px;line-height:1.7}
+.shell{max-width:1520px;margin:0 auto;padding:clamp(30px,4vw,72px) clamp(18px,3vw,40px) 110px;display:grid;grid-template-columns:236px minmax(0,1fr) 248px;gap:clamp(24px,3vw,52px);align-items:start}
+@media(max-width:1180px){.shell{grid-template-columns:236px minmax(0,1fr)}aside.rail{display:none}.relmob{display:block}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:min(42vh,320px)!important;overflow-y:auto!important;border-right:0!important;border-bottom:1px solid var(--rule);padding:0 0 16px!important;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 36px),transparent)}}
 nav.toc{position:sticky;top:28px;max-height:calc(100vh - 56px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
 nav.toc .t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
 nav.toc .t.s{margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--rule)}
@@ -309,8 +295,20 @@ figure.dg figcaption strong{color:var(--ink-2);font-weight:600}
 p.missing{color:var(--crit);font-family:var(--mono);font-size:13px}
 nav.toc a{display:block;font-size:14.5px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:var(--r-pill);transition:background .18s,color .18s}
 nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a[aria-current="true"]{color:var(--accent);background:var(--spot-wash);font-weight:600;box-shadow:inset 0 0 0 1px var(--spot-edge)}
+nav.toc a[aria-current="true"] .n{color:var(--accent)}
 nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
 nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+aside.rail{position:sticky;top:28px;max-height:calc(100vh - 56px);overflow-y:auto;border-left:1px solid var(--rule);padding-left:22px}
+aside.rail .railt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+aside.rail .railt.s{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+aside.rail a{display:block;font-size:13.5px;line-height:1.45;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .18s,color .18s}
+aside.rail a:hover{color:var(--ink);background:var(--sunk)}
+aside.rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+aside.rail .railsec{display:none}
+aside.rail .railsec.on{display:block}
+aside.rail .empty{font-size:13px;color:var(--faint);margin:0;padding:0 10px}
+.relmob{display:none}
 header.mast{border-bottom:1px solid var(--rule);padding-bottom:38px;margin-bottom:10px}
 header.mast h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,7vw,84px);line-height:1.02;letter-spacing:-.038em;margin:0 0 18px;text-wrap:balance}
 header.mast p{color:var(--muted);max-width:58ch;margin:0 0 28px;font-size:23px;line-height:1.45;letter-spacing:-.015em}
@@ -320,15 +318,16 @@ header.mast .meta b{color:var(--ink);font-weight:600;margin-right:6px}
 header.mast .meta span:first-child{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
 header.mast .meta span:first-child b{color:var(--spot-ink)}
 article{min-width:0}
+@media(min-width:1181px){article h3[id$="-related-documents"],article h3[id$="-related-documents"]+ul,article h3[id$="-related"],article h3[id$="-related"]+ul{display:none}}
 .hero{border-bottom:1px solid var(--rule);padding-bottom:48px;margin-bottom:8px}
 .hero .q{font-size:clamp(24px,2.8vw,34px);line-height:1.2;font-weight:700;letter-spacing:-.032em;margin:0 0 30px;max-width:22ch;text-wrap:balance}
 .hero .q em{font-style:normal;color:var(--muted);display:block;font-size:17.5px;font-weight:400;line-height:1.6;margin-top:20px;letter-spacing:-.005em;max-width:62ch}
-.wxy{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:0;border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px}
-.wxy>div{padding:20px 22px;border-right:1px solid var(--rule)}
-.wxy>div:last-child{border-right:0}
-@media(max-width:820px){.wxy>div{border-right:0;border-bottom:1px solid var(--rule)}.wxy>div:last-child{border-bottom:0}}
-.wxy h4{margin:0 0 7px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700}
-.wxy p{margin:0;font-size:15px;line-height:1.6;color:var(--ink-2);max-width:none}
+.wxy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 30px}
+.wxy>div{padding:24px 26px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-card)}
+@media(max-width:640px){.wxy{grid-template-columns:1fr}}
+.wxy h4{margin:0 0 10px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.wxy p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2);max-width:none}
+.wxy strong,.wxy b{color:var(--ink)}
 .author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:24px 26px;background:var(--surface);box-shadow:var(--sh-card);margin:0 0 26px;flex-wrap:wrap}
 .author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--accent);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none;letter-spacing:-.02em}
 .author .b{flex:1;min-width:240px}
@@ -344,8 +343,8 @@ article{min-width:0}
 .startat a:active{transform:translateY(1px)}
 .startat a.k{background:var(--accent);border-color:var(--accent);color:#FFF}
 .startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
-section.doc{margin-top:88px;scroll-margin-top:24px}
-section.doc:first-of-type{margin-top:52px}
+section.doc{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule);scroll-margin-top:24px}
+section.doc:first-of-type{margin-top:44px}
 h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.08;letter-spacing:-.034em;margin:0 0 26px;text-wrap:balance;scroll-margin-top:24px}
 h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.024em;margin:42px 0 12px;text-wrap:balance;scroll-margin-top:24px}
 h4{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.016em;margin:32px 0 10px;scroll-margin-top:24px}
@@ -372,11 +371,139 @@ th{color:var(--faint);font-size:11px;font-weight:700;letter-spacing:.08em;text-t
 td{padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
 tbody tr:last-child td{border-bottom:0}
 td:first-child{color:var(--ink);font-weight:600}
+details.faq{border:1px solid var(--rule);border-radius:var(--r-md);background:var(--surface);margin:0 0 8px;box-shadow:var(--sh-card)}
+details.faq>summary{cursor:pointer;list-style:none;padding:15px 52px 15px 20px;font-family:var(--display);font-size:16.5px;font-weight:600;letter-spacing:-.016em;position:relative;border-radius:var(--r-md)}
+details.faq>summary::-webkit-details-marker{display:none}
+details.faq>summary::after{content:"";position:absolute;right:20px;top:50%;width:9px;height:9px;margin-top:-6px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .18s}
+details.faq[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+details.faq>summary:hover{background:var(--sunk)}
+details.faq>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:var(--sh-focus)}
+details.faq[open]>summary{border-bottom:1px solid var(--rule);border-radius:var(--r-md) var(--r-md) 0 0}
+details.faq p{margin:0;padding:16px 20px 18px;font-size:16px;color:var(--ink-2);max-width:74ch}
+@media(prefers-reduced-motion:reduce){details.faq>summary::after{transition:none}}
 hr.soft{border:0;border-top:1px solid var(--rule);margin:32px 0}
 footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:14px;color:var(--faint)}
 footer p{max-width:76ch;margin:0 0 8px}
+@media(prefers-reduced-motion:reduce){.startat a:active{transform:none}}
 """
 
+
+# A 33-entry contents list with nothing marked tells the reader nothing about
+# where they are. This marks the section being read; without JavaScript the
+# list behaves exactly as it did before.
+SPY = """<script>
+(() => {
+  const nav = document.querySelector("nav.toc");
+  const secs = [...document.querySelectorAll("section.doc")];
+  if (!nav || !secs.length) return;
+
+  const links = new Map();
+  document.querySelectorAll('nav.toc a[href^="#sec-"]').forEach(a =>
+    links.set(a.getAttribute("href").slice(1), a));
+
+  let current = null;
+  const mark = id => {
+    if (id === current) return;
+    const prev = links.get(current);
+    if (prev) prev.removeAttribute("aria-current");
+    document.querySelectorAll("aside.rail .railsec.on").forEach(b => b.classList.remove("on"));
+    const block = document.querySelector('aside.rail .railsec[data-sec="' + id + '"]');
+    if (block) block.classList.add("on");
+    const next = links.get(id);
+    if (next) {
+      next.setAttribute("aria-current", "true");
+      // Keep the mark inside the contents list without scrolling the page.
+      const r = next.getBoundingClientRect(), n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+    }
+    current = id;
+  };
+
+  // The section whose top has passed a line a quarter down the viewport is the
+  // one being read. Plain geometry: no observer, no dependency, and it settles
+  // correctly on load, on resize, and after a jump to an anchor.
+  const pick = () => {
+    const line = window.innerHeight * 0.25;
+    let id = secs[0].id;
+    for (const sec of secs) {
+      if (sec.getBoundingClientRect().top > line) break;
+      id = sec.id;
+    }
+    mark("sec-" + id.replace("doc-", ""));
+  };
+
+  const frame = window.requestAnimationFrame || (fn => setTimeout(fn, 16));
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    frame(() => { queued = false; pick(); });
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  addEventListener("hashchange", onScroll);
+
+  // A click moves the mark at once, before the scroll settles.
+  links.forEach((a, id) => a.addEventListener("click", () => mark(id)));
+
+  pick();
+})();
+</script>"""
+
+
+def rail_block(sec, heads, rel):
+    """One section's reference column: where you are, and where to go next."""
+    out = [f'<div class="railsec" data-sec="sec-{sec}">']
+    if heads:
+        out.append('<p class="railt">On this page</p>')
+        out += [f'<a href="#{a}">{html.escape(t)}</a>' for a, t in heads]
+    if rel:
+        out.append(f'<p class="railt{" s" if heads else ""}">Related</p>')
+        out += [link(label, href) for label, href in rel]
+    if not heads and not rel:
+        out.append('<p class="empty">No further reading for this section.</p>')
+    out.append("</div>")
+    return "".join(out)
+
+
+def accordion(body):
+    """Turn each question into a disclosure.
+
+    Fifty-odd questions as a flat wall of headings is a document nobody scans.
+    As disclosures the whole set fits on one screen and the reader opens what
+    they came for. The anchor moves onto the <details>, so links still resolve.
+    """
+    parts = re.split(r'(<h4 id="[^"]*">.*?</h4>)', body)
+    out = [parts[0]]
+    for i in range(1, len(parts), 2):
+        head = parts[i]
+        rest = parts[i + 1] if i + 1 < len(parts) else ""
+        m = re.search(r"<h3\b", rest)
+        tail = ""
+        if m:
+            rest, tail = rest[: m.start()], rest[m.start() :]
+        anchor = re.search(r'id="([^"]*)"', head).group(1)
+        label = re.sub(r"</?h4[^>]*>", "", head)
+        out.append(f'<details class="faq" id="{anchor}"><summary>{label}</summary>{rest}</details>{tail}')
+    return "".join(out)
+
+
+def related(md):
+    """The links a document points at, for the reference rail."""
+    m = re.search(r"^##\s+Related.*?$\n(.*?)(?=^##\s|\Z)", md, re.M | re.S)
+    if not m:
+        return []
+    return re.findall(r"^-\s+\[([^\]]+)\]\(([^)]+)\)", m.group(1), re.M)
+
+
+def subheads(body):
+    """Second-level headings of a rendered section, for "on this page"."""
+    out = []
+    for anchor, label in re.findall(r'<h3 id="([^"]+)">(.*?)</h3>', body, re.S):
+        if anchor.endswith("-related") or anchor.endswith("-related-documents"):
+            continue
+        out.append((anchor, re.sub(r"<[^>]+>", "", label)))
+    return out
 
 def title_of(md, fallback):
     m = re.search(r"^#\s+(.*)$", md, re.M)
@@ -384,7 +511,7 @@ def title_of(md, fallback):
 
 
 def main():
-    sections, toc = [], []
+    sections, toc, rails = [], [], []
     for rel in ORDER:
         path = ROOT / rel
         if not path.exists():
@@ -404,7 +531,11 @@ def main():
         toc.append((sec, label))
         body = render(md, sec)
         body = re.sub(r'href="#([\w-]+)" data-scoped="1"', lambda m: f'href="#{sec}-{m.group(1)}"', body)
+        heads = subheads(body)
+        if sec == "32":
+            body = accordion(body)
         sections.append(f'<section class="doc" id="doc-{sec}">{body}</section>')
+        rails.append(rail_block(sec, heads, related(md)))
         print(f"  {rel}  →  #sec-{sec}")
 
     nav = "\n".join(
@@ -412,13 +543,15 @@ def main():
         for s, t in toc
     )
 
-    doc = f"""<meta charset="utf-8">
+    doc = f"""<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>uRWA Factory — Complete Documentation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-<style>{STYLE}</style>
+<style>{THEME.read_text(encoding="utf-8")}{STYLE}</style>
 <div class="shell">
 <nav class="toc" aria-label="Contents">
 <p class="t">Contents</p>
@@ -490,7 +623,18 @@ Edit the Markdown, not this file.</p>
 architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
+<aside class="rail" aria-label="Section reference">
+{"".join(rails)}
+<div class="railfix">
+<p class="railt s">Reference</p>
+<a href="prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Source on GitHub</a>
+<a href="https://eips.ethereum.org/EIPS/eip-7943">ERC-7943 on eips.ethereum.org</a>
+<a href="LICENSE">Licence — MIT</a>
 </div>
+</aside>
+</div>
+{SPY}
 <!-- source-digest: {source_digest()} -->
 """
     OUT.write_text(doc, encoding="utf-8")

@@ -104,7 +104,8 @@ Stated rather than hidden.
 11. Trust never bypasses the pause or frozen-balance checks.
 12. A refunded purchase cannot be refunded again by either path.
 13. `getFrozenTokens` may exceed balance and does not revert.
-14. **The fee hook returns zero and no STBU reference exists anywhere in the open-source code.**
+14. **The fee is zero in the default deployment, any non-zero fee is publicly readable before a
+    transaction, and no STBU reference exists anywhere in the open-source code.**
 15. No open-source contract references any Stobox address.
 
 ## Audit strategy

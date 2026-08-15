@@ -57,7 +57,7 @@ deliberate choice.
    values, documents and personal data never cross          │
   ═══════════════════════════════════════════════════════   ▼
    ON-CHAIN:  snapshotRoot · revocationRoot · attestation metadata
-              public leaves · passportId · chainId · token links
+              passportId · chainId · token links — no values, ever
 ```
 
 ```solidity
@@ -85,47 +85,71 @@ work. Four triggers:
 | **Creation** | Opening state, before any token exists |
 | **Tokenization** | The snapshot the handshake binds to |
 | **Material event** | New valuation, audit, proof-of-reserves, regime change, red-flag change |
-| **Scheduled — monthly** | A heartbeat, so neglect is visible |
+| **Freshness expiry** | A group's window elapses, so staleness is provable rather than assumed |
 
 Between snapshots the off-chain record is live but unprovable. That is the correct trade: a proof
 against a two-week-old root with a visible timestamp is honest; a continuously rewritten root would be
 both costly and impossible to cite.
 
-## Three visibility tiers
+### Freshness is per group, not per passport
 
-| Tier | On chain | Who reads the value | Example datapoints |
-|---|---|---|---|
-| **Public** | value in clear | anyone | class, jurisdiction, regime, token identity, compliance config, instrument terms |
-| **Conditional** | commitment | grantee with an access grant, off-chain, verified against the root | valuation, customers, revenue, title documents |
-| **Private** | commitment | regulator under legal basis, logged | UBO register, KYB file, banking relationships, investor file |
+A single cadence for the whole record is wrong in both directions: it re-anchors a valuation that has
+not moved, and lets a sanctions screen go stale for a month.
 
-All three sit in the same Merkle tree, so the snapshot root covers the complete record. Only the path
-from commitment to value differs. A private datapoint is still **provable** — it is simply never
-revealed.
+| Group | Window | Why |
+|---|---|---|
+| Sanctions and screening | Days | The fact it asserts changes without warning |
+| Reserve attestation | Days to weeks | What `MiCAReserveAttested` enforces; the basis of a backed token |
+| Valuation | Up to a year | Moves slowly, and re-valuing costs real money |
+| Legal opinion, title, custody | Until superseded | Changes on an event, never on a clock |
+| Identity of the asset — class, jurisdiction | No window | Does not change; if it does, the passport is wrong |
 
-### Attestation metadata is public even when the value is private
+**Staleness is a readable fact, not a hidden one.** A group past its window is visibly stale to
+anyone checking, which is the difference between "nothing has changed" and "nobody has looked in
+three years" — the distinction a cadence-only design cannot express.
 
-A counterparty can see that a named audit firm signed the reserve figure eleven days ago, with an
-attestation valid for ninety days — without seeing the figure. That is enormous signal at zero
-disclosure, and it answers most of the diligence question before anyone signs an NDA.
+## Visibility — nothing is disclosed by default
 
-## The public set, decided
+**The passport publishes no values.** Every datapoint is a commitment; reading one requires an
+explicit, expiring grant. There is no tier that is open to the world.
 
-Inclusion test: *would an investor need this before deciding to engage, and is it harmless if a
-competitor reads it?*
+| Disclosure tier | On chain | Who reads the value |
+|---|---|---|
+| **Granted** | commitment | A named grantee, off chain, verified against the root |
+| **Regulator tier** | commitment | A supervisor under legal basis, logged |
 
-| Public | Why |
-|---|---|
-| Asset class and jurisdiction | Basic eligibility |
-| Regime | Determines who may invest at all |
-| Token identity — address, chainId, name, symbol, standard | Needed to find and verify the instrument |
-| Supply and holder distribution | Already public on chain; hiding it would be theatre |
-| Compliance configuration | An investor must know the rules **before** attempting a transfer |
-| Instrument terms | A security whose terms are secret is not investable |
-| Attestation metadata | Signal without disclosure |
-| Red-flag status — audit, legal opinion, custody, redemption | Absence is material and must be visible |
+Both sit in the same Merkle tree, so the snapshot root covers the complete record. Only the path from
+commitment to value differs, and neither path is open.
 
-Everything else is commitment only.
+### Then why does a token look transparent?
+
+Because most of what an investor needs is **not passport data at all**. Asset class, jurisdiction,
+regime, supply, holder distribution, the live rule set, the token's own address and standard — all of
+that is token state, readable directly from the chain by anyone, with no passport involved and no
+grant required.
+
+That separation is the point. The chain carries what the instrument *is*; the passport carries
+evidence about the asset behind it. Confusing the two is what produces systems where an investor must
+ask permission to learn the transfer rules they are already bound by.
+
+### Attestation metadata is public even when the value is not
+
+A counterparty can see that a named audit firm signed the reserve figure eleven days ago, under an
+attestation valid for ninety days — without seeing the figure.
+
+That is enormous signal at zero disclosure, and it answers most of the diligence question before
+anyone signs an NDA. It is also what `MiCAReserveAttested` reads: the rule needs to know an
+attestation exists and is fresh, never what it says.
+
+### What the issuer gives up by disclosing nothing
+
+Stated because the decision has a cost. An asset whose datapoints are all behind grants is harder to
+assess casually, and some investors will not ask. The issuer trades reach for control.
+
+The default is closed because the reverse mistake is unrecoverable: a value published once cannot be
+unpublished, and much of a real asset record is commercially sensitive or personal. An issuer who
+wants openness grants broadly — including a grant to everyone, if they choose. **Opening is a
+decision; leaking is an accident.**
 
 ## No personal data. None.
 

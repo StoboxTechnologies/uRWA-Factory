@@ -58,6 +58,8 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | CO-09 | Treasury clone | Planned | CO-07 | 0.5 |
 | CO-10 | uRWAFactory: create, packages, presets, registry | Planned | CO-01…09 | 1.5 |
 | CO-11 | ERC-1404 compatibility surface | Planned | CO-03 | 0.25 |
+| CO-12 | Per-address pause — blocks sending and receiving, reason evented | Ready | CO-01 | 0.25 |
+| CO-13 | Configurable upgrade delay in TokenParams, exposed for the verifier | Ready | CO-01 | 0.5 |
 
 ### ID — Identity
 
@@ -83,7 +85,8 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | PO-05 | MaxHolders, MaxBalancePerHolder | Planned | PO-01, CO-05 | 0.5 |
 | PO-06 | HoldPeriod, TransferWindow | Planned | PO-01, CO-06 | 0.5 |
 | PO-07 | SanctionsScreen, TravelRuleThreshold | Planned | PO-01 | 0.5 |
-| PO-08 | Seven regime presets registered in the factory | Planned | PO-02…07, CO-10 | 0.5 |
+| PO-08 | Four regime presets registered in the factory — RegD506c, RegS, MiCA-ART, MiCA-EMT, Open | Planned | PO-02…09, CO-10 | 0.5 |
+| PO-09 | MiCA rules: issuer authorised, token class, whitepaper notified, reserve attested | Ready | PO-01 | 0.75 |
 
 ### CU — Custody and offerings · Phase 3
 
@@ -130,6 +133,8 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | UI-08 | Prototype: investor page | **Done** | SP-06 | — |
 | UI-06 | Compliance console | Planned | UI-01, CO-06 | 1 |
 | UI-07 | Passport proof verifier surface | Planned | PA-04 | 0.5 |
+| UI-09 | Deploy console: eight steps, no default for upgrade delay or emergency facet | Ready | UI-01 | 0.5 |
+| UI-10 | Verifier: upgrade delay, emergency facet, fee and passport state | Ready | UI-01 | 0.5 |
 
 ### TO — Tooling
 

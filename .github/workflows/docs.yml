@@ -3,7 +3,7 @@ name: Documentation site
 on:
   push:
     branches: [main]
-    paths: ['docs/**', 'README.md', 'build-docs.py', '.github/workflows/docs.yml']
+    paths: ['docs/**', 'prototypes/**', 'theme.css', 'README.md', 'build-docs.py', '.github/workflows/docs.yml']
   workflow_dispatch:
 
 permissions:
@@ -33,6 +33,7 @@ jobs:
           cp urwa-documentation.html _site/index.html
           cp -r docs _site/docs
           cp -r prototypes _site/prototypes
+          cp theme.css _site/theme.css   # the prototypes link ../theme.css
           cp README.md LICENSE NOTICE AUTHORS CITATION.cff _site/
 
       - uses: actions/configure-pages@v5

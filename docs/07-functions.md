@@ -186,6 +186,17 @@ frozen-balance check. That is what stops a compromised treasury from draining lo
 | `pause()` | Halts every transfer immediately | COMPLIANCE_OFFICER | Security incident, regulatory order, corporate action |
 | `unpause()` | Resumes | COMPLIANCE_OFFICER | Recovery |
 | `paused() → bool` | Current state | Anyone | Integrators must show it |
+| `pauseAddress(account, reason)` | Halts one address in **both** directions | COMPLIANCE_OFFICER | A compromised wallet or a counterparty under investigation |
+| `unpauseAddress(account)` | Resumes that address | COMPLIANCE_OFFICER | Recovery |
+| `addressPaused(account) → bool` | Is this address halted | Anyone | Pre-flight, and why a transfer failed |
+
+**Why an address pause is not just a full freeze.** A freeze restricts sending; the holder can still
+be paid. An address pause blocks sending *and* receiving. See [05](05-roles.md) for the full
+comparison — the two are separate instruments for separate problems, and collapsing them would leave
+no way to stop value flowing **toward** an address.
+
+`reason` is mandatory and evented, on the same principle as the trust list: an unexplained
+restriction is indistinguishable from an attack on a holder.
 
 **Why there is no timelock on this.** A delay on an emergency stop defeats the purpose. Upgrades are
 timelocked; the emergency brake is not.

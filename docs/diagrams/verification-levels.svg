@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 372" width="760" height="372" class="d-ver">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 464" width="760" height="464" class="d-ver">
 <style>
 .d-ver text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
 .d-ver .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
@@ -12,8 +12,15 @@
 .d-ver .i-sm{fill:#6E6E73}
 .d-ver .i-mos{fill:#F0F2F8}
 .d-ver .grey{fill:#6E6E73}
+
+.d-ver .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-ver .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-ver .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 </style>
-<rect width="760" height="372" fill="#FFFFFF"/>
+<rect width="760" height="464" fill="#FFFFFF"/>
+<!-- header -->
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M12 2.2l8 3v6c0 5-3.5 9-8 10.8C7.5 20.2 4 16.2 4 11.2v-6Z"/><path d="M8.5 11.8l2.6 2.6 4.6-5"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Verification levels</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
 
 <text class="lbl" x="24" y="24">EACH LEVEL VERIFIES WHAT THE ONE BELOW CANNOT</text>
 <text class="lbl" x="600" y="24">BLIND TO</text>
@@ -22,7 +29,7 @@
 <text class="lv" x="44" y="61">L0</text>
 <text class="st" x="78" y="61">Structure</text>
 <text class="sm" x="238" y="61">links, anchors, staleness, encoding</text>
-<text class="mos" x="506" y="61">11</text>
+<text class="mos" x="506" y="61">12</text>
 <text class="fa" x="600" y="61">whether the prose is true</text>
 
 <rect x="24" y="82" width="560" height="40" rx="9" fill="#F5F5F7" stroke="#E2E4E9"/>
@@ -62,5 +69,5 @@
 <text class="fa" x="600" y="288">what the checks miss</text>
 
 <rect x="24" y="332" width="712" height="30" rx="8" fill="#F5F5F7" stroke="#E2E4E9"/>
-<text class="sm" x="44" y="352">L5 found six dead checks on its first run. All six passed L0 through L2 and looked healthy. Nothing below L5 could have found them.</text>
+<text class="sm" x="44" y="352">L5 found six dead checks on its first run. All six passed L0 through L2 and looked healthy. Nothing below L5 could have found them.</text></g>
 </svg>

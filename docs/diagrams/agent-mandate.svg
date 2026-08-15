@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 366" width="760" height="366" class="d-mand">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 458" width="760" height="458" class="d-mand">
 <style>
 .d-mand text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
 .d-mand .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
@@ -11,6 +11,10 @@
 .d-mand .i-sm{fill:#6E6E73}
 .d-mand .no{fill:#B42318;font-size:10.5px}
 .d-mand .nob{fill:#B42318;font-size:11.5px;font-weight:600}
+
+.d-mand .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-mand .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-mand .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 </style>
 <defs>
 <marker id="ma" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
@@ -20,7 +24,10 @@
 <path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#F5CFCA"/>
 </marker>
 </defs>
-<rect width="760" height="366" fill="#FFFFFF"/>
+<rect width="760" height="458" fill="#FFFFFF"/>
+<!-- header -->
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><rect x="3.8" y="8" width="16.4" height="12.4" rx="3.4"/><path d="M12 3.6V8"/><circle cx="12" cy="2.6" r="1.4"/><path d="M9 13v2.2"/><path d="M15 13v2.2"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Agent mandate</text><rect x="24" y="92" width="712.0" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
 
 <rect x="24" y="16" width="150" height="60" rx="10" fill="#F0F2F8" stroke="#D2D5DB"/>
 <text class="st" x="42" y="40">Agent</text>
@@ -65,5 +72,5 @@
 <rect x="388" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#F5CFCA"/>
 <text class="nob" x="408" y="286">Outside it</text>
 <text class="mo" x="408" y="308">reverts before any state change</text>
-<text class="fa" x="408" y="330">The agent is not trusted to respect its mandate. It cannot exceed it.</text>
+<text class="fa" x="408" y="330">The agent is not trusted to respect its mandate. It cannot exceed it.</text></g>
 </svg>
