@@ -128,10 +128,14 @@ active    bool        derived: DID unexpired AND unblocked AND wallet not deacti
 ```
 
 **Invariants**
-1. A wallet maps to at most one subject.
+1. A wallet maps to at most one subject, enforced when the link is made rather than reconciled later.
 2. A wallet with no subject is assigned `keccak256(wallet)` as a synthetic subject.
 3. `subjectBalanceOf(s)` equals the sum of balances across all wallets of `s`.
 4. Deactivating one wallet never changes another wallet's eligibility.
+5. The wallet set is **not issuer-controlled** — the holder adds wallets themselves, up to the
+   registry's cap. Only the subject count is enforceable, which is why caps count subjects.
+6. Wallet deactivation is reversible by the holder and is therefore never an enforcement signal.
+   Stopping a person is a subject-level operation. See [09](09-identity-did.md).
 
 ### E-05 Claim
 
@@ -151,6 +155,8 @@ revoked     bool
 4. Reading a claim never reverts, including for unknown subjects.
 
 ### E-02 Balance and E-06/E-07 restrictions
+
+![What a balance is made of. Neither the frozen total nor the transferable amount is stored — both are composed on read, so they cannot drift from the parts they are made of.](diagrams/balance-composition.svg)
 
 ```
 balanceOf(a)          = free + adminFrozen + Σ(unexpired lockups)

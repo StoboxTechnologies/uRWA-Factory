@@ -51,7 +51,7 @@ jobs:
 
       - name: No Stobox contract addresses in source
         run: |
-          if grep -rniE '0x(096d75d0|b05cf4f6|25e60361|85a3eae3|1cb9bd2c|998a0bea|e0c0f44a)' \
+          if grep -rniE '0x(096d75d0|b05cf4f6|25e60361|a832662d|85a3eae3|1cb9bd2c|998a0bea|e0c0f44a)' \
               --include='*.sol' --include='*.ts' --include='*.js' src/ test/ script/ 2>/dev/null; then
             echo "::error::a known Stobox contract address appears in source"
             exit 1

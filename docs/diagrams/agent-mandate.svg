@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 366" width="760" height="366" class="d-mand">
+<style>
+.d-mand text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
+.d-mand .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-mand .st{font-size:13px;font-weight:600}
+.d-mand .sm{font-size:11.5px;fill:#6E6B66}
+.d-mand .fa{font-size:10.5px;fill:#9B9791}
+.d-mand .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
+.d-mand .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-mand .i-st{fill:#FFFFFF}
+.d-mand .i-sm{fill:#9B9791}
+.d-mand .no{fill:#7A322A;font-size:10.5px}
+.d-mand .nob{fill:#7A322A;font-size:11.5px;font-weight:600}
+</style>
+<defs>
+<marker id="ma" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+</marker>
+<marker id="mb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#C9A6A0"/>
+</marker>
+</defs>
+<rect width="760" height="366" fill="#FFFFFF"/>
+
+<rect x="24" y="16" width="150" height="60" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<text class="st" x="42" y="40">Agent</text>
+<text class="fa" x="42" y="60">automated operator</text>
+
+<path d="M182 46 L216 46" stroke="#9B9791" stroke-width="1.3" marker-end="url(#ma)" fill="none"/>
+<text class="mos" x="186" y="38">acts</text>
+
+<rect x="224" y="16" width="512" height="60" rx="10" fill="#111110"/>
+<text class="lbl i-sm" x="244" y="40">AGENTAUTHORITY · CHECKED BEFORE ANY STATE CHANGES</text>
+<text class="mo i-sm" x="244" y="62">check(mandate, scope, token, counterparty, amount) → (bool, reason)</text>
+
+<!-- the mandate -->
+<text class="lbl" x="24" y="112">WHAT A MANDATE BOUNDS</text>
+<rect x="24" y="124" width="230" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mos" x="42" y="148">scopes[]         which actions</text>
+<text class="mos" x="42" y="168">tokens[]         which assets</text>
+<text class="mos" x="42" y="188">counterparties[] whom with</text>
+<text class="mos" x="42" y="208">maxPerAction     per call</text>
+<text class="mos" x="42" y="228">maxPerEpoch      per window</text>
+
+<rect x="266" y="124" width="230" height="118" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<text class="st" x="284" y="148">Every mandate expires</text>
+<text class="sm" x="284" y="170">There is no perpetual mandate</text>
+<text class="sm" x="284" y="186">in the type — it is a required</text>
+<text class="sm" x="284" y="202">field, not a default.</text>
+<text class="mos" x="284" y="228">revoke() takes effect next call</text>
+
+<rect x="508" y="124" width="228" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="lbl" x="526" y="148">NO SCOPE EVER GRANTS</text>
+<text class="no" x="526" y="170">minting · role changes</text>
+<text class="no" x="526" y="190">upgrades · freezing</text>
+<text class="no" x="526" y="210">seizure · pause</text>
+<text class="fa" x="526" y="232">Not configurable. Absent from the type.</text>
+
+<!-- outcome -->
+<rect x="24" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="st" x="44" y="286">Inside the mandate</text>
+<text class="mo" x="44" y="308">consume(mandate, amount) · action proceeds</text>
+<text class="fa" x="44" y="330">AgentActed logged with principal, selector, token, amount.</text>
+
+<rect x="388" y="262" width="348" height="86" rx="10" fill="#FFFFFF" stroke="#C9A6A0"/>
+<text class="nob" x="408" y="286">Outside it</text>
+<text class="mo" x="408" y="308">reverts before any state change</text>
+<text class="fa" x="408" y="330">The agent is not trusted to respect its mandate. It cannot exceed it.</text>
+</svg>

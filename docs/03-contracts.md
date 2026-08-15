@@ -19,6 +19,8 @@ Every contract and sub-contract in the system.
 
 Facets share the token's storage through `delegatecall`. Each owns one namespaced storage struct.
 
+![The token diamond. The router is the only entry point; the ERC-20 core is registered against the diamond itself and cannot be cut out. Every facet owns exactly one namespaced storage struct, so two facets can never collide.](diagrams/token-diamond.svg)
+
 | Facet | Responsibility | Storage owned | In default package |
 |---|---|---|---|
 | *(diamond core)* | ERC-20 accounting, fallback router, ERC-2612 permit | `CoreStorage` | Always — immutable |

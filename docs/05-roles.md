@@ -15,6 +15,8 @@ bytes32 constant SUPPLY_OPERATOR    = keccak256("urwa.role.supply");
 bytes32 constant COMPLIANCE_OFFICER = keccak256("urwa.role.compliance");
 ```
 
+![Four roles, each unable to do the others' work. The separation matters most in the failure case: a compromised upgrade admin can stop the token but cannot move anyone's balance.](diagrams/roles-separation.svg)
+
 ### UPGRADE_ADMIN
 
 | | |

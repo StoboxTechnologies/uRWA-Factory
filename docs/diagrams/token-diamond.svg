@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" width="760" height="430" class="d-dia">
+<style>
+.d-dia text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
+.d-dia .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-dia .st{font-size:13px;font-weight:600}
+.d-dia .sm{font-size:11px;fill:#6E6B66}
+.d-dia .fa{font-size:10px;fill:#9B9791}
+.d-dia .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
+.d-dia .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;fill:#6E6B66}
+.d-dia .i-st{fill:#FFFFFF}
+.d-dia .i-sm{fill:#9B9791}
+.d-dia .i-mo{fill:#F1EFEC}
+.d-dia .no{fill:#7A322A;font-size:10px;font-weight:600}
+</style>
+<defs>
+<marker id="da" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+</marker>
+</defs>
+<rect width="760" height="430" fill="#FFFFFF"/>
+
+<!-- caller -->
+<rect x="24" y="16" width="180" height="30" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/>
+<text class="mo" x="38" y="35">any call to the token</text>
+<path d="M114 50 L114 68" stroke="#9B9791" stroke-width="1.3" marker-end="url(#da)" fill="none"/>
+
+<!-- fallback router -->
+<rect x="24" y="72" width="712" height="60" rx="10" fill="#111110"/>
+<text class="lbl i-sm" x="44" y="96">FALLBACK ROUTER · THE DIAMOND ITSELF</text>
+<text class="mo i-mo" x="44" y="118">selector → facet → delegatecall · unknown selector reverts FunctionNotFound</text>
+<rect x="560" y="86" width="156" height="32" rx="8" fill="#2E2C29"/>
+<text class="sm i-st" x="576" y="106">Fails closed by design</text>
+
+<!-- immutable core -->
+<rect x="24" y="146" width="712" height="66" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<text class="lbl" x="44" y="170">ERC-20 CORE · REGISTERED AGAINST THE DIAMOND</text>
+<text class="mo" x="44" y="192">balanceOf · transfer · transferFrom · approve · allowance · totalSupply</text>
+<rect x="556" y="160" width="160" height="34" rx="8" fill="#FFFFFF" stroke="#DAD6D0"/>
+<text class="no" x="572" y="176">diamondCut CANNOT</text>
+<text class="no" x="572" y="189">REPLACE OR REMOVE</text>
+
+<!-- facets -->
+<text class="lbl" x="24" y="242">FACETS · EACH OWNS ONE NAMESPACED STORAGE STRUCT</text>
+
+<rect x="24" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="st" x="40" y="276">ComplianceFacet</text>
+<text class="mos" x="40" y="294">ComplianceStorage</text>
+<text class="fa" x="40" y="312">the hook · ERC-7943 views</text>
+
+<rect x="204" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="st" x="220" y="276">FreezeFacet</text>
+<text class="mos" x="220" y="294">FreezeStorage</text>
+<text class="fa" x="220" y="312">admin freeze · totals</text>
+
+<rect x="384" y="254" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="st" x="400" y="276">LockupFacet</text>
+<text class="mos" x="400" y="294">LockupStorage</text>
+<text class="fa" x="400" y="312">schedules · expire by time</text>
+
+<rect x="564" y="254" width="172" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="st" x="580" y="276">MonetaryFacet</text>
+<text class="mos" x="580" y="294">MonetaryStorage</text>
+<text class="fa" x="580" y="312">issue · redeem · caps</text>
+
+<rect x="24" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="st" x="40" y="356">RolesFacet</text>
+<text class="mos" x="40" y="374">RolesStorage</text>
+<text class="fa" x="40" y="392">grant · revoke</text>
+
+<rect x="204" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="st" x="220" y="356">PurchaseFacet</text>
+<text class="mos" x="220" y="374">— optional</text>
+<text class="fa" x="220" y="392">offering entry point</text>
+
+<rect x="384" y="334" width="170" height="70" rx="10" fill="#FFFFFF" stroke="#DAD6D0" stroke-dasharray="4 3"/>
+<text class="st" x="400" y="356">EmergencyFacet</text>
+<text class="no" x="400" y="374">NOT INSTALLED BY DEFAULT</text>
+<text class="fa" x="400" y="392">forced transfer · mint</text>
+
+<rect x="564" y="334" width="172" height="70" rx="10" fill="#F7F6F4" stroke="#E9E6E2"/>
+<text class="st" x="580" y="356">Cut &amp; Loupe</text>
+<text class="mos" x="580" y="374">— no storage</text>
+<text class="fa" x="580" y="392">upgrade · introspection</text>
+</svg>

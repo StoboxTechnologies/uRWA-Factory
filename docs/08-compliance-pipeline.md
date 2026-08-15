@@ -16,6 +16,8 @@ operations in `EmergencyFacet`, which are separately access-controlled and separ
 
 ## The pipeline
 
+![Seven gates in fixed order, each with the error it raises. Trusted addresses skip gates 3 to 6 but never gate 1 — pause binds everything.](diagrams/transfer-pipeline.svg)
+
 ```
   transfer · transferFrom · mint · burn
                  │

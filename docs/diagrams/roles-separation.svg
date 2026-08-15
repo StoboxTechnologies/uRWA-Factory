@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" width="760" height="320" class="d-role">
+<style>
+.d-role text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
+.d-role .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-role .st{font-size:12.5px;font-weight:600}
+.d-role .sm{font-size:11px;fill:#6E6B66}
+.d-role .fa{font-size:10.5px;fill:#9B9791}
+.d-role .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#6E6B66}
+.d-role .i-st{fill:#FFFFFF}
+.d-role .i-sm{fill:#9B9791}
+.d-role .no{fill:#7A322A;font-size:10.5px;font-weight:600}
+.d-role .warn{fill:#7A6234;font-size:10.5px;font-weight:600}
+</style>
+<rect width="760" height="320" fill="#FFFFFF"/>
+
+<text class="lbl" x="24" y="24">FOUR ROLES · SEPARATED SO NO ONE OF THEM CAN ACT ALONE</text>
+
+<rect x="24" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mos" x="42" y="60">UPGRADE_ADMIN</text>
+<text class="st" x="42" y="84">Changes the code</text>
+<text class="sm" x="42" y="106">Facets, policy set,</text>
+<text class="sm" x="42" y="122">identity registry.</text>
+<text class="no" x="42" y="144">Cannot touch a balance</text>
+
+<rect x="206" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mos" x="224" y="60">SUPPLY_OPERATOR</text>
+<text class="st" x="224" y="84">Moves supply</text>
+<text class="sm" x="224" y="106">Issue, redeem,</text>
+<text class="sm" x="224" y="122">distribute.</text>
+<text class="no" x="224" y="144">Cannot freeze or seize</text>
+
+<rect x="388" y="36" width="172" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mos" x="406" y="60">COMPLIANCE_OFFICER</text>
+<text class="st" x="406" y="84">Restricts holders</text>
+<text class="sm" x="406" y="106">Freeze, lockup, pause,</text>
+<text class="sm" x="406" y="122">forced transfer.</text>
+<text class="no" x="406" y="144">Cannot mint</text>
+
+<rect x="570" y="36" width="166" height="118" rx="10" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mos" x="588" y="60">ISSUER_ADMIN</text>
+<text class="st" x="588" y="84">Configures</text>
+<text class="sm" x="588" y="106">Trust list, metadata,</text>
+<text class="sm" x="588" y="122">offering setup.</text>
+<text class="no" x="588" y="144">Cannot upgrade</text>
+
+<!-- the dangerous pairing -->
+<rect x="24" y="174" width="356" height="126" rx="10" fill="#F7F6F4" stroke="#DAD6D0"/>
+<text class="warn" x="44" y="198">THE PAIRING THE CONSOLE WARNS ABOUT</text>
+<text class="st" x="44" y="224">SUPPLY_OPERATOR = COMPLIANCE_OFFICER</text>
+<text class="sm" x="44" y="248">Together they can mint to an address and freeze</text>
+<text class="sm" x="44" y="264">everyone else — which removes the check each</text>
+<text class="sm" x="44" y="280">provides on the other.</text>
+<text class="fa" x="44" y="296">The deploy console warns. It does not block: small issuers exist.</text>
+
+<rect x="396" y="174" width="340" height="126" rx="10" fill="#111110"/>
+<text class="lbl i-sm" x="416" y="198">THE INVARIANT THAT MAKES THIS HOLD</text>
+<text class="st i-st" x="416" y="226">A compromised upgrade admin</text>
+<text class="st i-st" x="416" y="244">cannot change a balance</text>
+<text class="fa i-sm" x="416" y="270">Not by policy — by construction. The ERC-20 selectors are</text>
+<text class="fa i-sm" x="416" y="286">not replaceable, so no facet it installs can reach them.</text>
+</svg>

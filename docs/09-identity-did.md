@@ -6,6 +6,8 @@ The token depends on `IIdentityRegistry` as an interface. Any implementation wor
 indirection is what lets Stobox ship StoboxDID as its own default while the same code, forked, runs
 with no Stobox contract in the dependency graph.
 
+![Three interchangeable identity sources behind one interface. A fork runs on tier 0 alone, with no dependency on Stobox or on any attestation service.](diagrams/identity-tiers.svg)
+
 ```
    ComplianceFacet · PolicySet
               │
@@ -110,6 +112,100 @@ struct Linker {
 
 `Linker` gives wallet → subject, which is exactly the subject binding holder caps require.
 
+Source: [StoboxTechnologies/Stobox-Decentralized-ID](https://github.com/StoboxTechnologies/Stobox-Decentralized-ID),
+MIT. Deployed on Arbitrum One at `0x25E6036178656b1329ee51696407b367D8C6ba84` and on Arbitrum Sepolia
+at `0xA832662d1E11F2a6cEF706cE54A993E7eeEDC440`. No audit is published.
+
+## How a wallet is linked to a DID
+
+The mechanism the whole subject-based accounting rests on, stated exactly as the deployed contract
+implements it.
+
+![How wallets join and leave a subject. Note the second row: linking is self-service, and of the three ways out only two are authoritative — a holder can undo their own deactivation.](diagrams/did-wallet-linking.svg)
+
+### Two ways in, with different authority
+
+| | `createDID(uDID, wallet, validTo, blocked)` | `linkAddressToDID(existingWallet, newWallet)` |
+|---|---|---|
+| **Who may call** | `WRITER_ROLE` only | `WRITER_ROLE` **or the DID owner** |
+| **Creates the subject** | Yes | No — the subject must exist |
+| **Wallets after** | Exactly one | One more, up to the cap |
+| **Typical caller** | The onboarding operator, after KYC | **The holder, from their own wallet** |
+
+The second row is the one that matters and the one most integrations get wrong. `linkAddressToDID`
+is guarded by `writerOrDIDOwner`, which passes when the caller's own wallet resolves to the **same
+UDID** and that wallet is not deactivated. **A verified holder adds their own further wallets without
+asking anyone** — no operator, no ticket, no fee.
+
+### Preconditions, each with its own error
+
+| Condition | Reverts with |
+|---|---|
+| The reference wallet has a DID | `AddressDoesNotLinkedToDID` |
+| The new wallet is not `address(0)` | `ZeroAddressNotAllowed` |
+| The new wallet is not already linked anywhere | `AddressAlreadyLinkedToDID(addr, uDID)` |
+| Caller is a writer, or owns the DID and is not deactivated | `NotAuthorizedForThisTransaction` |
+| The subject is below the wallet cap | `MaxLinkedAddressesExceeded(uDID, max)` |
+
+A wallet belongs to **at most one** subject, enforced at link time rather than reconciled later.
+This is what makes `subjectOf` a total function and what makes holder caps sound.
+
+### What the link writes
+
+Every wallet of a subject stores the **full list** of that subject's wallets, so linking writes to all
+of them:
+
+```
+linkAddressToDID(A, D)  where A already has {A, B, C}
+
+  linker[D].linkedAddresses = [D, A, B, C]     the new wallet, complete
+  linker[A].linkedAddresses.push(D)            each existing wallet, appended
+  linker[B].linkedAddresses.push(D)
+  linker[C].linkedAddresses.push(D)
+```
+
+Cost grows with the number of wallets already linked — the nth link writes n entries. Bounded by
+`MAX_DID_LINKED_ADDRESSES`, **10 by default**, changeable by `DEFAULT_ADMIN_ROLE` through
+`setMaxDIDLinkedAddresses`. At ten the worst case is trivial; the design would not survive a cap of
+several hundred, which is a reason not to raise it casually.
+
+### Leaving: three different things, three different authorities
+
+**This is the distinction that determines what a compliance officer may rely on.**
+
+| Operation | Who may call | Reversible by the holder | Effect |
+|---|---|---|---|
+| `deactivateAddressOfDID(wallet)` | Writer **or the DID owner** | **Yes — `activateAddressOfDID`** | That wallet stops resolving as active |
+| `removeLinkedAddress(wallet)` | `WRITER_ROLE` only | No | The link is deleted; refuses on the last wallet |
+| `blockDID(uDID, reason)` | `WRITER_ROLE` only | No — needs `unBlockDID` | **Every** wallet of the subject fails at once |
+
+**Wallet deactivation is not a compliance control.** The holder can call `activateAddressOfDID` and
+undo it in the next block, because both sit behind the same `writerOrDIDOwner` guard. It is a
+self-service convenience — losing a device, retiring a hot wallet — and reading it as an enforcement
+signal would be a serious error.
+
+Only `blockDID` and `removeLinkedAddress` are authoritative, and only `blockDID` acts on the whole
+subject. A rule that must stop a person, rather than an address, has exactly one instrument.
+
+`removeLinkedAddress` also refuses to remove the last wallet (`CantRemoveLastLinkedAddress`), so a
+subject can never become unreachable. Where its internal bookkeeping disagrees with itself it emits
+`UnexpectedBehavior` and continues rather than reverting — worth indexing, because it is the contract
+reporting its own inconsistency.
+
+### What this means for the factory
+
+| Fact | Consequence for us |
+|---|---|
+| Holders link their own wallets | The issuer does not control the wallet set. Caps must count subjects, or they count nothing. |
+| Deactivation is holder-reversible | `isActive` may read it, but no rule may treat it as enforcement. Enforcement reads `blocked`. |
+| Cap is 10 and admin-mutable | Read `MAX_DID_LINKED_ADDRESSES` rather than assuming it; a raise changes gas, not correctness. |
+| `readLinkedAddresses` emits an event | It is **not** a `view` function and cannot be called from the compliance path. |
+| UDID is a `string` | The subject is `keccak256(bytes(uDID))`. Fixed once; changing it re-keys every balance. |
+
+The fourth row is the reason the adapter never enumerates wallets. It derives the subject from
+`getLinker(wallet).uDID` and hashes it — one read, no list, and it works from a `view` context, which
+enumeration cannot.
+
 ## Blocking integration defect — must be handled in the adapter
 
 `getUserDID` and `getAttribute` carry the `hasDID` modifier and **revert** when the wallet has no DID.
@@ -134,6 +230,10 @@ function isActive(address wallet) external view returns (bool) {
 Check `getLinker` first — it reverts only on a missing linker — and treat any failure as absence.
 This pattern applies to every read in the adapter without exception.
 
+`isActive` reads `deactivated` because a holder who disabled a wallet should not transact from it.
+**No rule may read it as an enforcement signal**, for the reason given above: the holder can reverse
+it themselves. Rules that must stop a person read `blocked`.
+
 ## Privacy check before launch
 
 `getUserDID`, `getAttribute` and `getLinker` are `public view` with **no role gate**. Only the
@@ -149,12 +249,16 @@ plaintext**.
 
 ## Wallets and subjects
 
+![Why the cap must count subjects. Counting addresses refuses the honest investor and misses the evasion at the same time — it is wrong in both directions.](diagrams/subject-vs-address.svg)
+
 | Fact | Consequence |
 |---|---|
 | One subject may hold many wallets | Holder caps must count subjects |
+| The holder links their own wallets | The wallet set is outside the issuer's control; only the subject count is enforceable |
 | A wallet may be deactivated without blocking the subject | Other wallets of the same subject keep working |
+| Deactivation is reversible by the holder | Never an enforcement signal — see the authority table above |
 | A wallet with no subject | Assigned a synthetic subject derived from the address, so counts never under-report |
-| Maximum wallets per DID | Enforced by StoboxDID via `MAX_DID_LINKED_ADDRESSES` |
+| Maximum wallets per DID | Enforced by StoboxDID via `MAX_DID_LINKED_ADDRESSES`, 10 by default |
 
 ## Revocation
 
@@ -162,7 +266,8 @@ plaintext**.
 |---|---|---|
 | `blockDID` | Whole subject | Every wallet fails `isActive` immediately |
 | `deactivateDIDAttribute` | One claim | That claim fails `hasValidClaim`; others unaffected |
-| `deactivateAddressOfDID` | One wallet | That wallet fails; subject and other wallets unaffected |
+| `deactivateAddressOfDID` | One wallet | That wallet fails; subject and other wallets unaffected. **Holder-reversible — not enforcement** |
+| `removeLinkedAddress` | One wallet | The link is deleted. `WRITER_ROLE` only; refuses on the last wallet |
 | Attribute `validTo` elapses | One claim | Automatic, no transaction |
 
 Revocation takes effect on the **next transfer**, not on the next onboarding cycle. There is no cache.

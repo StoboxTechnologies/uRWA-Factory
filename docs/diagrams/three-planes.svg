@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 432" width="760" height="432" class="d-planes">
+<style>
+.d-planes text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
+.d-planes .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6B66}
+.d-planes .nm{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.d-planes .it{font-size:12.5px;fill:#3C3A37}
+.d-planes .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;fill:#3C3A37}
+.d-planes .sm{font-size:11.5px;fill:#6E6B66}
+.d-planes .fa{font-size:11px;fill:#9B9791}
+.d-planes .arw{stroke:#9B9791;stroke-width:1.4;fill:none}
+/* Inverted text needs its own class: a CSS rule beats a fill="" attribute,
+   so setting the colour inline would be silently overridden. */
+.d-planes .i-nm{fill:#FFFFFF}
+.d-planes .i-lbl{fill:#F1EFEC}
+.d-planes .i-sm{fill:#9B9791}
+.d-planes .i-mo{fill:#F1EFEC}
+</style>
+<defs>
+<marker id="pa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+</marker>
+</defs>
+<rect width="760" height="432" fill="#FFFFFF"/>
+
+<!-- claims plane -->
+<rect x="24" y="16" width="470" height="112" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="40" y="30" width="86" height="18" rx="9" fill="#FFFFFF" stroke="#DAD6D0"/>
+<text class="lbl" x="52" y="42.5">EXTENSIBLE</text>
+<text class="nm" x="40" y="72">Claims</text>
+<text class="sm" x="118" y="72">who someone is</text>
+<rect x="40" y="86" width="128" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mo" x="54" y="104">Allowlist</text>
+<rect x="176" y="86" width="128" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mo" x="190" y="104">EAS</text>
+<rect x="312" y="86" width="166" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mo" x="326" y="104">StoboxDID</text>
+
+<rect x="510" y="16" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="lbl" x="528" y="42.5">IF IT BREAKS</text>
+<text class="it" x="528" y="68">Claims stop resolving.</text>
+<text class="it" x="528" y="86">Transfers block.</text>
+<text class="fa" x="528" y="110">Swap the adapter. No balance moves.</text>
+
+<path class="arw" d="M259 128 L259 148" marker-end="url(#pa)"/>
+<text class="fa" x="271" y="143">rules read claims</text>
+
+<!-- policy plane -->
+<rect x="24" y="152" width="470" height="112" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<rect x="40" y="166" width="94" height="18" rx="9" fill="#FFFFFF" stroke="#DAD6D0"/>
+<text class="lbl" x="52" y="178.5">REPLACEABLE</text>
+<text class="nm" x="40" y="208">Policy</text>
+<text class="sm" x="112" y="208">what they may do</text>
+<rect x="40" y="222" width="150" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mo" x="54" y="240">PolicySet</text>
+<rect x="198" y="222" width="280" height="28" rx="8" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="mo" x="212" y="240">12 stateless rules · groups AND-ed</text>
+
+<rect x="510" y="152" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="lbl" x="528" y="178.5">IF IT BREAKS</text>
+<text class="it" x="528" y="204">Trading halts.</text>
+<text class="it" x="528" y="222">Balances are untouched.</text>
+<text class="fa" x="528" y="246">setPolicySet — one transaction.</text>
+
+<path class="arw" d="M259 264 L259 284" marker-end="url(#pa)"/>
+<text class="fa" x="271" y="279">the hook calls the policy set</text>
+
+<!-- ledger plane -->
+<rect x="24" y="288" width="470" height="112" rx="12" fill="#111110"/>
+<rect x="40" y="302" width="82" height="18" rx="9" fill="#2E2C29"/>
+<text class="lbl i-lbl" x="52" y="314.5">IMMUTABLE</text>
+<text class="nm i-nm" x="40" y="344">Ledger</text>
+<text class="sm i-sm" x="122" y="344">who owns what</text>
+<rect x="40" y="358" width="438" height="28" rx="8" fill="#2E2C29"/>
+<text class="mo i-mo" x="54" y="376">ERC-20 core · balances · supply · allowances</text>
+
+<rect x="510" y="288" width="226" height="112" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<text class="lbl" x="528" y="314.5">IF IT BREAKS</text>
+<text class="it" x="528" y="340">It cannot.</text>
+<text class="fa" x="528" y="364">Selectors are registered against</text>
+<text class="fa" x="528" y="380">the diamond itself. diamondCut</text>
+<text class="fa" x="528" y="396">reverts rather than replacing them.</text>
+</svg>

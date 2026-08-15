@@ -1,24 +1,42 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <title>uRWA — Investor Page</title>
 <style>
   :root{
-    --ground:#F7F6F4;--surface:#FFFFFF;--raised:#FFFFFF;--sunk:#F1EFEC;
-    --ink:#111110;--ink-2:#3C3A37;--muted:#6E6B66;--faint:#9B9791;
-    --rule:#E9E6E2;--rule-strong:#DAD6D0;
-    --accent:#111110;--accent-2:#2E2C29;--accent-wash:#F1EFEC;--accent-edge:#DAD6D0;
-    --ok:#2F2E2B;
-    --warn:#7A6234;--warn-wash:#F6F2E9;--warn-edge:#E3D9C4;
-    --crit:#7A322A;--crit-wash:#F7EFED;--crit-edge:#E4CFCA;
-    --body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-    --display:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-    --mono:ui-monospace,'SF Mono','JetBrains Mono','IBM Plex Mono',Menlo,Consolas,monospace;
-    --r:8px;--r-lg:12px;--r-pill:999px;
-    --sh:0 1px 2px rgba(17,17,16,.04),0 1px 3px rgba(17,17,16,.025);
-    --sh-lg:0 2px 4px rgba(17,17,16,.03),0 12px 32px rgba(17,17,16,.05);
+    /* ground and surfaces */
+    --ground:#F5F5F7;--surface:#FFFFFF;--raised:#FFFFFF;--sunk:#F0F2F8;--dark:#0C0C0F;
+    /* ink */
+    --ink:#1D1D1F;--ink-2:#3C3C43;--muted:#6E6E73;--faint:#86868B;
+    /* lines */
+    --rule:#E2E4E9;--rule-strong:#D2D5DB;
+    /* emphasis — black carries the primary action */
+    --accent:#0C0C0F;--accent-2:#1D1D1F;--accent-wash:#F5F5F7;--accent-edge:#E2E4E9;
+    /* the one hue — a single spot colour, used sparingly */
+    --spot:#22D3EE;--spot-2:#0EBDD9;--spot-ink:#0C2E33;--spot-text:#0E7490;
+    --spot-wash:rgba(34,211,238,.22);--spot-edge:#A5E9F4;
+    /* status */
+    --ok:#0F7A5F;--ok-wash:#E9F8F3;--ok-edge:#B6E5D6;
+    --warn:#B45309;--warn-wash:#FEF6E7;--warn-edge:#F3DDB2;
+    --crit:#B42318;--crit-wash:#FEF1EF;--crit-edge:#F5CFCA;
+    /* type */
+    --body:-apple-system,system-ui,'SF Pro Display','SF Pro Text','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+    --display:-apple-system,system-ui,'SF Pro Display','Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono','IBM Plex Mono',Menlo,Consolas,monospace;
+    /* shape */
+    --r:10px;--r-md:12px;--r-lg:20px;--r-pill:980px;
+    /* depth */
+    --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+    --sh-lg:0 8px 20px -4px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.05);
+    --sh-card:0 10px 30px -24px rgba(0,0,0,.3);
+    --sh-focus:0 0 0 3px rgba(34,211,238,.45);
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
   button{font:inherit;color:inherit;cursor:pointer}input,select{font:inherit;color:inherit}
-  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r)}
   .banner{background:var(--accent-wash);border-bottom:1px solid var(--accent-edge);padding:8px 16px;font-size:12px;color:var(--accent-2);text-align:center}
   .top{display:flex;align-items:center;gap:12px;padding:12px clamp(14px,3vw,22px);border-bottom:1px solid var(--rule);background:var(--surface);flex-wrap:wrap}
   .tk{font-weight:700;font-size:15px}
@@ -40,13 +58,13 @@
   .card{border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);margin-bottom:14px;overflow:hidden}
   .card .hd{padding:11px 15px;border-bottom:1px solid var(--rule);font-size:11px;font-weight:650;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);background:var(--raised)}
   .card .bd{padding:15px}
-  .big{font-size:32px;font-weight:660;letter-spacing:-.02em;line-height:1.1}
+  .big{font-size:38px;font-weight:700;letter-spacing:-.032em;line-height:1.05}
   .big small{font-size:15px;font-weight:500;color:var(--faint);margin-left:5px}
   .bar{display:flex;height:30px;border-radius:2px;overflow:hidden;border:1px solid var(--rule-strong);margin:14px 0 9px}
   .bar div{display:grid;place-items:center;font-size:11px;font-family:var(--mono);min-width:0;overflow:hidden;white-space:nowrap}
   .lg{display:flex;gap:8px;flex-direction:column;font-size:12.5px}
   .lg span{display:flex;align-items:center;gap:8px;color:var(--muted)}
-  .lg i{width:10px;height:10px;border-radius:2px;flex:none;font-style:normal}
+  .lg i{width:10px;height:10px;border-radius:3px;flex:none;font-style:normal}
   .lg b{color:var(--ink);font-weight:600;font-family:var(--mono);font-size:12px;margin-left:auto}
   .el{display:flex;gap:10px;align-items:center;padding:9px 15px;border-bottom:1px solid var(--rule);font-size:13.5px}
   .el:last-child{border-bottom:0}
@@ -82,31 +100,76 @@
   .sp2.dn{border-color:var(--accent-edge);color:var(--accent)}
   .ok{color:var(--accent)}.bad{color:var(--crit)}
 
-  /* --- milky monochrome: shape, weight, restraint --- */
-  .btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary{border-radius:var(--r-pill);box-shadow:none;transition:background .14s,border-color .14s,color .14s}
+  /* --- gigaboost: Apple monochrome, one aqua accent --- */
+  h1,h2,h3,h4{font-family:var(--display);font-weight:700}
+  .btn,.btn.p,.btn.s,.btn.d,.btn.ghost,.btn.primary,.btn.spot{border-radius:var(--r-pill);font-weight:600;box-shadow:none;transition:background .18s,border-color .18s,color .18s,transform .12s}
   .btn{background:var(--surface);border-color:var(--rule-strong);color:var(--ink)}
-  .btn:hover{background:var(--sunk);border-color:var(--muted)}
-  .btn.p,.btn.primary{background:var(--ink);border-color:var(--ink);color:#FFFFFF;box-shadow:none}
+  .btn:hover{background:var(--sunk);border-color:var(--rule-strong)}
+  .btn.p,.btn.primary{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
   .btn.p:hover,.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#FFFFFF}
+  .btn.spot{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:700}
+  .btn.spot:hover{background:var(--spot-2);border-color:var(--spot-2);color:var(--spot-ink)}
   .btn.d{border-color:var(--crit-edge);color:var(--crit);background:var(--surface)}
   .btn.d:hover{background:var(--crit-wash)}
-  .card,.figbox,.note,.k,.addrcard,.nextitem,.wal,.opt,.tscroll,pre{border-radius:var(--r-lg)}
-  .card,.figbox,.k,.addrcard{box-shadow:var(--sh);border-color:var(--rule)}
-  .inp,input.inp,input,select{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
-  .inp:focus,input:focus,select:focus{border-color:var(--ink);box-shadow:0 0 0 3px var(--sunk)}
+  .btn:active:not([disabled]){transform:translateY(1px)}
+  .card,.figbox,.k,.addrcard,.tscroll{border-radius:var(--r-lg)}
+  .note,.nextitem,.wal,.opt,pre{border-radius:var(--r-md)}
+  .card,.figbox,.k,.addrcard{box-shadow:var(--sh-card);border-color:var(--rule)}
+  .inp,input.inp,input,select,textarea{border-radius:var(--r);border-color:var(--rule-strong);box-shadow:none;background:var(--surface)}
+  .inp:focus,input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:var(--sh-focus)}
   .pill,.chip,.tag,.sp2,.chainchip{border-radius:var(--r-pill)}
   .bar{border-radius:var(--r-pill);overflow:hidden}
   .bar div{border-radius:0}
   table,th,td{border-color:var(--rule)}
   .step .num,.prog .ic,.stg .i,.sg .i,.opt .mark{border-radius:var(--r-pill)}
-  .step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+  .step.active .num,.prog.ok .ic,.stg.y .i,.sg.ok .i{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
   .stg.n .i,.sg.no .i{background:var(--crit);border-color:var(--crit);color:#FFFFFF}
-  .opt.sel .mark::after{background:var(--ink)}
-  .opt.sel{border-color:var(--ink);background:var(--sunk)}
+  .opt.sel .mark::after{background:var(--accent)}
+  .opt.sel{border-color:var(--accent);background:var(--spot-wash)}
+
+  /* aqua marks emphasis; green marks a passing state; both carry a word too */
+  .banner{background:var(--spot-wash);border-color:var(--spot-edge);color:var(--accent)}
+  .tag.a{background:var(--spot);border-color:var(--spot);color:var(--spot-ink);font-weight:600}
+  .nb.on{background:var(--spot-wash);color:var(--accent);font-weight:600}
+  .nb.on .b{color:var(--accent)}
+  .st.ok{color:var(--ok)}.st.ok::before{background:var(--ok)}
+  .pill.ok{background:var(--ok-wash);border-color:var(--ok-edge);color:var(--ok)}
+  .el.y .m{color:var(--ok)}
+  .wal.ok{border-color:var(--ok-edge);background:var(--ok-wash)}.wal.ok .dot{background:var(--ok)}
+  .wallet.ok .dot{background:var(--ok)}
+
   a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--rule-strong)}
-  a:hover{text-decoration-color:var(--ink)}
-  a:focus-visible,button:focus-visible,input:focus-visible,.step:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:var(--r)}
+  a:hover{text-decoration-color:var(--accent)}
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,.step:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);box-shadow:var(--sh-focus)}
+
+
+  /* shared site navigation — sticky, translucent, blurred */
+  .sitenav{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:10px 22px;
+    border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.72);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+    font-size:13px;position:sticky;top:0;z-index:200}
+  .sitenav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:var(--r-pill);
+    font-weight:500;transition:background .18s,color .18s;white-space:nowrap}
+  .sitenav a:hover{color:var(--ink);background:var(--sunk);text-decoration:none}
+  .sitenav a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+  .sitenav .home{font-weight:700;font-size:15px;letter-spacing:-.02em;color:var(--ink);padding-left:0}
+  .sitenav .home:hover{background:none;color:var(--ink)}
+  .sitenav .div{width:1px;height:15px;background:var(--rule);margin:0 8px;flex:none}
+  .sitenav .push{margin-left:auto;background:var(--accent);color:#FFFFFF;font-weight:600}
+  .sitenav .push:hover{background:var(--accent-2);color:#FFFFFF}
+  @media(max-width:720px){.sitenav{position:static;padding:8px 14px}.sitenav .push{margin-left:0}}
 </style>
+<nav class="sitenav" aria-label="Site">
+<a class="home" href="../">uRWA Factory</a>
+<span class="div"></span>
+<a href="../">Documentation</a>
+<a href="index.html">Prototypes</a>
+<a href="deploy-console.html">Deploy console</a>
+<a href="token-console.html">Token console</a>
+<a href="verifier.html">Public verifier</a>
+<a href="investor.html" aria-current="page">Investor page</a>
+<a class="push" href="https://github.com/StoboxTechnologies/uRWA-Factory">GitHub</a>
+</nav>
 
 <div class="banner">Prototype — nothing is signed or sent. Every check maps to a real function in the specification.</div>
 
@@ -157,9 +220,9 @@ function position(){
               ["var(--sunk)","var(--rule-strong)","var(--muted)"],
               ["var(--accent-wash)","var(--accent-edge)","var(--accent)"]];
  const seg=(w,bg,fg,label)=>`<div style="width:${w}%;background:${bg};color:${fg}">${label}</div>`;
- const bars=[seg(pct(f),"var(--accent-wash)","var(--accent)",n(f))]
+ const bars=[seg(pct(f),"var(--spot)","var(--spot-ink)",n(f))]
    .concat(S.locks.map((l,i)=>{const t2=tones[i%tones.length];return seg(pct(l.a),t2[0],t2[2],n(l.a));}));
- const legs=[`<span><i style="background:var(--accent-wash);border:1px solid var(--accent-edge)"></i>Transferable now<b>${n(f)}</b></span>`]
+ const legs=[`<span><i style="background:var(--spot);border:1px solid var(--spot-edge)"></i>Transferable now<b>${n(f)}</b></span>`]
    .concat(S.locks.map((l,i)=>{const t2=tones[i%tones.length];
      return `<span><i style="background:${t2[0]};border:1px solid ${t2[1]}"></i>Unlocks ${esc(l.d)}<b>${n(l.a)}</b></span>`;}));
  return `<div class="card"><div class="hd">Your position</div><div class="bd">

@@ -46,6 +46,8 @@ deliberate choice.
 
 **Commitments and signatures, never content.** One 32-byte snapshot root anchors the entire record.
 
+![Values stay off chain; only commitments are anchored. Salt on every leaf is what stops a boolean or an enum being recovered by hashing every candidate, and the sparse tree is what makes absence provable.](diagrams/passport-disclosure.svg)
+
 ```
    private record            salted leaves           sparse Merkle tree
    899 datapoints    ──▶   hash(code ‖ value ‖  ──▶   absence provable

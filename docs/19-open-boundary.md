@@ -25,6 +25,8 @@ knowledge *about a specific asset* — the data, the scoring, the attestor relat
 | `PassportValidRule` | Optional; lets an issuer gate transfers on passport state if they choose. |
 | Conformance kit | The reputational centrepiece. |
 
+![Where the line falls. Everything needed to issue and operate a compliant token is given away; what is retained is the work of maintaining an attested asset record, not the ability to interoperate with one.](diagrams/open-boundary.svg)
+
 ## What is not in this repository
 
 | Component | Why it stays closed |

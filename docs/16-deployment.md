@@ -43,6 +43,8 @@ constructor plus a treasury clone — cheap enough to target under one dollar on
 15  createOffering(...) → activate(...)         // optional
 ```
 
+![One transaction from nothing to a working compliant token — after which the factory holds no role, no key and no upgrade right over what it created.](diagrams/deployment-flow.svg)
+
 Steps 12–13 apply only where a passport exists. A token without a passport is fully functional.
 
 ## `createToken` parameters

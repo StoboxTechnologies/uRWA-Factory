@@ -19,9 +19,11 @@ import hashlib
 import re
 import sys
 from pathlib import Path
+from xml.etree import ElementTree
 
 ROOT = Path(__file__).parent
 DOCS = ROOT / "docs"
+PROTO = ROOT / "prototypes"
 HTML = ROOT / "urwa-documentation.html"
 README = ROOT / "README.md"
 
@@ -63,6 +65,9 @@ class Corpus:
         self.docs = {p.name: p.read_text(encoding="utf-8") for p in sorted(DOCS.glob("*.md"))}
         self.readme = README.read_text(encoding="utf-8") if README.exists() else ""
         self.html = HTML.read_text(encoding="utf-8") if HTML.exists() else ""
+        self.proto = {p.name: p.read_text(encoding="utf-8") for p in sorted(PROTO.glob("*.html"))}
+        self.diagrams = {p.name: p.read_text(encoding="utf-8")
+                         for p in sorted((DOCS / "diagrams").glob("*.svg"))}
         self.html_exists = HTML.exists()
         # Content, not timestamps: a fresh git checkout gives every file the
         # same mtime, so an mtime comparison would be meaningless in CI.
@@ -245,6 +250,113 @@ def _(c):
 @breaks("L0.8")
 def _(c):
     c.html += "<table><tr><td>unclosed"
+    return c
+
+
+@check("L0.9", 0, "Every page is reachable from every other — no dead ends")
+def _(c):
+    if not c.proto:
+        return ["no prototype pages found"]
+    out = []
+    for name, text in c.proto.items():
+        if 'href="../"' not in text:
+            out.append(f"prototypes/{name} does not link back to the documentation")
+        missing = [s for s in c.proto if s != name and f'href="{s}"' not in text]
+        if missing:
+            out.append(f"prototypes/{name} does not link to {', '.join(sorted(missing))}")
+    for name in c.proto:
+        if f'prototypes/{name}"' not in c.html and name != "index.html":
+            out.append(f"the documentation does not link prototypes/{name}")
+    if 'href="prototypes/"' not in c.html:
+        out.append("the documentation does not link the prototype gallery")
+    return out
+
+
+@breaks("L0.9")
+def _(c):
+    c.proto["verifier.html"] = re.sub(r'<nav class="sitenav".*?</nav>', "",
+                                      c.proto["verifier.html"], flags=re.S)
+    return c
+
+
+@check("L0.10", 0, "Every page declares its character set and viewport")
+def _(c):
+    out = []
+    for name, text in list(c.proto.items()) + [("urwa-documentation.html", c.html)]:
+        head = text[:600]
+        if 'charset="utf-8"' not in head.lower():
+            out.append(f"{name} declares no character set — em dashes render as mojibake")
+        if 'name="viewport"' not in head:
+            out.append(f"{name} declares no viewport — it will not scale on a phone")
+    return out
+
+
+@breaks("L0.10")
+def _(c):
+    c.proto["verifier.html"] = c.proto["verifier.html"].replace('<meta charset="utf-8">', "", 1)
+    return c
+
+
+@check("L0.11", 0, "Every diagram resolves, scales, and is self-contained")
+def _(c):
+    referenced = set()
+    for text in c.docs.values():
+        referenced |= set(re.findall(r"!\[[^\]]*\]\((diagrams/[\w.-]+\.svg)\)", text))
+    if not c.diagrams:
+        return ["no diagrams found"]
+    out = [f"{r} is referenced but does not exist" for r in sorted(referenced)
+           if r.split("/")[-1] not in c.diagrams]
+    out += [f"diagrams/{n} exists but no document shows it" for n in sorted(c.diagrams)
+            if f"diagrams/{n}" not in referenced]
+    for n, svg in c.diagrams.items():
+        # Well-formedness catches duplicate attributes and unclosed tags, which a
+        # browser silently tolerates or silently drops.
+        try:
+            ElementTree.fromstring(svg)
+        except ElementTree.ParseError as e:
+            out.append(f"diagrams/{n} is not well-formed XML: {e}")
+            continue
+        if "viewBox" not in svg:
+            out.append(f"diagrams/{n} has no viewBox and cannot scale to the column")
+        # A scoped `text{fill:…}` rule overrides a fill="" attribute, so inverted
+        # text set inline silently disappears. Colour variants must be classes.
+        if re.search(r"<text[^>]*\sfill=", svg):
+            out.append(f"diagrams/{n} sets fill on a <text> element; the stylesheet overrides it")
+        if re.search(r'(?:href|src)="https?://', svg):
+            out.append(f"diagrams/{n} references an external resource")
+        out += _overflow(n, svg)
+    return out
+
+
+# Advance widths as a fraction of font size, calibrated against rendered output.
+# SVG does not wrap text, so a caption edited to be longer runs off the canvas
+# silently — nothing errors, the words are simply not there.
+ADVANCE = {"mono": 0.63, "caps": 0.62, "sans": 0.46}
+
+
+def _overflow(name, svg):
+    m = re.search(r'viewBox="0 0 ([\d.]+)', svg)
+    if not m:
+        return []
+    width = float(m.group(1))
+    styles = dict(re.findall(r"\.[\w-]+ \.([\w-]+)\{([^}]*)\}", svg))
+    out = []
+    for t in re.finditer(r'<text class="([^"]*)"[^>]*x="([\d.]+)"[^>]*>([^<]*)</text>', svg):
+        cls, x, txt = t.group(1), float(t.group(2)), t.group(3)
+        style = styles.get(cls.split()[0], "")
+        size = re.search(r"font-size:([\d.]+)px", style)
+        size = float(size.group(1)) if size else 13.0
+        k = ADVANCE["mono"] if "mono" in style else \
+            ADVANCE["caps"] if "letter-spacing" in style else ADVANCE["sans"]
+        if x + len(txt) * size * k > width - 6:
+            out.append(f'diagrams/{name}: "{txt[:44]}…" runs past the canvas edge')
+    return out
+
+
+@breaks("L0.11")
+def _(c):
+    c.diagrams["three-planes.svg"] = c.diagrams["three-planes.svg"].replace(
+        '<text class="nm i-nm"', '<text class="nm" fill="#FFFFFF"', 1)
     return c
 
 

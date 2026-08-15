@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 350" width="760" height="350" class="d-bnd">
+<style>
+.d-bnd text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
+.d-bnd .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+.d-bnd .st{font-size:13px;font-weight:600}
+.d-bnd .sm{font-size:11.5px;fill:#6E6B66}
+.d-bnd .fa{font-size:10.5px;fill:#9B9791}
+.d-bnd .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;fill:#6E6B66}
+.d-bnd .i-st{fill:#FFFFFF}
+.d-bnd .i-sm{fill:#9B9791}
+.d-bnd .i-mos{fill:#F1EFEC}
+</style>
+<rect width="760" height="350" fill="#FFFFFF"/>
+
+<!-- open -->
+<rect x="24" y="16" width="352" height="238" rx="12" fill="#FFFFFF" stroke="#E9E6E2"/>
+<rect x="44" y="36" width="76" height="20" rx="10" fill="#F1EFEC" stroke="#DAD6D0"/>
+<text class="lbl" x="56" y="49.5">MIT · FREE</text>
+<text class="st" x="44" y="80">Everything that makes a token work</text>
+<text class="mos" x="44" y="106">Token diamond and every facet</text>
+<text class="mos" x="44" y="126">Policy engine and all 12 rules</text>
+<text class="mos" x="44" y="146">All three identity adapters</text>
+<text class="mos" x="44" y="166">Treasury · offering registry · factory</text>
+<text class="mos" x="44" y="186">Agent authority · atomic DvP</text>
+<text class="mos" x="44" y="206">Passport interface and reference verifier</text>
+<text class="fa" x="44" y="234">Fork it, deploy it, compete with us. Fee hook returns zero.</text>
+
+<!-- closed -->
+<rect x="392" y="16" width="344" height="238" rx="12" fill="#111110"/>
+<rect x="412" y="36" width="112" height="20" rx="10" fill="#2E2C29"/>
+<text class="lbl i-sm" x="424" y="49.5">NOT GIVEN AWAY</text>
+<text class="st i-st" x="412" y="80">The Asset Passport service</text>
+<text class="mos i-mos" x="412" y="106">The attestor network and its agreements</text>
+<text class="mos i-mos" x="412" y="126">The datapoint schema and its 899 codes</text>
+<text class="mos i-mos" x="412" y="146">Collection, review and evidence workflow</text>
+<text class="mos i-mos" x="412" y="166">The values themselves, held off chain</text>
+<text class="mos i-mos" x="412" y="186">StoboxDID operations and issuance</text>
+<text class="fa i-sm" x="412" y="220">The interface is open, so a fork writes its own passport.</text>
+<text class="fa i-sm" x="412" y="236">What is retained is the work, not the ability to interoperate.</text>
+
+<!-- the test -->
+<rect x="24" y="272" width="712" height="62" rx="12" fill="#F7F6F4" stroke="#DAD6D0"/>
+<text class="st" x="44" y="296">The test the boundary has to pass</text>
+<text class="sm" x="44" y="320">Deploy the whole stack on a chain where no Stobox contract exists, and every function still works. It runs in CI.</text>
+</svg>

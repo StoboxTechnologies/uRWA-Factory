@@ -61,6 +61,8 @@ That is only possible because the compliance system and the settlement system ar
 
 ## AtomicDvP
 
+![Delivery versus payment in a single transaction. The gap that conventional settlement manages does not exist here, because there is no block in which one leg has moved and the other has not.](diagrams/atomic-dvp.svg)
+
 ```solidity
 struct Instruction {
     address securityToken;
@@ -126,6 +128,8 @@ without ever holding custody of either leg.
 Agents act **for a principal**, never in their own right. The agent's wallet is linked to the
 principal's DID subject, so it inherits the principal's eligibility — and, because holder caps count
 subjects, adding agent wallets never inflates the holder register.
+
+![What a mandate bounds. The agent is not trusted to stay inside its limits — it is structurally unable to exceed them, and no scope grants minting, upgrades, freezing, seizure or pause.](diagrams/agent-mandate.svg)
 
 Eligibility is not authority. Authority is separate, explicit and on-chain.
 

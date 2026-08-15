@@ -18,7 +18,9 @@ commit.
 | **L4** | Runtime behaviour and invariants | Foundry, fork tests | ✅ once code exists |
 | **L5** | **The checks themselves** | `verify.py --self-test`, CI | ✅ |
 
-**Thirty-one checks run today** — eight at L0, seven at L1, sixteen at L2 — and all thirty-one are
+![Six levels, each catching what the one below cannot — and each honest about its own blind spot. Thirty-four checks run today; L3 and L4 arrive with the code they test.](diagrams/verification-levels.svg)
+
+**Thirty-four checks run today** — eleven at L0, seven at L1, sixteen at L2 — and all thirty-four are
 re-run against their own broken fixtures at L5. The twenty-two L3 and L4 checks are specified below
 and implemented with the code they test.
 
@@ -31,6 +33,11 @@ Timestamps would be useless here: a fresh clone gives every file the same mtime,
 comparison passes in CI no matter how stale the build is — a check that is green precisely where it
 matters least.
 
+`L0.11` includes a text-overflow estimate, because SVG does not wrap. A caption edited to be two
+words longer does not error and does not wrap — the words are simply not on the canvas, and the
+diagram still looks finished. The check measures each label against the viewBox using advance widths
+calibrated from rendered output.
+
 | Check | Rule |
 |---|---|
 | `L0.1` | Every `docs/*.md` appears in the README index |
@@ -41,6 +48,9 @@ matters least.
 | `L0.6` | The built HTML is not stale relative to the sources — by content digest, not timestamp |
 | `L0.7` | No raw Markdown leaks into the HTML — no `![`, no `](`, no escaped block tags |
 | `L0.8` | Every HTML tag balances |
+| `L0.9` | Every page is reachable from every other — the documentation links each surface, each surface links back and sideways |
+| `L0.10` | Every page declares its character set and viewport |
+| `L0.11` | Every diagram resolves, parses, carries a `viewBox`, sets no `fill` on `<text>`, fetches nothing, and has no label running off the canvas |
 
 ## L1 — Document consistency
 

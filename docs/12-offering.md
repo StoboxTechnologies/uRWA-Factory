@@ -55,6 +55,8 @@ Both are supported and selected with the `preMint` flag.
      │◀── tokens + lockup applied ─────────────────────────────── │
 ```
 
+![An offering reaches exactly one terminal state. Both `settle` and `beginRefunding` are permissionless, so an absent operator cannot strand investor funds.](diagrams/offering-lifecycle.svg)
+
 The registry evaluates **offering-level** rules before value moves. The token's own pipeline still
 runs on the distribution leg. The two checks are independent by design: **passing an offering never
 implies the right to hold.** An investor who satisfies the offering but fails the token's rules cannot

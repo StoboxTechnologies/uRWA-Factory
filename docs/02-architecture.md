@@ -5,6 +5,8 @@
 The system is split into three planes with different mutability rules. Every requirement maps onto
 exactly one plane.
 
+![The three planes and what each failure costs. The blast radius shrinks as you go down: a broken claims adapter is swapped, a broken policy set is replaced, and the ledger cannot break because its selectors are not replaceable.](diagrams/three-planes.svg)
+
 | Plane | Contains | Mutability | Delivers |
 |---|---|---|---|
 | **Ledger** | Balances, supply, ERC-20 entry points | **Immutable** — enforced by code | Resilience |

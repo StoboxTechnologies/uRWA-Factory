@@ -4,6 +4,8 @@
 
 Rules are organised into groups. **Groups AND together; rules within a group OR.**
 
+![How a rule set composes. Groups are AND-ed, rules within a group are ANY-of — which is how one token serves a US tranche and an EU tranche from a single identity set.](diagrams/policy-evaluation.svg)
+
 ```
 ( HasValidIdentity )
 AND ( EUProfessionalOnly OR USAccreditedOnly )

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470" width="760" height="470" class="d-pipe">
+<style>
+.d-pipe text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#111110}
+.d-pipe .st{font-size:13.5px;font-weight:600}
+.d-pipe .sub{font-size:11.5px;fill:#6E6B66}
+.d-pipe .mo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#7A322A}
+.d-pipe .mk{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;fill:#3C3A37}
+.d-pipe .num{font-size:11.5px;font-weight:700;fill:#FFFFFF}
+.d-pipe .fa{font-size:11px;fill:#9B9791}
+.d-pipe .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#9B9791}
+/* A CSS rule beats a fill="" attribute, so variants get their own class. */
+.d-pipe .mk.q{fill:#6E6B66}
+</style>
+<defs>
+<marker id="ta" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#9B9791"/>
+</marker>
+<marker id="tr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0.5 L7.5 4 L0 7.5 Z" fill="#C9A6A0"/>
+</marker>
+</defs>
+<rect width="760" height="470" fill="#FFFFFF"/>
+
+<text class="lbl" x="24" y="26">CALLER</text>
+<rect x="96" y="12" width="212" height="26" rx="8" fill="#F1EFEC" stroke="#DAD6D0"/>
+<text class="mk" x="110" y="29">token.transfer(to, amount)</text>
+<text class="lbl" x="432" y="26">REVERTS WITH</text>
+
+<!-- spine -->
+<path d="M78 52 L78 424" stroke="#E9E6E2" stroke-width="2" fill="none"/>
+
+<!-- 1 -->
+<circle cx="78" cy="70" r="13" fill="#111110"/><text class="num" x="74.5" y="74">1</text>
+<text class="st" x="104" y="67">Paused?</text>
+<text class="sub" x="104" y="83">One storage read. Trusted addresses do not escape it.</text>
+<path d="M414 70 L428 70" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<text class="mo" x="436" y="74">ProtocolPaused</text>
+
+<!-- 2 -->
+<circle cx="78" cy="124" r="13" fill="#111110"/><text class="num" x="74.5" y="128">2</text>
+<text class="st" x="104" y="121">Both addresses trusted?</text>
+<text class="sub" x="104" y="137">Treasury, offering registry — named, with a reason on chain.</text>
+<path d="M414 124 L428 124" stroke="#DAD6D0" stroke-width="1.2" marker-end="url(#ta)"/>
+<text class="mk q" x="436" y="128">skip to 7</text>
+
+<!-- 3 -->
+<circle cx="78" cy="178" r="13" fill="#111110"/><text class="num" x="74.5" y="182">3</text>
+<text class="st" x="104" y="175">canSend(from)</text>
+<text class="sub" x="104" y="191">Identity active, base claim valid. Every call try/catch.</text>
+<path d="M414 178 L428 178" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<text class="mo" x="436" y="182">ERC7943CannotSend</text>
+
+<!-- 4 -->
+<circle cx="78" cy="232" r="13" fill="#111110"/><text class="num" x="74.5" y="236">4</text>
+<text class="st" x="104" y="229">canReceive(to)</text>
+<text class="sub" x="104" y="245">The same question about the counterparty.</text>
+<path d="M414 232 L428 232" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<text class="mo" x="436" y="236">ERC7943CannotReceive</text>
+
+<!-- 5 -->
+<circle cx="78" cy="286" r="13" fill="#111110"/><text class="num" x="74.5" y="290">5</text>
+<text class="st" x="104" y="283">amount ≤ balance − frozen</text>
+<text class="sub" x="104" y="299">Admin freeze plus every unexpired lockup.</text>
+<path d="M414 286 L428 286" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<text class="mo" x="436" y="290">ERC7943InsufficientUnfrozenBalance</text>
+
+<!-- 6 -->
+<circle cx="78" cy="340" r="13" fill="#111110"/><text class="num" x="74.5" y="344">6</text>
+<text class="st" x="104" y="337">PolicySet.evaluate</text>
+<text class="sub" x="104" y="353">Each rule under a gas ceiling. A revert counts as a refusal.</text>
+<path d="M414 340 L428 340" stroke="#C9A6A0" stroke-width="1.2" marker-end="url(#tr)"/>
+<text class="mo" x="436" y="344">ERC7943CannotTransfer</text>
+
+<!-- 7 -->
+<circle cx="78" cy="410" r="13" fill="#2F2E2B"/><text class="num" x="74.5" y="414">7</text>
+<text class="st" x="104" y="407">Execute</text>
+<text class="sub" x="104" y="423">Balances, holder count, subject balance, Transfer event.</text>
+
+<!-- trusted bypass -->
+<path d="M60 133 C 26 170, 26 372, 58 404" stroke="#DAD6D0" stroke-width="1.3" fill="none" stroke-dasharray="4 3" marker-end="url(#ta)"/>
+
+<!-- cost gutter -->
+<rect x="436" y="376" width="300" height="80" rx="10" fill="#F7F6F4" stroke="#E9E6E2"/>
+<text class="lbl" x="452" y="398">ORDER IS A COST DECISION</text>
+<text class="fa" x="452" y="418">Cheap storage reads first, the one</text>
+<text class="fa" x="452" y="434">unbounded external call last. Refusing a</text>
+<text class="fa" x="452" y="450">paused token costs almost nothing.</text>
+</svg>

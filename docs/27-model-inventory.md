@@ -52,6 +52,7 @@ Everything the project produces. Status is the same vocabulary as [24](24-work-r
 | A-10 | Data model | Document | **New** | Architecture | Entities → invariants complete |
 | A-11 | Interaction and API model | Document | **New** | Architecture | Call graph closed |
 | A-12 | Verification framework | Document | **New** | Engineering | Every check has a failing fixture |
+| A-13 | Architecture and flow diagrams — sixteen | SVG | **New** | Design | `L0.11` — resolves, parses, nothing off-canvas |
 
 ### B — Code artifacts
 
@@ -115,8 +116,8 @@ Everything the project produces. Status is the same vocabulary as [24](24-work-r
 | F-05 | Handoff record | Document | Done | Author | Names the next action and its owner |
 | F-06 | Decision record — internal | Document | Done | Author | Every open decision names what it blocks |
 
-**Totals: 12 specification · 10 code · 7 test · 7 interface · 7 operational · 6 governance = 49
-artifacts.** Twenty-six exist; twenty-three are planned.
+**Totals: 13 specification · 10 code · 7 test · 7 interface · 7 operational · 6 governance = 50
+artifacts.** Twenty-seven exist; twenty-three are planned.
 
 ## Ownership
 
