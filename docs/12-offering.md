@@ -1,0 +1,141 @@
+# 12 — Offerings
+
+## Purpose
+
+The offering registry runs primary sales: pricing, caps, allocations, eligibility and refunds. It is
+optional — a token functions without it, and private placements often skip it entirely.
+
+## Parameters
+
+```solidity
+struct OfferingParams {
+    address token;
+    address[] paymentTokens;     // USDC, USDT, …
+    uint256 pricePerToken;       // in payment-token units, or 0 for tiered
+    Tier[]  tiers;               // optional tiered pricing
+    uint256 softCap;
+    uint256 hardCap;
+    uint64  startAt;
+    uint64  endAt;
+    uint256 minInvestment;
+    uint256 maxInvestment;
+    uint64  lockupUntil;         // applied to purchased tokens
+    bool    preMint;             // reserve from treasury vs mint on purchase
+    bytes32 regime;              // RegD506c, RegS, MiCA-ART, …
+}
+
+struct Tier {
+    uint256 upToAmount;
+    uint256 pricePerToken;
+}
+```
+
+## Supply path — issuer chooses per offering
+
+| Mode | Behaviour | Suits |
+|---|---|---|
+| **Pre-mint and reserve** | Supply minted to treasury and reserved when the offering is created | Pre-sold allocations; buyers see availability up front |
+| **Mint on purchase** | Tokens created as each investor buys | Open-ended raises; supply always equals what was actually sold |
+
+Both are supported and selected with the `preMint` flag.
+
+## Purchase flow
+
+```
+  Investor        OfferingRegistry      IdentityRegistry       Treasury
+     │                   │                     │                  │
+     │─ purchase(id,amt)▶│                     │                  │
+     │                   │─ claim(subject,key)▶│                  │
+     │                   │◀──── claim set ─────│                  │
+     │                   │  evaluate offering rules               │
+     │                   │  check allocation, min/max, caps       │
+     │                   │──── pull payment · reserve tokens ────▶│
+     │                   │                     │   payment locked │
+     │                   │                     │   until soft cap │
+     │◀── tokens + lockup applied ─────────────────────────────── │
+```
+
+The registry evaluates **offering-level** rules before value moves. The token's own pipeline still
+runs on the distribution leg. The two checks are independent by design: **passing an offering never
+implies the right to hold.** An investor who satisfies the offering but fails the token's rules cannot
+receive tokens.
+
+## Payment locking
+
+| Offering state | Payments |
+|---|---|
+| Active | Locked in treasury |
+| Closed, soft cap unmet | Locked |
+| Settled | Released to issuer |
+| Refunding / Cancelled | Returning to investors |
+
+`Treasury.withdrawERC20` reverts while any offering holding that asset is Active or Closed with its
+soft cap unmet. The lock is enforced by the treasury, not by operator discipline.
+
+## Refunds — dual path
+
+| Path | Trigger | Who calls |
+|---|---|---|
+| **Operator push** | `refundBatch(id, limit)` | `OFFERING_OPERATOR` |
+| **Investor pull** | `claimRefund(purchaseId)` | The purchaser |
+
+Both exist because each covers the other's failure mode. Push gives investors a good experience and
+scales; pull guarantees that an absent, unwilling or insolvent operator cannot strand funds.
+
+**Idempotency is the invariant that makes this safe:** a purchase already in `Refunded` cannot be
+refunded again by either path. Assert it in tests.
+
+`beginRefunding` and `settle` are **permissionless** once their conditions are met — closed, and soft
+cap missed or met respectively. No operator action is required to reach either terminal state.
+
+## Allocations and whitelists
+
+| Feature | Mechanism |
+|---|---|
+| Per-investor allocation | Pre-committed amount per subject, checked at purchase |
+| Reserved tranches | A portion of the offering restricted to an allocation list |
+| Min / max investment | Per offering, overridable per investor by rule `bounds` |
+| Tiered pricing | `Tier[]` — price varies by cumulative amount sold |
+
+Allocations are keyed to **subjects**, not addresses, for the same reason holder caps are.
+
+## Offering-level rules versus token-level rules
+
+| Level | Governs | Typical rules |
+|---|---|---|
+| **Token** | Every transfer, forever | identity, jurisdiction, holder caps, hold period |
+| **Offering** | Primary purchase only | accreditation, minimum investment, allocation, regime-specific attestations |
+
+A token-level jurisdiction ban cannot be relaxed by an offering. An offering may only be **more**
+restrictive than the token, never less.
+
+## Hold periods
+
+| Source | Applies |
+|---|---|
+| Token-level baseline | Every acquisition, regardless of route |
+| Offering `lockupUntil` | Tokens purchased in that offering |
+
+Both apply; the longer wins. An offering may lengthen a hold period, never shorten it. The lockup is
+created at distribution and surfaces through `getFrozenTokens`, so it is visible to any ERC-7943
+integrator without offering-specific knowledge.
+
+## Regimes
+
+The regime selected at offering creation determines the rule preset applied and the evidence fields
+the passport expects.
+
+| Regime | Preset | Extra passport evidence |
+|---|---|---|
+| Reg D 506(c) | `RegD506c` | Form D reference, accreditation verification method |
+| Reg S | `RegS` | Distribution compliance period, US-person exclusion method |
+| EU prospectus or exemption | `MiFID2-*` | Prospectus approval or exemption basis |
+| MiCA — ART | `MiCA-ART` | Reserve composition, reserve custody, redemption-at-par terms, white paper |
+| MiCA — EMT | `MiCA-EMT` | 1:1 backing attestation, redemption at par at any time |
+| MiCA — other | `Open` | White paper reference |
+
+## Related documents
+
+- [06 — States](06-states.md#7-offering-state)
+- [10 — Rules](10-rules.md)
+- [13 — Treasury](13-treasury.md)

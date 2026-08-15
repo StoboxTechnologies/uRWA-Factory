@@ -1,0 +1,33 @@
+uRWA Factory
+Copyright (c) 2026 Stobox Technologies
+
+This software is licensed under the MIT License (see LICENSE).
+
+TRADEMARKS
+----------
+The MIT licence grants rights to the code. It does not grant rights to the
+names "Stobox", "Compass", "AXIS", or "uRWA Factory", or to any Stobox logo.
+
+A deployment of this software, or of a fork, MAY state that it "passes the
+uRWA conformance suite" if that is true. It MAY NOT describe itself as built
+by, certified by, endorsed by, or affiliated with Stobox.
+
+RESPONSIBILITY FOR DEPLOYMENTS
+------------------------------
+This is software. Anyone may deploy it. Stobox operates one instance and is
+responsible for that instance only.
+
+A deployment issued through the Stobox factory is verifiable on chain:
+
+  factory.isFactoryIssued(token)          on the canonical factory address
+  passport.isConfirmed(passportId, token) only the Stobox passport can confirm
+
+A deployment that fails either check is not a Stobox issuance, regardless of
+what it is called or how it is presented.
+
+NOT ADVICE
+----------
+Stobox is a software and infrastructure provider. This project supplies
+mechanisms and templates. Which rules apply to a given asset, and the
+consequences of that choice, are the issuer's decision. Nothing in this
+repository is legal, financial, tax or investment advice.
