@@ -172,6 +172,12 @@ unfrozenBalanceOf(a)  = max(0, balanceOf(a) − getFrozenTokens(a))
 5. `capLocked` never goes from true to false.
 6. Lockups expire by timestamp — no transaction, no keeper, no stale state.
 7. `getFrozenTokens` never reverts.
+8. A holder carries at most **32** lockups. Unbounded, the composed total would
+   grow expensive enough to price a holder out of transferring — a restriction
+   imposed by accident rather than by decision.
+9. The composed total has **one implementation**, shared by the pipeline that
+   enforces it, the view that reports it and the event that logs it. Two
+   implementations that agree today are two that can disagree later.
 
 ### E-08 Rule and E-09 Policy set
 

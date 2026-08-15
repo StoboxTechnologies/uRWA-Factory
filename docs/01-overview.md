@@ -93,7 +93,7 @@ Every step above is specified. **None of it is built yet** — see the status se
 | **Diagrams** | 17, generated from source and checked in CI |
 | **Prototypes** | Four surfaces, clickable, wired to nothing |
 | **Verification** | 37 automated checks, each proven to fail on its own broken input |
-| **Solidity** | Phase 0 done; Phase 1 in progress — ledger plane, compliance pipeline and subject accounting, 36 tests |
+| **Solidity** | Phase 0 done; Phase 1 in progress — ledger, pipeline, subject accounting, freeze and lockups; 46 tests |
 | **Audit** | Booked after the core, before any real issuance |
 | **Mainnet** | Not until the audit clears |
 

@@ -570,7 +570,13 @@ unfrozenBalanceOf(a)  = max(0, balanceOf(a) − getFrozenTokens(a))</pre>
 <li><code>capLocked</code> never goes from true to false.</li>
 <li>Lockups expire by timestamp — no transaction, no keeper, no stale state.</li>
 <li><code>getFrozenTokens</code> never reverts.</li>
+<li>A holder carries at most <strong>32</strong> lockups. Unbounded, the composed total would</li>
 </ol>
+<p>   grow expensive enough to price a holder out of transferring — a restriction    imposed by accident rather than by decision.</p>
+<ol>
+<li>The composed total has <strong>one implementation</strong>, shared by the pipeline that</li>
+</ol>
+<p>   enforces it, the view that reports it and the event that logs it. Two    implementations that agree today are two that can disagree later.</p>
 <h4 id="29-e-08-rule-and-e-09-policy-set">E-08 Rule and E-09 Policy set</h4>
 <pre>Rule       stateless contract; parameters immutable at deployment
 PolicySet  groups[] → rules[], each group ANY-of, groups AND-ed together</pre>
@@ -751,4 +757,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 727d1bb62979df6244ebe5cd0ce31f01d9cc9a61f0d137586c4897701ce397d2 -->
+<!-- source-digest: ff847e6714769dd270806a9e10c3c078db1140590e873493913e0de9bbd41cd4 -->

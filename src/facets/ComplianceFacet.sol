@@ -6,6 +6,7 @@ import {IEvents} from "../interfaces/IEvents.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {IPolicySet} from "../interfaces/IPolicy.sol";
 import {ClaimKeys, Roles} from "../interfaces/Roles.sol";
+import {Restrictions} from "./RestrictionFacets.sol";
 import {Layout} from "../storage/Layout.sol";
 
 /// @title The part that decides whether value may move
@@ -212,13 +213,11 @@ contract ComplianceFacet is IErrors {
     }
 
     /// @dev Admin freeze plus every unexpired lockup. May exceed the balance,
-    ///      which is legal and must not revert.
-    function _frozen(address account) internal view returns (uint256 total) {
-        total = Layout.freeze().adminFrozen[account];
-        Layout.Lockup[] storage locks = Layout.lockup().lockups[account];
-        for (uint256 i = 0; i < locks.length; i++) {
-            if (locks[i].unlockAt > block.timestamp) total += locks[i].amount;
-        }
+    ///      which is legal and must not revert. Shared with the restriction
+    ///      facets so the enforced number and the reported one are the same
+    ///      code, not two implementations that agree today.
+    function _frozen(address account) internal view returns (uint256) {
+        return Restrictions.frozenOf(account);
     }
 
     // ── ERC-7943, and the diagnostic that shares its code path ──────────────
