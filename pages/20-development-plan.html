@@ -412,106 +412,167 @@ footer p{max-width:76ch;margin:0 0 8px}
 <article>
 <header class="slim"><a href="../index.html">uRWA Factory documentation</a><span>Development plan</span></header>
 <section class="doc" id="doc-20"><h2 id="sec-20">20 — Development plan</h2>
-<p>Six phases. Each ends with something releasable and independently useful. Effort figures are planning estimates for a team of two Solidity engineers plus one front-end engineer, and should be re-estimated once the interface package compiles.</p>
-<h3 id="20-phase-0-interface-package">Phase 0 — Interface package</h3>
-<p><strong>Goal:</strong> the design is checked by a compiler rather than by reading.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th></tr></thead><tbody><tr><td style="text-align:left">Write every interface from <a href="07-functions.html">07</a> as Solidity with NatSpec, no bodies</td><td style="text-align:left"><code>src/interfaces/*.sol</code></td></tr><tr><td style="text-align:left">Declare every storage struct from <a href="04-storage.html">04</a></td><td style="text-align:left"><code>src/storage/*.sol</code></td></tr><tr><td style="text-align:left">Fix the diamond storage slot constants</td><td style="text-align:left"><code>src/storage/Slots.sol</code></td></tr><tr><td style="text-align:left">Define every event and error from <a href="14-events-errors.html">14</a></td><td style="text-align:left"><code>src/interfaces/IEvents.sol</code>, <code>IErrors.sol</code></td></tr><tr><td style="text-align:left">Foundry project skeleton, CI, linting</td><td style="text-align:left"><code>foundry.toml</code>, <code>.github/workflows</code></td></tr></tbody></table></div>
-<p><strong>Exit criteria:</strong> <code>forge build</code> succeeds. Storage layout is frozen. An external reviewer can read the whole surface in one sitting.</p>
-<p><strong>Why first:</strong> the storage layout is the one decision that cannot be revised once facets exist, and this is what an auditor or outside contributor asks for before anything else.</p>
-<p><em>Estimate: 1–2 weeks.</em></p>
+<p>Seven phases, each ending in something releasable and independently useful. Every task carries its registry ID from <a href="24-work-registry.html">24</a>, so the plan and the register cannot drift.</p>
+<p>Estimates assume <strong>two Solidity engineers, one front-end engineer, one part-time designer and writer</strong>, and should be re-estimated the day <code>IF-01</code> compiles. Everything before that is an estimate about code nobody has written.</p>
+<figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 436" class="d-plan">
+<style>
+.d-plan text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-plan .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
+.d-plan .ph{font-size:12px;font-weight:600}
+.d-plan .sm{font-size:10.5px;fill:#57575B}
+.d-plan .fa{font-size:10px;fill:#6E6E73}
+.d-plan .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
+.d-plan .i-ph{fill:#FFFFFF}
+.d-plan .i-sm{fill:#6E6E73}
+.d-plan .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-plan .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-plan .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<rect width="760" height="436" fill="#FFFFFF"/>
+
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M3 5.5h18"/><path d="M3 12h12"/><path d="M3 18.5h7"/><path d="M17.5 15.5 20 18l3.5-4"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Seven phases</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
+
+<text class="lbl" x="24" y="22">WEEKS</text>
+<text class="mos" x="150" y="22">0</text>
+<text class="mos" x="256" y="22">6</text>
+<text class="mos" x="380" y="22">12</text>
+<text class="mos" x="504" y="22">18</text>
+<text class="mos" x="628" y="22">24</text>
+<path d="M150 30 L736 30" stroke="#E2E4E9" stroke-width="1"/>
+
+
+<text class="lbl" x="24" y="56">SERIAL SPINE</text>
+
+<text class="ph" x="24" y="80">Phase 0</text>
+<text class="fa" x="24" y="94">interfaces</text>
+<rect x="150" y="66" width="42" height="30" rx="7" fill="#0C0C0F"/>
+<text class="sm i-ph" x="163" y="86">0</text>
+
+<text class="ph" x="24" y="122">Phase 1</text>
+<text class="fa" x="24" y="136">token, factory</text>
+<rect x="196" y="108" width="130" height="30" rx="7" fill="#0C0C0F"/>
+<text class="sm i-ph" x="252" y="128">1</text>
+
+<text class="ph" x="24" y="164">Phase 2</text>
+<text class="fa" x="24" y="178">rules, adapters</text>
+<rect x="330" y="150" width="96" height="30" rx="7" fill="#0C0C0F"/>
+<text class="sm i-ph" x="372" y="170">2</text>
+
+<text class="ph" x="24" y="206">Phase 3</text>
+<text class="fa" x="24" y="220">offerings</text>
+<rect x="430" y="192" width="116" height="30" rx="7" fill="#0C0C0F"/>
+<text class="sm i-ph" x="482" y="212">3</text>
+
+<text class="ph" x="24" y="248">Phase 6</text>
+<text class="fa" x="24" y="262">audit, mainnet</text>
+<rect x="550" y="234" width="116" height="30" rx="7" fill="#1D1D1F"/>
+<text class="sm i-ph" x="600" y="254">6</text>
+
+
+<text class="lbl" x="24" y="296">ALONGSIDE</text>
+
+<text class="ph" x="24" y="316">Phase 4 · passport</text>
+<rect x="330" y="302" width="110" height="22" rx="7" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="fa" x="376" y="317">4</text>
+
+<text class="ph" x="24" y="338">Phase 5 · interfaces</text>
+<rect x="330" y="326" width="200" height="16" rx="7" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="fa" x="424" y="338">5</text>
+
+<rect x="444" y="302" width="90" height="22" rx="7" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
+<text class="fa" x="474" y="317">3b optional</text>
+
+
+<path d="M192 66 L192 288" stroke="#D2D5DB" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="fa" x="196" y="288">storage frozen</text>
+<path d="M550 234 L550 288" stroke="#D2D5DB" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="fa" x="554" y="288">audit gate</text>
+</g>
+</svg>
+<figcaption>Seven phases. Phase 0 gates everything, the audit gates mainnet, and interfaces run alongside from Phase 2 — the only genuinely serial stretch is 0 → 1 → 2.</figcaption></figure>
+<h3 id="20-how-to-read-this">How to read this</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Column</th><th style="text-align:left">Means</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Task</strong></td><td style="text-align:left">The work, with its ID in <a href="24-work-registry.html">24</a></td></tr><tr><td style="text-align:left"><strong>Output</strong></td><td style="text-align:left">The file or artefact that exists when it is done</td></tr><tr><td style="text-align:left"><strong>Proves</strong></td><td style="text-align:left">The check that says so — a test, a script or a CI job</td></tr></tbody></table></div>
+<p>A task with no entry in the third column is not planned work. It is an intention.</p>
 <hr class="soft">
-<h3 id="20-phase-1-core-token-and-factory">Phase 1 — Core token and factory</h3>
-<p><strong>Goal:</strong> a conformant ERC-7943 token anyone can deploy.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th></tr></thead><tbody><tr><td style="text-align:left">Diamond core with immutable ERC-20 and ERC-2612</td><td style="text-align:left"><code>uRWAToken.sol</code></td></tr><tr><td style="text-align:left"><code>DiamondCutFacet</code>, <code>DiamondLoupeFacet</code></td><td style="text-align:left">facets</td></tr><tr><td style="text-align:left"><code>ComplianceFacet</code> — pipeline, ERC-7943 views, <code>whyBlocked</code>, trust list, pause</td><td style="text-align:left">facet</td></tr><tr><td style="text-align:left"><code>FreezeFacet</code>, <code>LockupFacet</code> — composed frozen total</td><td style="text-align:left">facets</td></tr><tr><td style="text-align:left"><code>MonetaryFacet</code>, <code>RolesFacet</code></td><td style="text-align:left">facets</td></tr><tr><td style="text-align:left"><code>AllowlistRegistry</code>, <code>EASAdapter</code></td><td style="text-align:left">identity adapters</td></tr><tr><td style="text-align:left"><code>uRWAFactory</code> with packages and presets</td><td style="text-align:left">factory</td></tr><tr><td style="text-align:left"><code>Treasury</code> clone</td><td style="text-align:left">treasury</td></tr><tr><td style="text-align:left"><strong>Conformance kit</strong> — separate repository</td><td style="text-align:left">test suite</td></tr></tbody></table></div>
-<p><strong>Exit criteria:</strong></p>
+<h3 id="20-phase-0-interface-package-1-2-weeks">Phase 0 — Interface package · 1–2 weeks</h3>
+<p><strong>Goal.</strong> The design is checked by a compiler rather than by reading.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th><th style="text-align:left">Proves</th></tr></thead><tbody><tr><td style="text-align:left"><code>IF-01</code> Every interface from <a href="07-functions.html">07</a> as Solidity with NatSpec, no bodies</td><td style="text-align:left"><code>src/interfaces/*.sol</code></td><td style="text-align:left"><code>forge build</code></td></tr><tr><td style="text-align:left"><code>IF-02</code> Every storage struct from <a href="04-storage.html">04</a>, with namespaced slots</td><td style="text-align:left"><code>src/storage/*.sol</code>, <code>Slots.sol</code></td><td style="text-align:left"><code>L3.3</code>, <code>L3.4</code></td></tr><tr><td style="text-align:left"><code>IF-03</code> Every event and error from <a href="14-events-errors.html">14</a></td><td style="text-align:left"><code>IEvents.sol</code>, <code>IErrors.sol</code></td><td style="text-align:left"><code>L3.5</code></td></tr><tr><td style="text-align:left"><code>IF-04</code> Foundry skeleton, remappings, formatter, CI wiring</td><td style="text-align:left"><code>foundry.toml</code>, workflows</td><td style="text-align:left">CI runs on a pull request</td></tr></tbody></table></div>
+<p><strong>Exit criteria.</strong> <code>forge build</code> succeeds. Storage layout is frozen. <code>L3.1</code> and <code>L3.2</code> run in CI, so the function reference and the interfaces can no longer disagree.</p>
+<p><strong>Why it is first, and alone.</strong> The storage layout is the single decision that cannot be revised once facets exist — a diamond shares storage, and a struct that needs a field inserted rather than appended means a migration of live balances. Phase 0 costs two weeks; getting it wrong costs a redeployment and every holder&#x27;s trust.</p>
+<blockquote><p><strong>Gate.</strong> Nothing in Phase 1 or 2 starts until <code>IF-02</code> is merged.</p></blockquote>
+<hr class="soft">
+<h3 id="20-phase-1-core-token-and-factory-5-7-weeks">Phase 1 — Core token and factory · 5–7 weeks</h3>
+<p><strong>Goal.</strong> A conformant ERC-7943 token anyone can deploy, with no dependency on us.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th><th style="text-align:left">Proves</th></tr></thead><tbody><tr><td style="text-align:left"><code>CO-01</code> Diamond core: immutable ERC-20, ERC-2612, fallback router</td><td style="text-align:left"><code>uRWAToken.sol</code></td><td style="text-align:left"><code>L4.1</code> — selectors cannot be replaced</td></tr><tr><td style="text-align:left"><code>CO-02</code> Cut and loupe facets</td><td style="text-align:left">facets</td><td style="text-align:left">Loupe report matches the published package</td></tr><tr><td style="text-align:left"><code>CO-03</code> <code>ComplianceFacet</code>: pipeline, ERC-7943 views, <code>whyBlocked</code></td><td style="text-align:left">facet</td><td style="text-align:left"><code>L4.2</code> — no view reverts, fuzzed</td></tr><tr><td style="text-align:left"><code>CO-04</code> Trust list and global pause</td><td style="text-align:left">facet</td><td style="text-align:left"><code>L4.9</code> — trust never bypasses pause</td></tr><tr><td style="text-align:left"><code>CO-05</code> Subject-level holder accounting</td><td style="text-align:left">facet</td><td style="text-align:left"><code>L4.5</code>, <code>L4.6</code> — caps count subjects</td></tr><tr><td style="text-align:left"><code>CO-06</code> Freeze and lockup with a composed frozen total</td><td style="text-align:left">facets</td><td style="text-align:left"><code>L4.11</code> — frozen may exceed balance</td></tr><tr><td style="text-align:left"><code>CO-07</code> <code>MonetaryFacet</code>: issue, redeem, distribute, caps</td><td style="text-align:left">facet</td><td style="text-align:left"><code>L4.7</code> — <code>totalIssued</code> monotonic</td></tr><tr><td style="text-align:left"><code>CO-08</code> <code>RolesFacet</code></td><td style="text-align:left">facet</td><td style="text-align:left"><code>L4.8</code> — upgrade admin cannot move a balance</td></tr><tr><td style="text-align:left"><code>CO-12</code> Per-address pause, both directions, reason evented</td><td style="text-align:left">facet</td><td style="text-align:left">A paused address can neither send nor receive</td></tr><tr><td style="text-align:left"><code>CO-13</code> Configurable upgrade delay, exposed for the verifier</td><td style="text-align:left">facet</td><td style="text-align:left">The delay is readable without storage access</td></tr><tr><td style="text-align:left"><code>CO-09</code> Treasury clone</td><td style="text-align:left"><code>Treasury.sol</code></td><td style="text-align:left">One treasury per token</td></tr><tr><td style="text-align:left"><code>CO-10</code> Factory: create, packages, presets, registry</td><td style="text-align:left"><code>uRWAFactory.sol</code></td><td style="text-align:left"><code>L4.13</code> — deploys on a clean chain</td></tr><tr><td style="text-align:left"><code>CO-11</code> ERC-1404 compatibility surface</td><td style="text-align:left">facet</td><td style="text-align:left">Legacy integrators read a reason code</td></tr><tr><td style="text-align:left"><code>ID-01</code>, <code>ID-02</code> Identity interface and the allowlist adapter</td><td style="text-align:left">adapters</td><td style="text-align:left">A fork runs on tier 0 alone</td></tr><tr><td style="text-align:left"><code>TO-01</code> <strong>ERC-7943 conformance kit, separate repository</strong></td><td style="text-align:left">test suite</td><td style="text-align:left">Passes against a token this factory issued</td></tr></tbody></table></div>
+<p><strong>Exit criteria.</strong></p>
 <ul>
-<li><code>supportsInterface(0x3edbb4c4)</code> returns true</li>
-<li>Conformance kit passes, including the must-not-revert guarantee for unknown wallets</li>
-<li>Deployed and verified on Base Sepolia</li>
-<li>A fork deploys the whole stack to a fresh anvil chain and completes a transfer — as a CI job</li>
+<li><code>supportsInterface(0x3edbb4c4)</code> is true</li>
+<li>The conformance kit passes, including the must-not-revert guarantee for unknown wallets</li>
+<li>Deployed and verified on Base Sepolia, with a loupe report published</li>
+<li><strong>A fresh-chain CI job deploys the whole stack with no Stobox contract present and completes a transfer</strong></li>
 </ul>
-<p><em>Estimate: 5–7 weeks.</em></p>
+<p>The last one is the open-source claim as a build step rather than a promise.</p>
 <hr class="soft">
-<h3 id="20-phase-2-policy-engine-and-rules">Phase 2 — Policy engine and rules</h3>
-<p><strong>Goal:</strong> real compliance regimes, configurable without a migration.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th></tr></thead><tbody><tr><td style="text-align:left"><code>PolicySet</code> — AND groups of OR alternatives, gas ceiling, rule cap</td><td style="text-align:left">contract</td></tr><tr><td style="text-align:left">Twelve rules from <a href="10-rules.html">10</a></td><td style="text-align:left"><code>src/rules/*.sol</code></td></tr><tr><td style="text-align:left">Seven presets registered in the factory</td><td style="text-align:left">migration script</td></tr><tr><td style="text-align:left"><code>StoboxDIDAdapter</code> with mandatory <code>try/catch</code> on every call</td><td style="text-align:left">adapter</td></tr><tr><td style="text-align:left">Subject-level holder accounting wired through the pipeline</td><td style="text-align:left">facet change</td></tr></tbody></table></div>
-<p><strong>Exit criteria:</strong></p>
-<ul>
-<li>Every preset has a passing and a failing test per rule</li>
-<li>The DID adapter returns rather than reverts for unknown, zero and contract addresses</li>
-<li>Holder caps demonstrably count subjects: a test where one investor with three wallets cannot exceed</li>
-</ul>
-<p>  a two-holder cap</p>
-<ul>
-<li>A deliberately reverting rule does not brick the token</li>
-</ul>
-<p><em>Estimate: 4–5 weeks.</em></p>
+<h3 id="20-phase-2-policy-engine-and-rules-4-5-weeks">Phase 2 — Policy engine and rules · 4–5 weeks</h3>
+<p><strong>Goal.</strong> Compliance becomes configuration instead of code.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th><th style="text-align:left">Proves</th></tr></thead><tbody><tr><td style="text-align:left"><code>PO-01</code> <code>PolicySet</code>: AND groups of OR alternatives, 100,000-gas ceiling, rule cap</td><td style="text-align:left"><code>PolicySet.sol</code></td><td style="text-align:left">A reverting rule counts as a refusal</td></tr><tr><td style="text-align:left"><code>PO-02</code> <code>HasValidIdentity</code></td><td style="text-align:left">rule</td><td style="text-align:left">The base gate every preset includes</td></tr><tr><td style="text-align:left"><code>PO-03</code> Jurisdiction allow and deny</td><td style="text-align:left">rules</td><td style="text-align:left">Countries compared as hashes</td></tr><tr><td style="text-align:left"><code>PO-04</code> <code>USAccreditedOnly</code>, <code>EUProfessionalOnly</code>, <code>EUQualifiedExemption</code></td><td style="text-align:left">rules</td><td style="text-align:left">Separate tests, not one <code>accredited</code> flag</td></tr><tr><td style="text-align:left"><code>PO-05</code> <code>MaxHolders</code>, <code>MaxBalancePerHolder</code></td><td style="text-align:left">rules</td><td style="text-align:left">One investor, three wallets, one holder</td></tr><tr><td style="text-align:left"><code>PO-06</code> <code>HoldPeriod</code>, <code>TransferWindow</code></td><td style="text-align:left">rules</td><td style="text-align:left">Composes with admin freezes</td></tr><tr><td style="text-align:left"><code>PO-07</code> <code>SanctionsScreen</code>, <code>TravelRuleThreshold</code></td><td style="text-align:left">rules</td><td style="text-align:left">Freshness enforced by the rule, not the registry</td></tr><tr><td style="text-align:left"><code>PO-09</code> The four MiCA rules — issuer, class, whitepaper, reserve</td><td style="text-align:left">rules</td><td style="text-align:left">A stale reserve stops the whole token</td></tr><tr><td style="text-align:left"><code>PO-08</code> Four presets registered in the factory</td><td style="text-align:left">factory config</td><td style="text-align:left">Preset composition matches <a href="10-rules.html">10</a></td></tr><tr><td style="text-align:left"><code>ID-03</code> EAS adapter</td><td style="text-align:left">adapter</td><td style="text-align:left">Base-native attestations</td></tr><tr><td style="text-align:left"><code>ID-04</code> StoboxDID adapter, <code>try/catch</code> on every call</td><td style="text-align:left">adapter</td><td style="text-align:left"><strong>Every view returns for unknown, zero and contract addresses</strong></td></tr></tbody></table></div>
+<p><strong>Exit criteria.</strong> A token switches regime with one <code>setPolicySet</code> call and no balance moves. <code>ID-04</code> carries the known integration defect and does not ship without the test that proves it is handled.</p>
 <hr class="soft">
-<h3 id="20-phase-3-custody-and-offerings">Phase 3 — Custody and offerings</h3>
-<p><strong>Goal:</strong> run a real primary sale end to end.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th></tr></thead><tbody><tr><td style="text-align:left">Treasury reservation and payment locking</td><td style="text-align:left">contract</td></tr><tr><td style="text-align:left"><code>OfferingRegistry</code> facets: governance, storage, purchase, refund, rules</td><td style="text-align:left">diamond</td></tr><tr><td style="text-align:left">Tiered pricing, multi payment token, allocations</td><td style="text-align:left">facets</td></tr><tr><td style="text-align:left">Dual-path refunds with idempotency</td><td style="text-align:left">facet</td></tr><tr><td style="text-align:left"><code>PurchaseFacet</code> on the token side</td><td style="text-align:left">facet</td></tr></tbody></table></div>
-<p><strong>Exit criteria:</strong></p>
-<ul>
-<li>Full lifecycle test: create → activate → purchase → close → settle</li>
-<li>Full failure test: create → activate → purchase → close → soft cap missed → refund, via both paths</li>
-<li>Double-refund attempt fails</li>
-<li>Payments provably not withdrawable before soft cap</li>
-<li><strong>Audit contest opens here</strong>, against a frozen interface</li>
-</ul>
-<p><em>Estimate: 5–6 weeks.</em></p>
+<h3 id="20-phase-3-custody-and-offerings-5-6-weeks">Phase 3 — Custody and offerings · 5–6 weeks</h3>
+<p><strong>Goal.</strong> Primary issuance, with investor money protected by construction.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th><th style="text-align:left">Proves</th></tr></thead><tbody><tr><td style="text-align:left"><code>CU-01</code> Treasury reservation and payment locking</td><td style="text-align:left"><code>Treasury</code></td><td style="text-align:left">Payment is not withdrawable below soft cap</td></tr><tr><td style="text-align:left"><code>CU-02</code> Offering registry: governance and storage facets</td><td style="text-align:left">diamond</td><td style="text-align:left">Read path unaffected by write-path upgrades</td></tr><tr><td style="text-align:left"><code>CU-03</code> Purchase, allocations, tiered pricing, multiple payment tokens</td><td style="text-align:left">facet</td><td style="text-align:left">A purchase over the remaining cap reverts whole</td></tr><tr><td style="text-align:left"><code>CU-04</code> Dual-path refunds with idempotency</td><td style="text-align:left">facet</td><td style="text-align:left"><code>L4.10</code> — no purchase refunds twice</td></tr><tr><td style="text-align:left"><code>CU-05</code> Offering-level rule engine</td><td style="text-align:left">facet</td><td style="text-align:left">Passing the offering never implies the right to hold</td></tr><tr><td style="text-align:left"><code>CU-06</code> <code>PurchaseFacet</code> on the token side</td><td style="text-align:left">facet</td><td style="text-align:left">The distribution leg runs the full pipeline</td></tr></tbody></table></div>
+<p><strong>Exit criteria.</strong> A raise runs end to end on testnet: subscribe, miss the soft cap, refund without the operator; then subscribe, meet it, settle. Both <code>settle</code> and <code>beginRefunding</code> callable by anyone.</p>
 <hr class="soft">
-<h3 id="20-phase-4-passport-and-proofs">Phase 4 — Passport and proofs</h3>
-<p><strong>Goal:</strong> verifiable asset provenance without disclosing the record.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th></tr></thead><tbody><tr><td style="text-align:left"><code>IAssetPassport</code>, <code>PassportLink</code> handshake</td><td style="text-align:left">interfaces and contract</td></tr><tr><td style="text-align:left"><code>ReferencePassport</code> — mechanism only, no schema</td><td style="text-align:left">contract</td></tr><tr><td style="text-align:left">Sparse Merkle tree, salted leaves, revocation tree</td><td style="text-align:left">library</td></tr><tr><td style="text-align:left"><strong>Verifier library</strong> — dependency-free, published separately</td><td style="text-align:left">library</td></tr><tr><td style="text-align:left"><code>AttestorRegistry</code> with key validity windows</td><td style="text-align:left">contract</td></tr><tr><td style="text-align:left">Access grants: group-scoped, expiring</td><td style="text-align:left">contract</td></tr><tr><td style="text-align:left"><code>PassportValidRule</code></td><td style="text-align:left">rule</td></tr></tbody></table></div>
-<p><strong>Exit criteria:</strong></p>
-<ul>
-<li>A third party verifies a proof using only the published spec and the verifier library</li>
-<li>Absence proofs work — &quot;no legal opinion&quot; is provable</li>
-<li>Handshake cannot be forged from the token side alone</li>
-<li>No datapoint schema appears anywhere in the repository</li>
-</ul>
-<p><em>Estimate: 4–5 weeks.</em></p>
+<h3 id="20-phase-3b-agents-and-settlement-3-4-weeks-optional">Phase 3b — Agents and settlement · 3–4 weeks, optional</h3>
+<p><strong>Goal.</strong> Automation and atomic settlement, as separate contracts nobody is forced to install.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th><th style="text-align:left">Proves</th></tr></thead><tbody><tr><td style="text-align:left"><code>AG-01</code> <code>AgentAuthority</code>: mandates, scopes, epoch limits, revoke</td><td style="text-align:left">contract</td><td style="text-align:left"><code>L4.15</code> — no action exceeds its mandate</td></tr><tr><td style="text-align:left"><code>AG-02</code> <code>AtomicDvP</code>: settle, preview, cancel</td><td style="text-align:left">contract</td><td style="text-align:left"><code>L4.14</code> — both legs or neither</td></tr><tr><td style="text-align:left"><code>AG-03</code> EIP-712 instruction format and signature verification</td><td style="text-align:left">library</td><td style="text-align:left">A replayed nonce cannot settle</td></tr><tr><td style="text-align:left"><code>AG-04</code> Reference monitoring agent</td><td style="text-align:left">package</td><td style="text-align:left">Reads only; demonstrates the mandate model</td></tr></tbody></table></div>
+<p><strong>Why it is separate.</strong> Both call <em>into</em> the token and are never dependencies of it. Keeping them out of the default package keeps the audited perimeter small and lets a plain issuance ship without them.</p>
 <hr class="soft">
-<h3 id="20-phase-5-interfaces">Phase 5 — Interfaces</h3>
-<p><strong>Goal:</strong> the system is usable by people, not only by contracts.</p>
-<p>See <a href="21-interface-specification.html">21 — Interface specification</a> for the full screen inventory.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th></tr></thead><tbody><tr><td style="text-align:left">Wallet connection and identity resolution</td><td style="text-align:left">shared module</td></tr><tr><td style="text-align:left">Issuer console</td><td style="text-align:left">app</td></tr><tr><td style="text-align:left">Investor page</td><td style="text-align:left">app</td></tr><tr><td style="text-align:left">Compliance console</td><td style="text-align:left">app</td></tr><tr><td style="text-align:left">Public verifier</td><td style="text-align:left">app</td></tr><tr><td style="text-align:left">TypeScript SDK and published ABIs</td><td style="text-align:left">npm package</td></tr></tbody></table></div>
-<p><strong>Exit criteria:</strong></p>
-<ul>
-<li>An issuer deploys a token and runs an offering without touching a block explorer</li>
-<li>An investor sees why a transfer would fail <em>before</em> signing</li>
-<li>A verifier checks a passport proof with no account</li>
-</ul>
-<p><em>Estimate: 6–8 weeks, overlapping phases 2–4.</em></p>
+<h3 id="20-phase-4-passport-and-proofs-4-5-weeks">Phase 4 — Passport and proofs · 4–5 weeks</h3>
+<p><strong>Goal.</strong> Evidence about the asset, provable by anyone, without disclosing anything.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th><th style="text-align:left">Proves</th></tr></thead><tbody><tr><td style="text-align:left"><code>PA-01</code> <code>IAssetPassport</code> and the handshake</td><td style="text-align:left">contract</td><td style="text-align:left">Declared ≠ confirmed</td></tr><tr><td style="text-align:left"><code>PA-02</code> Sparse Merkle tree, salted leaves, revocation tree</td><td style="text-align:left">library</td><td style="text-align:left"><strong>Absence is provable</strong></td></tr><tr><td style="text-align:left"><code>PA-03</code> Reference passport — mechanism only, no schema</td><td style="text-align:left">contract</td><td style="text-align:left">A fork writes its own passport</td></tr><tr><td style="text-align:left"><code>PA-04</code> Verifier library, dependency-free, separate package</td><td style="text-align:left">package</td><td style="text-align:left">Verifies without calling us</td></tr><tr><td style="text-align:left"><code>PA-05</code> Attestor registry with key validity windows</td><td style="text-align:left">contract</td><td style="text-align:left">Signature checked against the key valid at signing</td></tr><tr><td style="text-align:left"><code>PA-06</code> Access grants: group-scoped, expiring, revocable</td><td style="text-align:left">contract</td><td style="text-align:left">Every grant expires</td></tr><tr><td style="text-align:left"><code>PA-07</code> <code>PassportValidRule</code> — optional</td><td style="text-align:left">rule</td><td style="text-align:left">Passport gating stays the issuer&#x27;s choice</td></tr></tbody></table></div>
+<p><strong>Exit criteria.</strong> A third party verifies a disclosed datapoint and an absent one, using only the published library and a public node. <strong>Depends on Phase 1 only</strong> — it can run alongside Phase 2 or 3.</p>
 <hr class="soft">
-<h3 id="20-phase-6-audit-and-mainnet">Phase 6 — Audit and mainnet</h3>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th></tr></thead><tbody><tr><td style="text-align:left">Public audit contest</td><td style="text-align:left">report</td></tr><tr><td style="text-align:left">Remediation</td><td style="text-align:left">fixes and re-review</td></tr><tr><td style="text-align:left">Signed release, deployment manifest</td><td style="text-align:left">tag</td></tr><tr><td style="text-align:left">Base mainnet deployment</td><td style="text-align:left">addresses</td></tr><tr><td style="text-align:left">STBU fee enabled on the Stobox instance only</td><td style="text-align:left">configuration</td></tr></tbody></table></div>
-<p><strong>Exit criteria:</strong> findings resolved or explicitly accepted in writing; mainnet issuance open.</p>
+<h3 id="20-phase-5-interfaces-runs-from-phase-2-6-8-weeks-total">Phase 5 — Interfaces · runs from Phase 2, 6–8 weeks total</h3>
+<p><strong>Goal.</strong> Every job in <a href="28-product-model.html">28</a> reachable from a surface.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Task</th><th style="text-align:left">Output</th><th style="text-align:left">Proves</th></tr></thead><tbody><tr><td style="text-align:left"><code>TO-04</code> TypeScript SDK and published ABIs</td><td style="text-align:left">package</td><td style="text-align:left">ABIs generated from build artefacts</td></tr><tr><td style="text-align:left"><code>UI-01</code> Wallet connection and identity resolution</td><td style="text-align:left">module</td><td style="text-align:left">The seven connection states in <a href="21-interface-specification.html">21</a></td></tr><tr><td style="text-align:left"><code>UI-09</code> Deploy console — eight steps, no default for delay or emergency facet</td><td style="text-align:left">app</td><td style="text-align:left">Both governance choices are explicit</td></tr><tr><td style="text-align:left"><code>UI-02</code>…<code>UI-06</code> Deploy, token, verifier, investor, compliance surfaces</td><td style="text-align:left">app</td><td style="text-align:left">Every job maps to a surface</td></tr><tr><td style="text-align:left"><code>UI-10</code> Verifier shows delay, emergency facet, fee and passport state</td><td style="text-align:left">app</td><td style="text-align:left">Four facts a holder would otherwise read from storage</td></tr><tr><td style="text-align:left"><code>UI-07</code> Passport proof verifier</td><td style="text-align:left">app</td><td style="text-align:left">No account, no wallet, no cooperation</td></tr></tbody></table></div>
+<p><strong>Exit criteria.</strong> The public verifier answers for a token deployed by someone else, on a chain we do not operate.</p>
 <hr class="soft">
-<h3 id="20-critical-path">Critical path</h3>
-<pre>Phase 0 ──▶ Phase 1 ──▶ Phase 2 ──▶ Phase 3 ──▶ Phase 6
-                 │           │
-                 └──▶ Phase 4 ┘
-                 └──▶ Phase 5 (overlaps 2–4)</pre>
-<p>Phase 4 depends only on Phase 1. Phase 5 can start once Phase 1 interfaces are stable. The audit gates mainnet, not publication — code and testnets are public from the end of Phase 1.</p>
+<h3 id="20-phase-6-audit-and-mainnet-4-6-weeks-plus-remediation">Phase 6 — Audit and mainnet · 4–6 weeks plus remediation</h3>
+<p><strong>Goal.</strong> Independent confirmation, then issuance.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Scope</th><th style="text-align:left">In this audit</th></tr></thead><tbody><tr><td style="text-align:left">Token diamond and every facet</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left">Policy engine and rule library</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left">Treasury and offering registry</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left">Factory</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left">Agents and atomic DvP</td><td style="text-align:left">Later pass</td></tr><tr><td style="text-align:left">Passport</td><td style="text-align:left">Later pass</td></tr></tbody></table></div>
+<p><strong>Exit criteria.</strong> Findings resolved or accepted in writing, signed release with the report attached, mainnet deployment manifest published. <strong>No mainnet issuance until it clears.</strong></p>
+<hr class="soft">
+<h3 id="20-critical-path-and-what-runs-alongside">Critical path and what runs alongside</h3>
+<pre>  0 ──▶ 1 ──▶ 2 ──▶ 3 ──▶ 6          the serial spine
+             │      └──▶ 3b          optional, before or after 6
+             └──▶ 4                  needs only Phase 1
+             └──▶ 5                  starts once Phase 1 interfaces settle</pre>
+<div class="tscroll"><table><thead><tr><th style="text-align:left"></th><th style="text-align:left">Weeks</th></tr></thead><tbody><tr><td style="text-align:left">Serial spine, 0 → 1 → 2 → 3 → 6</td><td style="text-align:left"><strong>19–26</strong></td></tr><tr><td style="text-align:left">With 3b and 4 sequential instead of parallel</td><td style="text-align:left">26–35</td></tr><tr><td style="text-align:left">Interfaces, absorbed into the spine</td><td style="text-align:left">+0 if staffed from Phase 2</td></tr></tbody></table></div>
+<p>The audit gates <strong>mainnet</strong>, not publication. Code and testnet deployments are public from the end of Phase 1, which is when outside review becomes possible and therefore useful.</p>
+<h3 id="20-decision-gates">Decision gates</h3>
+<p>Points where the plan stops until someone decides.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Gate</th><th style="text-align:left">Before</th><th style="text-align:left">Needs</th></tr></thead><tbody><tr><td style="text-align:left">Storage frozen</td><td style="text-align:left">Phase 1</td><td style="text-align:left"><code>IF-02</code> merged and reviewed</td></tr><tr><td style="text-align:left">Claim schema v1 frozen</td><td style="text-align:left"><code>PO-02</code></td><td style="text-align:left">The MiCA key names confirmed against a real configuration</td></tr><tr><td style="text-align:left">Freshness windows per group</td><td style="text-align:left"><code>PA-03</code></td><td style="text-align:left">A number per group, from the attestation policy</td></tr><tr><td style="text-align:left">Audit firm engaged</td><td style="text-align:left">Phase 6</td><td style="text-align:left">Booked at the start of Phase 3 — lead times run to months</td></tr></tbody></table></div>
 <h3 id="20-team">Team</h3>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Role</th><th style="text-align:left">Phases</th><th style="text-align:left">Load</th></tr></thead><tbody><tr><td style="text-align:left">Solidity engineer × 2</td><td style="text-align:left">0–4, 6</td><td style="text-align:left">Full</td></tr><tr><td style="text-align:left">Front-end engineer</td><td style="text-align:left">5</td><td style="text-align:left">Full from Phase 2</td></tr><tr><td style="text-align:left">Designer</td><td style="text-align:left">5</td><td style="text-align:left">Part-time</td></tr><tr><td style="text-align:left">Technical writer</td><td style="text-align:left">All</td><td style="text-align:left">Part-time — docs ship with each phase</td></tr><tr><td style="text-align:left">Security reviewer</td><td style="text-align:left">3, 6</td><td style="text-align:left">External</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Role</th><th style="text-align:left">Phases</th><th style="text-align:left">Load</th></tr></thead><tbody><tr><td style="text-align:left">Solidity engineer × 2</td><td style="text-align:left">0–4, 6</td><td style="text-align:left">Full</td></tr><tr><td style="text-align:left">Front-end engineer</td><td style="text-align:left">5</td><td style="text-align:left">Full from Phase 2</td></tr><tr><td style="text-align:left">Designer</td><td style="text-align:left">5</td><td style="text-align:left">Part-time</td></tr><tr><td style="text-align:left">Technical writer</td><td style="text-align:left">All</td><td style="text-align:left">Part-time — documentation ships with each phase</td></tr><tr><td style="text-align:left">Security reviewer</td><td style="text-align:left">3, 6</td><td style="text-align:left">External</td></tr></tbody></table></div>
 <h3 id="20-definition-of-done-every-phase">Definition of done, every phase</h3>
 <ol>
-<li>Tests pass; coverage meets the targets in <a href="23-testing-plan.html">23 — Testing plan</a></li>
-<li>Documentation updated in the same pull request as the code</li>
-<li><code>build-docs.py</code> regenerated and committed</li>
+<li>Tests pass and coverage meets the targets in <a href="23-testing-plan.html">23</a></li>
+<li>Documentation updated <strong>in the same pull request</strong> as the code</li>
+<li><code>build-docs.py</code> regenerated and committed; <code>verify.py</code> and <code>--self-test</code> both green</li>
 <li>Deployment manifest updated</li>
-<li>All invariants from <a href="17-security.html">17</a> still assert</li>
+<li>Every invariant in <a href="17-security.html">17</a> still asserts</li>
 <li>The fresh-chain fork test passes</li>
 </ol>
 <h3 id="20-risks">Risks</h3>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Risk</th><th style="text-align:left">Mitigation</th></tr></thead><tbody><tr><td style="text-align:left">Storage layout wrong, discovered late</td><td style="text-align:left">Phase 0 exists precisely to prevent this</td></tr><tr><td style="text-align:left">Diamond complexity slows the audit</td><td style="text-align:left">Verification tooling and a loupe report shipped in Phase 1</td></tr><tr><td style="text-align:left">Scope grows through phases 3 and 5</td><td style="text-align:left">Each phase is independently releasable; a phase can be deferred without stranding the previous one</td></tr><tr><td style="text-align:left">Gas cost of the pipeline exceeds expectations</td><td style="text-align:left">Measured from Phase 1; the order in <a href="08-compliance-pipeline.html">08</a> is designed for the cheap path first</td></tr><tr><td style="text-align:left">DID adapter revert behaviour discovered in production</td><td style="text-align:left">Explicit exit criterion in Phase 2</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Risk</th><th style="text-align:left">Mitigation</th></tr></thead><tbody><tr><td style="text-align:left">Storage layout wrong, found late</td><td style="text-align:left">Phase 0 exists for this, and <code>L3.7</code> diffs every release</td></tr><tr><td style="text-align:left">Diamond complexity slows the audit</td><td style="text-align:left">Loupe report and verification tooling ship in Phase 1</td></tr><tr><td style="text-align:left">Scope creeps through Phases 3 and 5</td><td style="text-align:left">Each phase is independently releasable; deferring one strands nothing</td></tr><tr><td style="text-align:left">Pipeline gas exceeds expectations</td><td style="text-align:left">Measured from Phase 1; the order in <a href="08-compliance-pipeline.html">08</a> puts the cheap path first</td></tr><tr><td style="text-align:left">StoboxDID revert behaviour reaches production</td><td style="text-align:left">An explicit exit criterion on <code>ID-04</code>, not a code review note</td></tr><tr><td style="text-align:left">A MiCA rule stops a whole token unexpectedly</td><td style="text-align:left">Documented in <a href="10-rules.html">10</a>; the console warns at configuration time</td></tr><tr><td style="text-align:left">Audit lead time delays mainnet</td><td style="text-align:left">Book at the start of Phase 3, not the end of Phase 5</td></tr></tbody></table></div>
 <h3 id="20-related-documents">Related documents</h3>
 <ul>
-<li><a href="21-interface-specification.html">21 — Interface specification</a></li>
-<li><a href="23-testing-plan.html">23 — Testing plan</a></li>
-<li><a href="16-deployment.html">16 — Deployment</a></li>
+<li><a href="24-work-registry.html">24 — Work registry</a> — every task with dependencies and effort</li>
+<li><a href="23-testing-plan.html">23 — Testing plan</a> — what each phase must prove</li>
+<li><a href="21-interface-specification.html">21 — Interface specification</a> — Phase 5 in detail</li>
+<li><a href="16-deployment.html">16 — Deployment</a> — chains, addresses and order</li>
 </ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="19-open-boundary.html">← The open boundary</a><a class="pn n" href="21-interface-specification.html">Interface specification →</a></nav></section>
 <footer>
 <p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
@@ -521,7 +582,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 <aside class="rail" aria-label="Section reference">
-<div class="railsec" data-sec="sec-20"><p class="railt">On this page</p><a href="#20-phase-0-interface-package">Phase 0 — Interface package</a><a href="#20-phase-1-core-token-and-factory">Phase 1 — Core token and factory</a><a href="#20-phase-2-policy-engine-and-rules">Phase 2 — Policy engine and rules</a><a href="#20-phase-3-custody-and-offerings">Phase 3 — Custody and offerings</a><a href="#20-phase-4-passport-and-proofs">Phase 4 — Passport and proofs</a><a href="#20-phase-5-interfaces">Phase 5 — Interfaces</a><a href="#20-phase-6-audit-and-mainnet">Phase 6 — Audit and mainnet</a><a href="#20-critical-path">Critical path</a><a href="#20-team">Team</a><a href="#20-definition-of-done-every-phase">Definition of done, every phase</a><a href="#20-risks">Risks</a><p class="railt s">Related</p><a href="21-interface-specification.html">21 — Interface specification</a><a href="23-testing-plan.html">23 — Testing plan</a><a href="16-deployment.html">16 — Deployment</a></div>
+<div class="railsec" data-sec="sec-20"><p class="railt">On this page</p><a href="#20-how-to-read-this">How to read this</a><a href="#20-phase-0-interface-package-1-2-weeks">Phase 0 — Interface package · 1–2 weeks</a><a href="#20-phase-1-core-token-and-factory-5-7-weeks">Phase 1 — Core token and factory · 5–7 weeks</a><a href="#20-phase-2-policy-engine-and-rules-4-5-weeks">Phase 2 — Policy engine and rules · 4–5 weeks</a><a href="#20-phase-3-custody-and-offerings-5-6-weeks">Phase 3 — Custody and offerings · 5–6 weeks</a><a href="#20-phase-3b-agents-and-settlement-3-4-weeks-optional">Phase 3b — Agents and settlement · 3–4 weeks, optional</a><a href="#20-phase-4-passport-and-proofs-4-5-weeks">Phase 4 — Passport and proofs · 4–5 weeks</a><a href="#20-phase-5-interfaces-runs-from-phase-2-6-8-weeks-total">Phase 5 — Interfaces · runs from Phase 2, 6–8 weeks total</a><a href="#20-phase-6-audit-and-mainnet-4-6-weeks-plus-remediation">Phase 6 — Audit and mainnet · 4–6 weeks plus remediation</a><a href="#20-critical-path-and-what-runs-alongside">Critical path and what runs alongside</a><a href="#20-decision-gates">Decision gates</a><a href="#20-team">Team</a><a href="#20-definition-of-done-every-phase">Definition of done, every phase</a><a href="#20-risks">Risks</a><p class="railt s">Related</p><a href="24-work-registry.html">24 — Work registry</a><a href="23-testing-plan.html">23 — Testing plan</a><a href="21-interface-specification.html">21 — Interface specification</a><a href="16-deployment.html">16 — Deployment</a></div>
 <div class="railfix">
 <p class="railt s">Reference</p>
 <a href="../prototypes/">Prototypes</a>
@@ -589,4 +650,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 33692fdff92a79ae1ec4ee49e0cc4d9cbd8d2aec4390c7f016af56a2b28b4e71 -->
+<!-- source-digest: 25ed6b0207cd2bc94e74c791f4d13b153766de066f28adbd39f9b83636988705 -->

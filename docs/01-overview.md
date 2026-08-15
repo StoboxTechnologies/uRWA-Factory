@@ -39,6 +39,68 @@ That leaves a gap: there is a reference token for ERC-7943 (CMTAT v3.2.0) but no
 stack* — no open factory, no policy engine, no rule library, no conformance suite. This project is
 that stack.
 
+## The whole system, component by component
+
+Twelve contracts and two off-chain services. Nothing here is optional to understand; everything except
+the last three is optional to install.
+
+| Component | Does | Installed |
+|---|---|---|
+| **`uRWAToken`** | The asset itself — an ERC-20 diamond whose transfers run a compliance pipeline | Always |
+| **`ComplianceFacet`** | The pipeline: pause, trust, `canSend`, `canReceive`, unfrozen balance, rules | Always |
+| **`FreezeFacet`, `LockupFacet`** | Restrict part of a balance, by decision or by date | Always |
+| **`MonetaryFacet`** | Issue, redeem, distribute, supply caps | Always |
+| **`RolesFacet`** | Four separated roles, none able to do another's work | Always |
+| **`EmergencyFacet`** | Forced transfer, mint, burn — seizure under legal compulsion | **Chosen at deployment** |
+| **`PolicySet` + rules** | Sixteen stateless rules composed into a regime; swapped in one transaction | Always, contents vary |
+| **`IIdentityRegistry`** | Who someone is — one interface, three interchangeable sources | Always |
+| **`Treasury`** | Holds issued supply and investor payments; one per token | Always |
+| **`OfferingRegistry`** | Primary sales: subscription, allocation, settlement, refunds | Per chain |
+| **`uRWAFactory`** | Deploys and wires all of the above in one transaction, then lets go | Per chain |
+| **`AgentAuthority`, `AtomicDvP`** | Bounded automation and delivery-versus-payment | Optional |
+| **`AssetPassport`** | Committed, attested evidence about the underlying asset | Optional, proprietary |
+| **Attestor network** | The people who sign that evidence | Off chain, proprietary |
+
+The split that matters: **the first eleven are MIT and run with no dependency on us.** The last two
+are the business.
+
+## An asset from nothing to a traded token
+
+The end-to-end path, with the document that specifies each step.
+
+| # | What happens | Where |
+|---|---|---|
+| 1 | Issuer picks a regime — Reg D, Reg S, MiCA or their own composition | [10](10-rules.md) |
+| 2 | Issuer calls `createToken`; the factory deploys the token, its treasury and its rule set, grants four roles and registers the deployment | [16](16-deployment.md) |
+| 3 | Investors are verified once by an identity source and become **subjects**, not addresses | [09](09-identity-did.md) |
+| 4 | Supply is issued to the treasury, or minted as it sells | [12](12-offering.md) |
+| 5 | An offering opens; investors subscribe; payment is locked until the soft cap is met | [12](12-offering.md) |
+| 6 | Soft cap met → settle. Missed → **anyone** can start refunds; no operator can strand the money | [13](13-treasury.md) |
+| 7 | Tokens transfer, each one checked against the live rule set before it executes | [08](08-compliance-pipeline.md) |
+| 8 | Anyone can ask `canTransfer` and `whyBlocked` for free, before signing anything | [07](07-functions.md) |
+| 9 | Compliance freezes, locks, pauses or seizes when it must — every action evented with a reason | [05](05-roles.md) |
+| 10 | Trades settle atomically against payment, both legs or neither | [22](22-agents-and-settlement.md) |
+| 11 | Evidence about the asset is committed and provable without being disclosed | [11](11-passport.md) |
+| 12 | A regulator reconstructs the whole register from events alone | [14](14-events-errors.md) |
+
+Every step above is specified. **None of it is built yet** — see the status section below.
+
+## Where the project actually stands
+
+| | |
+|---|---|
+| **Specification** | Complete — 34 documents, five models, 50 artefacts registered |
+| **Diagrams** | 17, generated from source and checked in CI |
+| **Prototypes** | Four surfaces, clickable, wired to nothing |
+| **Verification** | 37 automated checks, each proven to fail on its own broken input |
+| **Solidity** | **None.** Phase 0 is next |
+| **Audit** | Booked after the core, before any real issuance |
+| **Mainnet** | Not until the audit clears |
+
+This is unusual enough to state plainly: **the design is finished and the code is not started.** That
+order is deliberate. The storage layout of a diamond cannot be revised once facets hold live balances,
+and the compliance semantics cannot be revised once someone's transfer has been refused on them.
+
 ## What is open and what is not
 
 | Open — MIT | Stobox proprietary |
@@ -54,7 +116,8 @@ that stack.
 
 **The credibility test:** a stranger can deploy the entire system on a fresh chain with no Stobox
 contract in the dependency graph. In the open distribution the default identity adapter is a plain
-allowlist, the fee hook is zero, and no STBU check exists anywhere in the code.
+allowlist, no fee is charged, and no STBU check exists anywhere in the code. Any fee ever set on
+any instance is readable through `fee()` before a transaction.
 
 ## What the token guarantees
 

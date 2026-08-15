@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 436" width="760" height="436" class="d-plan">
+<style>
+.d-plan text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
+.d-plan .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;fill:#6E6E73}
+.d-plan .ph{font-size:12px;font-weight:600}
+.d-plan .sm{font-size:10.5px;fill:#57575B}
+.d-plan .fa{font-size:10px;fill:#6E6E73}
+.d-plan .mos{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:#57575B}
+.d-plan .i-ph{fill:#FFFFFF}
+.d-plan .i-sm{fill:#6E6E73}
+.d-plan .hdt{font-size:18px;font-weight:700;letter-spacing:-.022em;fill:#1D1D1F}
+.d-plan .hdk{font-size:10.5px;font-weight:700;letter-spacing:.12em;fill:#6E6E73}
+.d-plan .ico{fill:none;stroke:#0C0C0F;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<rect width="760" height="436" fill="#FFFFFF"/>
+<!-- header -->
+<rect x="24" y="16" width="56" height="56" rx="16" fill="#22D3EE" fill-opacity="0.16" stroke="#A5E9F4"/><g class="ico" transform="translate(36,28) scale(1.3333)"><path d="M3 5.5h18"/><path d="M3 12h12"/><path d="M3 18.5h7"/><path d="M17.5 15.5 20 18l3.5-4"/></g><text class="hdk" x="98" y="36">DIAGRAM</text><text class="hdt" x="98" y="60">Seven phases</text><rect x="24" y="92" width="712" height="1" fill="#E2E4E9"/>
+<g transform="translate(0,92)">
+
+<text class="lbl" x="24" y="22">WEEKS</text>
+<text class="mos" x="150" y="22">0</text>
+<text class="mos" x="256" y="22">6</text>
+<text class="mos" x="380" y="22">12</text>
+<text class="mos" x="504" y="22">18</text>
+<text class="mos" x="628" y="22">24</text>
+<path d="M150 30 L736 30" stroke="#E2E4E9" stroke-width="1"/>
+
+<!-- serial spine -->
+<text class="lbl" x="24" y="56">SERIAL SPINE</text>
+
+<text class="ph" x="24" y="80">Phase 0</text>
+<text class="fa" x="24" y="94">interfaces</text>
+<rect x="150" y="66" width="42" height="30" rx="7" fill="#0C0C0F"/>
+<text class="sm i-ph" x="163" y="86">0</text>
+
+<text class="ph" x="24" y="122">Phase 1</text>
+<text class="fa" x="24" y="136">token, factory</text>
+<rect x="196" y="108" width="130" height="30" rx="7" fill="#0C0C0F"/>
+<text class="sm i-ph" x="252" y="128">1</text>
+
+<text class="ph" x="24" y="164">Phase 2</text>
+<text class="fa" x="24" y="178">rules, adapters</text>
+<rect x="330" y="150" width="96" height="30" rx="7" fill="#0C0C0F"/>
+<text class="sm i-ph" x="372" y="170">2</text>
+
+<text class="ph" x="24" y="206">Phase 3</text>
+<text class="fa" x="24" y="220">offerings</text>
+<rect x="430" y="192" width="116" height="30" rx="7" fill="#0C0C0F"/>
+<text class="sm i-ph" x="482" y="212">3</text>
+
+<text class="ph" x="24" y="248">Phase 6</text>
+<text class="fa" x="24" y="262">audit, mainnet</text>
+<rect x="550" y="234" width="116" height="30" rx="7" fill="#1D1D1F"/>
+<text class="sm i-ph" x="600" y="254">6</text>
+
+<!-- parallel -->
+<text class="lbl" x="24" y="296">ALONGSIDE</text>
+
+<text class="ph" x="24" y="316">Phase 4 · passport</text>
+<rect x="330" y="302" width="110" height="22" rx="7" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="fa" x="376" y="317">4</text>
+
+<text class="ph" x="24" y="338">Phase 5 · interfaces</text>
+<rect x="330" y="326" width="200" height="16" rx="7" fill="#F0F2F8" stroke="#D2D5DB"/>
+<text class="fa" x="424" y="338">5</text>
+
+<rect x="444" y="302" width="90" height="22" rx="7" fill="#FFFFFF" stroke="#D2D5DB" stroke-dasharray="4 3"/>
+<text class="fa" x="474" y="317">3b optional</text>
+
+<!-- gates -->
+<path d="M192 66 L192 288" stroke="#D2D5DB" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="fa" x="196" y="288">storage frozen</text>
+<path d="M550 234 L550 288" stroke="#D2D5DB" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="fa" x="554" y="288">audit gate</text>
+</g>
+</svg>
