@@ -75,7 +75,7 @@ interface IErrors {
     // ── agents and settlement ───────────────────────────────────────────────
 
     error MandateExpired(bytes32 mandateId, uint64 expiredAt);
-    error MandateRevoked(bytes32 mandateId);
+    error MandateIsRevoked(bytes32 mandateId);
     error OutOfScope(bytes32 mandateId, bytes32 scope);
     error PerActionLimitExceeded(uint256 requested, uint256 limit);
     error PerEpochLimitExceeded(uint256 requested, uint256 remaining);

@@ -41,6 +41,11 @@ def main():
     stamp = datetime.now(timezone.utc).strftime("%d %B %Y, %H:%M UTC")
     rows, sections = [], []
 
+    # This script writes a document, so the site is rebuilt on both sides of
+    # the run: before, so `L0.6` judges the tree as it stands rather than as a
+    # previous report left it; after, to fold in what was just written.
+    run([sys.executable, "build-docs.py"])
+
     # ── documentation and model checks ──────────────────────────────────────
 
     ok, out = run([sys.executable, "verify.py", "--verbose"])
@@ -146,6 +151,8 @@ def main():
         "",
     ]
     OUT.write_text("\n".join(body), encoding="utf-8")
+
+    run([sys.executable, "build-docs.py"])
 
     bad = sum(1 for *_, ok in rows if ok is False)
     print(f"  wrote {OUT.relative_to(ROOT)}")

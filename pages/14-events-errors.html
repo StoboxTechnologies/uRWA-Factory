@@ -563,7 +563,7 @@ error UpgradeNotScheduled(bytes32 cutHash);
 error UpgradeNotReady(bytes32 cutHash, uint64 executableAt);
 
 error MandateExpired(bytes32 mandateId, uint64 expiredAt);
-error MandateRevoked(bytes32 mandateId);
+error MandateIsRevoked(bytes32 mandateId);   // named apart from the event, as CapIsLocked is
 error OutOfScope(bytes32 mandateId, bytes32 scope);
 error PerActionLimitExceeded(uint256 requested, uint256 limit);
 error PerEpochLimitExceeded(uint256 requested, uint256 remaining);
@@ -662,4 +662,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 1fbc9f929d6c9b09f7e2b9ccc51568d79799e7e8135807f0a200392211b0e946 -->
+<!-- source-digest: b22bb27638d9eb6d15350ed5c3d16c4ec759a6318be3e17fcafb84a30dfbc234 -->

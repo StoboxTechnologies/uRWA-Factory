@@ -31,6 +31,34 @@ never touches a balance. The claims layer does not know what a token is.
   extensible            new keys added by anyone, no upgrade
 ```
 
+## The rule, as implemented
+
+The whole split is one line in [`LibDiamond`](../src/libraries/LibDiamond.sol):
+
+```solidity
+function isImmutable(bytes4 selector) internal view returns (bool) {
+    return s().facetOf[selector] == address(this);
+}
+```
+
+A selector whose facet is the diamond **itself** cannot be replaced or removed. The ERC-20 entry
+points are registered that way in the constructor, and nothing undoes it — there is no flag to clear
+and no function to call, because either would be the vulnerability the design exists to remove.
+
+Three attacks are refused by the same check, which is why all three are tested:
+
+| Attack | Refused because |
+|---|---|
+| Replace `balanceOf` with a hostile facet | `_enforceMutable` on replace |
+| Remove `transfer`, then add it back pointing elsewhere | `_enforceMutable` on remove |
+| Add over `balanceOf` without calling it a replace | `_enforceMutable` on add, when the selector is already taken |
+
+The third is the one a design gets wrong: a rule that only guards `Replace` is bypassed by `Add`.
+
+**Fail-closed comes from the router, not from a check.** `_update` calls `beforeUpdate` on itself;
+the fallback looks it up; an unregistered selector reverts `FunctionNotFound`. A token with no
+compliance facet cannot transfer, and no code anywhere says so.
+
 ## Why the boundary is there
 
 Almost every compliance token fuses accounting and policy into one upgradeable contract. That single

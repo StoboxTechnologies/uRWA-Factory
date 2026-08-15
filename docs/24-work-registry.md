@@ -47,8 +47,9 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| CO-01 | Diamond core: immutable ERC-20, ERC-2612, fallback router | Planned | IF-02 | 1.5 |
-| CO-02 | DiamondCutFacet, DiamondLoupeFacet | Planned | CO-01 | 0.5 |
+| CO-01 | Diamond core: immutable ERC-20, ERC-2612, fallback router | **Done** | IF-02 | — |
+| CO-02 | DiamondCutFacet with the upgrade delay; loupe reads on the core | **Done** | CO-01 | — |
+| CO-02a | DiamondLoupeFacet — full introspection surface | Ready | CO-02 | 0.25 |
 | CO-03 | ComplianceFacet: pipeline, ERC-7943 views, `whyBlocked` | Planned | CO-01 | 2 |
 | CO-04 | Trust list and pause | Planned | CO-03 | 0.5 |
 | CO-05 | Subject-level holder accounting | Planned | CO-03 | 1 |
@@ -59,7 +60,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | CO-10 | uRWAFactory: create, packages, presets, registry | Planned | CO-01…09 | 1.5 |
 | CO-11 | ERC-1404 compatibility surface | Planned | CO-03 | 0.25 |
 | CO-12 | Per-address pause — blocks sending and receiving, reason evented | Ready | CO-01 | 0.25 |
-| CO-13 | Configurable upgrade delay in TokenParams, exposed for the verifier | Ready | CO-01 | 0.5 |
+| CO-13 | Configurable upgrade delay in TokenParams, exposed for the verifier | **Done** | CO-01 | — |
 
 ### ID — Identity
 

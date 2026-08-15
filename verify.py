@@ -980,9 +980,14 @@ def _(c):
     if not c.solidity:
         return ["no Solidity sources found"]
     documented = doc_table_functions(c.d("07")) | doc_functions(c.d("07"))
-    # Only `interface` blocks. A library's internal accessors are not API and
-    # do not belong in a function reference aimed at integrators.
+    # `interface` blocks plus the external and public functions of `contract`
+    # blocks. A library's internal accessors are not API and do not belong in a
+    # reference aimed at integrators — but a facet's entry points are.
     api = "\n".join(re.findall(r"\binterface\s+\w+[^{]*\{(.*?)\n\}", c.solidity, re.S))
+    for body in re.findall(r"\bcontract\s+\w+[^{]*\{(.*?)\n\}", c.solidity, re.S):
+        api += "\n" + "\n".join(
+            m.group(0) for m in re.finditer(r"function\s+\w+\s*\([^;{]*?\b(?:external|public)\b", body, re.S)
+        )
     out = []
     for name in sorted(sol_functions(api)):
         if name not in documented:

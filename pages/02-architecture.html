@@ -519,6 +519,16 @@ footer p{max-width:76ch;margin:0 0 8px}
         ▼
   CLAIMS PLANE          identity claims · namespaced keys · adapters
   extensible            new keys added by anyone, no upgrade</pre>
+<h3 id="02-the-rule-as-implemented">The rule, as implemented</h3>
+<p>The whole split is one line in <a href="../src/libraries/LibDiamond.sol"><code>LibDiamond</code></a>:</p>
+<pre>function isImmutable(bytes4 selector) internal view returns (bool) {
+    return s().facetOf[selector] == address(this);
+}</pre>
+<p>A selector whose facet is the diamond <strong>itself</strong> cannot be replaced or removed. The ERC-20 entry points are registered that way in the constructor, and nothing undoes it — there is no flag to clear and no function to call, because either would be the vulnerability the design exists to remove.</p>
+<p>Three attacks are refused by the same check, which is why all three are tested:</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Attack</th><th style="text-align:left">Refused because</th></tr></thead><tbody><tr><td style="text-align:left">Replace <code>balanceOf</code> with a hostile facet</td><td style="text-align:left"><code>_enforceMutable</code> on replace</td></tr><tr><td style="text-align:left">Remove <code>transfer</code>, then add it back pointing elsewhere</td><td style="text-align:left"><code>_enforceMutable</code> on remove</td></tr><tr><td style="text-align:left">Add over <code>balanceOf</code> without calling it a replace</td><td style="text-align:left"><code>_enforceMutable</code> on add, when the selector is already taken</td></tr></tbody></table></div>
+<p>The third is the one a design gets wrong: a rule that only guards <code>Replace</code> is bypassed by <code>Add</code>.</p>
+<p><strong>Fail-closed comes from the router, not from a check.</strong> <code>_update</code> calls <code>beforeUpdate</code> on itself; the fallback looks it up; an unregistered selector reverts <code>FunctionNotFound</code>. A token with no compliance facet cannot transfer, and no code anywhere says so.</p>
 <h3 id="02-why-the-boundary-is-there">Why the boundary is there</h3>
 <p>Almost every compliance token fuses accounting and policy into one upgradeable contract. That single decision is what makes such systems hard to audit, what turns a rule change into a governance event, and what forces token migrations when a regulator moves.</p>
 <p>Separating them yields four properties that are otherwise unobtainable:</p>
@@ -586,7 +596,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 <aside class="rail" aria-label="Section reference">
-<div class="railsec" data-sec="sec-02"><p class="railt">On this page</p><a href="#02-the-three-planes">The three planes</a><a href="#02-why-the-boundary-is-there">Why the boundary is there</a><a href="#02-the-boundary-already-exists-in-stv3">The boundary already exists in STV3</a><a href="#02-component-map">Component map</a><a href="#02-design-principles">Design principles</a><a href="#02-failure-direction">Failure direction</a><p class="railt s">Related</p><a href="03-contracts.html">03 — Contracts</a><a href="08-compliance-pipeline.html">08 — Compliance pipeline</a><a href="17-security.html">17 — Security</a></div>
+<div class="railsec" data-sec="sec-02"><p class="railt">On this page</p><a href="#02-the-three-planes">The three planes</a><a href="#02-the-rule-as-implemented">The rule, as implemented</a><a href="#02-why-the-boundary-is-there">Why the boundary is there</a><a href="#02-the-boundary-already-exists-in-stv3">The boundary already exists in STV3</a><a href="#02-component-map">Component map</a><a href="#02-design-principles">Design principles</a><a href="#02-failure-direction">Failure direction</a><p class="railt s">Related</p><a href="03-contracts.html">03 — Contracts</a><a href="08-compliance-pipeline.html">08 — Compliance pipeline</a><a href="17-security.html">17 — Security</a></div>
 <div class="railfix">
 <p class="railt s">Reference</p>
 <a href="../prototypes/">Prototypes</a>
@@ -654,4 +664,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 1fbc9f929d6c9b09f7e2b9ccc51568d79799e7e8135807f0a200392211b0e946 -->
+<!-- source-digest: b22bb27638d9eb6d15350ed5c3d16c4ec759a6318be3e17fcafb84a30dfbc234 -->
