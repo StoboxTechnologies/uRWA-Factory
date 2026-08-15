@@ -14,3 +14,7 @@ docs/deployments/*.local.json
 .claude/
 .agents/
 .mcp.json
+
+# Internal: research material, decision log and reference clones.
+# Lives in the project folder, never published.
+_internal/

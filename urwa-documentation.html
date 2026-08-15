@@ -12,57 +12,79 @@
   --sh:0 1px 2px rgba(17,17,16,.04),0 1px 3px rgba(17,17,16,.025);
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.68;-webkit-font-smoothing:antialiased;letter-spacing:-.003em}
-.shell{max-width:1240px;margin:0 auto;padding:clamp(30px,4vw,72px) clamp(18px,3vw,36px) 110px;display:grid;grid-template-columns:238px minmax(0,1fr);gap:clamp(28px,4vw,64px);align-items:start}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17.5px;line-height:1.72;-webkit-font-smoothing:antialiased;letter-spacing:-.003em}
+.shell{max-width:1240px;margin:0 auto;padding:clamp(30px,4vw,72px) clamp(18px,3vw,36px) 110px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:clamp(28px,4vw,64px);align-items:start}
 @media(max-width:900px){.shell{grid-template-columns:1fr}nav.toc{position:static!important;max-height:none!important;border-right:0!important;border-bottom:1px solid var(--rule);padding-bottom:20px}}
 nav.toc{position:sticky;top:28px;max-height:calc(100vh - 56px);overflow-y:auto;border-right:1px solid var(--rule);padding-right:20px}
 nav.toc .t{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
-nav.toc a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .14s,color .14s}
+nav.toc a{display:block;font-size:14.5px;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:background .14s,color .14s}
 nav.toc a:hover{color:var(--ink);background:var(--sunk)}
 nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
 header.mast{border-bottom:1px solid var(--rule);padding-bottom:34px;margin-bottom:10px}
-header.mast h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,5.4vw,54px);line-height:1.03;letter-spacing:-.032em;margin:0 0 16px;text-wrap:balance}
-header.mast p{color:var(--muted);max-width:62ch;margin:0 0 22px;font-size:18px;line-height:1.6}
+header.mast h1{font-family:var(--display);font-weight:600;font-size:clamp(40px,6vw,66px);line-height:1.03;letter-spacing:-.032em;margin:0 0 16px;text-wrap:balance}
+header.mast p{color:var(--ink-2);max-width:60ch;margin:0 0 26px;font-size:20px;line-height:1.6}
 header.mast .meta{display:flex;flex-wrap:wrap;gap:8px}
 header.mast .meta span{font-size:12.5px;color:var(--muted);background:var(--sunk);border-radius:var(--r-pill);padding:5px 14px}
 header.mast .meta b{color:var(--ink);font-weight:600;margin-right:6px}
 article{min-width:0}
+.hero{border-bottom:1px solid var(--rule);padding-bottom:44px;margin-bottom:8px}
+.hero .q{font-size:22px;line-height:1.45;font-weight:500;letter-spacing:-.015em;background:var(--sunk);border-radius:var(--r-lg);padding:22px 26px;margin:0 0 26px;max-width:64ch}
+.hero .q em{font-style:normal;color:var(--muted);display:block;font-size:15px;font-weight:400;margin-top:10px;letter-spacing:0}
+.wxy{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:0;border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);box-shadow:var(--sh);margin:0 0 26px}
+.wxy>div{padding:20px 22px;border-right:1px solid var(--rule)}
+.wxy>div:last-child{border-right:0}
+@media(max-width:820px){.wxy>div{border-right:0;border-bottom:1px solid var(--rule)}.wxy>div:last-child{border-bottom:0}}
+.wxy h4{margin:0 0 7px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.wxy p{margin:0;font-size:15px;line-height:1.6;color:var(--ink-2);max-width:none}
+.author{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--rule);border-radius:var(--r-lg);padding:22px 24px;background:var(--surface);box-shadow:var(--sh);margin:0 0 26px;flex-wrap:wrap}
+.author .ini{width:52px;height:52px;border-radius:var(--r-pill);background:var(--ink);color:#FFF;display:grid;place-items:center;font-size:17px;font-weight:600;flex:none;letter-spacing:-.02em}
+.author .b{flex:1;min-width:240px}
+.author .nm{font-size:18px;font-weight:600;letter-spacing:-.015em;margin:0 0 2px}
+.author .ro{font-size:14.5px;color:var(--muted);margin:0 0 12px}
+.author .bio{font-size:14.5px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+.author .lk{display:flex;gap:8px;flex-wrap:wrap}
+.author .lk a{font-size:13.5px;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:6px 14px;color:var(--ink);transition:background .14s,border-color .14s}
+.author .lk a:hover{background:var(--sunk);border-color:var(--muted)}
+.startat{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.startat a{font-size:14px;text-decoration:none;border:1px solid var(--rule-strong);border-radius:var(--r-pill);padding:7px 16px;color:var(--ink);transition:background .14s,border-color .14s}
+.startat a:hover{background:var(--sunk);border-color:var(--muted)}
+.startat a.k{background:var(--ink);border-color:var(--ink);color:#FFF}
+.startat a.k:hover{background:var(--accent-2);border-color:var(--accent-2)}
 section.doc{margin-top:76px;scroll-margin-top:24px}
 section.doc:first-of-type{margin-top:44px}
-h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,3vw,32px);line-height:1.15;letter-spacing:-.026em;margin:0 0 24px;text-wrap:balance;scroll-margin-top:24px}
-h3{font-weight:600;font-size:17px;letter-spacing:-.012em;margin:38px 0 12px;text-wrap:balance;scroll-margin-top:24px}
-h4{font-weight:600;font-size:15px;margin:30px 0 10px;scroll-margin-top:24px}
-h5{font-weight:600;font-size:12.5px;margin:24px 0 8px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;scroll-margin-top:24px}
-p{margin:0 0 15px;max-width:74ch;text-wrap:pretty}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(27px,3.2vw,36px);line-height:1.15;letter-spacing:-.026em;margin:0 0 24px;text-wrap:balance;scroll-margin-top:24px}
+h3{font-weight:600;font-size:19px;letter-spacing:-.012em;margin:38px 0 12px;text-wrap:balance;scroll-margin-top:24px}
+h4{font-weight:600;font-size:16.5px;margin:30px 0 10px;scroll-margin-top:24px}
+h5{font-weight:600;font-size:13.5px;margin:24px 0 8px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;scroll-margin-top:24px}
+p{margin:0 0 17px;max-width:72ch;text-wrap:pretty}
 a{color:var(--ink);text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule-strong)}
 a:hover{text-decoration-color:var(--ink)}
 a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 strong{font-weight:600}
 code{font-family:var(--mono);font-size:.85em;background:var(--sunk);padding:2px 7px;border-radius:6px;color:var(--ink)}
-pre{font-family:var(--mono);font-size:12.5px;line-height:1.65;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh)}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:18px 20px;overflow-x:auto;margin:0 0 22px;color:var(--ink-2);box-shadow:var(--sh)}
 pre code{background:none;padding:0;font-size:inherit}
 ul,ol{margin:0 0 15px;padding-left:24px;max-width:74ch}
-li{margin-bottom:8px}
+li{margin-bottom:9px}
 li::marker{color:var(--faint)}
 ul.task{list-style:none;padding-left:2px}
 ul.task .box{font-family:var(--mono);color:var(--ink);margin-right:9px}
 blockquote{border:1px solid var(--rule-strong);background:var(--sunk);padding:16px 20px;margin:0 0 22px;border-radius:var(--r-lg);max-width:74ch}
 blockquote p{margin:0}
 .tscroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh)}
-table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:520px}
 th{color:var(--faint);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:14px 16px 11px;border-bottom:1px solid var(--rule);vertical-align:bottom}
-td{padding:12px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+td{padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
 tbody tr:last-child td{border-bottom:0}
 td:first-child{color:var(--ink);font-weight:600}
 hr.soft{border:0;border-top:1px solid var(--rule);margin:32px 0}
-footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:13px;color:var(--faint)}
+footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--rule);font-size:14px;color:var(--faint)}
 footer p{max-width:76ch;margin:0 0 8px}
 </style>
 <div class="shell">
 <nav class="toc" aria-label="Contents">
 <p class="t">Contents</p>
-<a href="#sec-readme"><span class="n">—</span>Introduction &amp; index</a>
 <a href="#sec-00"><span class="n">00</span>Why this exists</a>
 <a href="#sec-01"><span class="n">01</span>Overview</a>
 <a href="#sec-02"><span class="n">02</span>Architecture</a>
@@ -95,77 +117,53 @@ footer p{max-width:76ch;margin:0 0 8px}
 <article>
 <header class="mast">
 <h1>uRWA Factory</h1>
-<p>Complete documentation: architecture, contracts, storage, roles, states, every function, and the
-build order. Generated from the Markdown sources so the two never diverge.</p>
+<p>An open-source factory for real-world-asset security tokens that enforce their own compliance — free, MIT, and built on ERC-7943.</p>
 <div class="meta">
-<span><b>Version</b> specification</span>
+<span><b>Status</b> Specification · no code yet</span>
 <span><b>Licence</b> MIT</span>
 <span><b>Chain</b> Base</span>
 <span><b>Standard</b> ERC-7943 · 0x3edbb4c4</span>
 </div>
 </header>
-<section class="doc" id="doc-readme"><p>&lt;div align=&quot;center&quot;&gt;</p>
-<span id="sec-readme"></span>
-<p><strong>Open-source factory for compliant real-world-asset security tokens, built on ERC-7943.</strong></p>
-<p><a href="https://img.shields.io/badge/Licence-MIT-166B5C.svg">![Licence: MIT</a>](LICENSE) <a href="https://img.shields.io/badge/Standard-ERC--7943-166B5C.svg">![Standard: ERC-7943</a>](https://eips.ethereum.org/EIPS/eip-7943) <a href="https://img.shields.io/badge/Interface-0x3edbb4c4-4A5C58.svg">![Interface: 0x3edbb4c4</a>](docs/15-standards.md) <a href="https://img.shields.io/badge/Chain-Base-4A5C58.svg">![Chain: Base</a>](docs/16-deployment.md) <a href="https://img.shields.io/badge/Status-Specification-8A5712.svg">![Status: Specification</a>](docs/20-development-plan.md)</p>
-<p><strong><a href="https://stoboxtechnologies.github.io/uRWA-Factory/">📖 Documentation</a></strong> · <strong><a href="https://stoboxtechnologies.github.io/uRWA-Factory/prototypes/">🖥 Prototypes</a></strong> · <a href="#sec-00">Why this exists</a> · <a href="#sec-02">Architecture</a> · <a href="#sec-07">Function reference</a> · <a href="docs/AUTHOR.md">Author</a></p>
-<p>&lt;/div&gt;</p>
-<hr class="soft">
-<p>A security token has to answer one question, correctly, on every transfer, forever:</p>
-<blockquote><strong>May this specific person hold this specific asset, right now, in this amount?</strong></blockquote>
-<p>An ordinary ERC-20 cannot answer it. This repository is a complete, free implementation that can.</p>
-<p>Anyone can deploy their own factory and issue tokens with <strong>no dependency on Stobox</strong>. Stobox Technologies operates one instance and sells an attestation service on top. <strong>The contracts are free; the attestation is the product.</strong></p>
-<h3 id="readme-the-idea-in-three-sentences">The idea in three sentences</h3>
-<ol>
-<li><strong>The standard is open.</strong> A token that refuses transfers to anyone who may not hold it.</li>
-<li><strong>The factory is open.</strong> One transaction deploys that token, its treasury and its rules.</li>
-<li><strong>The attestation is a service.</strong> The Asset Passport records what the asset actually is, signed by</li>
-</ol>
-<p>   independent attestors.</p>
-<h3 id="readme-architecture-in-one-table">Architecture in one table</h3>
-<p>Three planes with different rules about what may change:</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Plane</th><th style="text-align:left">Contains</th><th style="text-align:left">Can it change?</th><th style="text-align:left">Gives you</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Ledger</strong></td><td style="text-align:left">Balances, supply, ERC-20 entry points</td><td style="text-align:left"><strong>Never</strong> — enforced by code, not policy</td><td style="text-align:left">Resilience</td></tr><tr><td style="text-align:left"><strong>Policy</strong></td><td style="text-align:left">Compliance facet, policy set, rules</td><td style="text-align:left"><strong>Freely</strong> — one transaction, no migration</td><td style="text-align:left">Agility</td></tr><tr><td style="text-align:left"><strong>Claims</strong></td><td style="text-align:left">Identity claims, namespaced keys</td><td style="text-align:left"><strong>Extensibly</strong> — anyone adds new types</td><td style="text-align:left">Customization</td></tr></tbody></table></div>
-<p><strong>A compliance bug can stop trading. It can never corrupt supply.</strong> That single boundary is the whole architecture — and it is already enforced by the STV3 base this work builds on, where <code>LibDiamond</code> refuses to replace or remove any selector registered against the diamond itself.</p>
-<p>Every transfer passes one pipeline:</p>
-<pre>paused? → both trusted? → canSend(from)? → canReceive(to)? → enough unfrozen? → rules pass? → execute</pre>
-<h3 id="readme-documentation">Documentation</h3>
-<p>Everything is in <a href="docs/"><code>docs/</code></a>, and rendered as a single page at the <strong><a href="https://stoboxtechnologies.github.io/uRWA-Factory/">documentation site</a></strong>.</p>
-<p>&lt;table&gt; &lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;50%&quot;&gt;</p>
-<p><strong>Start here</strong></p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">#</th><th style="text-align:left">Document</th></tr></thead><tbody><tr><td style="text-align:left">00</td><td style="text-align:left"><a href="#sec-00">Why this exists</a></td></tr><tr><td style="text-align:left">01</td><td style="text-align:left"><a href="#sec-01">Overview</a></td></tr><tr><td style="text-align:left">02</td><td style="text-align:left"><a href="#sec-02">Architecture</a></td></tr><tr><td style="text-align:left">03</td><td style="text-align:left"><a href="#sec-03">Contracts</a></td></tr><tr><td style="text-align:left">04</td><td style="text-align:left"><a href="#sec-04">Storage</a></td></tr><tr><td style="text-align:left">05</td><td style="text-align:left"><a href="#sec-05">Roles</a></td></tr><tr><td style="text-align:left">06</td><td style="text-align:left"><a href="#sec-06">States</a></td></tr><tr><td style="text-align:left">07</td><td style="text-align:left"><a href="#sec-07">Function reference</a></td></tr><tr><td style="text-align:left">08</td><td style="text-align:left"><a href="#sec-08">Compliance pipeline</a></td></tr><tr><td style="text-align:left">09</td><td style="text-align:left"><a href="#sec-09">Identity and DID</a></td></tr><tr><td style="text-align:left">10</td><td style="text-align:left"><a href="#sec-10">Rules</a></td></tr><tr><td style="text-align:left">11</td><td style="text-align:left"><a href="#sec-11">Asset Passport</a></td></tr></tbody></table></div>
-<p>&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;50%&quot;&gt;</p>
-<p><strong>Going deeper</strong></p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">#</th><th style="text-align:left">Document</th></tr></thead><tbody><tr><td style="text-align:left">12</td><td style="text-align:left"><a href="#sec-12">Offerings</a></td></tr><tr><td style="text-align:left">13</td><td style="text-align:left"><a href="#sec-13">Treasury</a></td></tr><tr><td style="text-align:left">14</td><td style="text-align:left"><a href="#sec-14">Events and errors</a></td></tr><tr><td style="text-align:left">15</td><td style="text-align:left"><a href="#sec-15">Standards</a></td></tr><tr><td style="text-align:left">16</td><td style="text-align:left"><a href="#sec-16">Deployment</a></td></tr><tr><td style="text-align:left">17</td><td style="text-align:left"><a href="#sec-17">Security</a></td></tr><tr><td style="text-align:left">18</td><td style="text-align:left"><a href="#sec-18">Glossary</a></td></tr><tr><td style="text-align:left">19</td><td style="text-align:left"><a href="#sec-19">Open boundary</a></td></tr><tr><td style="text-align:left">20</td><td style="text-align:left"><a href="#sec-20">Development plan</a></td></tr><tr><td style="text-align:left">21</td><td style="text-align:left"><a href="#sec-21">Interface specification</a></td></tr><tr><td style="text-align:left">22</td><td style="text-align:left"><a href="#sec-22">Agents and settlement</a></td></tr><tr><td style="text-align:left">23</td><td style="text-align:left"><a href="#sec-23">Testing plan</a></td></tr><tr><td style="text-align:left">24</td><td style="text-align:left"><a href="#sec-24">Work registry</a></td></tr><tr><td style="text-align:left">25</td><td style="text-align:left"><a href="#sec-25">Design system</a></td></tr><tr><td style="text-align:left">26</td><td style="text-align:left"><a href="#sec-26">Handoff</a></td></tr></tbody></table></div>
-<p>&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;</p>
-<h3 id="readme-prototypes">Prototypes</h3>
-<p>All four surfaces at <strong><a href="https://stoboxtechnologies.github.io/uRWA-Factory/prototypes/">the prototypes index</a></strong> — deploy console, token console, public verifier and investor page. Nothing connects to a chain; every value maps to a real function in the specification.</p>
-<h3 id="readme-status">Status</h3>
-<p><strong>Specification stage. No implementation yet.</strong> The <a href="#sec-26">handoff</a> records what is delivered, what is deliberately not, and how to verify both without asking anyone. The full work breakdown — 79 items with dependencies, handoff contracts and review gates — is in the <a href="#sec-24">work registry</a>. The design is complete and reviewable; Phase 0 — the compiling interface package — is next. See the <a href="#sec-20">development plan</a>.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Phase</th><th style="text-align:left">Delivers</th><th style="text-align:left">State</th></tr></thead><tbody><tr><td style="text-align:left">0</td><td style="text-align:left">Interface package, storage layout frozen</td><td style="text-align:left">Next</td></tr><tr><td style="text-align:left">1</td><td style="text-align:left">Core token, factory, conformance kit</td><td style="text-align:left">Planned</td></tr><tr><td style="text-align:left">2</td><td style="text-align:left">Policy engine, rule library, DID adapter</td><td style="text-align:left">Planned</td></tr><tr><td style="text-align:left">3</td><td style="text-align:left">Treasury, offerings, agent authority, atomic DvP</td><td style="text-align:left">Planned</td></tr><tr><td style="text-align:left">4</td><td style="text-align:left">Passport, proofs, verifier library</td><td style="text-align:left">Planned</td></tr><tr><td style="text-align:left">5</td><td style="text-align:left">Interfaces and SDK</td><td style="text-align:left">Planned</td></tr><tr><td style="text-align:left">6</td><td style="text-align:left">Audit, then mainnet</td><td style="text-align:left">Planned</td></tr></tbody></table></div>
-<p><strong>No mainnet issuance until an audit clears.</strong></p>
-<h3 id="readme-what-is-open-and-what-is-not">What is open, and what is not</h3>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Open — MIT, in this repository</th><th style="text-align:left">Stobox proprietary</th></tr></thead><tbody><tr><td style="text-align:left">Token, all facets, factory, treasury</td><td style="text-align:left">Asset Passport implementation</td></tr><tr><td style="text-align:left">Policy engine and rule library</td><td style="text-align:left">Data-point schemas and intelligence</td></tr><tr><td style="text-align:left">Three identity adapters</td><td style="text-align:left">Attestor network and curation</td></tr><tr><td style="text-align:left">Offering registry</td><td style="text-align:left">Compass console</td></tr><tr><td style="text-align:left">Passport interface, handshake, reference implementation</td><td style="text-align:left">The Stobox factory instance and its fee</td></tr><tr><td style="text-align:left">Snapshot format, proof format, verifier library</td><td style="text-align:left"></td></tr><tr><td style="text-align:left">Agent authority and atomic DvP</td><td style="text-align:left"></td></tr><tr><td style="text-align:left">ERC-7943 conformance kit</td><td style="text-align:left"></td></tr></tbody></table></div>
-<p>The credibility test is a build step, not a promise: <strong>CI deploys the whole stack to a clean chain with no Stobox contract present and runs an end-to-end sale on every commit.</strong> If that fails, the open-source claim has broken and the build stops. Details in <a href="#sec-19">19 — Open boundary</a>.</p>
-<h3 id="readme-build">Build</h3>
-<pre>forge build                 # once the interface package lands
-forge test
-python3 build-docs.py       # regenerates the documentation site</pre>
-<h3 id="readme-author">Author</h3>
-<h4 id="readme-gene-deyev">Gene Deyev</h4>
-<p><strong>Founder &amp; CEO, <a href="https://stobox.io">Stobox Technologies</a></strong> — <a href="docs/AUTHOR.md">full profile →</a></p>
-<p><a href="https://stobox.io/team/gene-deyev">Profile</a> · <a href="https://github.com/genedeyev">GitHub</a> · <a href="mailto:gd@stoboxplatform.com">Email</a> · <a href="https://stobox.io">Stobox</a></p>
-<p>Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.</p>
-<p>This project is released in a <strong>personal capacity</strong>. Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others — it operates one factory instance and sells the attestation service that sits on top, and neither is required to use anything here.</p>
-<p>The affiliation is disclosed because you should know who wrote your compliance layer and what their interests are.</p>
-<h3 id="readme-contributing">Contributing</h3>
-<p>Development is done by Stobox. Releases are published; <strong>forks are welcome and expected.</strong> Issues are accepted with no promised response time, and there is no roadmap vote — stated plainly because the complaint about &quot;open source in name only&quot; comes from unstated expectations rather than from their absence.</p>
-<p>Rules are the intended extension point and need no permission from anyone. See <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> and <a href="SUPPORT.md">SUPPORT.md</a>.</p>
-<h3 id="readme-security">Security</h3>
-<p>Do not open a public issue for a vulnerability. See <a href="SECURITY.md">SECURITY.md</a>.</p>
-<h3 id="readme-licence-and-name">Licence and name</h3>
-<p>MIT — see <a href="LICENSE">LICENSE</a>. The licence grants rights to the code, not to the name. A fork may state that it <em>passes the uRWA conformance suite</em>; it may not describe itself as built or certified by Stobox. See <a href="NOTICE">NOTICE</a>.</p>
-<h3 id="readme-disclaimer">Disclaimer</h3>
-<p>This project supplies mechanisms and templates. Which rules apply to a given asset, and the consequences of that choice, are the issuer&#x27;s decision. Nothing here is legal, financial or investment advice.</p></section><section class="doc" id="doc-00"><h2 id="sec-00">00 — Why this exists</h2>
+
+<div class="hero">
+
+<p class="q">May this specific person hold this specific asset, right now, in this amount?
+<em>Every security token has to answer that correctly, on every transfer, forever. An ordinary ERC-20 cannot answer it at all. This is a complete, free implementation that can.</em></p>
+
+<div class="wxy">
+<div><h4>What it is</h4><p>A factory that deploys compliant security tokens. One transaction produces the token, its treasury and its rule set — and the rules are enforced on chain, not in a spreadsheet afterwards.</p></div>
+<div><h4>How it works</h4><p>Three layers with different rules about what may change: an <b>immutable</b> ledger, a <b>replaceable</b> policy layer, and an <b>extensible</b> claims layer. A compliance bug can stop trading; it can never corrupt supply.</p></div>
+<div><h4>Why it exists</h4><p>ERC-7943 is Final, but there is no reference issuance stack for it. A standard with one implementer is not a standard, so the tooling is given away rather than sold.</p></div>
+<div><h4>Who it is for</h4><p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token.</p></div>
+</div>
+
+<div class="author">
+<div class="ini">GD</div>
+<div class="b">
+<p class="nm">Gene Deyev</p>
+<p class="ro">Founder &amp; CEO, Stobox Technologies — released here in a personal capacity</p>
+<p class="bio">Founded Stobox in 2018 and has led it since. Author of the Stobox Tokenization Framework and co-author of one of the earliest practitioner guides to security token offerings, registered with the U.S. Copyright Office in 2019. Public backer of ERC-7943.<br><br>Copyright is held personally; the repository is hosted under the Stobox organisation for continuity, not ownership. Stobox Technologies is one user of this software among others. The affiliation is stated because you should know who wrote your compliance layer and what their interests are.</p>
+<div class="lk">
+<a href="https://stobox.io/team/gene-deyev">Profile</a>
+<a href="https://github.com/genedeyev">GitHub</a>
+<a href="mailto:gd@stoboxplatform.com">Email</a>
+<a href="https://stobox.io">Stobox</a>
+</div>
+</div>
+</div>
+
+<div class="startat">
+<a class="k" href="#sec-00">Why this exists</a>
+<a href="#sec-02">Architecture</a>
+<a href="#sec-07">Function reference</a>
+<a href="prototypes/">Prototypes</a>
+<a href="https://github.com/StoboxTechnologies/uRWA-Factory">Repository</a>
+</div>
+
+</div>
+
+<section class="doc" id="doc-00"><h2 id="sec-00">00 — Why this exists</h2>
 <h3 id="00-the-short-version">The short version</h3>
 <p>Private markets run on paper, spreadsheets and trust in intermediaries. Tokenization was supposed to fix that, and largely has not — because putting an asset on a blockchain is the easy part, and making it <em>behave like a regulated instrument</em> is the hard part.</p>
 <p>This project is the hard part, given away.</p>
