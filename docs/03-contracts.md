@@ -84,6 +84,12 @@ All three expose the identical interface. The token neither knows nor cares whic
 
 ## Offering registry facets
 
+**Not yet split.** The registry ships as one contract. The facet split buys an upgradeable write path
+with a stable read path, which is worth having and is not worth having *first*: the money paths need
+an audit more than they need upgradeability, and a diamond is a larger surface to audit. Tracked as
+`CU-07`, and recorded here rather than left as a silent divergence between this document and the code.
+
+
 | Facet | Responsibility |
 |---|---|
 | `OfferingGovernanceFacet` | Create, activate, pause, close, cancel offerings |

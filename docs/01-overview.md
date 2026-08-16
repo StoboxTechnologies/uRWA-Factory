@@ -94,7 +94,7 @@ phase. See the status below.
 | **Diagrams** | 17, generated from source and checked in CI |
 | **Prototypes** | Four surfaces, clickable, wired to nothing |
 | **Verification** | 42 automated checks plus 55 contract tests, each check proven to fail on its own broken input |
-| **Solidity** | Phase 0 done; Phases 1 and 2 complete — policy engine, rule library and three identity adapters; 97 tests |
+| **Solidity** | Phase 0 done; Phases 1–3 in place — token, policies, identity, custody and primary issuance; 111 tests |
 | **Audit** | Booked after the core, before any real issuance |
 | **Mainnet** | Not until the audit clears |
 

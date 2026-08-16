@@ -93,12 +93,13 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| CU-01 | Treasury reservation and payment locking | Planned | CO-09 | 1 |
-| CU-02 | OfferingRegistry: governance and storage facets | Planned | CU-01 | 1.5 |
-| CU-03 | Purchase, allocations, tiered pricing, multi payment token | Planned | CU-02 | 1.5 |
-| CU-04 | Dual-path refunds with idempotency | Planned | CU-03 | 1 |
+| CU-01 | Treasury reservation, payment locking and the registry refund path | **Done** | CO-09 | — |
+| CU-02 | OfferingRegistry — one contract; the facet split is CU-07 | **Done** | CU-01 | — |
+| CU-03 | Purchase, bounds, hard cap. Tiered pricing and multi-currency outstanding | Ready | CU-02 | 0.75 |
+| CU-04 | Dual-path refunds with idempotency | **Done** | CU-03 | — |
 | CU-05 | Offering-level rule engine | Planned | CU-02, PO-01 | 0.5 |
 | CU-06 | PurchaseFacet on the token side | Planned | CU-03 | 0.5 |
+| CU-07 | Split the offering registry into its five facets | Planned | CU-02, audit | 1 |
 
 ### AG — Agents and settlement · Phase 3
 

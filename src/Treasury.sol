@@ -102,6 +102,17 @@ contract Treasury is IErrors {
         emit IEvents.Withdrawn(asset, to, amount);
     }
 
+    /// @notice Return investor payment
+    /// @dev Callable by the offering registry **while payments are locked** —
+    ///      that is precisely what the lock is for. The issuer cannot reach
+    ///      this money, and the registry can only send it back to the person
+    ///      who paid it.
+    function refund(address asset, address investor, uint256 amount) external {
+        _onlyRegistry();
+        if (!IERC20Minimal(asset).transfer(investor, amount)) revert InsufficientAvailable(amount, 0);
+        emit IEvents.Withdrawn(asset, investor, amount);
+    }
+
     /// @notice Refuse a withdrawal while an offering's payments are locked
     function withdrawPayments(address asset, address to, uint256 amount, uint256 offeringId) external {
         if (msg.sender != issuer) revert NotAuthorized(msg.sender, bytes32(0));

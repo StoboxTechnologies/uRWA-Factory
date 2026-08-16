@@ -516,6 +516,7 @@ subject-keyed one rather than pretending to an answer it cannot compute.
 | `token() → address` | Which token this serves | Anyone | Provenance |
 | `deposit(asset, amount)` | Accepts tokens | Anyone | Funding the treasury |
 | `initialise(token, issuer, offeringRegistry)` | Stands in for a constructor on a clone | The factory, once | Minimal proxies have no constructor; calling it twice reverts |
+| `refund(asset, investor, amount)` | Returns investor payment | **The offering registry**, even while payments are locked | Refunding is precisely what the lock exists for; the issuer cannot reach this money and the registry can only send it back to whoever paid |
 | `withdrawPayments(asset, to, amount, offeringId)` | Moves investor payment out | ISSUER_ADMIN | Refuses while that offering's payments are locked — the guarantee the treasury exists for |
 | `withdrawERC20(asset, to, amount)` | Takes payment tokens out | SUPPLY_OPERATOR | The issuer collecting proceeds |
 | `reserve(amount, offeringId)` | Commits supply to an offering | Offering registry | Buyers must be sure tokens exist |
