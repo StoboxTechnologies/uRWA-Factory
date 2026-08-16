@@ -33,6 +33,31 @@ def run(cmd, **kw):
         return False, "timed out"
 
 
+DESCRIPTIONS = {
+    "Slots.sol": "Namespaced storage slots, derived from the documented strings",
+    "Layout.sol": "The frozen storage layout — append only",
+    "LibDiamond.sol": "The function table, and the immutable-selector rule",
+    "uRWAToken.sol": "The ledger plane: ERC-20, permit, the router",
+    "DiamondCutFacet.sol": "The only way the function table changes",
+    "ComplianceFacet.sol": "The seven gates, the ERC-7943 views, `whyBlocked`",
+    "RestrictionFacets.sol": "Freeze, lockups, and the composed frozen total",
+    "MonetaryFacet.sol": "Issue, redeem, distribute, the supply cap",
+    "Roles.sol": "Role and claim-key identifiers",
+    "InterfacePackage.t.sol": "Interface id, slot derivation, identifier collisions",
+    "LedgerPlane.t.sol": "`L4.1` immutability, `L4.3` fail-closed, the upgrade delay",
+    "CompliancePipeline.t.sol": "`L4.2` views never revert, `L4.9` trust never bypasses pause",
+    "SubjectAccounting.t.sol": "`L4.5` caps count people, `L4.6` balances sum to supply",
+    "Restrictions.t.sol": "`L4.11` frozen may exceed balance, lockups expire by time",
+    "Supply.t.sol": "`L4.4` no value outside the pipeline, `L4.7` issuance monotonic",
+}
+
+
+def _describe(name):
+    if name in DESCRIPTIONS:
+        return DESCRIPTIONS[name]
+    return "Interface declarations" if name.startswith("I") else "—"
+
+
 def strip_ansi(s):
     return re.sub(r"\033\[[0-9;]*m", "", s)
 
@@ -129,6 +154,22 @@ def main():
     for title, table, headers in sections:
         body += ["", f"## {title}", "", "| " + " | ".join(headers) + " |",
                  "|" + "---|" * len(headers), table]
+
+    # ── where the code lives ────────────────────────────────────────────────
+
+    src = sorted((ROOT / "src").rglob("*.sol"))
+    tests = sorted((ROOT / "test").glob("*.t.sol"))
+    if src:
+        body += ["", "## Where the code is", "",
+                 "| File | Lines | What it is |", "|---|---|---|"]
+        for f in src:
+            rel = f.relative_to(ROOT)
+            body.append(f"| [`{rel}`](../{rel}) | {len(f.read_text().splitlines())} | {_describe(rel.name)} |")
+    if tests:
+        body += ["", "### Test files", "", "| File | Lines | Covers |", "|---|---|---|"]
+        for f in tests:
+            rel = f.relative_to(ROOT)
+            body.append(f"| [`{rel}`](../{rel}) | {len(f.read_text().splitlines())} | {_describe(rel.name)} |")
 
     body += [
         "",

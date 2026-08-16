@@ -83,7 +83,8 @@ The end-to-end path, with the document that specifies each step.
 | 11 | Evidence about the asset is committed and provable without being disclosed | [11](11-passport.md) |
 | 12 | A regulator reconstructs the whole register from events alone | [14](14-events-errors.md) |
 
-Every step above is specified. **None of it is built yet** — see the status section below.
+Every step is specified. Steps 3 and 7 to 9 are **built and tested**; the rest arrive with their
+phase. See the status below.
 
 ## Where the project actually stands
 
@@ -92,8 +93,8 @@ Every step above is specified. **None of it is built yet** — see the status se
 | **Specification** | Complete — 34 documents, five models, 50 artefacts registered |
 | **Diagrams** | 17, generated from source and checked in CI |
 | **Prototypes** | Four surfaces, clickable, wired to nothing |
-| **Verification** | 37 automated checks, each proven to fail on its own broken input |
-| **Solidity** | Phase 0 done; Phase 1 in progress — ledger, pipeline, subject accounting, freeze and lockups; 46 tests |
+| **Verification** | 42 automated checks plus 55 contract tests, each check proven to fail on its own broken input |
+| **Solidity** | Phase 0 done; Phase 1 in progress — ledger, pipeline, subject accounting, restrictions and supply; 55 tests |
 | **Audit** | Booked after the core, before any real issuance |
 | **Mainnet** | Not until the audit clears |
 

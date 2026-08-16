@@ -54,7 +54,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | CO-04 | Trust list, global pause and per-address pause | **Done** | CO-03 | — |
 | CO-05 | Subject-level holder accounting | **Done** | CO-03 | — |
 | CO-06 | FreezeFacet and LockupFacet with composed frozen total | **Done** | CO-01 | — |
-| CO-07 | MonetaryFacet: issue, redeem, distribute, caps | Planned | CO-01 | 1 |
+| CO-07 | MonetaryFacet: issue, redeem, distribute, caps | **Done** | CO-01 | — |
 | CO-08 | RolesFacet | Planned | CO-01 | 0.5 |
 | CO-09 | Treasury clone | Planned | CO-07 | 0.5 |
 | CO-10 | uRWAFactory: create, packages, presets, registry | Planned | CO-01…09 | 1.5 |
