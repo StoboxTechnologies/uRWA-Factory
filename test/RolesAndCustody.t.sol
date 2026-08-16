@@ -144,13 +144,37 @@ contract RolesAndCustodyTest is Test {
     }
 
     /// @notice The issuer cannot withdraw reserved supply
+    /// @dev The revert is asserted by selector. A bare `expectRevert` here
+    ///      would pass just as happily if the caller simply lacked the role,
+    ///      and would stop proving anything about reservations.
     function test_issuerCannotWithdrawWhatIsReserved() public {
+        _seedRole(Roles.SUPPLY_OPERATOR, issuer);
         _fund(address(treasury), 1000e18);
         vm.prank(registry);
         treasury.reserve(900e18, 1);
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IErrors.InsufficientAvailable.selector, 200e18, 100e18));
         treasury.withdrawERC20(address(token), issuer, 200e18);
+    }
+
+    /// @notice Revoking the role stops the withdrawal
+    /// @dev Custody asks the token's role register on every call rather than
+    ///      trusting an address recorded when the treasury was created. An
+    ///      issuer whose key is compromised is removed by revoking the role —
+    ///      which has to reach the money, or it has not removed them at all.
+    function test_revokingTheRoleReachesTheMoney() public {
+        cash.mint(address(treasury), 500e18);
+
+        treasury.withdrawPayments(address(cash), issuer, 100e18, 7);
+        assertEq(cash.balanceOf(issuer), 100e18);
+
+        // Somebody has to keep the role: it cannot be left empty, and a token
+        // with no issuer admin can never grant one again.
+        RolesFacet(address(token)).grantRole(Roles.ISSUER_ADMIN, other);
+        RolesFacet(address(token)).revokeRole(Roles.ISSUER_ADMIN, issuer);
+
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, issuer, Roles.ISSUER_ADMIN));
+        treasury.withdrawPayments(address(cash), issuer, 100e18, 7);
     }
 
     /// @notice Nor investor money while the offering is unsettled

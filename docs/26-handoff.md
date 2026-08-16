@@ -30,9 +30,9 @@ python3 report.py
 
 | Command | What it proves | Expected |
 |---|---|---|
-| `verify.py` | The documentation agrees with itself and with the Solidity | `43/43 checks passed` |
-| `verify.py --self-test` | Every check still fails on its own known-bad fixture | `43/43 checks verified` |
-| `forge test` | The runtime invariants hold | `130 tests passed` |
+| `verify.py` | The documentation agrees with itself and with the Solidity | `44/44 checks passed` |
+| `verify.py --self-test` | Every check still fails on its own known-bad fixture | `44/44 checks verified` |
+| `forge test` | The runtime invariants hold | `131 tests passed` |
 | `report.py` | Regenerates [33 — Test results](33-test-results.md) from a real run | A diff in the timestamp only |
 
 If any of the three is red before you have changed anything, stop and fix that first. Everything in
@@ -81,7 +81,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The tests
 
-**130 tests across 12 suites, all passing.**
+**131 tests across 12 suites, all passing.**
 
 | Suite | Tests | Holds |
 |---|---:|---|
@@ -91,7 +91,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 | `SubjectAccounting.t.sol` | 6 | Caps count people; the counters cannot be moved from outside |
 | `Restrictions.t.sol` | 10 | Freeze and lockups compose into one available balance |
 | `Supply.t.sol` | 9 | Issue, redeem, cap — monotonic and lockable |
-| `RolesAndCustody.t.sol` | 9 | Four roles, separated; the treasury holds the tokens |
+| `RolesAndCustody.t.sol` | 10 | Four roles, separated; revoking one reaches the money |
 | `FreshChain.t.sol` | 9 | The whole stack on a chain with no Stobox contract on it |
 | `Policy.t.sol` | 13 | AND of ORs, a gas ceiling per rule, and a rule that reverts refuses |
 | `Identity.t.sol` | 11 | Three adapters behind one interface; a reverting registry is survived |
@@ -201,15 +201,17 @@ first, and nothing automatic can prove the second.
 
 ## Part 5 · Findings
 
-### Fixed while writing this handoff
+### Fixed in the audit pass
 
-Both were found the same way: by reading every state-changing external function in `src/` and asking
-what stops the wrong caller. Each was documented as restricted, and neither was.
+All three were found the same way: by reading every state-changing external function in `src/` and
+asking what stops the wrong caller. Each was documented as restricted, and none of them was. `L3.6`
+now asks the same question on every build — it was written second, from the shape of the first two.
 
 | Finding | What it allowed | Fix |
 |---|---|---|
 | **`ComplianceFacet.afterUpdate` had no caller check** | Anyone could move `subjectBalance` and `subjectHolderCount` — the numbers `MaxHolders` and `MaxBalancePerHolder` decide on — without moving a balance. A holder cap could be made to refuse an honest investor, or admit a forbidden one. | Refuses any caller but the diamond. `test_theSubjectCountersCannotBeMovedFromOutside`. |
 | **`AtomicDvP.cancel` took only the nonce** | Documented as "either party"; callable by anyone. A bystander watching a relayer could cancel every pending trade on the contract for the price of the gas. | Takes the instruction and checks the caller is the seller or the buyer. `test_onlyAPartyMayCancel`. |
+| **The treasury trusted a stored address, not a role** | `withdrawPayments` and `withdrawERC20` are documented as `ISSUER_ADMIN` and `SUPPLY_OPERATOR`; both checked the `issuer` address recorded when the clone was created. Revoking the role on the token did not reach the money — a compromised key kept its withdrawal rights. | Both ask the token's role register on every call. `test_revokingTheRoleReachesTheMoney`. |
 
 `beforeUpdate` needs no such guard — it is a `view`. `releaseExpired` and `createToken` are
 permissionless deliberately, and say so in their own comments.
@@ -218,14 +220,13 @@ permissionless deliberately, and say so in their own comments.
 
 | # | Finding | Where it lands |
 |---|---|---|
-| 1 | **`L3.6` is specified and not implemented** — every access modifier checked against the caller documented in [07](07-functions.md). It was blocked on there being implementation contracts to read; there are now 32. | The first job of the next session. Both findings above are the same shape: a documented caller with nothing enforcing it. |
-| 2 | **`L3.7` is specified and not implemented** — storage structs only ever grow, diffed against the previous release. It needs a previous release. | The first tag. |
-| 3 | **Branch coverage is 57%.** The thin files are `uRWAToken` (18%), `uRWAFactory` (25%), `RolesFacet` (35%), `AtomicDvP` (39%). | Before the pre-audit freeze. A branch nobody has taken is where the next finding is. |
-| 4 | **`RuleLibrary` is 56% covered** and is the surface an issuer actually configures. | `PO-08`, with the presets. |
-| 5 | **The offering registry is one contract, not five facets.** Recorded in [03](03-contracts.md) rather than left as a silent divergence. | `CU-07`. |
-| 6 | **Claim freshness windows are not settled** per datapoint group. | `PA-03`. Cheap now, expensive after rules encode it. |
-| 7 | **The timelock default offered in the console is undecided.** Whatever ships becomes the de-facto standard. | `UI-01`. |
-| 8 | **MiCA claim key names are unconfirmed** against a real configuration. | `PO-08`. |
+| 1 | **`L3.7` is specified and not implemented** — storage structs only ever grow, diffed against the previous release. It needs a previous release. | The first tag. |
+| 2 | **Branch coverage is 57%.** The thin files are `uRWAToken` (18%), `uRWAFactory` (25%), `RolesFacet` (35%), `AtomicDvP` (39%). | Before the pre-audit freeze. A branch nobody has taken is where the next finding is. |
+| 3 | **`RuleLibrary` is 56% covered** and is the surface an issuer actually configures. | `PO-08`, with the presets. |
+| 4 | **The offering registry is one contract, not five facets.** Recorded in [03](03-contracts.md) rather than left as a silent divergence. | `CU-07`. |
+| 5 | **Claim freshness windows are not settled** per datapoint group. | `PA-03`. Cheap now, expensive after rules encode it. |
+| 6 | **The timelock default offered in the console is undecided.** Whatever ships becomes the de-facto standard. | `UI-01`. |
+| 7 | **MiCA claim key names are unconfirmed** against a real configuration. | `PO-08`. |
 
 ### Outside this repository
 
@@ -251,10 +252,11 @@ permissionless deliberately, and say so in their own comments.
 
 | Claim | Check |
 |---|---|
-| The documentation agrees with the code | `python3 verify.py` — 43 checks, all four levels |
+| The documentation agrees with the code | `python3 verify.py` — 44 checks, all four levels |
 | The checks are not decorative | `python3 verify.py --self-test` — each one fails on its own known-bad fixture |
-| The invariants hold at runtime | `forge test` — 130 tests, 12 suites |
+| The invariants hold at runtime | `forge test` — 131 tests, 12 suites |
 | Every invariant has an owner | `L3.8`, which fails if a test stops naming one |
+| Every documented caller is enforced | `L3.6` — delete any guard in `src/` and it names the function |
 | The documentation cannot drift | Edit any `docs/*.md`, push, and watch CI fail until `build-docs.py` is run and committed |
 | The open boundary is enforced | Add a Stobox address under `src/` and watch the `open-boundary` job fail |
 | The stack needs nothing of ours | `forge test --match-contract FreshChain` — deploys and transfers with no Stobox contract present |
@@ -267,7 +269,7 @@ permissionless deliberately, and say so in their own comments.
 
 ### The rules that bite
 
-Six things that have cost time here, each now enforced by a check. Read them before writing anything.
+Seven things that have cost time here, each now enforced by a check. Read them before writing anything.
 
 | Rule | Why | Enforced by |
 |---|---|---|
@@ -277,6 +279,7 @@ Six things that have cost time here, each now enforced by a check. Read them bef
 | A new check needs a row in [31](31-verification.md) **and** a fixture it fails on | A check nobody has seen fail is a check nobody has tested | `L2.16`, `L5` |
 | No page declares a token, loads a font, or restates a rule from `theme.css` | One edit changes how everything looks; that only works if there is one file | `L0.12`, `L0.14` |
 | Storage structs only grow | Those fields hold live balances | `L3.3`, and `L3.7` when there is a release to diff against |
+| Whoever doc 07 says may call a function is who the code lets call it | Documentation is not a guard, and three functions were guarded by nothing else | `L3.6` |
 
 And one that no check can catch: **`vm.prank` and `vm.expectRevert` are consumed by the very next
 call, including a call in an argument list.** `dvp.settle(i, _sign(k, i), ...)` spends the cheat on
@@ -290,12 +293,11 @@ results changed, not on every run.
 
 | # | Item | Why this order |
 |---|---|---|
-| 1 | Implement `L3.6` — access modifiers against the callers documented in [07](07-functions.md) | It can only be written now that the contracts exist, and it closes the gap both part 5 findings came through |
-| 2 | `CO-02a` — the full loupe facet | The last item in Phase 1, and every tool that introspects a diamond wants it |
-| 3 | `PO-08` — the four regime presets, with the MiCA key names confirmed | Closes Phase 2 and settles finding 8 |
-| 4 | `CU-03`, `CU-06`, `CU-07` — pricing, the purchase facet, the registry split | Closes the money paths before the pre-audit freeze |
-| 5 | Branch coverage on `uRWAToken`, `uRWAFactory`, `RolesFacet`, `AtomicDvP` | Findings 3 and 4, before anything is frozen |
-| 6 | `TO-01` — the conformance kit | Unparks `ST-02`, and is the piece that makes the work useful to somebody else's token |
+| 1 | `CO-02a` — the full loupe facet | The last item in Phase 1, and every tool that introspects a diamond wants it |
+| 2 | `PO-08` — the four regime presets, with the MiCA key names confirmed | Closes Phase 2 and settles finding 7 |
+| 3 | `CU-03`, `CU-06`, `CU-07` — pricing, the purchase facet, the registry split | Closes the money paths before the pre-audit freeze |
+| 4 | Branch coverage on `uRWAToken`, `uRWAFactory`, `RolesFacet`, `AtomicDvP` | Findings 2 and 3, before anything is frozen |
+| 5 | `TO-01` — the conformance kit | Unparks `ST-02`, and is the piece that makes the work useful to somebody else's token |
 
 Phase 4 (`PA-*`) and Phase 5 (`UI-*`) can start in parallel at any point. Neither is on the critical
 path to an audit.

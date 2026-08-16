@@ -520,7 +520,7 @@ subject-keyed one rather than pretending to an answer it cannot compute.
 |---|---|---|---|
 | `token() → address` | Which token this serves | Anyone | Provenance |
 | `deposit(asset, amount)` | Accepts tokens | Anyone | Funding the treasury |
-| `initialise(token, issuer, offeringRegistry)` | Stands in for a constructor on a clone | The factory, once | Minimal proxies have no constructor; calling it twice reverts |
+| `initialise(token, issuer, offeringRegistry)` | Stands in for a constructor on a clone | Anyone, once | Minimal proxies have no constructor. The factory clones and initialises in one transaction, so nobody can get between the two; a clone initialised by anyone else is an address the factory never registered and nothing was ever sent to |
 | `refund(asset, investor, amount)` | Returns investor payment | **The offering registry**, even while payments are locked | Refunding is precisely what the lock exists for; the issuer cannot reach this money and the registry can only send it back to whoever paid |
 | `withdrawPayments(asset, to, amount, offeringId)` | Moves investor payment out | ISSUER_ADMIN | Refuses while that offering's payments are locked — the guarantee the treasury exists for |
 | `withdrawERC20(asset, to, amount)` | Takes payment tokens out | SUPPLY_OPERATOR | The issuer collecting proceeds |
@@ -531,6 +531,12 @@ subject-keyed one rather than pretending to an answer it cannot compute.
 | `reservedOf(offeringId) → uint256` | Committed supply | Anyone | Investors verify availability |
 | `availableBalance() → uint256` | Unreserved supply | Anyone, SUPPLY_OPERATOR | What can actually be moved |
 | `paymentBalance(asset) → uint256` | Payment tokens held | Anyone | Raise transparency |
+
+**Who may take money out is asked of the token, every call.** The treasury holds no role register of
+its own and does not trust the address recorded when it was created: `withdrawPayments` requires
+`ISSUER_ADMIN` and `withdrawERC20` requires `SUPPLY_OPERATOR`, both read from the token at the moment
+of the call. Revoking a role therefore reaches the money — which is the one place where a revocation
+that did not take effect would matter most.
 
 **Why `withdrawERC20` sometimes reverts.** It refuses while any offering holding that asset is active
 or closed with its soft cap unmet. **The treasury enforces this, not operator discipline.** An operator

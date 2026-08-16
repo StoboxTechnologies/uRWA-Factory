@@ -132,11 +132,19 @@ code that had to actually declare something.
 | `L3.3` | Every storage struct matches [04](04-storage.md) field for field, in order |
 | `L3.4` | Slot constants match the documented strings exactly |
 | `L3.5` | Every event and error in [14](14-events-errors.md) exists in Solidity |
-| `L3.6` | Every access modifier matches the role in [07](07-functions.md) — with the implementation |
+| `L3.6` | Every documented caller in [07](07-functions.md) is enforced by the implementation |
 | `L3.7` | Storage structs only ever grow — diffed against the previous release |
 | `L3.8` | Every runtime invariant in this document is named by at least one test |
 
-`L3.6` needs implementation contracts and `L3.7` needs a previous release. Neither exists yet, so both stay specified rather than pretended.
+`L3.6` reads three rules out of the same column. A function documented as restricted to a role must
+enforce **that** role; one documented as open must enforce none; and one documented as restricted to
+anybody at all — the ledger, either party, the holder — must check *something* about its caller.
+Views are exempt: a function that cannot write cannot be abused by being called.
+
+The third rule is the one that earns its keep. It was written after two functions were found whose
+only guard was the sentence in the documentation, and it fails on exactly that shape.
+
+`L3.7` still needs a previous release to diff against, so it stays specified rather than pretended.
 
 ## L4 — Runtime
 

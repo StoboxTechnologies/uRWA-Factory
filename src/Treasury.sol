@@ -3,6 +3,14 @@ pragma solidity ^0.8.28;
 
 import {IErrors} from "./interfaces/IErrors.sol";
 import {IEvents} from "./interfaces/IEvents.sol";
+import {Roles} from "./interfaces/Roles.sol";
+
+/// @dev The treasury defers to the token's role register rather than to an
+///      address stored here. Custody is the last place a revoked role should
+///      still work.
+interface ITokenRoles {
+    function hasRole(bytes32 role, address account) external view returns (bool);
+}
 
 /// @dev The subset of ERC-20 the treasury needs from the tokens it holds.
 interface IERC20Minimal {
@@ -20,6 +28,8 @@ interface IERC20Minimal {
 contract Treasury is IErrors {
     address public token;
     address public offeringRegistry;
+    /// @dev Provenance only. Who may take money out is decided by the token's
+    ///      roles, not by this address — see `_onlyRole`.
     address public issuer;
     bool private _initialised;
 
@@ -91,7 +101,7 @@ contract Treasury is IErrors {
     ///      cannot reach investor money before the offering settles, and this
     ///      is the only place that could have let them.
     function withdrawERC20(address asset, address to, uint256 amount) external {
-        if (msg.sender != issuer) revert NotAuthorized(msg.sender, bytes32(0));
+        _onlyRole(Roles.SUPPLY_OPERATOR);
 
         if (asset == token) {
             uint256 held = IERC20Minimal(token).balanceOf(address(this));
@@ -115,10 +125,17 @@ contract Treasury is IErrors {
 
     /// @notice Refuse a withdrawal while an offering's payments are locked
     function withdrawPayments(address asset, address to, uint256 amount, uint256 offeringId) external {
-        if (msg.sender != issuer) revert NotAuthorized(msg.sender, bytes32(0));
+        _onlyRole(Roles.ISSUER_ADMIN);
         if (paymentsLocked[offeringId]) revert PaymentsAreLocked(offeringId);
         if (!IERC20Minimal(asset).transfer(to, amount)) revert InsufficientAvailable(amount, 0);
         emit IEvents.Withdrawn(asset, to, amount);
+    }
+
+    /// @dev Asked of the token, every time. An address recorded here at
+    ///      creation would go on working after the role behind it was revoked,
+    ///      which is the one case where that matters most.
+    function _onlyRole(bytes32 role) private view {
+        if (!ITokenRoles(token).hasRole(role, msg.sender)) revert NotAuthorized(msg.sender, role);
     }
 
     function _onlyRegistry() private view {

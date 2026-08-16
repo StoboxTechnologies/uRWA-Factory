@@ -1140,6 +1140,144 @@ def doc_named(text, pattern):
     return set(re.findall(pattern, text))
 
 
+def sol_blocks(text, keyword):
+    """`contract`/`library` name → body, by brace matching rather than regex.
+
+    A regex cannot find the end of a Solidity block, and the end is the whole
+    point here: a guard belongs to one contract, and reading two contracts as
+    one would let a check in one of them excuse a missing check in the other.
+    """
+    out = {}
+    for m in re.finditer(rf"\b{keyword}\s+(\w+)[^{{;]*\{{", text):
+        depth, i = 1, m.end()
+        while i < len(text) and depth:
+            depth += (text[i] == "{") - (text[i] == "}")
+            i += 1
+        out[m.group(1)] = text[m.end():i - 1]
+    return out
+
+
+def sol_implementations(body):
+    """Function name → list of (modifiers, body) for functions that have one."""
+    out = {}
+    for m in re.finditer(r"\bfunction\s+(\w+)\s*\(([^)]*)\)([^{;]*)\{", body):
+        depth, i = 1, m.end()
+        while i < len(body) and depth:
+            depth += (body[i] == "{") - (body[i] == "}")
+            i += 1
+        out.setdefault(m.group(1), []).append((m.group(3), body[m.end():i - 1]))
+    return out
+
+
+def sol_guard(name, fns, seen=None):
+    """What a function checks about its caller: (roles enforced, checks at all).
+
+    Follows the private helpers a function calls, because the guard is almost
+    never written inline — `_only(Roles.X)` and `_onlyAdmin()` are the two
+    shapes in this codebase, and both hide the role one level down.
+    """
+    seen = seen or set()
+    roles, checks = set(), False
+    for _, body in fns.get(name, []):
+        for helper, args in re.findall(r"\b(_\w+)\s*\(([^)]*)\)", body):
+            if helper.startswith("_only"):
+                checks = True
+                roles |= set(re.findall(r"Roles\.(\w+)", args))
+            if helper not in seen and helper in fns:
+                sub_roles, sub_checks = sol_guard(helper, fns, seen | {helper})
+                if helper.startswith("_only"):
+                    roles |= sub_roles
+                    checks = True
+                else:
+                    # A helper that recovers a signature establishes who
+                    # authorised the call as surely as reading `msg.sender`.
+                    checks = checks or sub_checks
+        if re.search(r"msg\.sender|ecrecover", body):
+            checks = True
+        roles |= set(re.findall(r"roles\[Roles\.(\w+)\]\[msg\.sender\]", body))
+    return roles, checks
+
+
+def doc_callers(text):
+    """(section, function, documented caller) for every row of doc 07."""
+    rows, sec, in_table = [], "", False
+    for line in text.split("\n"):
+        if line.startswith("## "):
+            sec = line[3:].strip()
+        if SEPARATOR.match(line.strip()):
+            in_table = True
+            continue
+        if in_table and line.strip().startswith("|"):
+            cells = [x.strip() for x in line.strip().strip("|").split("|")]
+            if len(cells) >= 3:
+                m = re.match(r"^\**`(\w+)\(", cells[0])
+                if m:
+                    rows.append((sec, m.group(1), re.sub(r"[`*]", "", cells[2])))
+        else:
+            in_table = False
+    return rows
+
+
+@check("L3.6", 3, "Every documented caller is enforced by the implementation")
+def _(c):
+    """Doc 07 says who may call each function. This asks the code.
+
+    Three rules, and the third is the one that earns its keep:
+
+    1. A function documented as restricted to a role enforces **that** role.
+    2. A function documented as callable by anyone enforces no role.
+    3. A function documented as restricted to anybody at all — a role, the
+       ledger, either party, the holder — checks *something* about its caller.
+
+    Rule 3 catches the failure this check was written for: a function whose
+    only guard is the sentence in the documentation. Views are exempt, because
+    a function that cannot write cannot be abused by being called.
+    """
+    if not c.solidity:
+        return ["no Solidity sources found"]
+    contracts = sol_blocks(c.solidity, "contract")
+    contracts.update(sol_blocks(c.solidity, "library"))
+    roles = set(re.findall(r"(\w+)\s*=\s*keccak256\(\"urwa\.role\.", c.solidity))
+    if not roles:
+        return ["no role constants found in Solidity"]
+
+    out = []
+    for section, fn, caller in doc_callers(c.d("07")):
+        found = None
+        for name in re.findall(r"[A-Z]\w+", section):
+            if name in contracts:
+                fns = sol_implementations(contracts[name])
+                if fn in fns:
+                    found = (name, fns)
+                    break
+        # Not built yet — the passport and the emergency facet are specified
+        # only, and `L3.1` already holds them to their interfaces.
+        if not found:
+            continue
+        name, fns = found
+        modifiers = fns[fn][0][0]
+        if "view" in modifiers or "pure" in modifiers:
+            continue
+
+        enforced, checks_caller = sol_guard(fn, fns)
+        expected = {r for r in re.findall(r"[A-Z_]{4,}", caller) if r in roles}
+        if expected:
+            for role in sorted(expected - enforced):
+                out.append(f"{name}.{fn} is documented as {role} and does not enforce it")
+        elif caller.lower().startswith("anyone"):
+            for role in sorted(enforced):
+                out.append(f"{name}.{fn} is documented as open and enforces {role}")
+        elif not checks_caller:
+            out.append(f"{name}.{fn} is documented as {caller!r} and checks nothing about its caller")
+    return out
+
+
+@breaks("L3.6")
+def _(c):
+    c.solidity = c.solidity.replace("_only(Roles.SUPPLY_OPERATOR);", "")
+    return c
+
+
 @check("L3.8", 3, "Every runtime invariant in 31 is claimed by at least one test")
 def _(c):
     """A specified invariant nobody tests is a paragraph, not a guarantee.
