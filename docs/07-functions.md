@@ -479,6 +479,8 @@ appearing anywhere.
 |---|---|---|---|
 | `token() → address` | Which token this serves | Anyone | Provenance |
 | `deposit(asset, amount)` | Accepts tokens | Anyone | Funding the treasury |
+| `initialise(token, issuer, offeringRegistry)` | Stands in for a constructor on a clone | The factory, once | Minimal proxies have no constructor; calling it twice reverts |
+| `withdrawPayments(asset, to, amount, offeringId)` | Moves investor payment out | ISSUER_ADMIN | Refuses while that offering's payments are locked — the guarantee the treasury exists for |
 | `withdrawERC20(asset, to, amount)` | Takes payment tokens out | SUPPLY_OPERATOR | The issuer collecting proceeds |
 | `reserve(amount, offeringId)` | Commits supply to an offering | Offering registry | Buyers must be sure tokens exist |
 | `release(amount, offeringId)` | Uncommits it | Offering registry | Offering cancelled or under-subscribed |
