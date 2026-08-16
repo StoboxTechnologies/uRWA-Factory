@@ -140,6 +140,24 @@ contract SupplyTest is Test {
         assertEq(ComplianceFacet(address(token)).unfrozenBalanceOf(investor), 0, "locked tokens were movable");
     }
 
+    /// @notice Distribution lockups are bounded, like every other lockup
+    /// @dev `LockupFacet` caps a holder at 32 lockups so the composed frozen
+    ///      total stays affordable to recompute on every transfer. Distribution
+    ///      pushes lockups on a different path, and it must honour the same
+    ///      bound — a monthly programme to one holder would otherwise grow the
+    ///      array without limit and price their transfers out of reach.
+    function test_distributionLockupsAreBounded() public {
+        MonetaryFacet m = MonetaryFacet(address(token));
+        m.issue(treasury, 100e18);
+
+        uint64 unlock = uint64(block.timestamp + 365 days);
+        for (uint256 i = 0; i < 32; i++) {
+            m.distributeFromTreasury(investor, 1e18, unlock);
+        }
+        vm.expectRevert(abi.encodeWithSelector(IErrors.RuleLimitExceeded.selector, 32, 32));
+        m.distributeFromTreasury(investor, 1e18, unlock);
+    }
+
     /// @notice Issuance and redemption keep the holder counts honest
     function test_supplyChangesMaintainHolderCounts() public {
         MonetaryFacet m = MonetaryFacet(address(token));
@@ -165,6 +183,22 @@ contract SupplyTest is Test {
     function test_issuingWithoutATreasuryReverts() public {
         MonetaryFacet(address(token)).setTreasury(address(0));
         vm.expectRevert(IErrors.TreasuryNotSet.selector);
+        MonetaryFacet(address(token)).issue(address(0), 1e18);
+    }
+
+    /// @notice Issuance can only credit the treasury, never a holder directly
+    /// @dev A mint credits a balance without passing the compliance pipeline,
+    ///      so a mint straight to a holder would seat value in an unverified,
+    ///      sanctioned or paused wallet — the exact outcome the pipeline exists
+    ///      to prevent. Value reaches a holder only through the distribution
+    ///      leg, which runs the full pipeline.
+    function test_issueCannotMintDirectlyToAHolder() public {
+        address holder = address(0xBEEF);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, holder, Roles.SUPPLY_OPERATOR));
+        MonetaryFacet(address(token)).issue(holder, 1e18);
+
+        // The treasury and the zero-address shorthand both still work.
+        MonetaryFacet(address(token)).issue(treasury, 1e18);
         MonetaryFacet(address(token)).issue(address(0), 1e18);
     }
 

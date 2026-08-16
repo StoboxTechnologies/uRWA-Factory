@@ -112,6 +112,14 @@ contract OfferingRegistry is IErrors {
     function cancel(uint256 id, string calldata reason) external {
         _onlyOperator(id);
         reason;
+        // A settled or already-refunding offering is finished. Cancelling one
+        // reopened refunds on money that had been released to the issuer or
+        // belonged to another offering sharing the treasury — the state machine
+        // must only run forward from a live state.
+        Status s = _offerings[id].status;
+        if (s != Status.Draft && s != Status.Active && s != Status.Paused && s != Status.Closed) {
+            revert OfferingNotActive(id, uint8(s));
+        }
         _move(id, Status.Cancelled);
     }
 

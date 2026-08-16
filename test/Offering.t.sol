@@ -180,21 +180,44 @@ contract OfferingTest is Test {
 
     /// @notice Neither can be used to reverse the other's outcome
     function test_settleAndRefundCannotBeSwapped() public {
+        // Under-subscribed cannot settle. `settle` gates on the soft cap, not
+        // the clock, so no warp is needed — and warping here across an
+        // `expectRevert` made the test depend on accumulated block time.
         vm.prank(alice);
         registry.purchase(id, 100e18);
-        vm.warp(block.timestamp + 40 days);
-
         vm.expectRevert(IErrors.SoftCapNotMet.selector);
         registry.settle(id);
 
+        // Over-subscribed cannot refund. Warp to an absolute time past the
+        // offering's own end, so the assertion does not depend on how much time
+        // earlier statements happened to advance.
+        uint256 met = _create(100e18, 1000e18);
+        registry.activate(met);
+        vm.prank(bob);
+        registry.purchase(met, 200e18);
+        vm.warp(registry.offeringOf(met).endAt + 1);
+
+        vm.expectRevert(IErrors.SoftCapMet.selector);
+        registry.beginRefunding(met);
+    }
+
+    /// @notice A settled offering cannot be cancelled back into refunding
+    /// @dev The drain the state machine has to refuse: settle releases payments
+    ///      to the issuer, and `Cancelled` bypasses the soft-cap guard in
+    ///      `beginRefunding`. Without a state guard on `cancel`, the chain
+    ///      settle → cancel → beginRefunding reopens refunds on money already
+    ///      released — drawn from whatever shares the treasury, including other
+    ///      offerings' locked funds.
+    function test_aSettledOfferingCannotBeCancelled() public {
         uint256 met = _create(100e18, 1000e18);
         registry.activate(met);
         vm.prank(bob);
         registry.purchase(met, 200e18);
         vm.warp(block.timestamp + 40 days);
+        registry.settle(met);
 
-        vm.expectRevert(IErrors.SoftCapMet.selector);
-        registry.beginRefunding(met);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.OfferingNotActive.selector, met, uint8(4)));
+        registry.cancel(met, "too late");
     }
 
     // ── refunds ─────────────────────────────────────────────────────────────

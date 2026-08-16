@@ -20,8 +20,16 @@ contract MonetaryFacet is IErrors {
         Layout.CoreStorage storage c = Layout.core();
         Layout.MonetaryStorage storage m = Layout.monetary();
 
-        address dest = to == address(0) ? m.treasury : to;
+        // Issuance mints into the treasury and only the treasury. A mint
+        // credits a balance directly, without passing the compliance pipeline —
+        // so a mint straight to a holder would put value in an unverified,
+        // sanctioned or paused wallet, which is exactly what the pipeline
+        // exists to make impossible. Value reaches a holder only through
+        // `distributeFromTreasury`, which runs the full pipeline. `to == 0` is
+        // the treasury; any other destination is refused.
+        address dest = m.treasury;
         if (dest == address(0)) revert TreasuryNotSet();
+        if (to != address(0) && to != dest) revert NotAuthorized(to, Roles.SUPPLY_OPERATOR);
 
         if (c.maxSupply != 0 && c.totalSupply + amount > c.maxSupply) {
             revert MaxSupplyExceeded(amount, c.maxSupply - c.totalSupply);
@@ -71,8 +79,14 @@ contract MonetaryFacet is IErrors {
         _move(treasury, to, amount);
 
         if (unlockAt > block.timestamp) {
-            Layout.lockup()
-            .lockups[to].push(Layout.Lockup({amount: amount, unlockAt: unlockAt, note: "distribution lockup"}));
+            Layout.Lockup[] storage locks = Layout.lockup().lockups[to];
+            // The same bound `LockupFacet` enforces. Without it, a monthly
+            // vesting or dividend programme to one holder would grow the array
+            // past the point where the composed frozen total — recomputed on
+            // every transfer of that holder's — stays affordable, restricting
+            // them by accident. 32 mirrors `LockupFacet.MAX_LOCKUPS`.
+            if (locks.length >= 32) revert RuleLimitExceeded(locks.length, 32);
+            locks.push(Layout.Lockup({amount: amount, unlockAt: unlockAt, note: "distribution lockup"}));
             emit IEvents.LockupAdded(to, amount, unlockAt, "distribution lockup");
         }
     }
