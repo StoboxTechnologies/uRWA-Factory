@@ -124,7 +124,7 @@ All four surfaces at **[the prototypes index](https://stoboxtechnologies.github.
 
 ## Status
 
-**Implementation stage. Phases 0 to 2 are all but closed.** 32 Solidity files, 141 passing tests,
+**Implementation stage. Phases 0 to 2 are all but closed.** 32 Solidity files, 157 passing tests,
 44 documentation checks that fail the build when the code and the documentation disagree. The
 [handoff](docs/26-handoff.md) records what is delivered, what is deliberately not, the findings from
 the last audit pass, and how to verify all of it without asking anyone. The full work breakdown — 87

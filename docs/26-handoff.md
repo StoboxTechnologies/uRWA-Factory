@@ -81,25 +81,25 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The tests
 
-**141 tests across 13 suites, all passing.**
+**157 tests across 13 suites, all passing.**
 
 | Suite | Tests | Holds |
 |---|---:|---|
 | `InterfacePackage.t.sol` | 6 | The interface id is computed from our own declaration, not copied |
 | `LedgerPlane.t.sol` | 12 | The ledger cannot be cut out, and fails closed when compliance is |
-| `Loupe.t.sol` | 10 | The report and the router agree, after every kind of cut |
-| `CompliancePipeline.t.sol` | 13 | Seven gates, in order, with the reason preserved |
-| `SubjectAccounting.t.sol` | 6 | Caps count people; the counters cannot be moved from outside |
-| `Restrictions.t.sol` | 10 | Freeze and lockups compose into one available balance |
-| `Supply.t.sol` | 9 | Issue, redeem, cap — monotonic and lockable |
-| `RolesAndCustody.t.sol` | 10 | Four roles, separated; revoking one reaches the money |
+| `Loupe.t.sol` | 11 | The report and the router agree, after every kind of cut |
+| `CompliancePipeline.t.sol` | 15 | Seven gates, in order, with the reason preserved |
+| `SubjectAccounting.t.sol` | 7 | Caps count people; the counters cannot be moved from outside |
+| `Restrictions.t.sol` | 11 | Freeze and lockups compose into one available balance |
+| `Supply.t.sol` | 12 | Issue, redeem, cap — monotonic and lockable |
+| `RolesAndCustody.t.sol` | 11 | Four roles, separated; revoking one reaches the money |
 | `FreshChain.t.sol` | 9 | The whole stack on a chain with no Stobox contract on it |
-| `Policy.t.sol` | 13 | AND of ORs, a gas ceiling per rule, and a rule that reverts refuses |
+| `Policy.t.sol` | 14 | AND of ORs, a **per-rule** gas ceiling, and a rule that reverts refuses |
 | `Identity.t.sol` | 11 | Three adapters behind one interface; a reverting registry is survived |
-| `Offering.t.sol` | 14 | Purchases, allocations, refunds that cannot be taken twice |
-| `AgentsAndSettlement.t.sol` | 18 | Mandates that cannot be exceeded; trades that cannot half-settle |
+| `Offering.t.sol` | 17 | Purchases, allocations, refunds that cannot be taken twice |
+| `AgentsAndSettlement.t.sol` | 21 | Mandates that cannot be exceeded; trades that cannot half-settle |
 
-Line coverage over `src/` is **73%**, branch coverage **57%**. Coverage is not a measure of whether
+Line coverage over `src/` is **75%**, branch coverage **57%**. Coverage is not a measure of whether
 the tests are any good — but a branch never taken is a branch nobody has observed, and the weakest
 files are named in part 5.
 
@@ -203,17 +203,43 @@ first, and nothing automatic can prove the second.
 
 ## Part 5 · Findings
 
-### Fixed in the audit pass
+### The multi-agent audit of 16 August 2026
 
-All three were found the same way: by reading every state-changing external function in `src/` and
-asking what stops the wrong caller. Each was documented as restricted, and none of them was. `L3.6`
-now asks the same question on every build — it was written second, from the shape of the first two.
+After the loupe work, a parallel audit swept every Solidity subsystem and the Python tooling — eight
+finders by subsystem, each finding sent to two adversarial reviewers prompted to refute it. It
+returned **18 confirmed defects, one split, three refuted, two low**. Seventeen were fixed, each with
+a test that fails without the fix; one (subject re-link, below) is deferred with reasons. The full
+disposition of every finding — including the rejected ones and why — is in
+`_internal/AUDIT-2026-08-16.md`.
+
+The severe ones, by area:
+
+| Area | Finding | Fix |
+|---|---|---|
+| **Treasury** | `withdrawERC20` never checked any payment lock — a `SUPPLY_OPERATOR` could drain locked investor funds (**critical**) | Both withdrawal doors check `freeBalance(asset)`; the lock is tracked by amount and asset |
+| **Offerings** | refund returned cash but never reclaimed delivered tokens, so a failed offering left investors tokens for free | **Deliver at settlement, not at purchase** — a failed offering delivers nothing to reclaim |
+| **Offerings** | the test suite's permissive stub hid that a real `purchase` reverts — primary issuance was dead on arrival | The registry is authorised for `distributeFromTreasury`; the real path is tested |
+| **DvP** | `cancel` keyed on the bare nonce was still forgeable after the first fix | Settlement state keyed on the instruction digest, which binds the parties |
+| **Identity** | `StoboxDIDAdapter.hasValidClaim` hardcoded `false` refused every tier-2 transfer | The base gate is `isActive`; the redundant subject-keyed check is dropped |
+| **Policy** | the 100k gas ceiling wrapped the whole policy set, so documented presets ran out of gas | The ceiling is per rule; the set gets a ceiling sized for all its rules |
+| **Agents** | `consume` enforced only amounts, not scope/token/counterparty | It now enforces every dimension of the mandate |
+| **Monetary** | `issue(to)` minted straight to a holder, skipping the pipeline | Issuance credits the treasury only |
+
+Plus five mediums (loupe `Add`-over-mutable, self-transfer holder inflation, `frozenOf` overflow,
+epochless cap, `report.py`'s false "clean") and three test-quality fixes (tests that could not fail
+now can). `L3.6`, added just before the audit, is the check that would have caught the access-control
+class; the audit found the rest by reading logic against its own claims.
+
+### Fixed just before the audit
+
+Three access-control defects, found by reading every state-changing external function for a caller
+check. Each was documented as restricted and none was. `L3.6` now asks the same question every build.
 
 | Finding | What it allowed | Fix |
 |---|---|---|
-| **`ComplianceFacet.afterUpdate` had no caller check** | Anyone could move `subjectBalance` and `subjectHolderCount` — the numbers `MaxHolders` and `MaxBalancePerHolder` decide on — without moving a balance. A holder cap could be made to refuse an honest investor, or admit a forbidden one. | Refuses any caller but the diamond. `test_theSubjectCountersCannotBeMovedFromOutside`. |
-| **`AtomicDvP.cancel` took only the nonce** | Documented as "either party"; callable by anyone. A bystander watching a relayer could cancel every pending trade on the contract for the price of the gas. | Takes the instruction and checks the caller is the seller or the buyer. `test_onlyAPartyMayCancel`. |
-| **The treasury trusted a stored address, not a role** | `withdrawPayments` and `withdrawERC20` are documented as `ISSUER_ADMIN` and `SUPPLY_OPERATOR`; both checked the `issuer` address recorded when the clone was created. Revoking the role on the token did not reach the money — a compromised key kept its withdrawal rights. | Both ask the token's role register on every call. `test_revokingTheRoleReachesTheMoney`. |
+| **`ComplianceFacet.afterUpdate` had no caller check** | Anyone could move the subject counters `MaxHolders` decides on, without moving a balance. | Refuses any caller but the diamond. `test_theSubjectCountersCannotBeMovedFromOutside`. |
+| **`AtomicDvP.cancel` took only the nonce** | A bystander could cancel pending trades — though the digest fix in the audit is what finally closed it. | Now keyed on the instruction digest. `test_aForgedInstructionCannotCancelARealTrade`. |
+| **The treasury trusted a stored address, not a role** | Revoking a role did not reach the money — a compromised key kept its withdrawal rights. | Both withdrawal doors ask the token's role register. `test_revokingTheRoleReachesTheMoney`. |
 
 `beforeUpdate` needs no such guard — it is a `view`. `releaseExpired` and `createToken` are
 permissionless deliberately, and say so in their own comments.
@@ -222,13 +248,14 @@ permissionless deliberately, and say so in their own comments.
 
 | # | Finding | Where it lands |
 |---|---|---|
-| 1 | **`L3.7` is specified and not implemented** — storage structs only ever grow, diffed against the previous release. It needs a previous release. | The first tag. |
-| 2 | **Branch coverage is 57%.** The thin files are `uRWAToken` (18%), `uRWAFactory` (25%), `RolesFacet` (35%), `AtomicDvP` (39%). | Before the pre-audit freeze. A branch nobody has taken is where the next finding is. |
-| 3 | **`RuleLibrary` is 56% covered** and is the surface an issuer actually configures. | `PO-08`, with the presets. |
-| 4 | **The offering registry is one contract, not five facets.** Recorded in [03](03-contracts.md) rather than left as a silent divergence. | `CU-07`. |
-| 5 | **Claim freshness windows are not settled** per datapoint group. | `PA-03`. Cheap now, expensive after rules encode it. |
-| 6 | **The timelock default offered in the console is undecided.** Whatever ships becomes the de-facto standard. | `UI-01`. |
-| 7 | **MiCA claim key names are unconfirmed** against a real configuration. | `PO-08`. |
+| 1 | **Subject accounting cannot follow a wallet re-link** (audit finding, deferred). Re-binding a wallet to a new DID subject strands the old subject's balance and holder flag, so a concentration cap can be bypassed and `subjectHolderCount` leaks. The correct fix needs a re-sync path keyed off registry events the registries do not emit uniformly, and touches the frozen `ComplianceStorage`. A re-link is rare and admin-driven; the exposure is a wrong holder cap, not lost funds. | `CO-05` follow-up — a re-sync entry point, argued against the storage layout. |
+| 2 | **`L3.7` is specified and not implemented** — storage structs only ever grow, diffed against the previous release. It needs a previous release. | The first tag. |
+| 3 | **Branch coverage is 57%** (line 75%). The audit tests lifted the thinnest files — `AtomicDvP` branch 39% → 79%, `uRWAToken` line 18% → 62% — but `RolesFacet` (66%), `uRWAFactory` (69%) and `RuleLibrary` (57%) still want more. | Before the pre-audit freeze. A branch nobody has taken is where the next finding is. |
+| 4 | **`RuleLibrary` is 56% covered** and is the surface an issuer actually configures. | `PO-08`, with the presets. |
+| 5 | **The offering registry is one contract, not five facets.** Recorded in [03](03-contracts.md) rather than left as a silent divergence. | `CU-07`. |
+| 6 | **Claim freshness windows are not settled** per datapoint group. | `PA-03`. Cheap now, expensive after rules encode it. |
+| 7 | **The timelock default offered in the console is undecided.** Whatever ships becomes the de-facto standard. | `UI-01`. |
+| 8 | **MiCA claim key names are unconfirmed** against a real configuration. | `PO-08`. |
 
 ### Outside this repository
 
@@ -256,7 +283,7 @@ permissionless deliberately, and say so in their own comments.
 |---|---|
 | The documentation agrees with the code | `python3 verify.py` — 44 checks, all four levels |
 | The checks are not decorative | `python3 verify.py --self-test` — each one fails on its own known-bad fixture |
-| The invariants hold at runtime | `forge test` — 141 tests, 13 suites |
+| The invariants hold at runtime | `forge test` — 157 tests, 13 suites |
 | Every invariant has an owner | `L3.8`, which fails if a test stops naming one |
 | Every documented caller is enforced | `L3.6` — delete any guard in `src/` and it names the function |
 | The documentation cannot drift | Edit any `docs/*.md`, push, and watch CI fail until `build-docs.py` is run and committed |
