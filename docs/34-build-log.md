@@ -17,6 +17,36 @@ An entry is written even when a session finds nothing — "audited, clean" is a 
 
 ---
 
+## 2026-08-16 · Session 8 — the refusal branches, each walked once
+
+**Shipped.** `Refusals.t.sol` — thirteen tests over the guard paths coverage showed nobody had ever
+executed: the wrong-key permit, the expired permit, the zero spender and zero recipient, the
+overdraft, both allowance branches (the finite one decrementing, the infinite sentinel never), the
+compliance facet that reverts with **empty data** still surfacing the canonical ERC-7943 error, the
+re-granted role that must not duplicate its member row, the revoked officer who must vanish from
+enumeration, the malformed and the malleable signature, the payment leg that fails **after**
+compliance passed reverting the trade whole, the settled digest refusing replay, and every named
+refusal `previewSettle` can give.
+
+**Why this session existed.** Branch coverage was the handoff's standing finding: a branch never
+taken is a branch nobody has observed, and these were almost all *refusal* paths — exactly where a
+regression would let something through rather than break something visible.
+
+**Audited.** `verify.py` 44/44, self-test 44/44, `forge test` 197/197 across 19 suites, 7/7 tools.
+Branch coverage over `src/` rose from 57% to 66%; the three targets moved: `uRWAToken` 18% → **100%**,
+`AtomicDvP` 38% → 76%, `RolesFacet` 35% → 65%.
+
+**Found.** Nothing wrong in the code — every guard behaved as documented once walked. One test
+hazard worth recording: a `vm.warp` backward between two `expectRevert` blocks did not re-date the
+second call as expected; the fix was to order time-dependent refusals so the clock only moves
+forward.
+
+**Open.** `OP-04` (Base Sepolia, needs operator keys) unchanged. Remaining thin files for a second
+coverage pass: `DiamondCutFacet` 4/8, `RuleLibrary` 12/21, `Treasury` 6/10, `Adapters` 14/23,
+`PolicySet` 11/18. Then `TO-01`.
+
+---
+
 ## 2026-08-16 · Session 7 — the stack becomes a script an operator can run
 
 **Shipped.** `script/Deploy.s.sol` — doc 16's deployment flow, executable. `DeployStack` stands up

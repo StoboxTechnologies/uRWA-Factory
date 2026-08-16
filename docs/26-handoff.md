@@ -81,7 +81,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The tests
 
-**184 tests across 16 suites, all passing.**
+**197 tests across 19 suites, all passing.**
 
 | Suite | Tests | Holds |
 |---|---:|---|
@@ -99,6 +99,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 | `Offering.t.sol` | 30 | Purchases, pricing, offering rules that fail closed, refunds that cannot be taken twice |
 | `PurchaseDoor.t.sol` | 4 | Primary issuance end to end through the real stack — no stubs on the money path |
 | `Deploy.t.sol` | 4 | The deployment script's own code stands the stack up and sells through it |
+| `Refusals.t.sol` | 13 | The guard branches, each walked: bad permits, empty reverts, stale members, malleable signatures, half-dead legs |
 | `AgentsAndSettlement.t.sol` | 21 | Mandates that cannot be exceeded; trades that cannot half-settle |
 | `Preset.t.sol` | 6 | A regime preset is applied at creation and enforces |
 
@@ -286,7 +287,7 @@ permissionless deliberately, and say so in their own comments.
 |---|---|
 | The documentation agrees with the code | `python3 verify.py` — 44 checks, all four levels |
 | The checks are not decorative | `python3 verify.py --self-test` — each one fails on its own known-bad fixture |
-| The invariants hold at runtime | `forge test` — 184 tests, 16 suites |
+| The invariants hold at runtime | `forge test` — 197 tests, 19 suites |
 | Every invariant has an owner | `L3.8`, which fails if a test stops naming one |
 | Every documented caller is enforced | `L3.6` — delete any guard in `src/` and it names the function |
 | The documentation cannot drift | Edit any `docs/*.md`, push, and watch CI fail until `build-docs.py` is run and committed |
