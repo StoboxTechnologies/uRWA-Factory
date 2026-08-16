@@ -217,3 +217,51 @@ contract MiCARule is ClaimReader {
         return keccak256(abi.encodePacked("MiCARule", key));
     }
 }
+
+/// @title The concentration ceiling
+/// @notice A cap on how much of the supply **one person** may hold, counted
+///         across every wallet they control. An address-based version is
+///         defeated by the same evasion holder caps are.
+contract MaxBalancePerHolder is IRule {
+    /// @dev Either an absolute amount, or basis points of supply. Basis points
+    ///      track a growing float; an absolute figure does not, and an issuer
+    ///      who picks the wrong one finds out only when supply changes.
+    uint256 public immutable absoluteCap;
+    uint16 public immutable basisPoints;
+
+    constructor(uint256 absoluteCap_, uint16 basisPoints_) {
+        absoluteCap = absoluteCap_;
+        basisPoints = basisPoints_;
+    }
+
+    function check(address, address, uint256 amount, RuleContext calldata ctx)
+        external
+        view
+        returns (bool, string memory)
+    {
+        uint256 cap = absoluteCap;
+        if (basisPoints != 0) {
+            uint256 supply = _read(ctx.token, abi.encodeWithSignature("totalSupply()"));
+            uint256 fromSupply = (supply * basisPoints) / 10_000;
+            cap = cap == 0 || fromSupply < cap ? fromSupply : cap;
+        }
+        if (cap == 0) return (true, "");
+
+        uint256 held = _read(ctx.token, abi.encodeWithSignature("subjectBalanceOf(bytes32)", ctx.toSubject));
+        if (held + amount > cap) return (false, "concentration limit exceeded");
+        return (true, "");
+    }
+
+    function _read(address token, bytes memory call) private view returns (uint256) {
+        (bool ok, bytes memory data) = token.staticcall(call);
+        return ok && data.length >= 32 ? abi.decode(data, (uint256)) : 0;
+    }
+
+    function bounds(address) external pure returns (uint256, uint256) {
+        return (0, type(uint256).max);
+    }
+
+    function ruleId() external pure returns (bytes32) {
+        return keccak256("MaxBalancePerHolder");
+    }
+}

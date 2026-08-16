@@ -66,10 +66,10 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| ID-01 | `IIdentityRegistry` and claim-key registry | Planned | IF-01 | 0.5 |
-| ID-02 | AllowlistRegistry — the open-source default | Planned | ID-01 | 0.5 |
-| ID-03 | EAS adapter | Planned | ID-01 | 1 |
-| ID-04 | StoboxDID adapter with `try/catch` on every call | Planned | ID-01 | 1 |
+| ID-01 | `IIdentityRegistry` and claim-key registry | **Done** | IF-01 | — |
+| ID-02 | AllowlistRegistry — the open-source default, with wallet binding | **Done** | ID-01 | — |
+| ID-03 | EAS adapter | **Done** | ID-01 | — |
+| ID-04 | StoboxDID adapter with `try/catch` on every call | **Done** | ID-01 | — |
 
 > **ID-04 carries the known integration defect.** `getUserDID` and `getAttribute` revert on unknown
 > wallets. Its definition of done is a test proving all four interface functions return rather than
@@ -83,7 +83,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | PO-02 | HasValidIdentity | **Done** | PO-01, ID-01 | — |
 | PO-03 | JurisdictionAllow / JurisdictionDeny — one contract, both directions | **Done** | PO-01 | — |
 | PO-04 | US accredited, EU professional, EU qualified — one `RequiresClaim` per key | **Done** | PO-01 | — |
-| PO-05 | MaxHolders done; MaxBalancePerHolder outstanding | Ready | PO-01, CO-05 | 0.25 |
+| PO-05 | MaxHolders, MaxBalancePerHolder | **Done** | PO-01, CO-05 | — |
 | PO-06 | TransferWindow done; HoldPeriod rides the lockup mechanism | **Done** | PO-01, CO-06 | — |
 | PO-07 | SanctionsScreen via `RequiresClaim` with a freshness window | **Done** | PO-01 | — |
 | PO-08 | Four regime presets registered in the factory — RegD506c, RegS, MiCA-ART, MiCA-EMT, Open | Planned | PO-02…09, CO-10 | 0.5 |

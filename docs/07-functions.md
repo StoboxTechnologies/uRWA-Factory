@@ -470,6 +470,41 @@ appearing anywhere.
 
 ---
 
+## Identity adapters
+
+**What this is.** Three implementations of `IIdentityRegistry`, plus the few
+administrative functions each needs. A token neither knows nor cares which is installed.
+
+### `AllowlistRegistry` — tier 0
+
+| Function | Does | Called by | Why |
+|---|---|---|---|
+| `allow(wallet)` | Permits an address | Registry admin | The whole of tier 0's eligibility model |
+| `deny(wallet)` | Withdraws permission | Registry admin | Reversing a mistake, or acting on one |
+| `link(wallet, subject)` | Binds several wallets to one person | Registry admin | Without it a tier-0 holder cap counts addresses, and one investor with two wallets defeats it |
+
+### `EASAdapter` — tier 1
+
+| Function | Does | Called by | Why |
+|---|---|---|---|
+| `bind(wallet, subject)` | Binds a wallet to an identity | Registry admin | EAS attests to recipients; the subject binding is ours |
+| `record(subject, key, uid)` | Points a claim key at an attestation | Registry admin | The adapter holds the mapping; the attestation itself lives in EAS |
+
+### `StoboxDIDAdapter` — tier 2
+
+| Function | Does | Called by | Why |
+|---|---|---|---|
+| `mapKey(key, name)` | Maps a `bytes32` claim key to a StoboxDID attribute name | Registry admin | The adapter never guesses a name — a wrong guess reads empty and refuses silently |
+| `claimForWallet(wallet, key)` | Reads a claim by **wallet** | Rules, integrators | StoboxDID indexes attributes by wallet; the adapter cannot invert that on chain |
+| `hasValidClaimForWallet(wallet, key)` | The same question, as a boolean | Rules | The form a rule actually uses |
+
+**Why tier 2 has two extra reads.** `IIdentityRegistry.claim` is keyed by subject, and StoboxDID
+stores attributes against wallets. Inverting that mapping on chain would mean an enumeration the
+registry does not support, so the adapter exposes the wallet-keyed form and returns empty from the
+subject-keyed one rather than pretending to an answer it cannot compute.
+
+---
+
 ## Treasury
 
 **What this is.** The vault. One per token.

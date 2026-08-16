@@ -988,6 +988,12 @@ def _(c):
     api |= set(
         re.findall(r"\bfunction\s+(\w+)\s*\([^;{]*?\b(?:external|public)\b[^;{]*\{", c.solidity, re.S)
     )
+    # Interfaces tagged `@custom:external` describe somebody else's contract —
+    # EAS, StoboxDID — which this project reads but does not define. Their
+    # signatures belong in their own documentation, not ours.
+    for block in re.findall(r"@custom:external.*?\binterface\s+\w+[^{]*\{(.*?)\n\}", c.solidity, re.S):
+        api -= set(re.findall(r"\bfunction\s+(\w+)", block))
+
     # A leading underscore marks an internal helper by convention throughout
     # this codebase, and no such function is part of the documented surface.
     out = []

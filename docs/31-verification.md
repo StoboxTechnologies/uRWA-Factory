@@ -128,7 +128,7 @@ code that had to actually declare something.
 | Check | Rule |
 |---|---|
 | `L3.1` | Every function in [07](07-functions.md) exists in the interfaces with a matching signature |
-| `L3.2` | Every interface function is documented in [07](07-functions.md) |
+| `L3.2` | Every interface function is documented in [07](07-functions.md) — except interfaces tagged `@custom:external`, which describe somebody else's contract |
 | `L3.3` | Every storage struct matches [04](04-storage.md) field for field, in order |
 | `L3.4` | Slot constants match the documented strings exactly |
 | `L3.5` | Every event and error in [14](14-events-errors.md) exists in Solidity |
