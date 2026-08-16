@@ -118,15 +118,35 @@ def main():
 
     # ── the open-boundary claim, as a grep ──────────────────────────────────
 
-    known = "0x(096d75d0|b05cf4f6|25e60361|a832662d|85a3eae3|1cb9bd2c|998a0bea|e0c0f44a)"
-    hit, _ = run(["grep", "-rniE", known, "src", "test"])
-    clean = hit is False  # grep exits non-zero when it finds nothing
-    rows.append(("Open boundary", "No Stobox address in contract source",
-                 "clean" if clean else "**found**", clean))
+    def boundary_clean(pattern):
+        """True only if grep ran and found nothing.
 
-    hit2, _ = run(["grep", "-rniE", r"\bSTBU\b", "src", "test"])
+        grep's three exit codes are distinct and must stay distinct: 0 found a
+        match, 1 found none, 2 could not run (a missing or unreadable path). The
+        old code collapsed 1 and 2 together, so a grep that never scanned
+        anything — after a directory is renamed, say — reported the boundary as
+        clean while checking nothing. For the report's headline compliance
+        claim, an error is not a pass.
+        """
+        try:
+            p = subprocess.run(["grep", "-rniE", pattern, "src", "test"],
+                               capture_output=True, text=True, cwd=ROOT, timeout=600)
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            return None, "grep could not run"
+        if p.returncode == 0:
+            return False, "found"
+        if p.returncode == 1:
+            return True, "clean"
+        return None, f"grep error (exit {p.returncode})"
+
+    known = "0x(096d75d0|b05cf4f6|25e60361|a832662d|85a3eae3|1cb9bd2c|998a0bea|e0c0f44a)"
+    ok, label = boundary_clean(known)
+    rows.append(("Open boundary", "No Stobox address in contract source",
+                 label if ok else ("**found**" if ok is False else f"**{label}**"), ok))
+
+    ok2, label2 = boundary_clean(r"\bSTBU\b")
     rows.append(("Open boundary", "No STBU reference in contract source",
-                 "clean" if hit2 is False else "**found**", hit2 is False))
+                 label2 if ok2 else ("**found**" if ok2 is False else f"**{label2}**"), ok2))
 
     # ── write ───────────────────────────────────────────────────────────────
 

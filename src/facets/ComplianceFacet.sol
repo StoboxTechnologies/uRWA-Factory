@@ -67,6 +67,13 @@ contract ComplianceFacet is IErrors {
         // balance would change, and every holder cap would be wrong.
         if (msg.sender != address(this)) revert NotAuthorized(msg.sender, bytes32(0));
 
+        // A self-transfer nets every balance back to where it started, so no
+        // count changes. Running the two half-updates anyway would let a holder
+        // call `transfer(self, balance)` in a loop: `_increase` reads the
+        // restored balance as `balanceAfter == amount` and reports a new holder
+        // each time, inflating the register without bound.
+        if (from == to) return;
+
         Layout.ComplianceStorage storage s = Layout.compliance();
         Layout.CoreStorage storage core = Layout.core();
 

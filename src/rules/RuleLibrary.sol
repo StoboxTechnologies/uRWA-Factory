@@ -69,6 +69,11 @@ contract JurisdictionRule is ClaimReader {
     }
 
     function check(address, address, uint256, RuleContext calldata ctx) external view returns (bool, string memory) {
+        // The claim must be valid before its value is read. `RequiresClaim`
+        // gates on `_has` first; this rule did not, so it enforced jurisdiction
+        // against a revoked or expired attestation — a holder who relocated
+        // into an excluded country kept passing on the stale evidence.
+        if (!_has(ctx.toSubject, ClaimKeys.JURISDICTION_COUNTRY)) return (false, "jurisdiction unknown");
         bytes32 country = _claim(ctx.toSubject, ClaimKeys.JURISDICTION_COUNTRY).valueHash;
         if (country == bytes32(0)) return (false, "jurisdiction unknown");
         if (isDenyList) {

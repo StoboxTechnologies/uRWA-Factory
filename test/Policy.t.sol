@@ -23,6 +23,13 @@ contract Claims is IIdentityRegistry {
         store[subject][key] = Claim(value, 0, issuedAt, 0, address(this), false);
     }
 
+    /// @dev A claim whose value is still readable but is no longer valid — the
+    ///      state a real attester leaves behind when it revokes. `claim()`
+    ///      returns the value; `hasValidClaim()` returns false.
+    function setRevoked(bytes32 subject, bytes32 key, bytes32 value) external {
+        store[subject][key] = Claim(value, 0, 0, 0, address(this), true);
+    }
+
     function subjectOf(address w) external pure returns (bytes32) {
         return keccak256(abi.encodePacked(w));
     }
@@ -36,7 +43,9 @@ contract Claims is IIdentityRegistry {
     }
 
     function hasValidClaim(bytes32 s, bytes32 k) external view returns (bool) {
-        return store[s][k].issuer != address(0);
+        Claim storage c = store[s][k];
+        if (c.issuer == address(0) || c.revoked) return false;
+        return c.expiresAt == 0 || c.expiresAt > block.timestamp;
     }
 }
 
@@ -238,6 +247,26 @@ contract PolicyTest is Test {
         claims.set(_s(bob), ClaimKeys.JURISDICTION_COUNTRY, EE, uint64(block.timestamp));
         (ok,,) = token.ask(alice, bob, 1e18);
         assertTrue(ok);
+    }
+
+    /// @notice A revoked jurisdiction claim refuses, it does not pass on the stale value
+    /// @dev The fail-open the rule had: it read `valueHash` without asking
+    ///      whether the claim was still valid. A holder whose EE attestation is
+    ///      revoked — because they relocated to a denied country pending
+    ///      re-attestation — kept receiving a Reg S security as though still in
+    ///      EE. The rule must gate on validity first, exactly as
+    ///      `RequiresClaim` does.
+    function test_aRevokedJurisdictionClaimRefuses() public {
+        bytes32[] memory denied = new bytes32[](1);
+        denied[0] = US;
+        policy.addGroup(IDENTITY);
+        policy.addRule(IDENTITY, address(new JurisdictionRule(address(claims), true, denied)));
+
+        // The value still reads as EE (not on the deny list), but it is revoked.
+        claims.setRevoked(_s(bob), ClaimKeys.JURISDICTION_COUNTRY, EE);
+        (bool ok,, string memory reason) = token.ask(alice, bob, 1e18);
+        assertFalse(ok, "a revoked jurisdiction claim passed a deny list");
+        assertEq(reason, "jurisdiction unknown");
     }
 
     /// @notice An unknown jurisdiction refuses rather than passes

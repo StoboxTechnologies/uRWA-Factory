@@ -72,5 +72,11 @@ interface IAtomicDvP {
 
     /// @notice Withdraw a signed instruction before it settles — either party
     function cancel(Instruction calldata instruction) external;
-    function isSettled(bytes32 nonce) external view returns (bool);
+
+    /// @notice The digest keying an instruction's settlement state
+    function digestOf(Instruction calldata instruction) external view returns (bytes32);
+
+    /// @notice Whether the instruction with this digest has settled
+    /// @dev Keyed by digest — pass an instruction through `digestOf` first.
+    function isSettled(bytes32 digest) external view returns (bool);
 }

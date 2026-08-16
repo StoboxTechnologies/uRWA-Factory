@@ -130,6 +130,24 @@ contract RestrictionsTest is Test {
         assertEq(ComplianceFacet(address(token)).unfrozenBalanceOf(alice), 0);
     }
 
+    /// @notice The max-freeze sentinel plus a lockup saturates, it does not panic
+    /// @dev `setFrozenTokens(w, type(uint256).max)` is the freeze-everything
+    ///      idiom, and a distribution or admin lockup can sit on top of it.
+    ///      A checked add would overflow and revert with a panic — and
+    ///      `getFrozenTokens`, `unfrozenBalanceOf`, `canTransfer` and
+    ///      `whyBlocked` all read this total, so the panic would break the four
+    ///      views ERC-7943 says must never revert.
+    function test_maxFreezePlusLockupSaturatesInsteadOfReverting() public {
+        FreezeFacet(address(token)).setFrozenTokens(alice, type(uint256).max);
+        LockupFacet(address(token)).addLockup(alice, 5e18, uint64(block.timestamp + 1 days), "on top");
+
+        // Both of these read the composed total; a checked overflow would
+        // panic here instead of saturating, and these two views are among the
+        // four ERC-7943 says must never revert.
+        assertEq(ComplianceFacet(address(token)).getFrozenTokens(alice), type(uint256).max);
+        assertEq(ComplianceFacet(address(token)).unfrozenBalanceOf(alice), 0);
+    }
+
     /// @notice Lockups are bounded, so the total stays affordable to compute
     /// @dev An unbounded array would let a compliance officer price a holder
     ///      out of transferring — a restriction by accident rather than by

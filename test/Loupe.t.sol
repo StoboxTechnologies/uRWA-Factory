@@ -77,6 +77,22 @@ contract LoupeTest is Test {
         _assertConsistent();
     }
 
+    /// @notice Adding over an already-served selector untracks the old facet too
+    /// @dev `Add` over an existing mutable selector is a `Replace` in disguise.
+    ///      If the old owner is not untracked, the report claims one selector
+    ///      for two facets and lists a facet that no call reaches — the router
+    ///      and the loupe disagree, which is the one thing the loupe exists to
+    ///      make impossible.
+    function test_addingOverAServedSelectorDoesNotLeaveAGhost() public {
+        _cut(address(two), TwoWayFacet.alpha.selector, IDiamond.FacetCutAction.Add);
+        _cut(address(rival), TwoWayFacet.alpha.selector, IDiamond.FacetCutAction.Add);
+
+        _assertConsistent();
+        assertEq(token.facetAddress(TwoWayFacet.alpha.selector), address(rival), "router did not repoint");
+        assertEq(token.facetFunctionSelectors(address(two)).length, 0, "the old facet still claims it");
+        assertFalse(_listed(address(two)), "a facet that serves nothing is still listed");
+    }
+
     /// @notice A replaced selector leaves the facet that used to serve it
     /// @dev Otherwise two facets both claim it, and an outsider diffing the
     ///      report against a published package sees code that is not running.

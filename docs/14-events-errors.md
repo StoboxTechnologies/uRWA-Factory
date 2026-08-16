@@ -262,6 +262,7 @@ error UpgradeNotReady(bytes32 cutHash, uint64 executableAt);
 
 error MandateExpired(bytes32 mandateId, uint64 expiredAt);
 error MandateIsRevoked(bytes32 mandateId);   // named apart from the event, as CapIsLocked is
+error EpochlessCap();                         // a per-epoch cap with a zero-length epoch never binds
 error OutOfScope(bytes32 mandateId, bytes32 scope);
 error PerActionLimitExceeded(uint256 requested, uint256 limit);
 error PerEpochLimitExceeded(uint256 requested, uint256 remaining);

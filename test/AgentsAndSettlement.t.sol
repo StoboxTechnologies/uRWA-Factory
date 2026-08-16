@@ -301,7 +301,44 @@ contract AgentsAndSettlementTest is Test {
 
         // And the trade it tried to kill still settles.
         dvp.settle(i, s1, s2);
-        assertTrue(dvp.isSettled(i.nonce));
+        assertTrue(dvp.isSettled(dvp.digestOf(i)));
+    }
+
+    /// @notice A forged instruction cannot cancel a genuine trade's nonce
+    /// @dev The attack the party check alone did not stop: the attacker names
+    ///      themselves as both parties and borrows the victim's nonce, so the
+    ///      party check passes. It fails anyway, because cancellation is keyed
+    ///      on the digest — which binds the real parties and terms — and the
+    ///      forgery's digest is its own.
+    function test_aForgedInstructionCannotCancelARealTrade() public {
+        Instruction memory real = _instruction(100e18, 500e18);
+        bytes memory s1 = _sign(sellerKey, real);
+        bytes memory s2 = _sign(buyerKey, real);
+
+        // A fresh allocation, not `= real`: assigning one memory struct to
+        // another aliases it in Solidity, and mutating the alias would rewrite
+        // the genuine instruction under the test's feet.
+        address attacker = address(0xBAD);
+        Instruction memory forged = _instruction(100e18, 500e18); // same nonce…
+        forged.seller = attacker; // …but the attacker's own parties
+        forged.buyer = attacker;
+
+        vm.prank(attacker);
+        dvp.cancel(forged); // passes the party check, cancels only its own digest
+
+        // The genuine trade is untouched and still settles.
+        dvp.settle(real, s1, s2);
+        assertTrue(dvp.isSettled(dvp.digestOf(real)));
+    }
+
+    /// @notice A per-epoch cap with a zero-length epoch is rejected at the grant
+    /// @dev Otherwise the cap never binds: every consume finds the window over
+    ///      and resets the spend before adding to it.
+    function test_anEpochlessCapIsRejected() public {
+        Mandate memory m = _template(100e18, 250e18, 0);
+        vm.prank(principal);
+        vm.expectRevert(IErrors.EpochlessCap.selector);
+        authority.grant(m);
     }
 
     /// @notice The preview names the reason before anyone signs anything

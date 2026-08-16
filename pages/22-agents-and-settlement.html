@@ -528,15 +528,18 @@ interface IAtomicDvP {
         external view returns (bool ok, uint8 stage, address rule, string memory reason);
 
     function cancel(Instruction calldata i) external;
-    function isSettled(bytes32 nonce) external view returns (bool);
+    function digestOf(Instruction calldata i) external view returns (bytes32);
+    function isSettled(bytes32 digest) external view returns (bool);
 }</pre>
+<p><strong>Settlement state is keyed by the instruction digest, not the bare nonce.</strong> The nonce alone does not name the parties, so a state keyed on it conflates two different trades that share one — which let a bystander cancel a trade they were not part of by forging an instruction with the victim&#x27;s nonce. The digest binds every term, so a forged instruction reaches only its own state, never a genuine trade&#x27;s. A caller asking whether a trade settled passes the instruction through <code>digestOf</code> first.</p>
 <h4 id="22-execution-order">Execution order</h4>
-<pre> 1. instruction not expired, nonce unused
- 2. both signatures valid (EIP-712)        ← either party or their agent may submit
- 3. token.canTransfer(seller, buyer, securityAmount)   ← revert with the rule&#x27;s reason if false
- 4. paymentToken:  buyer  → seller
- 5. securityToken: seller → buyer          ← runs the full compliance pipeline
- 6. mark nonce settled, emit Settled</pre>
+<pre> 1. instruction not expired, neither party is the zero address
+ 2. digest unused (not settled, not cancelled)
+ 3. both signatures valid (EIP-712)        ← either party or their agent may submit
+ 4. token.canTransfer(seller, buyer, securityAmount)   ← revert with the rule&#x27;s reason if false
+ 5. paymentToken:  buyer  → seller
+ 6. securityToken: seller → buyer          ← runs the full compliance pipeline
+ 7. mark digest settled, emit Settled</pre>
 <p>Step 3 is a courtesy that makes failures legible: step 5 would enforce it anyway, but reverting early returns the <em>rule and reason</em> rather than a bare failure. <code>previewSettle</code> runs steps 1–3 in view mode and is what an agent calls before it ever constructs a transaction.</p>
 <h4 id="22-why-signatures-rather-than-approvals">Why signatures rather than approvals</h4>
 <p>Both parties sign the instruction off-chain. Either side — or either side&#x27;s agent — submits it. This means no party ever grants a standing allowance to a counterparty, the trade terms are fixed at signing, and the submitter pays gas. A matching agent can therefore execute a trade it negotiated without ever holding custody of either leg.</p>
@@ -785,4 +788,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 9a4eb9c685596e9ac0102268af34241a148d0b3ae3957394fa234e5a765f73fa -->
+<!-- source-digest: 3791b658623612afbd658af5764f073c522d238911a8198cf6032792610fed6f -->

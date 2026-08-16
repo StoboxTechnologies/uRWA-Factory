@@ -31,6 +31,11 @@ contract AgentAuthority is IErrors {
     function grant(Mandate calldata mandate) external returns (bytes32 mandateId) {
         if (mandate.agent == address(0)) revert ZeroAddress();
         if (mandate.expiresAt <= block.timestamp) revert MandateExpired(bytes32(0), mandate.expiresAt);
+        // A per-epoch cap with a zero-length epoch is a cap that never binds:
+        // every `consume` would find the window already over and reset the
+        // spend to zero before adding to it. Reject the misconfiguration at the
+        // grant rather than let the agent draw without limit believing one held.
+        if (mandate.maxPerEpoch != 0 && mandate.epochLength == 0) revert EpochlessCap();
 
         mandateId = keccak256(abi.encode(msg.sender, mandate.agent, mandate.expiresAt, _byPrincipal[msg.sender].length));
         Mandate storage m = _mandates[mandateId];

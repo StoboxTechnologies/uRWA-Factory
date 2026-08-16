@@ -88,6 +88,29 @@ contract SubjectAccountingTest is Test {
         assertEq(c.subjectBalanceOf(INVESTOR_ONE), 300e18, "the person's total is the sum of their wallets");
     }
 
+    /// @notice A self-transfer changes no count, however many times it is done
+    /// @dev `_increase` reads "was this balance zero?" as `balanceAfter ==
+    ///      amount`. A self-transfer of the whole balance nets back to the same
+    ///      figure, so that test is true even though the holder was never new —
+    ///      it would add a phantom holder on every call. `holderCount` is a
+    ///      permissionless reporting figure, so anyone could inflate it without
+    ///      bound; the guard is that a self-transfer returns early.
+    function test_aSelfTransferNeverChangesTheCounts() public {
+        _seedThrough(w1, 100e18);
+        ComplianceFacet c = ComplianceFacet(address(token));
+        assertEq(c.holderCount(), 1);
+        assertEq(c.subjectHolderCount(), 1);
+
+        for (uint256 i = 0; i < 5; i++) {
+            vm.prank(w1);
+            token.transfer(w1, 100e18);
+        }
+
+        assertEq(c.holderCount(), 1, "self-transfers inflated the address register");
+        assertEq(c.subjectHolderCount(), 1, "self-transfers inflated the subject register");
+        assertEq(c.subjectBalanceOf(INVESTOR_ONE), 100e18, "the balance drifted");
+    }
+
     /// @notice A second person moves the subject count, a second wallet does not
     function test_aSecondPersonIsASecondHolder() public {
         _seedThrough(w1, 200e18);

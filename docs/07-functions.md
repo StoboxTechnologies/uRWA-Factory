@@ -726,7 +726,8 @@ require a human role holder, and there is no mandate that can include them.
 | `settle(instruction, sellerSig, buyerSig) → settlementId` | Executes both legs atomically | Either party, or their agent | **Settlement risk cannot occur** |
 | `previewSettle(instruction) → (ok, stage, rule, reason)` | Will this trade work? | Anyone, agents | Check before signing, for free |
 | `cancel(instruction)` | Invalidates a signed instruction | Either party — enforced | Change of mind before settlement |
-| `isSettled(nonce) → bool` | Already done? | Anyone | Replay protection |
+| `digestOf(instruction) → bytes32` | The key its settlement state is kept under | Anyone | Replay state is keyed by digest, not nonce |
+| `isSettled(digest) → bool` | Already done? | Anyone | Replay protection |
 
 **Why signatures rather than approvals.** Both parties sign off-chain; either side or their agent
 submits. No standing allowance is granted to a counterparty, the terms are fixed at signing, and a

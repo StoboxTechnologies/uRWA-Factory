@@ -86,8 +86,15 @@ library LibDiamond {
         for (uint256 i = 0; i < selectors.length; i++) {
             bytes4 sel = selectors[i];
             // Adding over an existing selector is a replace in disguise, and
-            // must not be a way around the rule.
-            if (d.facetOf[sel] != address(0)) _enforceMutable(sel);
+            // must not be a way around the rule — nor a way around the loupe's
+            // bookkeeping. `_enforceMutable` stops it overwriting the core;
+            // `_untrack` takes the selector off whatever facet used to serve it,
+            // exactly as `_replace` does, so the report never claims one
+            // selector for two facets or lists a facet that serves nothing.
+            if (d.facetOf[sel] != address(0)) {
+                _enforceMutable(sel);
+                _untrack(d, d.facetOf[sel], sel);
+            }
             _track(d, facet);
             d.facetOf[sel] = facet;
             d.selectorsOf[facet].push(sel);

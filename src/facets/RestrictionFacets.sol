@@ -14,7 +14,16 @@ library Restrictions {
         total = Layout.freeze().adminFrozen[account];
         Layout.Lockup[] storage locks = Layout.lockup().lockups[account];
         for (uint256 i = 0; i < locks.length; i++) {
-            if (locks[i].unlockAt > block.timestamp) total += locks[i].amount;
+            if (locks[i].unlockAt <= block.timestamp) continue;
+            // Saturating add. `setFrozenTokens(account, type(uint256).max)` is
+            // the freeze-everything idiom, and a frozen total is allowed to
+            // exceed the balance — so a lockup on top of it must not overflow
+            // and revert. `frozenOf` feeds the four views that ERC-7943 says
+            // must never revert; a panic here would break every one of them.
+            unchecked {
+                uint256 next = total + locks[i].amount;
+                total = next < total ? type(uint256).max : next;
+            }
         }
     }
 }

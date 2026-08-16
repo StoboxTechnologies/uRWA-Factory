@@ -84,19 +84,27 @@ interface IAtomicDvP {
         external view returns (bool ok, uint8 stage, address rule, string memory reason);
 
     function cancel(Instruction calldata i) external;
-    function isSettled(bytes32 nonce) external view returns (bool);
+    function digestOf(Instruction calldata i) external view returns (bytes32);
+    function isSettled(bytes32 digest) external view returns (bool);
 }
 ```
+
+**Settlement state is keyed by the instruction digest, not the bare nonce.** The nonce alone does not
+name the parties, so a state keyed on it conflates two different trades that share one — which let a
+bystander cancel a trade they were not part of by forging an instruction with the victim's nonce. The
+digest binds every term, so a forged instruction reaches only its own state, never a genuine trade's.
+A caller asking whether a trade settled passes the instruction through `digestOf` first.
 
 ### Execution order
 
 ```
- 1. instruction not expired, nonce unused
- 2. both signatures valid (EIP-712)        ← either party or their agent may submit
- 3. token.canTransfer(seller, buyer, securityAmount)   ← revert with the rule's reason if false
- 4. paymentToken:  buyer  → seller
- 5. securityToken: seller → buyer          ← runs the full compliance pipeline
- 6. mark nonce settled, emit Settled
+ 1. instruction not expired, neither party is the zero address
+ 2. digest unused (not settled, not cancelled)
+ 3. both signatures valid (EIP-712)        ← either party or their agent may submit
+ 4. token.canTransfer(seller, buyer, securityAmount)   ← revert with the rule's reason if false
+ 5. paymentToken:  buyer  → seller
+ 6. securityToken: seller → buyer          ← runs the full compliance pipeline
+ 7. mark digest settled, emit Settled
 ```
 
 Step 3 is a courtesy that makes failures legible: step 5 would enforce it anyway, but reverting early

@@ -30,6 +30,11 @@ contract AtomicDvP is IErrors {
         "Instruction(address securityToken,address paymentToken,address seller,address buyer,uint256 securityAmount,uint256 paymentAmount,uint64 validUntil,bytes32 nonce,bytes32 tradeRef)"
     );
 
+    // Keyed by the instruction digest, not the bare nonce. The nonce alone
+    // does not name the parties, so a state keyed on it conflates two different
+    // trades that happen to share one — which is exactly how a bystander was
+    // able to cancel a trade they were not part of. The digest binds every
+    // term, so a forged instruction cannot reach a genuine one's state.
     mapping(bytes32 => bool) public isSettled;
     mapping(bytes32 => bool) public isCancelled;
 
@@ -53,10 +58,15 @@ contract AtomicDvP is IErrors {
         returns (bytes32 settlementId)
     {
         if (block.timestamp > i.validUntil) revert InstructionExpired(i.validUntil);
-        if (isSettled[i.nonce]) revert NonceAlreadySettled(i.nonce);
-        if (isCancelled[i.nonce]) revert NonceAlreadySettled(i.nonce);
+        // A zero-address party would be satisfied by a garbage signature, since
+        // `_recover` returns the zero address for one — so the signature check
+        // below would pass without any real signature existing.
+        if (i.seller == address(0) || i.buyer == address(0)) revert ZeroAddress();
 
         bytes32 digest = _digest(i);
+        if (isSettled[digest]) revert NonceAlreadySettled(i.nonce);
+        if (isCancelled[digest]) revert NonceAlreadySettled(i.nonce);
+
         if (_recover(digest, sellerSig) != i.seller) revert BadSignature(i.seller);
         if (_recover(digest, buyerSig) != i.buyer) revert BadSignature(i.buyer);
 
@@ -69,7 +79,7 @@ contract AtomicDvP is IErrors {
             revert ERC7943CannotTransfer(i.seller, i.buyer, i.securityAmount);
         }
 
-        isSettled[i.nonce] = true;
+        isSettled[digest] = true;
 
         // Payment first, then delivery. Either both move or the transaction
         // reverts and neither did.
@@ -87,8 +97,10 @@ contract AtomicDvP is IErrors {
     /// @notice Would this settle — free, and names the rule that would refuse
     function previewSettle(Instruction calldata i) external view returns (bool ok, string memory reason) {
         if (block.timestamp > i.validUntil) return (false, "instruction expired");
-        if (isSettled[i.nonce]) return (false, "already settled");
-        if (isCancelled[i.nonce]) return (false, "cancelled");
+        if (i.seller == address(0) || i.buyer == address(0)) return (false, "a party is the zero address");
+        bytes32 digest = _digest(i);
+        if (isSettled[digest]) return (false, "already settled");
+        if (isCancelled[digest]) return (false, "cancelled");
 
         try ICompliantToken(i.securityToken).canTransfer(i.seller, i.buyer, i.securityAmount) returns (bool allowed) {
             if (allowed) return (true, "");
@@ -109,16 +121,25 @@ contract AtomicDvP is IErrors {
     /// @dev Either party may cancel. A trade one side has repudiated should not
     ///      remain settleable by the other until it expires.
     ///
-    ///      The whole instruction is passed rather than the nonce alone,
-    ///      because the nonce does not say who the parties are: a function
-    ///      taking only the nonce could be called by anyone, and a bystander
-    ///      watching the mempool could cancel every pending trade on the
-    ///      contract for the price of the gas.
+    ///      Cancellation is recorded against the instruction **digest**, not the
+    ///      nonce. That is what makes the party check meaningful: an attacker
+    ///      can forge an instruction naming themselves as both parties and any
+    ///      nonce they like, and it passes the check below — but its digest is
+    ///      its own, so it cancels only that forgery, never the genuine trade
+    ///      whose digest binds the real seller, buyer and terms.
     function cancel(Instruction calldata i) external {
         if (msg.sender != i.seller && msg.sender != i.buyer) {
             revert NotAuthorized(msg.sender, i.nonce);
         }
-        isCancelled[i.nonce] = true;
+        isCancelled[_digest(i)] = true;
+    }
+
+    /// @notice The digest under which an instruction's settlement state is kept
+    /// @dev `isSettled` and `isCancelled` are keyed by this, not the nonce. A
+    ///      caller asking "did this settle?" passes the instruction through here
+    ///      first.
+    function digestOf(Instruction calldata i) external view returns (bytes32) {
+        return _digest(i);
     }
 
     function _digest(Instruction calldata i) private view returns (bytes32) {
