@@ -144,7 +144,12 @@ completely. See [22 — Agents and settlement](22-agents-and-settlement.md).
 | `beforeUpdate(from, to, amount)` | Runs the seven gates and reverts with the reason | **The ledger, on itself** | Every movement of value passes through it |
 | `afterUpdate(from, to, amount)` | Updates holder counts and subject balances | **The ledger, on itself**, after the move | Subject accounting needs the identity registry, which the ledger plane must not depend on |
 
-**Not called by anyone else.** The token invokes it on its own address before touching a balance, so
+**Not called by anyone else, and that is enforced.** `afterUpdate` refuses any caller but the
+diamond. It moves the numbers holder caps are decided on and moves no balance, so an unguarded one
+would let a bystander make `MaxHolders` refuse an honest investor without touching the ledger.
+`beforeUpdate` needs no such guard: it is a `view` and can change nothing.
+
+The token invokes both on its own address before touching a balance, so
 the fallback router resolves it. That indirection is what makes the system fail closed: remove the
 compliance facet and the selector is unregistered, so every transfer reverts `FunctionNotFound` with
 no code anywhere stating that behaviour.
@@ -704,7 +709,7 @@ require a human role holder, and there is no mandate that can include them.
 |---|---|---|---|
 | `settle(instruction, sellerSig, buyerSig) → settlementId` | Executes both legs atomically | Either party, or their agent | **Settlement risk cannot occur** |
 | `previewSettle(instruction) → (ok, stage, rule, reason)` | Will this trade work? | Anyone, agents | Check before signing, for free |
-| `cancel(nonce)` | Invalidates a signed instruction | Either party | Change of mind before settlement |
+| `cancel(instruction)` | Invalidates a signed instruction | Either party — enforced | Change of mind before settlement |
 | `isSettled(nonce) → bool` | Already done? | Anyone | Replay protection |
 
 **Why signatures rather than approvals.** Both parties sign off-chain; either side or their agent

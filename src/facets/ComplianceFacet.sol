@@ -61,6 +61,12 @@ contract ComplianceFacet is IErrors {
     ///      on the claims plane. It runs after the fact, so it can never refuse
     ///      a transfer the pipeline already allowed.
     function afterUpdate(address from, address to, uint256 amount) external {
+        // The ledger calls this on itself, so the only legitimate caller is the
+        // diamond. Without the check, anyone could move the subject counters
+        // that `MaxHolders` and `MaxBalancePerHolder` are decided on — no
+        // balance would change, and every holder cap would be wrong.
+        if (msg.sender != address(this)) revert NotAuthorized(msg.sender, bytes32(0));
+
         Layout.ComplianceStorage storage s = Layout.compliance();
         Layout.CoreStorage storage core = Layout.core();
 

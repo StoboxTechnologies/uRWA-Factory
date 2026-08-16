@@ -28,6 +28,7 @@ HTML = ROOT / "index.html"       # the whole documentation, one page
 HUB = ROOT / "start.html"        # one card per document
 PAGES = ROOT / "pages"
 SRC = ROOT / "src"
+TEST = ROOT / "test"
 README = ROOT / "README.md"
 
 RESET, BOLD, RED, GREEN, DIM = "\033[0m", "\033[1m", "\033[31m", "\033[32m", "\033[2m"
@@ -75,6 +76,8 @@ class Corpus:
         self.sol = {str(p.relative_to(ROOT)): p.read_text(encoding="utf-8")
                     for p in sorted(SRC.rglob("*.sol"))}
         self.solidity = "\n".join(self.sol.values())
+        self.tests = {p.name: p.read_text(encoding="utf-8") for p in sorted(TEST.glob("*.t.sol"))}
+        self.test_text = "\n".join(self.tests.values())
         self.hub = HUB.read_text(encoding="utf-8") if HUB.exists() else ""
         self.pages = {p.name: p.read_text(encoding="utf-8") for p in sorted(PAGES.glob("*.html"))}
         # Every built surface, for the checks that must hold on all of them.
@@ -1136,6 +1139,29 @@ def doc_functions(text):
 def doc_named(text, pattern):
     return set(re.findall(pattern, text))
 
+
+@check("L3.8", 3, "Every runtime invariant in 31 is claimed by at least one test")
+def _(c):
+    """A specified invariant nobody tests is a paragraph, not a guarantee.
+
+    This does not prove the test is any good — nothing here can. It proves the
+    invariant has an owner, which is the difference between a list that is
+    maintained and a list that is aspirational.
+    """
+    doc = c.d("31")
+    invariants = set(re.findall(r"`(L4\.\d+)`", doc))
+    if not invariants:
+        return ["doc 31 lists no runtime invariants"]
+    if not c.test_text:
+        return ["no test files found"]
+    claimed = set(re.findall(r"\b(L4\.\d+)\b", c.test_text))
+    return [f"{i} is specified but no test names it" for i in sorted(invariants - claimed)]
+
+
+@breaks("L3.8")
+def _(c):
+    c.test_text = c.test_text.replace("L4.1", "L9.9")
+    return c
 
 # ── runner ───────────────────────────────────────────────────────────────────
 

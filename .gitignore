@@ -3,6 +3,8 @@ out/
 broadcast/
 lib/
 node_modules/
+__pycache__/
+*.pyc
 .env
 .env.*
 !.env.example

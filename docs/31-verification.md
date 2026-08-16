@@ -134,6 +134,7 @@ code that had to actually declare something.
 | `L3.5` | Every event and error in [14](14-events-errors.md) exists in Solidity |
 | `L3.6` | Every access modifier matches the role in [07](07-functions.md) — with the implementation |
 | `L3.7` | Storage structs only ever grow — diffed against the previous release |
+| `L3.8` | Every runtime invariant in this document is named by at least one test |
 
 `L3.6` needs implementation contracts and `L3.7` needs a previous release. Neither exists yet, so both stay specified rather than pretended.
 

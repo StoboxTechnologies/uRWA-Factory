@@ -108,8 +108,17 @@ contract AtomicDvP is IErrors {
     /// @notice Withdraw a signed instruction before it settles
     /// @dev Either party may cancel. A trade one side has repudiated should not
     ///      remain settleable by the other until it expires.
-    function cancel(bytes32 nonce) external {
-        isCancelled[nonce] = true;
+    ///
+    ///      The whole instruction is passed rather than the nonce alone,
+    ///      because the nonce does not say who the parties are: a function
+    ///      taking only the nonce could be called by anyone, and a bystander
+    ///      watching the mempool could cancel every pending trade on the
+    ///      contract for the price of the gas.
+    function cancel(Instruction calldata i) external {
+        if (msg.sender != i.seller && msg.sender != i.buyer) {
+            revert NotAuthorized(msg.sender, i.nonce);
+        }
+        isCancelled[i.nonce] = true;
     }
 
     function _digest(Instruction calldata i) private view returns (bytes32) {

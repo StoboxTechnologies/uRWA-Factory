@@ -6,6 +6,7 @@ import {uRWAToken} from "../src/uRWAToken.sol";
 import {ComplianceFacet} from "../src/facets/ComplianceFacet.sol";
 import {DiamondCutFacet} from "../src/facets/DiamondCutFacet.sol";
 import {IDiamond} from "../src/interfaces/IDiamond.sol";
+import {IErrors} from "../src/interfaces/IErrors.sol";
 import {IIdentityRegistry, Claim} from "../src/interfaces/IIdentityRegistry.sol";
 import {Roles} from "../src/interfaces/Roles.sol";
 
@@ -100,6 +101,25 @@ contract SubjectAccountingTest is Test {
         vm.prank(w1);
         token.transfer(w2, 50e18);
         assertEq(c.subjectHolderCount(), 2, "a second wallet of the same person raised the count");
+    }
+
+    /// @notice Only the ledger may move the counters
+    /// @dev `afterUpdate` writes the numbers every holder cap is decided on and
+    ///      moves no balance, so an unguarded one would let a bystander make
+    ///      `MaxHolders` refuse an honest investor — or admit a forbidden one —
+    ///      without touching the ledger at all.
+    function test_theSubjectCountersCannotBeMovedFromOutside() public {
+        _seedThrough(w1, 100e18);
+        ComplianceFacet c = ComplianceFacet(address(token));
+        assertEq(c.subjectHolderCount(), 1);
+
+        address bystander = address(0xB9);
+        vm.prank(bystander);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, bystander, bytes32(0)));
+        c.afterUpdate(address(0), other, 1_000_000e18);
+
+        assertEq(c.subjectHolderCount(), 1, "the count moved without a balance moving");
+        assertEq(c.subjectBalanceOf(INVESTOR_TWO), 0);
     }
 
     /// @notice Emptying every wallet of a person removes exactly one holder

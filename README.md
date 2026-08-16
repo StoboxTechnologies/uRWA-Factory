@@ -124,17 +124,21 @@ All four surfaces at **[the prototypes index](https://stoboxtechnologies.github.
 
 ## Status
 
-**Specification stage. No implementation yet.** The [handoff](docs/26-handoff.md) records what is delivered, what is deliberately not, and how to verify both without asking anyone. The full work breakdown — 79 items with dependencies, handoff contracts and review gates — is in the [work registry](docs/24-work-registry.md). The design is complete and reviewable; Phase 0 — the
-compiling interface package — is next. See the [development plan](docs/20-development-plan.md).
+**Implementation stage. Phases 0 to 2 are all but closed.** 32 Solidity files, 130 passing tests,
+43 documentation checks that fail the build when the code and the documentation disagree. The
+[handoff](docs/26-handoff.md) records what is delivered, what is deliberately not, the findings from
+the last audit pass, and how to verify all of it without asking anyone. The full work breakdown — 87
+items with dependencies, handoff contracts and review gates — is in the
+[work registry](docs/24-work-registry.md).
 
 | Phase | Delivers | State |
 |---|---|---|
-| 0 | Interface package, storage layout frozen | Next |
-| 1 | Core token, factory, conformance kit | Planned |
-| 2 | Policy engine, rule library, DID adapter | Planned |
-| 3 | Treasury, offerings, agent authority, atomic DvP | Planned |
-| 4 | Passport, proofs, verifier library | Planned |
-| 5 | Interfaces and SDK | Planned |
+| 0 | Interface package, storage layout frozen | **Done** |
+| 1 | Core token, factory, identity adapters | **13 of 14** |
+| 2 | Policy engine, rule library | **8 of 9** |
+| 3 | Treasury, offerings, agent authority, atomic DvP | **6 of 11** |
+| 4 | Passport, proofs, verifier library | Not started |
+| 5 | Interfaces and SDK | Prototypes only |
 | 6 | Audit, then mainnet | Planned |
 
 **No mainnet issuance until an audit clears.**

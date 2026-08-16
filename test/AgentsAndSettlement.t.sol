@@ -91,8 +91,11 @@ contract AgentsAndSettlementTest is Test {
         assertEq(spent, 50e18);
     }
 
-    /// @notice The per-action limit binds
-    /// @dev The agent is not trusted to stay inside it; it is unable to leave.
+    /// @notice `L4.15` — no agent action exceeds its mandate
+    /// @dev The agent is not trusted to stay inside the limit; it is unable
+    ///      to leave it. Both the free check and the state-changing path are
+    ///      asserted, because an agent that ignores the former still meets
+    ///      the latter.
     function test_theAgentCannotExceedThePerActionLimit() public {
         (bool ok, string memory why) =
             authority.check(mandateId, authority.SCOPE_TRANSFER(), address(security), venue, 150e18);
@@ -276,10 +279,29 @@ contract AgentsAndSettlementTest is Test {
         bytes memory s1 = _sign(sellerKey, i);
         bytes memory s2 = _sign(buyerKey, i);
         vm.prank(seller);
-        dvp.cancel(i.nonce);
+        dvp.cancel(i);
 
         vm.expectRevert();
         dvp.settle(i, s1, s2);
+    }
+
+    /// @notice A bystander cannot cancel somebody else's trade
+    /// @dev The nonce is public the moment the instruction reaches a relayer.
+    ///      If cancelling took only the nonce, anyone watching could kill every
+    ///      pending trade on the contract for the price of the gas.
+    function test_onlyAPartyMayCancel() public {
+        Instruction memory i = _instruction(100e18, 500e18);
+        bytes memory s1 = _sign(sellerKey, i);
+        bytes memory s2 = _sign(buyerKey, i);
+
+        address bystander = address(0xB9);
+        vm.prank(bystander);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, bystander, i.nonce));
+        dvp.cancel(i);
+
+        // And the trade it tried to kill still settles.
+        dvp.settle(i, s1, s2);
+        assertTrue(dvp.isSettled(i.nonce));
     }
 
     /// @notice The preview names the reason before anyone signs anything

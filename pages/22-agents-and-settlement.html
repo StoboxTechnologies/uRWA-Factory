@@ -391,7 +391,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="23-testing-plan.html"><span class="n">23</span>Testing plan</a>
 <a href="24-work-registry.html"><span class="n">24</span>Work registry</a>
 <a href="25-design-system.html"><span class="n">25</span>Design system</a>
-<a href="26-handoff.html"><span class="n">26</span>Handoff: specification to build</a>
+<a href="26-handoff.html"><span class="n">26</span>Handoff</a>
 <a href="27-model-inventory.html"><span class="n">27</span>Model inventory and artifact register</a>
 <a href="28-product-model.html"><span class="n">28</span>Product model</a>
 <a href="29-data-model.html"><span class="n">29</span>Data model</a>
@@ -527,7 +527,7 @@ interface IAtomicDvP {
     function previewSettle(Instruction calldata i)
         external view returns (bool ok, uint8 stage, address rule, string memory reason);
 
-    function cancel(bytes32 nonce) external;
+    function cancel(Instruction calldata i) external;
     function isSettled(bytes32 nonce) external view returns (bool);
 }</pre>
 <h4 id="22-execution-order">Execution order</h4>
@@ -541,7 +541,7 @@ interface IAtomicDvP {
 <h4 id="22-why-signatures-rather-than-approvals">Why signatures rather than approvals</h4>
 <p>Both parties sign the instruction off-chain. Either side — or either side&#x27;s agent — submits it. This means no party ever grants a standing allowance to a counterparty, the trade terms are fixed at signing, and the submitter pays gas. A matching agent can therefore execute a trade it negotiated without ever holding custody of either leg.</p>
 <h4 id="22-properties">Properties</h4>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Property</th><th style="text-align:left">Mechanism</th></tr></thead><tbody><tr><td style="text-align:left">Atomicity</td><td style="text-align:left">Single transaction; any failure reverts both legs</td></tr><tr><td style="text-align:left">No custody by intermediaries</td><td style="text-align:left">Signatures, not escrow</td></tr><tr><td style="text-align:left">Compliance-integrated</td><td style="text-align:left">Security leg passes the full pipeline</td></tr><tr><td style="text-align:left">Replay-safe</td><td style="text-align:left">Nonce marked settled; <code>cancel</code> invalidates unilaterally</td></tr><tr><td style="text-align:left">Reportable</td><td style="text-align:left"><code>tradeRef</code> plus a <code>Settled</code> event carrying both legs</td></tr><tr><td style="text-align:left">Front-running resistant</td><td style="text-align:left">Terms are signed; a third party cannot alter price or size</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Property</th><th style="text-align:left">Mechanism</th></tr></thead><tbody><tr><td style="text-align:left">Atomicity</td><td style="text-align:left">Single transaction; any failure reverts both legs</td></tr><tr><td style="text-align:left">No custody by intermediaries</td><td style="text-align:left">Signatures, not escrow</td></tr><tr><td style="text-align:left">Compliance-integrated</td><td style="text-align:left">Security leg passes the full pipeline</td></tr><tr><td style="text-align:left">Replay-safe</td><td style="text-align:left">Nonce marked settled; <code>cancel</code> invalidates unilaterally, by a party</td></tr><tr><td style="text-align:left">Reportable</td><td style="text-align:left"><code>tradeRef</code> plus a <code>Settled</code> event carrying both legs</td></tr><tr><td style="text-align:left">Front-running resistant</td><td style="text-align:left">Terms are signed; a third party cannot alter price or size</td></tr></tbody></table></div>
 <hr class="soft">
 <h3 id="22-agent-authority">Agent authority</h3>
 <p>Agents act <strong>for a principal</strong>, never in their own right. The agent&#x27;s wallet is linked to the principal&#x27;s DID subject, so it inherits the principal&#x27;s eligibility — and, because holder caps count subjects, adding agent wallets never inflates the holder register.</p>
@@ -694,7 +694,7 @@ event Settled(bytes32 indexed settlementId, address indexed securityToken, addre
 <p>From logs alone: which agent did what, under whose mandate, within which limits, and what remained. An agent-executed action is never indistinguishable from a human one — that distinction must survive into the audit trail, and it does.</p>
 <hr class="soft">
 <h3 id="22-failure-modes">Failure modes</h3>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Failure</th><th style="text-align:left">Response</th></tr></thead><tbody><tr><td style="text-align:left">Agent key compromised</td><td style="text-align:left"><code>revoke</code> is immediate; damage bounded by <code>maxPerEpoch</code> already consumed</td></tr><tr><td style="text-align:left">Agent loops on a failing action</td><td style="text-align:left">Pre-flight is free, so a correct agent never submits; a broken one is bounded by limits and visible in <code>AgentActed</code></td></tr><tr><td style="text-align:left">Agent settles at a bad price</td><td style="text-align:left">Price band in the quote scope; outside it, signing fails</td></tr><tr><td style="text-align:left">Counterparty becomes ineligible between signing and settling</td><td style="text-align:left"><code>settle</code> reverts atomically — nothing moves</td></tr><tr><td style="text-align:left">Instruction replayed</td><td style="text-align:left">Nonce marked settled; <code>cancel</code> invalidates unilaterally</td></tr><tr><td style="text-align:left">Mandate outlives its purpose</td><td style="text-align:left"><code>expiresAt</code> is mandatory — no perpetual mandate exists in the type</td></tr><tr><td style="text-align:left">Agent acts outside the asset allowlist</td><td style="text-align:left"><code>check</code> reverts</td></tr><tr><td style="text-align:left">Principal loses track of agents</td><td style="text-align:left"><code>mandatesOf(principal)</code> enumerates all live mandates</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Failure</th><th style="text-align:left">Response</th></tr></thead><tbody><tr><td style="text-align:left">Agent key compromised</td><td style="text-align:left"><code>revoke</code> is immediate; damage bounded by <code>maxPerEpoch</code> already consumed</td></tr><tr><td style="text-align:left">Agent loops on a failing action</td><td style="text-align:left">Pre-flight is free, so a correct agent never submits; a broken one is bounded by limits and visible in <code>AgentActed</code></td></tr><tr><td style="text-align:left">Agent settles at a bad price</td><td style="text-align:left">Price band in the quote scope; outside it, signing fails</td></tr><tr><td style="text-align:left">Counterparty becomes ineligible between signing and settling</td><td style="text-align:left"><code>settle</code> reverts atomically — nothing moves</td></tr><tr><td style="text-align:left">Instruction replayed</td><td style="text-align:left">Nonce marked settled; <code>cancel</code> invalidates unilaterally, by a party</td></tr><tr><td style="text-align:left">Mandate outlives its purpose</td><td style="text-align:left"><code>expiresAt</code> is mandatory — no perpetual mandate exists in the type</td></tr><tr><td style="text-align:left">Agent acts outside the asset allowlist</td><td style="text-align:left"><code>check</code> reverts</td></tr><tr><td style="text-align:left">Principal loses track of agents</td><td style="text-align:left"><code>mandatesOf(principal)</code> enumerates all live mandates</td></tr></tbody></table></div>
 <hr class="soft">
 <h3 id="22-scope-note">Scope note</h3>
 <p>Issuer-operations automation and market making are different activities with different operational profiles, even though both use the same mandate mechanism. The architecture makes the boundary explicit and enforceable through scopes and limits, so that whichever profile applies, the agent&#x27;s actual authority is visible on chain and bounded by construction.</p>
@@ -785,4 +785,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: a8058273cd05a789aa6cca676e7ddbabdac34a339d68fc0ac46aee33b11e37d0 -->
+<!-- source-digest: 9630fa1221ae56297a29b56e8bd1584e23360fc6ba87ab073034e3e82cefa75b -->

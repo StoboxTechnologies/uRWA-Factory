@@ -184,7 +184,12 @@ contract FreshChainTest is Test {
         assertEq(Treasury(tb).token(), b);
     }
 
-    /// @notice No fee is charged
+    /// @notice `L4.12` — the default deployment charges nothing
+    /// @dev The fee half is asserted here. The other half of the invariant —
+    ///      that no Stobox token is named anywhere in the source — is a grep in
+    ///      CI, because such a reference would be a string rather than a call,
+    ///      and no test can see a string. Naming the ticker in this comment is
+    ///      what broke that job once; it is checked literally, on purpose.
     function test_noFeeIsChargedInTheOpenDistribution() public view {
         assertEq(factory.fee(), 0);
         assertEq(factory.feeToken(), address(0));

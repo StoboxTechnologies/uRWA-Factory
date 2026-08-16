@@ -191,11 +191,11 @@ a runnable test is an opinion.
 
 ## What can start today
 
-`IF-01` · `IF-02` · `IF-03` · `IF-04`
+`CO-02a` · `CU-03` · `UI-09` · `UI-10`
 
-Everything else is gated behind the storage layout. Standards work (`ST-*`) is parked for this cycle
-by decision of 15 August 2026 — see [26 — Handoff](26-handoff.md#this-week-no-dependencies). The
-critical path never ran through it.
+Phases 0 to 2 are all but closed, and the storage layout that gated everything is frozen. Standards
+work (`ST-*`) is parked for this cycle by decision of 15 August 2026 — see
+[26 — Handoff](26-handoff.md). The critical path never ran through it.
 
 ---
 
@@ -283,27 +283,32 @@ merge → registry status updated in this document
 
 ## Totals
 
-| Group | Items | Done | Ready | Effort remaining |
-|---|---:|---:|---:|---:|
-| SP — Specification | 7 | 7 | 0 | — |
-| IF — Interfaces | 4 | 0 | 4 | 2.5 |
-| CO — Core | 11 | 0 | 0 | 10.75 |
-| ID — Identity | 4 | 0 | 0 | 3 |
-| PO — Policy | 8 | 0 | 0 | 4.5 |
-| CU — Custody | 6 | 0 | 0 | 6 |
-| AG — Agents | 4 | 0 | 0 | 4 |
-| PA — Passport | 7 | 0 | 0 | 5.25 |
-| UI — Interfaces | 9 | 2 | 0 | 9 |
-| TO — Tooling | 5 | 0 | 0 | 2.75 |
-| OP — Operations | 8 | 1 | 0 | 2.75 |
-| ST — Standards | 6 | 0 | 0 | 3.5 |
-| **Total** | **79** | **10** | **4** | **≈54 engineer-weeks** |
+| Group | Items | Done | Ready | Planned | Parked | Effort remaining |
+|---|---:|---:|---:|---:|---:|---:|
+| SP — Specification | 7 | 7 | 0 | 0 | 0 | — |
+| IF — Interfaces | 4 | 4 | 0 | 0 | 0 | — |
+| CO — Core | 14 | 13 | 1 | 0 | 0 | 0.25 |
+| ID — Identity | 4 | 4 | 0 | 0 | 0 | — |
+| PO — Policy | 9 | 8 | 0 | 1 | 0 | 0.5 |
+| CU — Custody | 7 | 3 | 1 | 3 | 0 | 2.75 |
+| AG — Agents | 4 | 3 | 0 | 1 | 0 | 1 |
+| PA — Passport | 7 | 0 | 0 | 7 | 0 | 5.25 |
+| UI — Interfaces | 11 | 2 | 2 | 7 | 0 | 10 |
+| TO — Tooling | 5 | 0 | 0 | 4 | 1 | 3.75 |
+| OP — Operations | 9 | 2 | 0 | 7 | 0 | 2.75 |
+| ST — Standards | 6 | 0 | 0 | 4 | 2 | 3.5 |
+| **Total** | **87** | **46** | **4** | **34** | **3** | **≈29.75 engineer-weeks** |
 
-At two Solidity engineers and one front-end engineer, with UI overlapping, that is roughly **five to
-six months to audit**, plus the audit and remediation window.
+The remaining figure is the sum of the effort column over every row not marked Done — it is arithmetic
+over this table, not a fresh estimate. The original plan was ≈54 engineer-weeks over 79 items; the
+scope grew by 8 items and 46 of them are now merged.
 
-These are planning figures. Re-estimate at the `IF` gate, when the first real code exists and the
-storage layout has been argued about properly.
+At two Solidity engineers and one front-end engineer, with UI overlapping, the remainder is roughly
+**three months to audit**, plus the audit and remediation window.
+
+These are still planning figures. The groups that have shipped were re-estimated by being built; the
+ones that have not — `PA`, `UI`, `OP` — carry their original numbers and should be re-argued before
+anyone commits to them.
 
 ## Related documents
 

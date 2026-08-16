@@ -83,7 +83,7 @@ interface IAtomicDvP {
     function previewSettle(Instruction calldata i)
         external view returns (bool ok, uint8 stage, address rule, string memory reason);
 
-    function cancel(bytes32 nonce) external;
+    function cancel(Instruction calldata i) external;
     function isSettled(bytes32 nonce) external view returns (bool);
 }
 ```
@@ -117,7 +117,7 @@ without ever holding custody of either leg.
 | Atomicity | Single transaction; any failure reverts both legs |
 | No custody by intermediaries | Signatures, not escrow |
 | Compliance-integrated | Security leg passes the full pipeline |
-| Replay-safe | Nonce marked settled; `cancel` invalidates unilaterally |
+| Replay-safe | Nonce marked settled; `cancel` invalidates unilaterally, by a party |
 | Reportable | `tradeRef` plus a `Settled` event carrying both legs |
 | Front-running resistant | Terms are signed; a third party cannot alter price or size |
 
@@ -290,7 +290,7 @@ into the audit trail, and it does.
 | Agent loops on a failing action | Pre-flight is free, so a correct agent never submits; a broken one is bounded by limits and visible in `AgentActed` |
 | Agent settles at a bad price | Price band in the quote scope; outside it, signing fails |
 | Counterparty becomes ineligible between signing and settling | `settle` reverts atomically — nothing moves |
-| Instruction replayed | Nonce marked settled; `cancel` invalidates unilaterally |
+| Instruction replayed | Nonce marked settled; `cancel` invalidates unilaterally, by a party |
 | Mandate outlives its purpose | `expiresAt` is mandatory — no perpetual mandate exists in the type |
 | Agent acts outside the asset allowlist | `check` reverts |
 | Principal loses track of agents | `mandatesOf(principal)` enumerates all live mandates |

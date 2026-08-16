@@ -70,6 +70,7 @@ interface IAtomicDvP {
     /// @notice Would this settle — free, and names the rule that would refuse
     function previewSettle(Instruction calldata instruction) external view returns (bool ok, string memory reason);
 
-    function cancel(bytes32 nonce) external;
+    /// @notice Withdraw a signed instruction before it settles — either party
+    function cancel(Instruction calldata instruction) external;
     function isSettled(bytes32 nonce) external view returns (bool);
 }
