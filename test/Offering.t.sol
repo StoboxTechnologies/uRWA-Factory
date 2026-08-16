@@ -35,29 +35,49 @@ contract Cash {
     }
 }
 
-/// @dev The token's supply side, and the treasury's custody side.
+/// @dev The token's supply side. Faithful to the real `MonetaryFacet`: only the
+///      offering registry (or a supply operator) may distribute. A permissive
+///      stub is what hid, before the audit, that a real purchase reverts because
+///      the registry is not an authorised caller.
 contract TokenStub {
     mapping(address => uint256) public delivered;
+    address public registry;
+
+    function setRegistry(address r) external {
+        registry = r;
+    }
 
     function distributeFromTreasury(address to, uint256 amount, uint64) external {
+        require(msg.sender == registry, "not the registry");
         delivered[to] += amount;
     }
 }
 
+/// @dev The treasury's custody side, tracking the payment lock by amount so the
+///      registry's raised/refund accounting is exercised against real numbers.
 contract TreasuryStub {
-    bool public locked;
+    mapping(address => uint256) public lockedPayments;
+    mapping(uint256 => uint256) public lockedOf;
+    mapping(uint256 => address) public assetOf;
 
-    function lockPayments(uint256) external {
-        locked = true;
+    function lockPayment(uint256 offeringId, address asset, uint256 amount) external {
+        lockedPayments[asset] += amount;
+        lockedOf[offeringId] += amount;
+        assetOf[offeringId] = asset;
     }
 
-    function unlockPayments(uint256) external {
-        locked = false;
+    function unlockPayments(uint256 offeringId) external {
+        lockedPayments[assetOf[offeringId]] -= lockedOf[offeringId];
+        lockedOf[offeringId] = 0;
     }
 
     /// @dev Refunds leave the treasury even while payments are locked — that is
-    ///      what the lock is for.
-    function refund(address asset, address investor, uint256 amount) external {
+    ///      what the lock is for — and reduce the locked total as they go.
+    function refund(uint256 offeringId, address asset, address investor, uint256 amount) external {
+        uint256 locked = lockedOf[offeringId];
+        uint256 dec = amount > locked ? locked : amount;
+        lockedOf[offeringId] = locked - dec;
+        lockedPayments[asset] -= dec;
         Cash(asset).transfer(investor, amount);
     }
 }
@@ -81,6 +101,7 @@ contract OfferingTest is Test {
         registry = new OfferingRegistry(address(this));
         cash = new Cash();
         token = new TokenStub();
+        token.setRegistry(address(registry));
         treasury = new TreasuryStub();
 
         cash.mint(alice, 1_000_000e18);
@@ -92,13 +113,60 @@ contract OfferingTest is Test {
 
     // ── subscription ────────────────────────────────────────────────────────
 
-    function test_aPurchaseDeliversTokensAndTakesPayment() public {
+    /// @notice A purchase takes payment and locks it, but delivers nothing yet
+    /// @dev Delivery waits for settlement, so a failed offering never delivered
+    ///      tokens it would have to claw back. The money is locked the instant
+    ///      it lands.
+    function test_aPurchaseTakesPaymentAndLocksItWithoutDelivering() public {
         vm.prank(alice);
         registry.purchase(id, 100e18);
 
-        assertEq(token.delivered(alice), 100e18);
+        assertEq(token.delivered(alice), 0, "tokens were delivered before settlement");
         assertEq(cash.balanceOf(address(treasury)), 100e18);
+        assertEq(treasury.lockedPayments(address(cash)), 100e18, "the payment was not locked");
         assertEq(registry.raisedOf(id), 100e18);
+    }
+
+    /// @notice Tokens are delivered when the buyer claims a settled offering
+    /// @dev The other half: once the soft cap is met and the offering settles,
+    ///      the buyer pulls their tokens, and the distribution runs the token's
+    ///      full pipeline. This is also the end-to-end proof that the registry
+    ///      is an authorised caller of the distribution leg — the stub refuses
+    ///      any other caller, exactly as the real facet does.
+    function test_aBuyerClaimsTokensFromASettledOffering() public {
+        vm.prank(alice);
+        registry.purchase(id, 600e18); // meets the 500e18 soft cap
+        vm.warp(registry.offeringOf(id).endAt + 1);
+        registry.settle(id);
+
+        assertEq(token.delivered(alice), 0, "delivered before the claim");
+        vm.prank(alice);
+        registry.claimTokens(0);
+        assertEq(token.delivered(alice), 600e18, "the claim did not deliver");
+
+        // And it cannot be claimed twice.
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.AlreadyRefunded.selector, uint256(0)));
+        registry.claimTokens(0);
+    }
+
+    /// @notice A failed offering delivers no tokens and refunds every cent
+    /// @dev The symmetry the old flow broke: it delivered at purchase, so a
+    ///      failed raise left investors holding tokens for free while their cash
+    ///      came back. Now the money is the only leg, and it unwinds cleanly.
+    function test_aFailedOfferingRefundsCashAndDeliversNoTokens() public {
+        vm.prank(alice);
+        registry.purchase(id, 100e18); // below the 500e18 soft cap
+        uint256 before = cash.balanceOf(alice);
+
+        vm.warp(registry.offeringOf(id).endAt + 1);
+        registry.beginRefunding(id);
+        vm.prank(alice);
+        registry.claimRefund(0);
+
+        assertEq(cash.balanceOf(alice), before + 100e18, "cash not returned");
+        assertEq(token.delivered(alice), 0, "tokens were delivered on a failed offering");
+        assertEq(treasury.lockedPayments(address(cash)), 0, "the lock was not released");
     }
 
     /// @notice A request over the remaining cap reverts whole
@@ -158,13 +226,13 @@ contract OfferingTest is Test {
         vm.prank(alice);
         registry.purchase(id, 600e18);
 
-        assertTrue(treasury.locked(), "payments should be held until settlement");
+        assertEq(treasury.lockedPayments(address(cash)), 600e18, "payments should be held until settlement");
 
         vm.prank(stranger);
         registry.settle(id);
 
         assertEq(registry.statusOf(id), 4, "not settled");
-        assertFalse(treasury.locked(), "payments were not released to the issuer");
+        assertEq(treasury.lockedPayments(address(cash)), 0, "payments were not released to the issuer");
     }
 
     /// @notice And anyone may start refunds once it is missed

@@ -165,7 +165,7 @@ contract RolesAndCustodyTest is Test {
     function test_revokingTheRoleReachesTheMoney() public {
         cash.mint(address(treasury), 500e18);
 
-        treasury.withdrawPayments(address(cash), issuer, 100e18, 7);
+        treasury.withdrawPayments(address(cash), issuer, 100e18);
         assertEq(cash.balanceOf(issuer), 100e18);
 
         // Somebody has to keep the role: it cannot be left empty, and a token
@@ -174,25 +174,61 @@ contract RolesAndCustodyTest is Test {
         RolesFacet(address(token)).revokeRole(Roles.ISSUER_ADMIN, issuer);
 
         vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, issuer, Roles.ISSUER_ADMIN));
-        treasury.withdrawPayments(address(cash), issuer, 100e18, 7);
+        treasury.withdrawPayments(address(cash), issuer, 100e18);
     }
 
-    /// @notice Nor investor money while the offering is unsettled
+    /// @notice Locked investor money cannot be withdrawn — through either door
     /// @dev The guarantee the treasury exists for. Money paid into an offering
-    ///      that has not met its soft cap cannot be spent in the meantime.
+    ///      that has not met its soft cap cannot be spent in the meantime, and
+    ///      the lock is on an amount of an asset, so neither the ISSUER_ADMIN
+    ///      door (`withdrawPayments`) nor the SUPPLY_OPERATOR door
+    ///      (`withdrawERC20`) can reach it, and no offering id the caller passes
+    ///      can unlock it.
     function test_lockedPaymentsCannotBeWithdrawn() public {
+        _seedRole(Roles.SUPPLY_OPERATOR, issuer);
         cash.mint(address(treasury), 500e18);
 
         vm.prank(registry);
-        treasury.lockPayments(7);
+        treasury.lockPayment(7, address(cash), 500e18);
 
-        vm.expectRevert(abi.encodeWithSelector(IErrors.PaymentsAreLocked.selector, uint256(7)));
-        treasury.withdrawPayments(address(cash), issuer, 100e18, 7);
+        // The ISSUER_ADMIN door refuses.
+        vm.expectRevert(abi.encodeWithSelector(IErrors.PaymentsAreLocked.selector, uint256(0)));
+        treasury.withdrawPayments(address(cash), issuer, 100e18);
 
+        // And so does the SUPPLY_OPERATOR door — the critical hole: it used to
+        // have no lock check at all and would drain the whole 500e18.
+        vm.expectRevert(abi.encodeWithSelector(IErrors.InsufficientAvailable.selector, 100e18, 0));
+        treasury.withdrawERC20(address(cash), issuer, 100e18);
+
+        // Once the offering settles, the same money is withdrawable.
         vm.prank(registry);
         treasury.unlockPayments(7);
-        treasury.withdrawPayments(address(cash), issuer, 100e18, 7);
+        treasury.withdrawPayments(address(cash), issuer, 100e18);
         assertEq(cash.balanceOf(issuer), 100e18);
+    }
+
+    /// @notice One offering's settlement does not unlock another's money
+    /// @dev Two offerings share the treasury and the payment asset. Settling
+    ///      the first releases only its own locked total; the second's stays
+    ///      locked, and a withdrawal can reach only the settled amount.
+    function test_settlingOneOfferingLeavesAnothersMoneyLocked() public {
+        _seedRole(Roles.SUPPLY_OPERATOR, issuer);
+        cash.mint(address(treasury), 800e18);
+
+        vm.prank(registry);
+        treasury.lockPayment(1, address(cash), 300e18);
+        vm.prank(registry);
+        treasury.lockPayment(2, address(cash), 500e18);
+
+        vm.prank(registry);
+        treasury.unlockPayments(1); // offering 1 settles
+
+        assertEq(treasury.freeBalance(address(cash)), 300e18, "only offering 1's money is free");
+        vm.expectRevert(abi.encodeWithSelector(IErrors.InsufficientAvailable.selector, 400e18, 300e18));
+        treasury.withdrawERC20(address(cash), issuer, 400e18);
+
+        treasury.withdrawPayments(address(cash), issuer, 300e18);
+        assertEq(cash.balanceOf(issuer), 300e18);
     }
 
     /// @notice Only the offering registry may reserve or lock

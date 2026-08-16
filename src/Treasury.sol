@@ -36,8 +36,17 @@ contract Treasury is IErrors {
     /// @dev Reserved against a specific offering, and not withdrawable while
     ///      that offering is unsettled below its soft cap.
     mapping(uint256 => uint256) public reservedOf;
-    mapping(uint256 => bool) public paymentsLocked;
     uint256 public totalReserved;
+
+    /// @dev Investor payments held against an unsettled offering, tracked by
+    ///      amount and asset rather than a bare per-offering flag. The old flag
+    ///      could not answer the only question a withdrawal asks — "how much of
+    ///      *this asset* is spoken for?" — because funds are fungible per asset
+    ///      while a lock was per offering. A withdrawal now compares the amount
+    ///      wanted against the free (held minus locked) balance of that asset.
+    mapping(address => uint256) public lockedPayments; // per asset
+    mapping(uint256 => uint256) public lockedOf; // per offering
+    mapping(uint256 => address) private _offeringAsset;
 
     /// @notice Initialise a clone
     /// @dev Minimal proxies have no constructor, so this stands in for one and
@@ -77,18 +86,30 @@ contract Treasury is IErrors {
 
     // ── investor payments ───────────────────────────────────────────────────
 
-    /// @notice Hold investor payment until the soft cap decides its fate
-    /// @dev The guarantee this exists for: money paid into an offering that
-    ///      fails cannot be spent by the issuer in the meantime.
-    function lockPayments(uint256 offeringId) external {
+    /// @notice Lock a payment just received against an offering
+    /// @dev Called by the registry as each purchase's money lands. The amount is
+    ///      added to the locked total for that asset, so a withdrawal can tell
+    ///      how much of the balance is investor money that must stay refundable.
+    function lockPayment(uint256 offeringId, address asset, uint256 amount) external {
         _onlyRegistry();
-        paymentsLocked[offeringId] = true;
+        lockedPayments[asset] += amount;
+        lockedOf[offeringId] += amount;
+        _offeringAsset[offeringId] = asset;
         emit IEvents.PaymentsLocked(offeringId);
     }
 
+    /// @notice Release an offering's locked payments once it settles
+    /// @dev The soft cap was met; the money is the issuer's to withdraw. Only
+    ///      the offering's own locked total is released — funds belonging to
+    ///      other offerings in the same asset stay locked.
     function unlockPayments(uint256 offeringId) external {
         _onlyRegistry();
-        paymentsLocked[offeringId] = false;
+        address asset = _offeringAsset[offeringId];
+        uint256 amount = lockedOf[offeringId];
+        if (amount != 0) {
+            lockedPayments[asset] -= amount;
+            lockedOf[offeringId] = 0;
+        }
         emit IEvents.PaymentsUnlocked(offeringId);
     }
 
@@ -96,37 +117,49 @@ contract Treasury is IErrors {
         return IERC20Minimal(asset).balanceOf(address(this));
     }
 
+    /// @notice What of an asset is free to withdraw — held, minus everything spoken for
+    function freeBalance(address asset) public view returns (uint256) {
+        uint256 held = IERC20Minimal(asset).balanceOf(address(this));
+        uint256 encumbered = asset == token ? totalReserved : lockedPayments[asset];
+        return held > encumbered ? held - encumbered : 0;
+    }
+
     /// @notice Move an asset out
-    /// @dev Refuses while any offering holding that asset is locked. The issuer
-    ///      cannot reach investor money before the offering settles, and this
-    ///      is the only place that could have let them.
+    /// @dev Refuses to touch anything spoken for: the security token's reserved
+    ///      supply, or a payment asset's locked investor money. The treasury
+    ///      enforces this, not operator discipline — the withdrawal fails
+    ///      whichever door and whichever asset it comes through.
     function withdrawERC20(address asset, address to, uint256 amount) external {
         _onlyRole(Roles.SUPPLY_OPERATOR);
-
-        if (asset == token) {
-            uint256 held = IERC20Minimal(token).balanceOf(address(this));
-            if (held < totalReserved + amount) revert InsufficientAvailable(amount, held - totalReserved);
-        }
-
+        uint256 free = freeBalance(asset);
+        if (amount > free) revert InsufficientAvailable(amount, free);
         if (!IERC20Minimal(asset).transfer(to, amount)) revert InsufficientAvailable(amount, 0);
         emit IEvents.Withdrawn(asset, to, amount);
     }
 
     /// @notice Return investor payment
     /// @dev Callable by the offering registry **while payments are locked** —
-    ///      that is precisely what the lock is for. The issuer cannot reach
-    ///      this money, and the registry can only send it back to the person
-    ///      who paid it.
-    function refund(address asset, address investor, uint256 amount) external {
+    ///      that is precisely what the lock is for. Returning money reduces the
+    ///      locked total for that asset and offering by the same amount, so the
+    ///      free balance the invariant rests on stays correct.
+    function refund(uint256 offeringId, address asset, address investor, uint256 amount) external {
         _onlyRegistry();
+        uint256 locked = lockedOf[offeringId];
+        uint256 dec = amount > locked ? locked : amount;
+        lockedOf[offeringId] = locked - dec;
+        lockedPayments[asset] = lockedPayments[asset] > dec ? lockedPayments[asset] - dec : 0;
         if (!IERC20Minimal(asset).transfer(investor, amount)) revert InsufficientAvailable(amount, 0);
         emit IEvents.Withdrawn(asset, investor, amount);
     }
 
-    /// @notice Refuse a withdrawal while an offering's payments are locked
-    function withdrawPayments(address asset, address to, uint256 amount, uint256 offeringId) external {
+    /// @notice Withdraw payment proceeds
+    /// @dev Refuses to move locked investor money. The guard is the free
+    ///      balance of the asset, not a caller-supplied offering id — a lock is
+    ///      on an amount of an asset, and no id the caller chooses can unlock it.
+    function withdrawPayments(address asset, address to, uint256 amount) external {
         _onlyRole(Roles.ISSUER_ADMIN);
-        if (paymentsLocked[offeringId]) revert PaymentsAreLocked(offeringId);
+        uint256 free = freeBalance(asset);
+        if (amount > free) revert PaymentsAreLocked(0);
         if (!IERC20Minimal(asset).transfer(to, amount)) revert InsufficientAvailable(amount, 0);
         emit IEvents.Withdrawn(asset, to, amount);
     }

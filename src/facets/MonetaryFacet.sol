@@ -72,8 +72,16 @@ contract MonetaryFacet is IErrors {
     ///      an investor who cannot hold the token cannot be given it — not even
     ///      by the operator who issued it.
     function distributeFromTreasury(address to, uint256 amount, uint64 unlockAt) external {
-        _only(Roles.SUPPLY_OPERATOR);
-        address treasury = Layout.monetary().treasury;
+        // The supply operator, or the offering registry the issuer wired in.
+        // The registry delivers tokens to buyers when an offering settles, and
+        // it cannot hold `SUPPLY_OPERATOR` — that role can also `issue` and
+        // `redeem`. Authorising the one stored registry address for the one
+        // distribution call keeps the registry's power to exactly this.
+        Layout.MonetaryStorage storage mono = Layout.monetary();
+        if (!Layout.roles().roles[Roles.SUPPLY_OPERATOR][msg.sender] && msg.sender != mono.offeringRegistry) {
+            revert NotAuthorized(msg.sender, Roles.SUPPLY_OPERATOR);
+        }
+        address treasury = mono.treasury;
         if (treasury == address(0)) revert TreasuryNotSet();
 
         _move(treasury, to, amount);

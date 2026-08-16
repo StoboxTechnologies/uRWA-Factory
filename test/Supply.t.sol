@@ -129,6 +129,37 @@ contract SupplyTest is Test {
         assertEq(token.balanceOf(investor), 10e18);
     }
 
+    /// @notice The offering registry may distribute; a stranger may not
+    /// @dev The primary-issuance flow was dead on arrival before this: the
+    ///      registry delivers tokens on settlement, but it holds no role and
+    ///      the real `distributeFromTreasury` required `SUPPLY_OPERATOR`, so a
+    ///      real purchase reverted. The stored registry address is now
+    ///      authorised for exactly this one call — and nothing else, since the
+    ///      role would also let it `issue` and `redeem`.
+    function test_theOfferingRegistryMayDistributeButAStrangerMayNot() public {
+        MonetaryFacet m = MonetaryFacet(address(token));
+        m.issue(treasury, 100e18);
+
+        address offeringRegistry = address(0x0FFE);
+        m.setOfferingRegistry(offeringRegistry);
+        gate.allow(investor);
+
+        // A stranger with no role and no wiring is refused.
+        vm.prank(stranger);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, stranger, Roles.SUPPLY_OPERATOR));
+        m.distributeFromTreasury(investor, 10e18, 0);
+
+        // The wired registry succeeds.
+        vm.prank(offeringRegistry);
+        m.distributeFromTreasury(investor, 10e18, 0);
+        assertEq(token.balanceOf(investor), 10e18);
+
+        // But it cannot mint or redeem — those still need the role.
+        vm.prank(offeringRegistry);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, offeringRegistry, Roles.SUPPLY_OPERATOR));
+        m.issue(treasury, 1e18);
+    }
+
     /// @notice A distribution lockup restricts what was just delivered
     function test_distributionCanArriveLocked() public {
         MonetaryFacet m = MonetaryFacet(address(token));
@@ -208,7 +239,7 @@ contract SupplyTest is Test {
         MonetaryFacet m = new MonetaryFacet();
         ComplianceFacet c = new ComplianceFacet();
 
-        bytes4[] memory ms = new bytes4[](9);
+        bytes4[] memory ms = new bytes4[](10);
         ms[0] = MonetaryFacet.issue.selector;
         ms[1] = MonetaryFacet.redeem.selector;
         ms[2] = MonetaryFacet.distributeFromTreasury.selector;
@@ -218,6 +249,7 @@ contract SupplyTest is Test {
         ms[6] = MonetaryFacet.totalIssued.selector;
         ms[7] = MonetaryFacet.setTreasury.selector;
         ms[8] = MonetaryFacet.treasury.selector;
+        ms[9] = MonetaryFacet.setOfferingRegistry.selector;
 
         bytes4[] memory cs = new bytes4[](7);
         cs[0] = ComplianceFacet.beforeUpdate.selector;

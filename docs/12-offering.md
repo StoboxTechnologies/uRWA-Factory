@@ -51,11 +51,20 @@ an issuer who did not choose will be surprised by whichever they got.
      │                   │◀──── claim set ─────│                  │
      │                   │  evaluate offering rules               │
      │                   │  check allocation, min/max, caps       │
-     │                   │──── pull payment · reserve tokens ────▶│
+     │                   │──── pull payment · lock it ───────────▶│
      │                   │                     │   payment locked │
+     │◀── recorded; tokens owed, not yet delivered ────────────── │
      │                   │                     │   until soft cap │
-     │◀── tokens + lockup applied ─────────────────────────────── │
+     ⋮  offering reaches its soft cap and someone calls settle    ⋮
+     │─ claimTokens(pid)▶│                     │                  │
+     │◀── tokens + lockup applied (full pipeline) ─────────────── │
 ```
+
+**Tokens are delivered at settlement, not at purchase.** A purchase during the raise records a claim
+and locks the money; the security tokens are pulled by the investor — `claimTokens` — only once the
+offering settles. This is why a failed offering unwinds cleanly: it delivered nothing, so a refund is
+the only leg to reverse. Delivering at purchase would leave a failed offering having to claw tokens
+back out of investors' wallets, which needs a seizure power the design deliberately keeps opt-in.
 
 ![An offering reaches exactly one terminal state. Both `settle` and `beginRefunding` are permissionless, so an absent operator cannot strand investor funds.](diagrams/offering-lifecycle.svg)
 

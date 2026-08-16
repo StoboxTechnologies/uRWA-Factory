@@ -447,10 +447,14 @@ struct Tier {
      │                   │◀──── claim set ─────│                  │
      │                   │  evaluate offering rules               │
      │                   │  check allocation, min/max, caps       │
-     │                   │──── pull payment · reserve tokens ────▶│
+     │                   │──── pull payment · lock it ───────────▶│
      │                   │                     │   payment locked │
+     │◀── recorded; tokens owed, not yet delivered ────────────── │
      │                   │                     │   until soft cap │
-     │◀── tokens + lockup applied ─────────────────────────────── │</pre>
+     ⋮  offering reaches its soft cap and someone calls settle    ⋮
+     │─ claimTokens(pid)▶│                     │                  │
+     │◀── tokens + lockup applied (full pipeline) ─────────────── │</pre>
+<p><strong>Tokens are delivered at settlement, not at purchase.</strong> A purchase during the raise records a claim and locks the money; the security tokens are pulled by the investor — <code>claimTokens</code> — only once the offering settles. This is why a failed offering unwinds cleanly: it delivered nothing, so a refund is the only leg to reverse. Delivering at purchase would leave a failed offering having to claw tokens back out of investors&#x27; wallets, which needs a seizure power the design deliberately keeps opt-in.</p>
 <figure class="dg"><svg role="img" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 432" class="d-off">
 <style>
 .d-off text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#0C0C0F}
@@ -641,4 +645,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: da765f824a76b098ad9d6e55f5c9798ec5e8134026a401ef1172148d43a9e521 -->
+<!-- source-digest: 1cc4fa7cef02f704f7385c46433cb959dead867834d066984a5780ed31ca67a8 -->

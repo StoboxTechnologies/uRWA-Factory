@@ -17,9 +17,9 @@ interface ITokenSupply {
 }
 
 interface ITreasuryCustody {
-    function lockPayments(uint256 offeringId) external;
+    function lockPayment(uint256 offeringId, address asset, uint256 amount) external;
     function unlockPayments(uint256 offeringId) external;
-    function refund(address asset, address investor, uint256 amount) external;
+    function refund(uint256 offeringId, address asset, address investor, uint256 amount) external;
 }
 
 /// @title Primary issuance
@@ -90,8 +90,9 @@ contract OfferingRegistry is IErrors {
     function activate(uint256 id) external {
         _onlyOperator(id);
         _move(id, Status.Active);
-        ITreasuryCustody(_offerings[id].treasury).lockPayments(id);
-        emit IEvents.PaymentsLocked(id);
+        // Payments are locked as each one arrives, not in one flag here: the
+        // lock has to track an amount and an asset, and at activation there is
+        // nothing yet to lock.
     }
 
     function pause(uint256 id) external {
@@ -155,6 +156,9 @@ contract OfferingRegistry is IErrors {
         if (!IERC20Payment(payment).transferFrom(msg.sender, o.treasury, cost)) {
             revert InsufficientAvailable(cost, 0);
         }
+        // Lock the money the instant it lands. Until the offering settles it is
+        // the investor's, refundable and unreachable by the issuer.
+        ITreasuryCustody(o.treasury).lockPayment(id, payment, cost);
 
         o.raised += cost;
         o.sold += tokens;
@@ -175,10 +179,11 @@ contract OfferingRegistry is IErrors {
         _byInvestor[msg.sender].push(pid);
         _byOffering[id].push(pid);
 
-        // The distribution leg runs the token's full pipeline. Passing the
-        // offering never implies the right to hold.
-        ITokenSupply(o.params.token).distributeFromTreasury(msg.sender, tokens, o.params.lockupUntil);
-
+        // Tokens are **not** delivered here. A purchase during the raise is a
+        // claim on tokens, settled only if the offering does. Delivering now
+        // and clawing back on failure would need a seizure primitive the design
+        // deliberately keeps opt-in; delivering at settlement needs none,
+        // because a failed offering delivered nothing.
         emit IEvents.PurchaseRecorded(id, pid, msg.sender, cost, tokens);
     }
 
@@ -234,6 +239,44 @@ contract OfferingRegistry is IErrors {
         emit IEvents.OfferingRefundingBegan(id, o.raised, o.params.softCap);
     }
 
+    // ── delivery, once the offering settles ─────────────────────────────────
+
+    /// @notice Claim the tokens a settled offering owes you
+    /// @dev Pull-based, because a settled offering may have thousands of
+    ///      purchasers and pushing to all of them in one transaction cannot be
+    ///      bounded. The distribution leg runs the token's full pipeline, so
+    ///      passing the offering still never implies the right to hold.
+    function claimTokens(uint256 purchaseId) external {
+        Purchase storage p = _purchases[purchaseId];
+        if (p.investor != msg.sender) revert NotAuthorized(msg.sender, bytes32(0));
+        _deliver(purchaseId);
+    }
+
+    /// @notice Operator-pushed delivery for a batch of settled purchases
+    function deliverBatch(uint256 id, uint256 limit) external {
+        _onlyOperator(id);
+        uint256[] storage ids = _byOffering[id];
+        uint256 done;
+        for (uint256 i = 0; i < ids.length && done < limit; i++) {
+            if (_purchases[ids[i]].state == PURCHASE_ACTIVE) {
+                _deliver(ids[i]);
+                done++;
+            }
+        }
+    }
+
+    function _deliver(uint256 purchaseId) private {
+        Purchase storage p = _purchases[purchaseId];
+        if (p.state != PURCHASE_ACTIVE) revert AlreadyRefunded(purchaseId);
+
+        Offering storage o = _offerings[p.offeringId];
+        if (o.status != Status.Settled) revert OfferingNotActive(p.offeringId, uint8(o.status));
+
+        p.state = PURCHASE_SETTLED;
+        ITokenSupply(o.params.token).distributeFromTreasury(p.investor, p.tokens, p.unlockAt);
+        emit IEvents.PurchaseRecorded(p.offeringId, purchaseId, p.investor, p.paid, p.tokens);
+    }
+
     // ── refunds, both paths ─────────────────────────────────────────────────
 
     /// @notice Refund yourself
@@ -267,7 +310,10 @@ contract OfferingRegistry is IErrors {
     ///      be obtained by using the other door.
     function _refund(uint256 purchaseId) private {
         Purchase storage p = _purchases[purchaseId];
-        if (p.state == PURCHASE_REFUNDED) revert AlreadyRefunded(purchaseId);
+        // Only an active purchase refunds. A delivered one (state Settled) is
+        // finished, and a twice-refunded one is the `L4.10` case — the single
+        // state check both public doors funnel through.
+        if (p.state != PURCHASE_ACTIVE) revert AlreadyRefunded(purchaseId);
 
         Offering storage o = _offerings[p.offeringId];
         if (o.status != Status.Refunding) revert OfferingNotActive(p.offeringId, uint8(o.status));
@@ -278,7 +324,7 @@ contract OfferingRegistry is IErrors {
         // The money is in the treasury, not here. The registry can only send
         // it back to the person who paid it, and the issuer cannot reach it at
         // all while the offering is unsettled.
-        ITreasuryCustody(o.treasury).refund(p.paymentToken, p.investor, p.paid);
+        ITreasuryCustody(o.treasury).refund(p.offeringId, p.paymentToken, p.investor, p.paid);
         emit IEvents.PurchaseRefunded(purchaseId, p.investor, p.paid);
     }
 

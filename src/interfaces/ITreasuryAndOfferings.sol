@@ -15,12 +15,16 @@ interface ITreasury {
     function release(uint256 amount, uint256 offeringId) external;
     function reservedOf(uint256 offeringId) external view returns (uint256);
 
-    /// @notice Hold investor payment until the soft cap decides its fate
-    function lockPayments(uint256 offeringId) external;
+    /// @notice Lock a payment against an offering as it arrives; release on settle
+    function lockPayment(uint256 offeringId, address asset, uint256 amount) external;
     function unlockPayments(uint256 offeringId) external;
+    function lockedPayments(address asset) external view returns (uint256);
 
     /// @notice Payment currency held, as distinct from security tokens
     function paymentBalance(address asset) external view returns (uint256);
+
+    /// @notice What of an asset is free to withdraw — held minus everything spoken for
+    function freeBalance(address asset) external view returns (uint256);
 
     function withdrawERC20(address asset, address to, uint256 amount) external;
 }
@@ -78,6 +82,12 @@ interface IOfferingRegistry {
     ///      chain; requiring an operator would let an absent one hold investor
     ///      funds hostage.
     function settle(uint256 id) external;
+
+    /// @notice Claim the tokens a settled offering owes you; pull-based
+    function claimTokens(uint256 purchaseId) external;
+
+    /// @notice Operator-pushed delivery of settled purchases
+    function deliverBatch(uint256 id, uint256 limit) external;
 
     /// @notice Start refunds once the soft cap is missed — also permissionless
     function beginRefunding(uint256 id) external;

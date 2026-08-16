@@ -49,39 +49,47 @@ During an offering the treasury tracks three quantities per asset:
 
 ## Payment locking
 
-`withdrawERC20` reverts while any offering holding that asset is in `Active` or `Closed` state with
-its soft cap unmet.
+Investor payments are locked **by amount and asset**, not by a per-offering flag. As each purchase
+lands, the registry calls `lockPayment(offeringId, asset, amount)`, adding to the locked total for
+that asset. `unlockPayments(offeringId)` on settlement releases only that offering's total.
+
+`freeBalance(asset)` is what a withdrawal may move: the held balance minus everything spoken for —
+the security token's `reserved`, or a payment asset's locked total. **Both** withdrawal doors check
+it: `withdrawERC20` (`SUPPLY_OPERATOR`) and `withdrawPayments` (`ISSUER_ADMIN`). Neither can reach
+locked money, and no offering id a caller supplies can unlock it, because a lock is on an amount of an
+asset and not on an id.
 
 This is enforced by the treasury itself, not by operator discipline. An operator who wants the funds
-early cannot get them by calling in a different order, and an operator who forgets cannot accidentally
-break refundability.
+early cannot get them by calling in a different order or through the other door, and one offering's
+settlement never frees another's money.
 
-| Offering state | Payment tokens |
+| Offering state | Its payment tokens |
 |---|---|
-| Active | Locked |
+| Active, accumulating purchases | Locked as each arrives |
 | Closed, soft cap unmet | Locked |
-| Settled | Available to `SUPPLY_OPERATOR` |
-| Refunding / Cancelled | Reserved for refunds; not withdrawable |
+| Settled | Released; withdrawable |
+| Refunding / Cancelled | Returned to investors; the lock falls as each refund goes out |
 
 ## Distribution
 
 `distributeFromTreasury(to, amount, unlockAt)` moves tokens to a holder and optionally applies a
 lockup in the same transaction. It runs the full compliance pipeline on the receiving side — the
-treasury being trusted does not make the recipient eligible.
+treasury being trusted does not make the recipient eligible. It is callable by `SUPPLY_OPERATOR` or by
+the offering registry the issuer wired in, which delivers tokens as offerings settle. It is bounded at
+32 lockups per holder, the same bound `LockupFacet` enforces.
 
 Passing `unlockAt = 0` applies no lockup.
 
 ## Refund handling
 
-On refund the treasury performs both legs:
+A refund is **cash only**. Because tokens are delivered at settlement rather than at purchase (see
+[12 — Offerings](12-offering.md)), a failed offering never delivered any security tokens, so there is
+nothing to return — only the payment to give back. `refund(offeringId, asset, investor, amount)`
+transfers the payment and reduces the locked total by the same amount.
 
-1. Payment tokens return to the investor.
-2. Security tokens return from the investor to the treasury.
-
-The second leg is a compliance-checked transfer like any other. If the investor has since become
-ineligible to send — a blocked DID, for example — the transfer would fail and strand the refund. The
-registry therefore performs the token return leg through the trusted path, treating a refund as a
-system operation rather than an investor transfer.
+This is the symmetry the earlier design lacked: delivering at purchase meant a failed raise had to
+claw tokens back out of investors' wallets, which needs a seizure power the design keeps opt-in.
+Delivering at settlement needs none.
 
 ## Functions
 
@@ -89,14 +97,16 @@ See [07 — Function reference](07-functions.md#treasury) for the complete list.
 
 | Group | Functions |
 |---|---|
-| Custody | `deposit`, `withdrawERC20` |
-| Offering support | `reserve`, `release`, `lockPayments`, `unlockPayments` |
-| Views | `token`, `reservedOf`, `availableBalance`, `paymentBalance` |
+| Custody | `deposit`, `withdrawERC20`, `withdrawPayments` |
+| Offering support | `reserve`, `release`, `lockPayment`, `unlockPayments`, `refund` |
+| Views | `token`, `reservedOf`, `availableBalance`, `paymentBalance`, `freeBalance`, `lockedPayments` |
 
 ## Invariants
 
 1. `availableBalance() == balance − reserved`, never negative.
-2. `withdrawERC20` cannot reduce the balance below `reserved`.
+2. `freeBalance(asset)` is the held balance minus what is reserved (for the security token) or locked
+   (for a payment asset), never negative.
+3. Neither `withdrawERC20` nor `withdrawPayments` can move more than `freeBalance(asset)`.
 3. Payment tokens for an unmet-soft-cap offering are never withdrawable.
 4. Only the offering registry may call `reserve` and `release`.
 5. Only `SUPPLY_OPERATOR` may call `withdrawERC20`.

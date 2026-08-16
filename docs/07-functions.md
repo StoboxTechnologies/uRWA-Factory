@@ -309,9 +309,9 @@ that does not depend on someone's memory.
 
 | Function | Does | Called by | Why |
 |---|---|---|---|
-| `issue(to, amount)` | Mints new tokens | SUPPLY_OPERATOR | Creating the asset's representation |
+| `issue(to, amount)` | Mints new tokens **into the treasury only** | SUPPLY_OPERATOR | Creating the asset's representation. A mint skips the pipeline, so it may not seat value in a holder directly — `to` must be the treasury or zero |
 | `redeem(amount)` | Burns from the treasury | SUPPLY_OPERATOR | Buy-backs, redemptions, cancelling unsold supply |
-| `distributeFromTreasury(to, amount, unlockAt)` | Sends to a holder, optionally with a lockup | SUPPLY_OPERATOR | Allocations, private placements, dividends in kind |
+| `distributeFromTreasury(to, amount, unlockAt)` | Sends to a holder, optionally with a lockup | SUPPLY_OPERATOR, or the wired offering registry | Allocations, private placements, dividends in kind, and the settlement leg of an offering. Runs the full pipeline; bounded at 32 lockups per holder |
 | `totalIssued() → uint256` | Lifetime issuance, never decreases | Reporting, auditors | Distinguishes "ever created" from "currently outstanding" |
 | `lockCap()` | Makes the cap permanent | ISSUER_ADMIN | Irreversible by design: a cap that can be raised is not a cap |
 | `setMaxSupply(newMax)` | Changes the cap | ISSUER_ADMIN | Follow-on rounds — **reverts if the cap was locked** |
@@ -531,13 +531,15 @@ subject-keyed one rather than pretending to an answer it cannot compute.
 | `token() → address` | Which token this serves | Anyone | Provenance |
 | `deposit(asset, amount)` | Accepts tokens | Anyone | Funding the treasury |
 | `initialise(token, issuer, offeringRegistry)` | Stands in for a constructor on a clone | Anyone, once | Minimal proxies have no constructor. The factory clones and initialises in one transaction, so nobody can get between the two; a clone initialised by anyone else is an address the factory never registered and nothing was ever sent to |
-| `refund(asset, investor, amount)` | Returns investor payment | **The offering registry**, even while payments are locked | Refunding is precisely what the lock exists for; the issuer cannot reach this money and the registry can only send it back to whoever paid |
-| `withdrawPayments(asset, to, amount, offeringId)` | Moves investor payment out | ISSUER_ADMIN | Refuses while that offering's payments are locked — the guarantee the treasury exists for |
+| `refund(offeringId, asset, investor, amount)` | Returns investor payment | **The offering registry**, even while payments are locked | Refunding is precisely what the lock exists for; the issuer cannot reach this money and the registry can only send it back to whoever paid. Reduces the locked total as it goes |
+| `withdrawPayments(asset, to, amount)` | Moves investor payment out | ISSUER_ADMIN | Refuses to move more than the asset's **free** balance — held minus locked. No offering id, because a lock is on an amount of an asset and no id a caller passes can release it |
 | `withdrawERC20(asset, to, amount)` | Takes payment tokens out | SUPPLY_OPERATOR | The issuer collecting proceeds |
 | `reserve(amount, offeringId)` | Commits supply to an offering | Offering registry | Buyers must be sure tokens exist |
 | `release(amount, offeringId)` | Uncommits it | Offering registry | Offering cancelled or under-subscribed |
-| `lockPayments(offeringId)` | Freezes investor money | Offering registry | Refundability until the soft cap |
-| `unlockPayments(offeringId)` | Releases it | Offering registry | Soft cap met |
+| `lockPayment(offeringId, asset, amount)` | Locks a payment as it arrives | Offering registry | Refundability until the soft cap — tracked by amount and asset |
+| `unlockPayments(offeringId)` | Releases that offering's locked total | Offering registry | Soft cap met; other offerings' money stays locked |
+| `freeBalance(asset) → uint256` | Held minus everything spoken for | Anyone | What a withdrawal may actually move |
+| `lockedPayments(asset) → uint256` | Investor money held against unsettled offerings | Anyone | The encumbrance `freeBalance` subtracts |
 | `reservedOf(offeringId) → uint256` | Committed supply | Anyone | Investors verify availability |
 | `availableBalance() → uint256` | Unreserved supply | Anyone, SUPPLY_OPERATOR | What can actually be moved |
 | `paymentBalance(asset) → uint256` | Payment tokens held | Anyone | Raise transparency |
@@ -545,7 +547,8 @@ subject-keyed one rather than pretending to an answer it cannot compute.
 **Who may take money out is asked of the token, every call.** The treasury holds no role register of
 its own and does not trust the address recorded when it was created: `withdrawPayments` requires
 `ISSUER_ADMIN` and `withdrawERC20` requires `SUPPLY_OPERATOR`, both read from the token at the moment
-of the call. Revoking a role therefore reaches the money — which is the one place where a revocation
+of the call, and **both refuse to move locked investor money or reserved supply** — the guard is the
+asset's free balance, checked whichever door the withdrawal comes through. Revoking a role therefore reaches the money — which is the one place where a revocation
 that did not take effect would matter most.
 
 **Why `withdrawERC20` sometimes reverts.** It refuses while any offering holding that asset is active
@@ -664,8 +667,10 @@ path: `OfferingGovernanceFacet` (create, activate, pause, close, cancel), `Offer
 | `activate(id)` | Opens it | OFFERING_OPERATOR | Go live |
 | `pause(id)` / `unpause(id)` | Suspends and resumes | OFFERING_OPERATOR | Issues mid-raise |
 | `close(id)` | Ends purchasing | OFFERING_OPERATOR | End date or hard cap |
-| `cancel(id, reason)` | Aborts | OFFERING_OPERATOR | Raise abandoned; refunds follow |
-| `settle(id)` | Releases proceeds | **Anyone**, once soft cap met | The issuer collects |
+| `cancel(id, reason)` | Aborts a **live** offering | OFFERING_OPERATOR | Raise abandoned; refunds follow. Refuses on a settled or refunding one, which is finished |
+| `settle(id)` | Releases proceeds; enables token claims | **Anyone**, once soft cap met | The issuer collects |
+| `claimTokens(purchaseId)` | Delivers the tokens a settled offering owes you | Investor | Delivery waits for settlement, so a failed offering delivered nothing to claw back |
+| `deliverBatch(id, limit)` | Delivers many settled purchases at once | OFFERING_OPERATOR | Good UX at scale |
 | `beginRefunding(id)` | Starts refunds | **Anyone**, once soft cap missed | Investors get their money back |
 | `refundBatch(id, limit)` | Refunds many at once | OFFERING_OPERATOR | Good UX at scale |
 | `claimRefund(purchaseId)` | Refunds yourself | Investor | The backstop that makes refunds a guarantee |

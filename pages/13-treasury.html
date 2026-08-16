@@ -428,26 +428,27 @@ footer p{max-width:76ch;margin:0 0 8px}
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Quantity</th><th style="text-align:left">Meaning</th></tr></thead><tbody><tr><td style="text-align:left"><code>balance</code></td><td style="text-align:left">Total held</td></tr><tr><td style="text-align:left"><code>reserved</code></td><td style="text-align:left">Committed to active offerings</td></tr><tr><td style="text-align:left"><code>available</code></td><td style="text-align:left"><code>balance − reserved</code>, the only part freely withdrawable</td></tr></tbody></table></div>
 <p><code>reserve</code> and <code>release</code> are callable only by the offering registry. <code>availableBalance()</code> is what <code>withdrawERC20</code> checks against.</p>
 <h3 id="13-payment-locking">Payment locking</h3>
-<p><code>withdrawERC20</code> reverts while any offering holding that asset is in <code>Active</code> or <code>Closed</code> state with its soft cap unmet.</p>
-<p>This is enforced by the treasury itself, not by operator discipline. An operator who wants the funds early cannot get them by calling in a different order, and an operator who forgets cannot accidentally break refundability.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Offering state</th><th style="text-align:left">Payment tokens</th></tr></thead><tbody><tr><td style="text-align:left">Active</td><td style="text-align:left">Locked</td></tr><tr><td style="text-align:left">Closed, soft cap unmet</td><td style="text-align:left">Locked</td></tr><tr><td style="text-align:left">Settled</td><td style="text-align:left">Available to <code>SUPPLY_OPERATOR</code></td></tr><tr><td style="text-align:left">Refunding / Cancelled</td><td style="text-align:left">Reserved for refunds; not withdrawable</td></tr></tbody></table></div>
+<p>Investor payments are locked <strong>by amount and asset</strong>, not by a per-offering flag. As each purchase lands, the registry calls <code>lockPayment(offeringId, asset, amount)</code>, adding to the locked total for that asset. <code>unlockPayments(offeringId)</code> on settlement releases only that offering&#x27;s total.</p>
+<p><code>freeBalance(asset)</code> is what a withdrawal may move: the held balance minus everything spoken for — the security token&#x27;s <code>reserved</code>, or a payment asset&#x27;s locked total. <strong>Both</strong> withdrawal doors check it: <code>withdrawERC20</code> (<code>SUPPLY_OPERATOR</code>) and <code>withdrawPayments</code> (<code>ISSUER_ADMIN</code>). Neither can reach locked money, and no offering id a caller supplies can unlock it, because a lock is on an amount of an asset and not on an id.</p>
+<p>This is enforced by the treasury itself, not by operator discipline. An operator who wants the funds early cannot get them by calling in a different order or through the other door, and one offering&#x27;s settlement never frees another&#x27;s money.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Offering state</th><th style="text-align:left">Its payment tokens</th></tr></thead><tbody><tr><td style="text-align:left">Active, accumulating purchases</td><td style="text-align:left">Locked as each arrives</td></tr><tr><td style="text-align:left">Closed, soft cap unmet</td><td style="text-align:left">Locked</td></tr><tr><td style="text-align:left">Settled</td><td style="text-align:left">Released; withdrawable</td></tr><tr><td style="text-align:left">Refunding / Cancelled</td><td style="text-align:left">Returned to investors; the lock falls as each refund goes out</td></tr></tbody></table></div>
 <h3 id="13-distribution">Distribution</h3>
-<p><code>distributeFromTreasury(to, amount, unlockAt)</code> moves tokens to a holder and optionally applies a lockup in the same transaction. It runs the full compliance pipeline on the receiving side — the treasury being trusted does not make the recipient eligible.</p>
+<p><code>distributeFromTreasury(to, amount, unlockAt)</code> moves tokens to a holder and optionally applies a lockup in the same transaction. It runs the full compliance pipeline on the receiving side — the treasury being trusted does not make the recipient eligible. It is callable by <code>SUPPLY_OPERATOR</code> or by the offering registry the issuer wired in, which delivers tokens as offerings settle. It is bounded at 32 lockups per holder, the same bound <code>LockupFacet</code> enforces.</p>
 <p>Passing <code>unlockAt = 0</code> applies no lockup.</p>
 <h3 id="13-refund-handling">Refund handling</h3>
-<p>On refund the treasury performs both legs:</p>
-<ol>
-<li>Payment tokens return to the investor.</li>
-<li>Security tokens return from the investor to the treasury.</li>
-</ol>
-<p>The second leg is a compliance-checked transfer like any other. If the investor has since become ineligible to send — a blocked DID, for example — the transfer would fail and strand the refund. The registry therefore performs the token return leg through the trusted path, treating a refund as a system operation rather than an investor transfer.</p>
+<p>A refund is <strong>cash only</strong>. Because tokens are delivered at settlement rather than at purchase (see <a href="12-offering.html">12 — Offerings</a>), a failed offering never delivered any security tokens, so there is nothing to return — only the payment to give back. <code>refund(offeringId, asset, investor, amount)</code> transfers the payment and reduces the locked total by the same amount.</p>
+<p>This is the symmetry the earlier design lacked: delivering at purchase meant a failed raise had to claw tokens back out of investors&#x27; wallets, which needs a seizure power the design keeps opt-in. Delivering at settlement needs none.</p>
 <h3 id="13-functions">Functions</h3>
 <p>See <a href="07-functions.html">07 — Function reference</a> for the complete list. Summary:</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Group</th><th style="text-align:left">Functions</th></tr></thead><tbody><tr><td style="text-align:left">Custody</td><td style="text-align:left"><code>deposit</code>, <code>withdrawERC20</code></td></tr><tr><td style="text-align:left">Offering support</td><td style="text-align:left"><code>reserve</code>, <code>release</code>, <code>lockPayments</code>, <code>unlockPayments</code></td></tr><tr><td style="text-align:left">Views</td><td style="text-align:left"><code>token</code>, <code>reservedOf</code>, <code>availableBalance</code>, <code>paymentBalance</code></td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Group</th><th style="text-align:left">Functions</th></tr></thead><tbody><tr><td style="text-align:left">Custody</td><td style="text-align:left"><code>deposit</code>, <code>withdrawERC20</code>, <code>withdrawPayments</code></td></tr><tr><td style="text-align:left">Offering support</td><td style="text-align:left"><code>reserve</code>, <code>release</code>, <code>lockPayment</code>, <code>unlockPayments</code>, <code>refund</code></td></tr><tr><td style="text-align:left">Views</td><td style="text-align:left"><code>token</code>, <code>reservedOf</code>, <code>availableBalance</code>, <code>paymentBalance</code>, <code>freeBalance</code>, <code>lockedPayments</code></td></tr></tbody></table></div>
 <h3 id="13-invariants">Invariants</h3>
 <ol>
 <li><code>availableBalance() == balance − reserved</code>, never negative.</li>
-<li><code>withdrawERC20</code> cannot reduce the balance below <code>reserved</code>.</li>
+<li><code>freeBalance(asset)</code> is the held balance minus what is reserved (for the security token) or locked</li>
+</ol>
+<p>   (for a payment asset), never negative.</p>
+<ol>
+<li>Neither <code>withdrawERC20</code> nor <code>withdrawPayments</code> can move more than <code>freeBalance(asset)</code>.</li>
 <li>Payment tokens for an unmet-soft-cap offering are never withdrawable.</li>
 <li>Only the offering registry may call <code>reserve</code> and <code>release</code>.</li>
 <li>Only <code>SUPPLY_OPERATOR</code> may call <code>withdrawERC20</code>.</li>
@@ -533,4 +534,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: da765f824a76b098ad9d6e55f5c9798ec5e8134026a401ef1172148d43a9e521 -->
+<!-- source-digest: 1cc4fa7cef02f704f7385c46433cb959dead867834d066984a5780ed31ca67a8 -->
