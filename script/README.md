@@ -4,6 +4,23 @@ The executable form of [docs/16-deployment.md](../docs/16-deployment.md). Two sc
 everything they do is also run by CI as a test (`test/Deploy.t.sol`), through the same code — if a
 script rots, the build goes red before an operator finds out on a chain.
 
+## 0 · What the operator provides
+
+Everything the scripts need from a human, before anything runs:
+
+| You provide | Where to get it | Where it goes |
+|---|---|---|
+| A deployer key | A **fresh** key for testnet; the operations multisig for mainnet — the factory's admin is the broadcaster and is not transferable | `PRIVATE_KEY` in `.env` |
+| Base Sepolia gas | [Coinbase developer faucet](https://portal.cdp.coinbase.com/products/faucet) or the [Alchemy faucet](https://www.alchemy.com/faucets/base-sepolia) — ~0.05 ETH covers the whole stack many times over | The deployer address |
+| An RPC URL | The public `https://sepolia.base.org`, or an Alchemy/Infura/QuickNode endpoint | `BASE_SEPOLIA_RPC_URL` in `.env` |
+| A BaseScan API key | [basescan.org/myapikey](https://basescan.org/myapikey), free account | `BASESCAN_API_KEY` in `.env` |
+
+```bash
+cp .env.example .env    # fill in the four values; .env is never committed
+```
+
+With `.env` filled, steps 1–3 below run without further decisions.
+
 ## 1 · The stack — once per chain
 
 ```bash

@@ -17,6 +17,38 @@ An entry is written even when a session finds nothing — "audited, clean" is a 
 
 ---
 
+## 2026-08-16 · Session 9 — the second refusal pass, and the operator's onboarding
+
+**Shipped.** Two things: the rest of the coverage work, and the artifacts an operator needs before
+`OP-04` can run.
+
+- **`Refusals2.t.sol`** — thirteen more tests over the remaining dark branches: the cut initialiser
+  that works, objects aloud, and objects silently (silence must be named by selector, not swallowed);
+  the coin whose `transfer` returns false being treated as failure through all three treasury doors;
+  over-reservation refused with the gap; policy-set ownership guarded both ways; the empty group that
+  is vacuously true rather than a brick; composition bookkeeping surviving repeats and absent
+  removes; the broken registry refusing and naming the sender first; the valid-but-empty jurisdiction
+  claim failing closed; MiCA freshness binding both ways; the basis-points concentration cap computed
+  from live supply with the tighter bound governing; and EAS invalidity being fourfold — absent,
+  expired, revoked, unreachable — all silent.
+- **Operator onboarding** — `.env.example` with the four values `OP-04` needs and where to get each;
+  a "what the operator provides" section opening `script/README.md`; and `vercel.json` pinning the
+  documentation site as a zero-build static deployment so importing the repository into Vercel needs
+  no configuration.
+
+**Audited.** `verify.py` 44/44, self-test 44/44, `forge test` 210/210 across 24 suites, 7/7 tools.
+Branch coverage over `src/` is **72%** (from 66%): `DiamondCutFacet` 50% → **100%**, `Treasury` 60% →
+**100%**, `PolicySet` 61% → 89%, `RuleLibrary` 57% → 86%, `Adapters` 61% → 74%. The remainder is
+adapter fallbacks and the offering registry's long tail — good enough to stop chasing; the audit
+judges the rest.
+
+**Found.** Nothing wrong — every edge behaved as documented once walked.
+
+**Open.** `OP-04` waits on the operator filling `.env` (the four values are listed in it); the Vercel
+project waits on the operator importing the repository. Then `TO-01`, the conformance kit.
+
+---
+
 ## 2026-08-16 · Session 8 — the refusal branches, each walked once
 
 **Shipped.** `Refusals.t.sol` — thirteen tests over the guard paths coverage showed nobody had ever
