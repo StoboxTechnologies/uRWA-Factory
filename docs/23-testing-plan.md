@@ -187,21 +187,31 @@ property of a deployed contract, and a mock will not reproduce it.
 
 ## Conformance kit
 
-Separate repository, so any ERC-7943 implementer can run it without adopting anything else.
+Built, and **liftable**: `test/conformance/ERC7943Conformance.sol` imports nothing from `src/`, so
+publishing it as its own repository is a copy, not a port. Any implementer inherits the harness,
+answers six hooks — the token, an eligible holder and receiver, an ineligible account, the freeze
+authority, and optionally a force authority — and every check judges their token. CI runs it against
+this repository's own token on every commit; the first stranger the kit met was us.
 
 ```
-forge test --match-path test/conformance/*
+forge test --match-path "test/conformance/*"
 ```
 
 | Group | Checks |
 |---|---|
-| Interface | `supportsInterface(0x3edbb4c4)`; all six selectors present |
-| Purity | The three views never revert and never write, over fuzzed inputs |
-| Semantics | `canTransfer` implies `canSend` and `canReceive`; excludes balance and allowance |
-| Freeze | May exceed balance; `setFrozenTokens` emits `Frozen` |
-| Forced | Event ordering, unfreeze-first, `canReceive` enforced |
-| Errors | Canonical errors decode correctly |
-| Mint and burn | Respect `canReceive` and `canSend` |
+| Interface | `supportsInterface(0x3edbb4c4)` and ERC-165; the sentinel `0xffffffff` denied |
+| Purity | The four views never revert and never write, over fuzzed inputs — including unknown wallets, the exact failure mode found live in a deployed registry |
+| Semantics | `canTransfer` implies `canSend` and `canReceive`; ignores allowances; an ineligible party fails the pair from either side |
+| Enforcement | A refused answer binds — the transfer itself fails, not only the preview |
+| Freeze | May exceed balance without reverting; binds `canTransfer` and the ledger; emits `Frozen` |
+| Forced | Judged only where an authority exists: compulsion bypasses the freeze, never `canReceive` |
+
+`canTransfer` **includes** frozen balances — it answers "would this exact transfer succeed, right
+now", as the interface defines it. An earlier draft of this table claimed it excluded balance, which
+contradicted the interface's own words; the kit settled the question by running.
+
+Canonical-error decoding and mint/burn gating are the kit's next checks, once the standard's error
+surface is exercised by a second implementation worth comparing against.
 
 ---
 

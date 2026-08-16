@@ -17,6 +17,40 @@ An entry is written even when a session finds nothing — "audited, clean" is a 
 
 ---
 
+## 2026-08-16 · Session 10 — the conformance kit, and its first stranger is us
+
+**Shipped.** `TO-01`. `test/conformance/ERC7943Conformance.sol` is the liftable kit: it imports
+nothing from `src/`, declares the ERC-7943 surface locally, and judges **any** implementation whose
+binding answers six hooks — the token, an eligible holder and receiver, an ineligible account, the
+freeze authority, and optionally a force authority. Ten checks across five groups: the interface
+claim, the four views fuzzed to never revert or write (the exact failure mode found live in a
+deployed registry), the pair semantics with allowances explicitly not `canTransfer`'s business, the
+refusals binding the ledger and not only the preview, the freeze exceeding balance without reverting,
+and — only where seizure exists — compulsion bypassing the freeze but never `canReceive`.
+
+`uRWAConformance.t.sol` binds our own token, so CI runs the kit against us on every commit. It binds
+with **no force authority**: the default token does not install seizure, the kit treats that as a
+declared, checkable absence rather than non-conformance, and the loupe proves it on chain.
+
+**Corrected.** Doc 23's conformance table claimed `canTransfer` "excludes balance", contradicting the
+interface's own "would this exact transfer succeed, right now" and the unfrozen gate. The kit settled
+it by running: it includes frozen balances and ignores allowances. The table now says so, and records
+the correction.
+
+**Audited.** `verify.py` 44/44, self-test 44/44, `forge test` 220/220 across 25 suites, 7/7 tools.
+The kit proved able to fail: removing the `getFrozenTokens` selector from the binding turned two
+checks red before the sabotage was reverted.
+
+**Found.** Nothing wrong in the token — it passed its own kit first try, which after ten sessions of
+this protocol is the expected outcome rather than a suspicious one.
+
+**Open.** `OP-04` (operator env) and the Vercel import, both waiting on the operator. Publishing
+`test/conformance/` as its own repository is also an operator step — creating a public repo is
+outward-facing. Then `ST-03`: run the kit against CMTAT and publish the result, which is what makes
+it credible to strangers. `ST-02`, the errata, is unparked — its runnable exhibit exists.
+
+---
+
 ## 2026-08-16 · Session 9 — the second refusal pass, and the operator's onboarding
 
 **Shipped.** Two things: the rest of the coverage work, and the artifacts an operator needs before

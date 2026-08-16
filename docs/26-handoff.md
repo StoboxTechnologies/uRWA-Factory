@@ -48,7 +48,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The registry
 
-87 items. **51 done, 2 ready, 31 planned, 3 parked.** Full census in
+87 items. **52 done, 3 ready, 30 planned, 2 parked.** Full census in
 [24 — Totals](24-work-registry.md#totals).
 
 | Group | Items | Done | State |
@@ -62,9 +62,9 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 | AG — Agents | 4 | 3 | Mandates and DvP built |
 | PA — Passport | 7 | 0 | Not started — the whole of Phase 4 |
 | UI — Interfaces | 11 | 2 | Prototypes only; no real surface |
-| TO — Tooling | 5 | 0 | Conformance kit not started |
+| TO — Tooling | 5 | 1 | Conformance kit built and judging our own token; the rest is SDK and indexer |
 | OP — Operations | 9 | 2 | CI built; audit and release remain |
-| ST — Standards | 6 | 0 | Parked for this cycle |
+| ST — Standards | 6 | 0 | `ST-02` unparked — the errata now has its runnable exhibit |
 
 ### The code
 
@@ -81,7 +81,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The tests
 
-**210 tests across 24 suites, all passing.**
+**220 tests across 25 suites, all passing.**
 
 | Suite | Tests | Holds |
 |---|---:|---|
@@ -101,6 +101,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 | `Deploy.t.sol` | 4 | The deployment script's own code stands the stack up and sells through it |
 | `Refusals.t.sol` | 13 | The guard branches: bad permits, empty reverts, stale members, malleable signatures, half-dead legs |
 | `Refusals2.t.sol` | 13 | The second pass: cut initialisers, lying coins, empty groups, stale attestations, the concentration maths |
+| `conformance/` | 10 | The liftable ERC-7943 kit, judging this repository's token first |
 | `AgentsAndSettlement.t.sol` | 21 | Mandates that cannot be exceeded; trades that cannot half-settle |
 | `Preset.t.sol` | 6 | A regime preset is applied at creation and enforces |
 
@@ -288,7 +289,7 @@ permissionless deliberately, and say so in their own comments.
 |---|---|
 | The documentation agrees with the code | `python3 verify.py` — 44 checks, all four levels |
 | The checks are not decorative | `python3 verify.py --self-test` — each one fails on its own known-bad fixture |
-| The invariants hold at runtime | `forge test` — 210 tests, 24 suites |
+| The invariants hold at runtime | `forge test` — 220 tests, 25 suites |
 | Every invariant has an owner | `L3.8`, which fails if a test stops naming one |
 | Every documented caller is enforced | `L3.6` — delete any guard in `src/` and it names the function |
 | The documentation cannot drift | Edit any `docs/*.md`, push, and watch CI fail until `build-docs.py` is run and committed |
@@ -329,7 +330,8 @@ results changed, not on every run.
 | # | Item | Why this order |
 |---|---|---|
 | 1 | `OP-04` — run `DeployStack` + `DeployDemoToken` on Base Sepolia, verify, publish the addresses | The scripts and their CI test exist; a real chain is the remaining step to the first demo token |
-| 2 | Branch coverage on `uRWAToken`, `uRWAFactory`, `RolesFacet`, `AtomicDvP` | Findings 2 and 3, before anything is frozen |
+| 2 | Publish `test/conformance/` as its own repository, then `ST-03` — run it against CMTAT and publish the result | The kit is liftable by design; the copy is an operator step, and the CMTAT run is what makes it credible to strangers |
+| 3 | Branch coverage on `uRWAToken`, `uRWAFactory`, `RolesFacet`, `AtomicDvP` | Findings 2 and 3, before anything is frozen |
 | 3 | `TO-01` — the conformance kit | Unparks `ST-02`, and is the piece that makes the work useful to somebody else's token |
 
 Phase 4 (`PA-*`) and Phase 5 (`UI-*`) can start in parallel at any point. Neither is on the critical

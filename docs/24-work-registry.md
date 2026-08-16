@@ -142,7 +142,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| TO-01 | **ERC-7943 conformance kit, separate repository** | Planned | CO-03 | 1 |
+| TO-01 | ERC-7943 conformance kit — liftable `test/conformance/`, CI runs it against our own token; the standalone repository is a copy an operator publishes | **Done** | CO-03 | — |
 | TO-02 | Facet verification script and loupe report | Planned | CO-02 | 0.5 |
 | TO-03 | Deployment manifest generator | Planned | CO-10 | 0.25 |
 | TO-04 | TypeScript SDK and published ABIs | Planned | IF-01 | 1 |
@@ -167,7 +167,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
 | ST-01 | Ethereum Magicians thread on the specification | **Parked** | SP-06 | 0.25 |
-| ST-02 | ERC-7943 errata: the revert-on-unknown-subject failure mode | **Parked** | TO-01 | 0.25 |
+| ST-02 | ERC-7943 errata: the revert-on-unknown-subject failure mode — the kit's fuzz test is the runnable exhibit | Ready | TO-01 | 0.25 |
 | ST-03 | Run the conformance kit against CMTAT, publish the result | Planned | TO-01 | 0.5 |
 | ST-04 | Draft ERC — diagnostic interface | Planned | CO-03, TO-01 | 1 |
 | ST-05 | Draft ERC — agent mandates | Planned | AG-01 | 1 |
@@ -294,10 +294,10 @@ merge → registry status updated in this document
 | AG — Agents | 4 | 3 | 0 | 1 | 0 | 1 |
 | PA — Passport | 7 | 0 | 0 | 7 | 0 | 5.25 |
 | UI — Interfaces | 11 | 2 | 2 | 7 | 0 | 10 |
-| TO — Tooling | 5 | 0 | 0 | 4 | 1 | 3.75 |
+| TO — Tooling | 5 | 1 | 0 | 3 | 1 | 2.75 |
 | OP — Operations | 9 | 2 | 0 | 7 | 0 | 2.75 |
-| ST — Standards | 6 | 0 | 0 | 4 | 2 | 3.5 |
-| **Total** | **87** | **51** | **2** | **31** | **3** | **≈27.25 engineer-weeks** |
+| ST — Standards | 6 | 0 | 1 | 4 | 1 | 3.5 |
+| **Total** | **87** | **52** | **3** | **30** | **2** | **≈26.25 engineer-weeks** |
 
 The remaining figure is the sum of the effort column over every row not marked Done — it is arithmetic
 over this table, not a fresh estimate. The original plan was ≈54 engineer-weeks over 79 items; the
