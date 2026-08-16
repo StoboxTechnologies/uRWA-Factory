@@ -418,26 +418,28 @@ footer p{max-width:76ch;margin:0 0 8px}
 <h3 id="12-parameters">Parameters</h3>
 <pre>struct OfferingParams {
     address token;
-    address[] paymentTokens;     // USDC, USDT, …
-    uint256 pricePerToken;       // in payment-token units, or 0 for tiered
-    Tier[]  tiers;               // optional tiered pricing
+    address[] paymentTokens;     // USDC, USDT, … — any one may be paid in
+    uint256 price;               // flat price per whole token; ignored when tiers is non-empty
+    Tier[]  tiers;               // optional ascending price bands
     uint256 softCap;
     uint256 hardCap;
+    uint256 minPerInvestor;
+    uint256 maxPerInvestor;
     uint64  startAt;
     uint64  endAt;
-    uint256 minInvestment;
-    uint256 maxInvestment;
     uint64  lockupUntil;         // applied to purchased tokens
     bool    preMint;             // reserve from treasury vs mint on purchase
     bytes32 regime;              // RegD506c, RegS, MiCA-ART, …
 }
 
 struct Tier {
-    uint256 upToAmount;
-    uint256 pricePerToken;
+    uint256 upToAmount;          // cumulative across the raise, not per investor
+    uint256 price;
 }</pre>
 <h3 id="12-supply-path-issuer-chooses-per-offering">Supply path — issuer chooses per offering</h3>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Mode</th><th style="text-align:left">Behaviour</th><th style="text-align:left">Suits</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Pre-mint and reserve</strong></td><td style="text-align:left">Supply minted to treasury and reserved when the offering is created</td><td style="text-align:left">Pre-sold allocations; buyers see availability up front</td></tr><tr><td style="text-align:left"><strong>Mint on purchase</strong></td><td style="text-align:left">Tokens created as each investor buys</td><td style="text-align:left">Open-ended raises; supply always equals what was actually sold</td></tr></tbody></table></div>
+<p><strong>Multi-currency.</strong> The buyer names which listed currency to pay in — <code>purchase(id, amount, paymentToken)</code> — and an unlisted one is refused rather than silently retargeted. All accepted currencies are priced equally, which is the stablecoin assumption: list only currencies you are willing to treat as interchangeable at face value. The refund returns exactly the currency each purchase paid.</p>
+<p><strong>Tiered pricing.</strong> Bands are consumed in order across the whole raise, from where it has already sold: the early-bird price is gone once its band is full, a purchase crossing a boundary pays each band&#x27;s price for the tokens that fall in it, and anything past the final band is priced at that band — never at zero. <code>previewPurchase</code> returns the same blended cost <code>purchase</code> will charge.</p>
 <p>Both are supported and selected with the <code>preMint</code> flag. <strong>There is no default</strong> — the console requires a choice, because the two produce different <code>totalSupply</code> readings for the same raise and an issuer who did not choose will be surprised by whichever they got.</p>
 <h3 id="12-purchase-flow">Purchase flow</h3>
 <pre>  Investor        OfferingRegistry      IdentityRegistry       Treasury
@@ -645,4 +647,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 6117639f31aa0344c8b08f7306a48eb024766420000e24f3f7abf577ed7df4b8 -->
+<!-- source-digest: ab15679323a92ca949dcae4994ce42c044c9cea9c6666048ecd50900d6281021 -->

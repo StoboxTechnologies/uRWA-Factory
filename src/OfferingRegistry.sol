@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {IErrors} from "./interfaces/IErrors.sol";
 import {IEvents} from "./interfaces/IEvents.sol";
-import {OfferingParams, Purchase} from "./interfaces/ITreasuryAndOfferings.sol";
+import {OfferingParams, Purchase, Tier} from "./interfaces/ITreasuryAndOfferings.sol";
 import {Roles} from "./interfaces/Roles.sol";
 
 interface IERC20Payment {
@@ -132,7 +132,7 @@ contract OfferingRegistry is IErrors {
     ///      partial-refund path to the money leg — the most sensitive code
     ///      here — and would let a purchase succeed for an amount nobody
     ///      agreed to.
-    function purchase(uint256 id, uint256 amount) external {
+    function purchase(uint256 id, uint256 amount, address paymentToken) external {
         Offering storage o = _offerings[id];
         if (o.status != Status.Active) revert OfferingNotActive(id, uint8(o.status));
         if (block.timestamp < o.params.startAt || block.timestamp >= o.params.endAt) {
@@ -151,11 +151,15 @@ contract OfferingRegistry is IErrors {
             revert HardCapExceeded(tokens, o.params.hardCap - o.sold);
         }
 
-        address payment = o.params.paymentTokens.length > 0 ? o.params.paymentTokens[0] : address(0);
-        if (payment == address(0)) revert ZeroAddress();
-        if (!IERC20Payment(payment).transferFrom(msg.sender, o.treasury, cost)) {
+        // The buyer names which of the offering's accepted currencies to pay in.
+        // All are priced equally, so the same cost is charged whichever is used;
+        // paying in a currency the offering does not list is refused rather than
+        // silently retargeted to the first one.
+        if (!_accepts(o, paymentToken)) revert PaymentTokenNotAccepted(paymentToken);
+        if (!IERC20Payment(paymentToken).transferFrom(msg.sender, o.treasury, cost)) {
             revert InsufficientAvailable(cost, 0);
         }
+        address payment = paymentToken;
         // Lock the money the instant it lands. Until the offering settles it is
         // the investor's, refundable and unreachable by the issuer.
         ITreasuryCustody(o.treasury).lockPayment(id, payment, cost);
@@ -198,14 +202,40 @@ contract OfferingRegistry is IErrors {
         return _quote(_offerings[id], amount);
     }
 
+    /// @dev Cost is priced from where the offering has already sold, so tiers
+    ///      are consumed in order across the whole raise and a buyer pays the
+    ///      band their tokens actually fall in — not one flat price for
+    ///      everybody. With no tiers, the flat `price` applies. The last band's
+    ///      price continues past its ceiling, so a purchase is never priced at
+    ///      zero — the silent-zero failure mode an unpriced remainder would open.
     function _quote(Offering storage o, uint256 amount)
         private
         view
         returns (uint256 cost, uint256 tokens, uint64 unlockAt)
     {
         tokens = amount;
-        cost = (amount * o.params.price) / 1e18;
         unlockAt = o.params.lockupUntil;
+
+        Tier[] storage tiers = o.params.tiers;
+        if (tiers.length == 0) {
+            cost = (amount * o.params.price) / 1e18;
+            return (cost, tokens, unlockAt);
+        }
+
+        uint256 cursor = o.sold;
+        uint256 remaining = amount;
+        for (uint256 i = 0; i < tiers.length && remaining > 0; i++) {
+            if (cursor >= tiers[i].upToAmount) continue; // an already-filled band
+            uint256 take = tiers[i].upToAmount - cursor;
+            if (take > remaining) take = remaining;
+            cost += (take * tiers[i].price) / 1e18;
+            cursor += take;
+            remaining -= take;
+        }
+        // Anything above the final band is priced at that band, never free.
+        if (remaining > 0) {
+            cost += (remaining * tiers[tiers.length - 1].price) / 1e18;
+        }
     }
 
     // ── the two permissionless calls ────────────────────────────────────────
@@ -401,5 +431,16 @@ contract OfferingRegistry is IErrors {
 
     function _onlyAdmin() private view {
         if (msg.sender != admin) revert NotAuthorized(msg.sender, Roles.REGISTRY_ADMIN);
+    }
+
+    /// @dev Whether an offering lists this payment currency. A short linear
+    ///      scan: the accepted set is a handful of stablecoins, not an open
+    ///      market.
+    function _accepts(Offering storage o, address paymentToken) private view returns (bool) {
+        address[] storage accepted = o.params.paymentTokens;
+        for (uint256 i = 0; i < accepted.length; i++) {
+            if (accepted[i] == paymentToken) return true;
+        }
+        return false;
     }
 }

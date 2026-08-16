@@ -10,23 +10,23 @@ optional — a token functions without it, and private placements often skip it 
 ```solidity
 struct OfferingParams {
     address token;
-    address[] paymentTokens;     // USDC, USDT, …
-    uint256 pricePerToken;       // in payment-token units, or 0 for tiered
-    Tier[]  tiers;               // optional tiered pricing
+    address[] paymentTokens;     // USDC, USDT, … — any one may be paid in
+    uint256 price;               // flat price per whole token; ignored when tiers is non-empty
+    Tier[]  tiers;               // optional ascending price bands
     uint256 softCap;
     uint256 hardCap;
+    uint256 minPerInvestor;
+    uint256 maxPerInvestor;
     uint64  startAt;
     uint64  endAt;
-    uint256 minInvestment;
-    uint256 maxInvestment;
     uint64  lockupUntil;         // applied to purchased tokens
     bool    preMint;             // reserve from treasury vs mint on purchase
     bytes32 regime;              // RegD506c, RegS, MiCA-ART, …
 }
 
 struct Tier {
-    uint256 upToAmount;
-    uint256 pricePerToken;
+    uint256 upToAmount;          // cumulative across the raise, not per investor
+    uint256 price;
 }
 ```
 
@@ -36,6 +36,17 @@ struct Tier {
 |---|---|---|
 | **Pre-mint and reserve** | Supply minted to treasury and reserved when the offering is created | Pre-sold allocations; buyers see availability up front |
 | **Mint on purchase** | Tokens created as each investor buys | Open-ended raises; supply always equals what was actually sold |
+
+**Multi-currency.** The buyer names which listed currency to pay in — `purchase(id, amount,
+paymentToken)` — and an unlisted one is refused rather than silently retargeted. All accepted
+currencies are priced equally, which is the stablecoin assumption: list only currencies you are
+willing to treat as interchangeable at face value. The refund returns exactly the currency each
+purchase paid.
+
+**Tiered pricing.** Bands are consumed in order across the whole raise, from where it has already
+sold: the early-bird price is gone once its band is full, a purchase crossing a boundary pays each
+band's price for the tokens that fall in it, and anything past the final band is priced at that
+band — never at zero. `previewPurchase` returns the same blended cost `purchase` will charge.
 
 Both are supported and selected with the `preMint` flag. **There is no default** — the console
 requires a choice, because the two produce different `totalSupply` readings for the same raise and

@@ -29,11 +29,21 @@ interface ITreasury {
     function withdrawERC20(address asset, address to, uint256 amount) external;
 }
 
+/// @dev A price band. Token units sold up to `upToAmount` (cumulative across the
+///      whole offering, not per investor) cost `price` per whole token. Bands
+///      are given in ascending `upToAmount`; the last band's price continues for
+///      anything beyond it, so a purchase can never be priced at zero.
+struct Tier {
+    uint256 upToAmount;
+    uint256 price;
+}
+
 /// @notice Everything an investor must be able to read before subscribing
 struct OfferingParams {
     address token;
-    address[] paymentTokens;
-    uint256 price; // per whole token, in payment-token units
+    address[] paymentTokens; // any one may be paid in; all priced equally (stablecoin assumption)
+    uint256 price; // flat price per whole token; ignored when `tiers` is non-empty
+    Tier[] tiers; // optional ascending price bands; empty means the flat price
     uint256 softCap;
     uint256 hardCap;
     uint256 minPerInvestor;
@@ -69,7 +79,7 @@ interface IOfferingRegistry {
     /// @dev Reverts whole if `amount` exceeds what the hard cap still allows.
     ///      No partial fill: it would add a refund path to the money leg and
     ///      let a purchase succeed for an amount nobody agreed to.
-    function purchase(uint256 id, uint256 amount) external;
+    function purchase(uint256 id, uint256 amount, address paymentToken) external;
 
     /// @notice Cost, tokens and unlock date before signing anything
     function previewPurchase(uint256 id, uint256 amount)

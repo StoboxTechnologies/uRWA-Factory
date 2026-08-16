@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Test} from "forge-std/Test.sol";
 import {OfferingRegistry} from "../src/OfferingRegistry.sol";
 import {IErrors} from "../src/interfaces/IErrors.sol";
-import {OfferingParams, Purchase} from "../src/interfaces/ITreasuryAndOfferings.sol";
+import {OfferingParams, Purchase, Tier} from "../src/interfaces/ITreasuryAndOfferings.sol";
 
 /// @dev A payment currency.
 contract Cash {
@@ -86,6 +86,7 @@ contract TreasuryStub {
 contract OfferingTest is Test {
     OfferingRegistry registry;
     Cash cash;
+    Cash cash2; // a second accepted stablecoin, for the multi-currency path
     TokenStub token;
     TreasuryStub treasury;
 
@@ -100,12 +101,15 @@ contract OfferingTest is Test {
         vm.warp(1_000_000);
         registry = new OfferingRegistry(address(this));
         cash = new Cash();
+        cash2 = new Cash();
         token = new TokenStub();
         token.setRegistry(address(registry));
         treasury = new TreasuryStub();
 
         cash.mint(alice, 1_000_000e18);
         cash.mint(bob, 1_000_000e18);
+        cash2.mint(alice, 1_000_000e18);
+        cash2.mint(bob, 1_000_000e18);
 
         id = _create(500e18, 1000e18);
         registry.activate(id);
@@ -119,7 +123,7 @@ contract OfferingTest is Test {
     ///      it lands.
     function test_aPurchaseTakesPaymentAndLocksItWithoutDelivering() public {
         vm.prank(alice);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
 
         assertEq(token.delivered(alice), 0, "tokens were delivered before settlement");
         assertEq(cash.balanceOf(address(treasury)), 100e18);
@@ -135,7 +139,7 @@ contract OfferingTest is Test {
     ///      any other caller, exactly as the real facet does.
     function test_aBuyerClaimsTokensFromASettledOffering() public {
         vm.prank(alice);
-        registry.purchase(id, 600e18); // meets the 500e18 soft cap
+        registry.purchase(id, 600e18, address(cash)); // meets the 500e18 soft cap
         vm.warp(registry.offeringOf(id).endAt + 1);
         registry.settle(id);
 
@@ -156,7 +160,7 @@ contract OfferingTest is Test {
     ///      came back. Now the money is the only leg, and it unwinds cleanly.
     function test_aFailedOfferingRefundsCashAndDeliversNoTokens() public {
         vm.prank(alice);
-        registry.purchase(id, 100e18); // below the 500e18 soft cap
+        registry.purchase(id, 100e18, address(cash)); // below the 500e18 soft cap
         uint256 before = cash.balanceOf(alice);
 
         vm.warp(registry.offeringOf(id).endAt + 1);
@@ -175,15 +179,15 @@ contract OfferingTest is Test {
     ///      succeed for an amount nobody agreed to.
     function test_overTheHardCapRevertsWholeAndSaysWhatWouldFit() public {
         vm.prank(alice);
-        registry.purchase(id, 900e18);
+        registry.purchase(id, 900e18, address(cash));
 
         vm.prank(bob);
         vm.expectRevert(abi.encodeWithSelector(IErrors.HardCapExceeded.selector, 200e18, 100e18));
-        registry.purchase(id, 200e18);
+        registry.purchase(id, 200e18, address(cash));
 
         // And the amount the error named does fit.
         vm.prank(bob);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
         assertEq(registry.raisedOf(id), 1000e18);
     }
 
@@ -193,7 +197,7 @@ contract OfferingTest is Test {
         assertEq(tokens, 250e18);
 
         vm.prank(alice);
-        registry.purchase(id, 250e18);
+        registry.purchase(id, 250e18, address(cash));
         assertEq(cash.balanceOf(address(treasury)), cost);
     }
 
@@ -203,18 +207,18 @@ contract OfferingTest is Test {
 
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(IErrors.BelowMinimum.selector, 50e18, 100e18));
-        registry.purchase(bounded, 50e18);
+        registry.purchase(bounded, 50e18, address(cash));
 
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(IErrors.AboveMaximum.selector, 600e18, 500e18));
-        registry.purchase(bounded, 600e18);
+        registry.purchase(bounded, 600e18, address(cash));
     }
 
     function test_aPausedOfferingTakesNoMoney() public {
         registry.pause(id);
         vm.prank(alice);
         vm.expectRevert();
-        registry.purchase(id, 1e18);
+        registry.purchase(id, 1e18, address(cash));
     }
 
     // ── the two permissionless calls ────────────────────────────────────────
@@ -224,7 +228,7 @@ contract OfferingTest is Test {
     ///      to sit on an answer the chain already contains.
     function test_anyoneMaySettleOnceTheSoftCapIsMet() public {
         vm.prank(alice);
-        registry.purchase(id, 600e18);
+        registry.purchase(id, 600e18, address(cash));
 
         assertEq(treasury.lockedPayments(address(cash)), 600e18, "payments should be held until settlement");
 
@@ -238,7 +242,7 @@ contract OfferingTest is Test {
     /// @notice And anyone may start refunds once it is missed
     function test_anyoneMayBeginRefundingOnceTheSoftCapIsMissed() public {
         vm.prank(alice);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
 
         vm.warp(block.timestamp + 40 days);
         vm.prank(stranger);
@@ -252,7 +256,7 @@ contract OfferingTest is Test {
         // the clock, so no warp is needed — and warping here across an
         // `expectRevert` made the test depend on accumulated block time.
         vm.prank(alice);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
         vm.expectRevert(IErrors.SoftCapNotMet.selector);
         registry.settle(id);
 
@@ -262,7 +266,7 @@ contract OfferingTest is Test {
         uint256 met = _create(100e18, 1000e18);
         registry.activate(met);
         vm.prank(bob);
-        registry.purchase(met, 200e18);
+        registry.purchase(met, 200e18, address(cash));
         vm.warp(registry.offeringOf(met).endAt + 1);
 
         vm.expectRevert(IErrors.SoftCapMet.selector);
@@ -280,7 +284,7 @@ contract OfferingTest is Test {
         uint256 met = _create(100e18, 1000e18);
         registry.activate(met);
         vm.prank(bob);
-        registry.purchase(met, 200e18);
+        registry.purchase(met, 200e18, address(cash));
         vm.warp(block.timestamp + 40 days);
         registry.settle(met);
 
@@ -293,7 +297,7 @@ contract OfferingTest is Test {
     /// @notice An investor refunds themselves without anyone's permission
     function test_anInvestorCanRefundThemselves() public {
         vm.prank(alice);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
         uint256 before = cash.balanceOf(alice);
 
         vm.warp(block.timestamp + 40 days);
@@ -309,7 +313,7 @@ contract OfferingTest is Test {
     ///      lives there. Putting it on each door would be two chances to forget.
     function test_aPurchaseCannotBeRefundedTwiceByEitherPath() public {
         vm.prank(alice);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
         vm.warp(block.timestamp + 40 days);
         registry.beginRefunding(id);
 
@@ -328,9 +332,9 @@ contract OfferingTest is Test {
     /// @notice The operator path and the investor path agree
     function test_theOperatorPathRefundsTheSameAmount() public {
         vm.prank(alice);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
         vm.prank(bob);
-        registry.purchase(id, 50e18);
+        registry.purchase(id, 50e18, address(cash));
         vm.warp(block.timestamp + 40 days);
         registry.beginRefunding(id);
 
@@ -345,7 +349,7 @@ contract OfferingTest is Test {
     /// @notice Only the investor may claim their own refund
     function test_onlyTheInvestorMayClaimTheirRefund() public {
         vm.prank(alice);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
         vm.warp(block.timestamp + 40 days);
         registry.beginRefunding(id);
 
@@ -357,7 +361,7 @@ contract OfferingTest is Test {
     /// @notice Refunds are impossible before refunding begins
     function test_noRefundBeforeRefundingBegins() public {
         vm.prank(alice);
-        registry.purchase(id, 100e18);
+        registry.purchase(id, 100e18, address(cash));
 
         vm.prank(alice);
         vm.expectRevert();
@@ -383,16 +387,120 @@ contract OfferingTest is Test {
         return _create(softCap, hardCap, 0, 0);
     }
 
+    // ── CU-03 · tiered pricing ──────────────────────────────────────────────
+
+    /// @notice A purchase crossing a tier boundary pays each band's price
+    /// @dev The first 100 tokens are priced at band one, the next at band two.
+    ///      A buyer taking 150 across the boundary pays 100 at the low price and
+    ///      50 at the high one — not 150 at either. The preview agrees with what
+    ///      the purchase charges, so the blended cost is never a surprise.
+    function test_tieredPricingChargesEachBandInOrder() public {
+        Tier[] memory tiers = new Tier[](2);
+        tiers[0] = Tier({upToAmount: 100e18, price: 1e18}); // 1.0 each
+        tiers[1] = Tier({upToAmount: 1000e18, price: 2e18}); // 2.0 each
+        uint256 offering = _createWith(_one(address(cash)), 0, tiers, 0, 1000e18, 0, 0);
+        registry.activate(offering);
+
+        (uint256 preview,,) = registry.previewPurchase(offering, 150e18);
+        assertEq(preview, 100e18 + 100e18, "100 at 1.0 plus 50 at 2.0");
+
+        uint256 before = cash.balanceOf(alice);
+        vm.prank(alice);
+        registry.purchase(offering, 150e18, address(cash));
+        assertEq(before - cash.balanceOf(alice), 200e18, "the buyer paid the blended cost");
+    }
+
+    /// @notice A later buyer pays the higher band the earlier one exhausted
+    /// @dev Tiers are consumed across the whole raise, from where it has already
+    ///      sold — the early-bird price is gone once its band is full.
+    function test_aLaterBuyerPaysTheHigherBand() public {
+        Tier[] memory tiers = new Tier[](2);
+        tiers[0] = Tier({upToAmount: 100e18, price: 1e18});
+        tiers[1] = Tier({upToAmount: 1000e18, price: 2e18});
+        uint256 offering = _createWith(_one(address(cash)), 0, tiers, 0, 1000e18, 0, 0);
+        registry.activate(offering);
+
+        vm.prank(alice);
+        registry.purchase(offering, 100e18, address(cash)); // takes the whole first band
+
+        (uint256 preview,,) = registry.previewPurchase(offering, 50e18);
+        assertEq(preview, 100e18, "the first band is spent; 50 at 2.0");
+        vm.prank(bob);
+        registry.purchase(offering, 50e18, address(cash));
+        assertEq(registry.raisedOf(offering), 100e18 + 100e18);
+    }
+
+    /// @notice Buying past the final band is priced at it, never at zero
+    /// @dev The silent-zero failure mode: a purchase above the last tier's
+    ///      ceiling must not cost nothing. The final band's price continues.
+    function test_pricingPastTheLastBandIsNeverFree() public {
+        Tier[] memory tiers = new Tier[](1);
+        tiers[0] = Tier({upToAmount: 100e18, price: 3e18});
+        uint256 offering = _createWith(_one(address(cash)), 0, tiers, 0, 1000e18, 0, 0);
+        registry.activate(offering);
+
+        (uint256 preview,,) = registry.previewPurchase(offering, 200e18);
+        assertEq(preview, 600e18, "200 tokens at the final 3.0, not 100 free");
+    }
+
+    // ── CU-03 · multi-currency ──────────────────────────────────────────────
+
+    /// @notice Any listed currency is accepted, at the same price
+    /// @dev The offering lists two stablecoins; a buyer pays in the second. The
+    ///      cost is identical, and the money lands and locks under the currency
+    ///      actually paid.
+    function test_multiCurrencyAcceptsAnyListedToken() public {
+        address[] memory pay = new address[](2);
+        pay[0] = address(cash);
+        pay[1] = address(cash2);
+        uint256 offering = _createWith(pay, 1e18, new Tier[](0), 0, 1000e18, 0, 0);
+        registry.activate(offering);
+
+        vm.prank(alice);
+        registry.purchase(offering, 100e18, address(cash2));
+
+        assertEq(cash2.balanceOf(address(treasury)), 100e18, "the second currency did not land");
+        assertEq(cash.balanceOf(address(treasury)), 0, "nothing should have moved in the first");
+        assertEq(treasury.lockedPayments(address(cash2)), 100e18, "the paid currency was not locked");
+    }
+
+    /// @notice A currency the offering does not list is refused
+    /// @dev Not silently retargeted to the first accepted token — the buyer pays
+    ///      in what they chose or not at all.
+    function test_anUnlistedPaymentTokenIsRefused() public {
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.PaymentTokenNotAccepted.selector, address(cash2)));
+        registry.purchase(id, 100e18, address(cash2));
+    }
+
+    function _one(address a) internal pure returns (address[] memory out) {
+        out = new address[](1);
+        out[0] = a;
+    }
+
     /// @dev Offerings are not editable once created, so a test that needs
     ///      different bounds creates a different offering rather than reaching
     ///      into storage.
     function _create(uint256 softCap, uint256 hardCap, uint256 min, uint256 max) internal returns (uint256) {
         address[] memory pay = new address[](1);
         pay[0] = address(cash);
+        return _createWith(pay, 1e18, new Tier[](0), softCap, hardCap, min, max);
+    }
+
+    function _createWith(
+        address[] memory pay,
+        uint256 price,
+        Tier[] memory tiers,
+        uint256 softCap,
+        uint256 hardCap,
+        uint256 min,
+        uint256 max
+    ) internal returns (uint256) {
         OfferingParams memory p = OfferingParams({
             token: address(token),
             paymentTokens: pay,
-            price: 1e18,
+            price: price,
+            tiers: tiers,
             softCap: softCap,
             hardCap: hardCap,
             minPerInvestor: min,

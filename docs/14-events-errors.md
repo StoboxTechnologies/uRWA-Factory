@@ -253,6 +253,7 @@ error AboveMaximum(uint256 amount, uint256 maximum);
 error HardCapExceeded(uint256 raised, uint256 hardCap);
 error AllocationExceeded(bytes32 subject, uint256 allocated, uint256 requested);
 error AlreadyRefunded(uint256 purchaseId);
+error PaymentTokenNotAccepted(address paymentToken); // purchase: paid in a currency the offering does not list
 error AddressIsPaused(address account);
 
 error CannotReplaceImmutableFunction(bytes4 selector);

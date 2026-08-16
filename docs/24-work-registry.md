@@ -95,7 +95,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 |---|---|---|---|---|
 | CU-01 | Treasury reservation, payment locking and the registry refund path | **Done** | CO-09 | — |
 | CU-02 | OfferingRegistry — one contract; the facet split is CU-07 | **Done** | CU-01 | — |
-| CU-03 | Purchase, bounds, hard cap. Tiered pricing and multi-currency outstanding | Ready | CU-02 | 0.75 |
+| CU-03 | Purchase, bounds, hard cap, **tiered pricing and multi-currency** | **Done** | CU-02 | — |
 | CU-04 | Dual-path refunds with idempotency | **Done** | CU-03 | — |
 | CU-05 | Offering-level rule engine | Planned | CU-02, PO-01 | 0.5 |
 | CU-06 | PurchaseFacet on the token side | Planned | CU-03 | 0.5 |
@@ -191,7 +191,7 @@ a runnable test is an opinion.
 
 ## What can start today
 
-`CU-03` · `UI-09` · `UI-10`
+`UI-09` · `UI-10`
 
 Phases 0 to 2 are all but closed, and the storage layout that gated everything is frozen. Standards
 work (`ST-*`) is parked for this cycle by decision of 15 August 2026 — see
@@ -290,14 +290,14 @@ merge → registry status updated in this document
 | CO — Core | 14 | 14 | 0 | 0 | 0 | — |
 | ID — Identity | 4 | 4 | 0 | 0 | 0 | — |
 | PO — Policy | 9 | 9 | 0 | 0 | 0 | — |
-| CU — Custody | 7 | 3 | 1 | 3 | 0 | 2.75 |
+| CU — Custody | 7 | 4 | 0 | 3 | 0 | 2 |
 | AG — Agents | 4 | 3 | 0 | 1 | 0 | 1 |
 | PA — Passport | 7 | 0 | 0 | 7 | 0 | 5.25 |
 | UI — Interfaces | 11 | 2 | 2 | 7 | 0 | 10 |
 | TO — Tooling | 5 | 0 | 0 | 4 | 1 | 3.75 |
 | OP — Operations | 9 | 2 | 0 | 7 | 0 | 2.75 |
 | ST — Standards | 6 | 0 | 0 | 4 | 2 | 3.5 |
-| **Total** | **87** | **48** | **3** | **33** | **3** | **≈29 engineer-weeks** |
+| **Total** | **87** | **49** | **2** | **33** | **3** | **≈28.25 engineer-weeks** |
 
 The remaining figure is the sum of the effort column over every row not marked Done — it is arithmetic
 over this table, not a fresh estimate. The original plan was ≈54 engineer-weeks over 79 items; the

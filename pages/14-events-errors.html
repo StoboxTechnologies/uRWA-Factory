@@ -556,6 +556,7 @@ error AboveMaximum(uint256 amount, uint256 maximum);
 error HardCapExceeded(uint256 raised, uint256 hardCap);
 error AllocationExceeded(bytes32 subject, uint256 allocated, uint256 requested);
 error AlreadyRefunded(uint256 purchaseId);
+error PaymentTokenNotAccepted(address paymentToken); // purchase: paid in a currency the offering does not list
 error AddressIsPaused(address account);
 
 error CannotReplaceImmutableFunction(bytes4 selector);
@@ -667,4 +668,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 6117639f31aa0344c8b08f7306a48eb024766420000e24f3f7abf577ed7df4b8 -->
+<!-- source-digest: ab15679323a92ca949dcae4994ce42c044c9cea9c6666048ecd50900d6281021 -->

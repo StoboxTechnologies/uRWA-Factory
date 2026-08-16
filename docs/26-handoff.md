@@ -48,7 +48,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The registry
 
-87 items. **48 done, 3 ready, 33 planned, 3 parked.** Full census in
+87 items. **49 done, 2 ready, 33 planned, 3 parked.** Full census in
 [24 — Totals](24-work-registry.md#totals).
 
 | Group | Items | Done | State |
@@ -58,7 +58,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 | CO — Core | 14 | 14 | Complete |
 | ID — Identity | 4 | 4 | Complete; three adapters, one interface |
 | PO — Policy | 9 | 9 | Complete — presets registered and applied at creation |
-| CU — Custody | 7 | 3 | Treasury and registry built; pricing and the facet split remain |
+| CU — Custody | 7 | 4 | Treasury, registry, tiered/multi-currency pricing; purchase facet and split remain |
 | AG — Agents | 4 | 3 | Mandates and DvP built |
 | PA — Passport | 7 | 0 | Not started — the whole of Phase 4 |
 | UI — Interfaces | 11 | 2 | Prototypes only; no real surface |
@@ -81,7 +81,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The tests
 
-**163 tests across 14 suites, all passing.**
+**168 tests across 14 suites, all passing.**
 
 | Suite | Tests | Holds |
 |---|---:|---|
@@ -96,7 +96,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 | `FreshChain.t.sol` | 9 | The whole stack on a chain with no Stobox contract on it |
 | `Policy.t.sol` | 14 | AND of ORs, a **per-rule** gas ceiling, and a rule that reverts refuses |
 | `Identity.t.sol` | 11 | Three adapters behind one interface; a reverting registry is survived |
-| `Offering.t.sol` | 17 | Purchases, allocations, refunds that cannot be taken twice |
+| `Offering.t.sol` | 22 | Purchases, tiered/multi-currency pricing, refunds that cannot be taken twice |
 | `AgentsAndSettlement.t.sol` | 21 | Mandates that cannot be exceeded; trades that cannot half-settle |
 | `Preset.t.sol` | 6 | A regime preset is applied at creation and enforces |
 
@@ -284,7 +284,7 @@ permissionless deliberately, and say so in their own comments.
 |---|---|
 | The documentation agrees with the code | `python3 verify.py` — 44 checks, all four levels |
 | The checks are not decorative | `python3 verify.py --self-test` — each one fails on its own known-bad fixture |
-| The invariants hold at runtime | `forge test` — 163 tests, 14 suites |
+| The invariants hold at runtime | `forge test` — 168 tests, 14 suites |
 | Every invariant has an owner | `L3.8`, which fails if a test stops naming one |
 | Every documented caller is enforced | `L3.6` — delete any guard in `src/` and it names the function |
 | The documentation cannot drift | Edit any `docs/*.md`, push, and watch CI fail until `build-docs.py` is run and committed |
@@ -323,7 +323,7 @@ results changed, not on every run.
 
 | # | Item | Why this order |
 |---|---|---|
-| 1 | `CU-03`, `CU-06`, `CU-07` — pricing, the purchase facet, the registry split | Closes the money paths before the pre-audit freeze |
+| 1 | `CU-06` — the PurchaseFacet on the token side, and `CU-05` — offering-level rules | The remaining money-path work; `CU-07` (the facet split) is parked behind the audit by design |
 | 2 | Branch coverage on `uRWAToken`, `uRWAFactory`, `RolesFacet`, `AtomicDvP` | Findings 2 and 3, before anything is frozen |
 | 3 | `TO-01` — the conformance kit | Unparks `ST-02`, and is the piece that makes the work useful to somebody else's token |
 
@@ -350,12 +350,12 @@ path to an audit.
 | **0 · Interfaces** | IF-01…04 | **Done** — storage frozen |
 | **1 · Core** | CO, ID | **Done** — 14 of 14 |
 | **2 · Policy** | PO | **Done** — 9 of 9 |
-| **3 · Custody** | CU, AG | **6 of 11** — pricing, purchase facet, registry split |
+| **3 · Custody** | CU, AG | **7 of 11** — purchase facet, offering rules, registry split |
 | **4 · Passport** | PA | Not started |
 | **5 · Interfaces** | UI | Prototypes only |
 | **6 · Release** | OP-05…08 | Audit, remediation, mainnet |
 
-**≈29 engineer-weeks remaining**, arithmetic over the registry rather than a fresh estimate. The
+**≈28.25 engineer-weeks remaining**, arithmetic over the registry rather than a fresh estimate. The
 groups that have shipped were re-estimated by being built; `PA`, `UI` and `OP` still carry their
 original figures and should be re-argued before anyone commits to them.
 

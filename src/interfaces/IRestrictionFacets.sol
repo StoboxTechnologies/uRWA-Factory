@@ -77,7 +77,7 @@ interface IEmergencyFacet {
 /// @title Offering entry point on the token side
 /// @notice Optional. A token with no primary sale never installs it.
 interface IPurchaseFacet {
-    function purchase(uint256 offeringId, uint256 amount) external;
+    function purchase(uint256 offeringId, uint256 amount, address paymentToken) external;
 
     function previewPurchase(uint256 offeringId, uint256 amount)
         external

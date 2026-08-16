@@ -389,7 +389,7 @@ destination, that destination is onboarded first.
 
 | Function | Does | Called by | Why |
 |---|---|---|---|
-| `purchase(offeringId, amount)` | Buys tokens in an active offering | Investor | The primary sale |
+| `purchase(offeringId, amount, paymentToken)` | Buys tokens in an active offering, paying in any accepted currency | Investor | The primary sale; tiered pricing is consumed across the raise |
 | `previewPurchase(offeringId, amount) → (cost, tokens, unlockAt)` | Calculates before committing | Investor, UI | Nobody should sign before seeing the price and the lockup |
 | `refundPurchase(purchaseId)` | Claims a refund | Investor | Soft cap missed — the investor gets their money back without anyone's permission |
 
