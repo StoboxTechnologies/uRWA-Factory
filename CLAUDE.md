@@ -1,5 +1,25 @@
 # Working rules for this repository
 
+## The session cycle
+
+Every working session follows the same cycle, and none of it is optional:
+
+1. **Build** the session's work.
+2. **Audit it** — `python3 verify.py`, `forge test`, and for any substantive change a multi-agent
+   adversarial audit (finders by subsystem, plus skeptics that try to refute each finding).
+3. **Audit the audit** — `python3 verify.py --self-test` (every check must fail its own fixture),
+   every new test proven by reverting its fix, every finding re-read against the code before it is
+   acted on.
+4. **Log** the session in [docs/34-build-log.md](docs/34-build-log.md) — newest entry first: what
+   shipped, what was audited and its results, what the audit found and how it was resolved, what is
+   open. Write an entry even when nothing was found; "audited, clean" is a result.
+5. **Refresh the handoff** — [docs/26-handoff.md](docs/26-handoff.md) must reflect the end state.
+
+The commit that closes a session includes its build-log entry. The next session opens by reading the
+top of the build log and the handoff, and starts from the recorded gaps before taking on new work.
+This makes the *process* auditable, not only the code: a gap found in one session is provably carried
+into the next rather than lost.
+
 ## The design system is one file
 
 `theme.css` at the repository root declares every colour, face, radius, shadow and control in this

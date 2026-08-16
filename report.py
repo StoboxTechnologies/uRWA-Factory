@@ -207,6 +207,7 @@ def main():
         "## Related",
         "",
         "- [31 — Verification framework](31-verification.md) — what each level checks and cannot check",
+        "- [34 — Build log](34-build-log.md) — the session-by-session history these results belong to",
         "- [23 — Testing plan](23-testing-plan.md) — what each phase must prove",
         "- [20 — Development plan](20-development-plan.md) — when the rest arrives",
         "",

@@ -114,6 +114,7 @@ document, with previous and next.
 | 31 | [Verification framework](docs/31-verification.md) |
 | 32 | [FAQ](docs/32-faq.md) |
 | 33 | [Test results](docs/33-test-results.md) |
+| 34 | [Build log](docs/34-build-log.md) |
 
 </td></tr>
 </table>
