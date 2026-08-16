@@ -107,6 +107,8 @@ Stated rather than hidden.
 14. **The fee is zero in the default deployment, any non-zero fee is publicly readable before a
     transaction, and no STBU reference exists anywhere in the open-source code.**
 15. No open-source contract references any Stobox address.
+16. The loupe agrees with the router: every selector the report claims routes where it says, every
+    routed selector is reported exactly once, and no facet is listed that serves nothing.
 
 ## Audit strategy
 

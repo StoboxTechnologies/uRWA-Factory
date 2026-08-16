@@ -138,6 +138,11 @@ which is the point of departure from STV3, where the factory retains `DEFAULT_AD
 | `REGISTRY_ADMIN` | Upgrade the registry, set default payment tokens, force offering status |
 | `OFFERING_OPERATOR` | Create, activate, pause, close, cancel offerings; process refunds; attach rules |
 
+**The offering operator is bound per offering, not per registry.** Whoever creates an offering is
+recorded as its operator and is the only address that can govern it. One registry serves every issuer
+on the chain, so a registry-wide operator role would let one issuer's operator reach another issuer's
+raise. `REGISTRY_ADMIN` is registry-wide; `OFFERING_OPERATOR` never is.
+
 ## Passport roles
 
 | Role | Can |

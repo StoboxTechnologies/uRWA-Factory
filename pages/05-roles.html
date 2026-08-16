@@ -521,6 +521,7 @@ bytes32 constant COMPLIANCE_OFFICER = keccak256(&quot;urwa.role.compliance&quot;
 <p>The factory is permissionless: <code>createToken</code> has no access control. <code>FACTORY_ADMIN</code> governs only the factory&#x27;s own configuration. A deployed token is never controllable by the factory after creation — which is the point of departure from STV3, where the factory retains <code>DEFAULT_ADMIN_ROLE</code>.</p>
 <h3 id="05-offering-registry-roles">Offering registry roles</h3>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Role</th><th style="text-align:left">Can</th></tr></thead><tbody><tr><td style="text-align:left"><code>REGISTRY_ADMIN</code></td><td style="text-align:left">Upgrade the registry, set default payment tokens, force offering status</td></tr><tr><td style="text-align:left"><code>OFFERING_OPERATOR</code></td><td style="text-align:left">Create, activate, pause, close, cancel offerings; process refunds; attach rules</td></tr></tbody></table></div>
+<p><strong>The offering operator is bound per offering, not per registry.</strong> Whoever creates an offering is recorded as its operator and is the only address that can govern it. One registry serves every issuer on the chain, so a registry-wide operator role would let one issuer&#x27;s operator reach another issuer&#x27;s raise. <code>REGISTRY_ADMIN</code> is registry-wide; <code>OFFERING_OPERATOR</code> never is.</p>
 <h3 id="05-passport-roles">Passport roles</h3>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Role</th><th style="text-align:left">Can</th></tr></thead><tbody><tr><td style="text-align:left"><code>PASSPORT_ADMIN</code></td><td style="text-align:left">Upgrade, manage attestor registry</td></tr><tr><td style="text-align:left"><code>PASSPORT_ISSUER</code></td><td style="text-align:left">Mint passports, anchor snapshots, confirm token links</td></tr><tr><td style="text-align:left"><em>(passport owner)</em></td><td style="text-align:left">Grant and revoke access to their own record</td></tr><tr><td style="text-align:left"><code>ATTESTOR</code></td><td style="text-align:left">Record attestations within their engagement scope</td></tr></tbody></table></div>
 <h3 id="05-stoboxdid-roles">StoboxDID roles</h3>
@@ -612,4 +613,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: d9a9cdf3917dbd8c4ebe79e40f3cb1d06380d5ee38704987f19e7a5e745df077 -->
+<!-- source-digest: 9a4eb9c685596e9ac0102268af34241a148d0b3ae3957394fa234e5a765f73fa -->

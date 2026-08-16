@@ -23,9 +23,8 @@ Facets share the token's storage through `delegatecall`. Each owns one namespace
 
 | Facet | Responsibility | Storage owned | In default package |
 |---|---|---|---|
-| *(diamond core)* | ERC-20 accounting, fallback router, ERC-2612 permit | `CoreStorage` | Always — immutable |
+| *(diamond core)* | ERC-20 accounting, fallback router, ERC-2612 permit, **the loupe** | `CoreStorage` | Always — immutable |
 | `DiamondCutFacet` | Add, replace and remove facets; enforces the upgrade delay | `UpgradeStorage` | Yes |
-| `DiamondLoupeFacet` | Introspection, ERC-165 | — | Yes |
 | `ComplianceFacet` | The transfer hook; ERC-7943 views; trust list; pause | `ComplianceStorage` | Yes |
 | `FreezeFacet` | Admin freeze, composed frozen total | `FreezeStorage` | Yes |
 | `LockupFacet` | Dated lockup schedules | `LockupStorage` | Yes |
@@ -33,6 +32,12 @@ Facets share the token's storage through `delegatecall`. Each owns one namespace
 | `RolesFacet` | Role grant and revoke | `RolesStorage` | Yes |
 | `PurchaseFacet` | Offering entry point on the token side | — | Optional |
 | `EmergencyFacet` | Forced transfer, mint, burn | — | **No — opt-in only** |
+
+**The loupe is not a facet.** `facets`, `facetAddresses`, `facetAddress`, `facetFunctionSelectors`
+and `supportsInterface` are registered against the diamond itself, alongside the ERC-20 core, and no
+cut can replace or remove them. A loupe an administrator can remove proves nothing on the day
+somebody needs it to — and everything an outsider can establish about a deployed token, including
+that seizure is absent, is read through it.
 
 `EmergencyFacet` is not installed by default. Installing it is a deliberate act by the issuer,
 consistent with how STV3 treats the same functionality.
@@ -75,7 +80,6 @@ All three expose the identical interface. The token neither knows nor cares whic
 | Facet | Responsibility |
 |---|---|
 | `DiamondCutFacet` | Upgrade the factory |
-| `DiamondLoupeFacet` | Introspection |
 | `CreateFacet` | `createToken`, `createTokenWithOffering` |
 | `PackageFacet` | Register and query facet packages |
 | `PresetFacet` | Register and query policy presets |

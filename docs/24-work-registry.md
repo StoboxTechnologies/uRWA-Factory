@@ -49,7 +49,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 |---|---|---|---|---|
 | CO-01 | Diamond core: immutable ERC-20, ERC-2612, fallback router | **Done** | IF-02 | — |
 | CO-02 | DiamondCutFacet with the upgrade delay; loupe reads on the core | **Done** | CO-01 | — |
-| CO-02a | DiamondLoupeFacet — full introspection surface | Ready | CO-02 | 0.25 |
+| CO-02a | Full loupe, in the diamond core rather than a removable facet | **Done** | CO-02 | — |
 | CO-03 | ComplianceFacet: pipeline, ERC-7943 views, `whyBlocked` | **Done** | CO-01 | — |
 | CO-04 | Trust list, global pause and per-address pause | **Done** | CO-03 | — |
 | CO-05 | Subject-level holder accounting | **Done** | CO-03 | — |
@@ -191,7 +191,7 @@ a runnable test is an opinion.
 
 ## What can start today
 
-`CO-02a` · `CU-03` · `UI-09` · `UI-10`
+`CU-03` · `UI-09` · `UI-10`
 
 Phases 0 to 2 are all but closed, and the storage layout that gated everything is frozen. Standards
 work (`ST-*`) is parked for this cycle by decision of 15 August 2026 — see
@@ -287,7 +287,7 @@ merge → registry status updated in this document
 |---|---:|---:|---:|---:|---:|---:|
 | SP — Specification | 7 | 7 | 0 | 0 | 0 | — |
 | IF — Interfaces | 4 | 4 | 0 | 0 | 0 | — |
-| CO — Core | 14 | 13 | 1 | 0 | 0 | 0.25 |
+| CO — Core | 14 | 14 | 0 | 0 | 0 | — |
 | ID — Identity | 4 | 4 | 0 | 0 | 0 | — |
 | PO — Policy | 9 | 8 | 0 | 1 | 0 | 0.5 |
 | CU — Custody | 7 | 3 | 1 | 3 | 0 | 2.75 |
@@ -297,7 +297,7 @@ merge → registry status updated in this document
 | TO — Tooling | 5 | 0 | 0 | 4 | 1 | 3.75 |
 | OP — Operations | 9 | 2 | 0 | 7 | 0 | 2.75 |
 | ST — Standards | 6 | 0 | 0 | 4 | 2 | 3.5 |
-| **Total** | **87** | **46** | **4** | **34** | **3** | **≈29.75 engineer-weeks** |
+| **Total** | **87** | **47** | **3** | **34** | **3** | **≈29.5 engineer-weeks** |
 
 The remaining figure is the sum of the effort column over every row not marked Done — it is arithmetic
 over this table, not a fresh estimate. The original plan was ≈54 engineer-weeks over 79 items; the

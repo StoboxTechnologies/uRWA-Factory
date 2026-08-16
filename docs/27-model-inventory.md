@@ -74,7 +74,7 @@ Everything the project produces. Status is the same vocabulary as [24](24-work-r
 | ID | Artifact | Kind | Status | Owner | Check |
 |---|---|---|---|---|---|
 | C-01 | Unit suites, per contract | Foundry | Planned | Engineering | Coverage floor per contract, enforced in CI |
-| C-02 | Invariant suites — fifteen | Foundry | Planned | Engineering | All fifteen of `L4.1`…`L4.15` present |
+| C-02 | Invariant suites — sixteen | Foundry | **Done** | Engineering | All sixteen of `L4.1`…`L4.16` present, and `L3.6` fails the build when one loses its owner |
 | C-03 | Fork tests against live StoboxDID, EAS, USDC | Foundry | Planned | Engineering | Runs against a pinned block, not `latest` |
 | C-04 | Fresh-chain deploy test | CI + anvil | Planned | Engineering | `L4.13` — no Stobox address in the trace |
 | C-05 | ERC-7943 conformance kit | Separate repo | Planned | Architecture | Passes against a token this factory issued |
@@ -102,7 +102,7 @@ Everything the project produces. Status is the same vocabulary as [24](24-work-r
 | E-03 | CI: build, test, invariants, coverage, gas | Actions | Planned | Engineering | Red on any failing invariant or gas regression |
 | E-04 | Deployment manifest | JSON | Planned | Engineering | Every deployed address matches its loupe report |
 | E-05 | Facet verification and loupe report | Script | Planned | Engineering | Every selector maps to a verified source file |
-| E-06 | Incident-response runbook | Document | Planned | Compliance | Each of the fifteen invariants names a response |
+| E-06 | Incident-response runbook | Document | Planned | Compliance | Each of the sixteen invariants names a response |
 | E-07 | Signed releases with audit reports | Tags | Planned | Engineering | Tag signed; audit report attached to the release |
 
 ### F — Governance artifacts

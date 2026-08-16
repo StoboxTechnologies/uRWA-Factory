@@ -7,7 +7,7 @@
 | **ERC-7943 (uRWA)** | Primary compliance interface | `ComplianceFacet`, `FreezeFacet`, `EmergencyFacet` |
 | **ERC-20** | Token base | Diamond core, immutable |
 | **EIP-2535** | Modularity and upgrade | Diamond |
-| **ERC-165** | Interface discovery | `DiamondLoupeFacet` |
+| **ERC-165** | Interface discovery | The diamond core — immutable |
 | **ERC-173** | Ownership | Diamond core |
 | **ERC-1404** | Legacy restriction reporting | `ComplianceFacet` — integrator compatibility |
 | **ERC-2612** | Gasless approval | Diamond core |

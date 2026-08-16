@@ -104,7 +104,7 @@ A package is a named, versioned set of facet cuts.
 
 | Package | Contents |
 |---|---|
-| `base` | Cut, Loupe, Compliance, Freeze, Lockup, Monetary, Roles |
+| `base` | Cut, Compliance, Freeze, Lockup, Monetary, Roles — the loupe is in the core |
 | `base+purchase` | `base` + PurchaseFacet |
 | `base+emergency` | `base` + EmergencyFacet — **opt-in, requires explicit issuer action** |
 | `full` | Everything |

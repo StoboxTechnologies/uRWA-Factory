@@ -949,7 +949,7 @@ def _(c):
     documented = set(re.findall(r"`(L[0-5]\.\d+)`", c.d("31")))
     if not documented:
         return ["doc 31 lists no checks"]
-    deferred = {"L3.6", "L3.7"} | {f"L4.{i}" for i in range(1, 16)} | {f"L5.{i}" for i in range(1, 6)}
+    deferred = {"L3.7"} | {f"L4.{i}" for i in range(1, 17)} | {f"L5.{i}" for i in range(1, 6)}
     implemented = {ch["id"] for ch in CHECKS}
     out = [f"{k} is documented but not implemented" for k in sorted(documented - implemented - deferred)]
     out += [f"{k} is implemented but not documented in doc 31" for k in sorted(implemented - documented)]
@@ -1140,6 +1140,17 @@ def doc_named(text, pattern):
     return set(re.findall(pattern, text))
 
 
+def sol_strip_comments(text):
+    """Solidity with comments removed.
+
+    The word "contract" appears in prose far more often than in code, and a
+    block parser that reads a sentence as a declaration invents contracts that
+    do not exist — then judges them.
+    """
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+    return re.sub(r"//[^\n]*", "", text)
+
+
 def sol_blocks(text, keyword):
     """`contract`/`library` name → body, by brace matching rather than regex.
 
@@ -1195,6 +1206,9 @@ def sol_guard(name, fns, seen=None):
         if re.search(r"msg\.sender|ecrecover", body):
             checks = True
         roles |= set(re.findall(r"roles\[Roles\.(\w+)\]\[msg\.sender\]", body))
+        # A contract with one administrator names the role it is standing in
+        # for in the error it reverts with. That is the enforcement, stated.
+        roles |= set(re.findall(r"NotAuthorized\(msg\.sender,\s*Roles\.(\w+)\)", body))
     return roles, checks
 
 
@@ -1235,8 +1249,9 @@ def _(c):
     """
     if not c.solidity:
         return ["no Solidity sources found"]
-    contracts = sol_blocks(c.solidity, "contract")
-    contracts.update(sol_blocks(c.solidity, "library"))
+    source = sol_strip_comments(c.solidity)
+    contracts = sol_blocks(source, "contract")
+    contracts.update(sol_blocks(source, "library"))
     roles = set(re.findall(r"(\w+)\s*=\s*keccak256\(\"urwa\.role\.", c.solidity))
     if not roles:
         return ["no role constants found in Solidity"]
@@ -1250,7 +1265,16 @@ def _(c):
                 if fn in fns:
                     found = (name, fns)
                     break
-        # Not built yet — the passport and the emergency facet are specified
+        # A heading that names no contract we build, or names one that does not
+        # serve the function: fall back to a unique implementation elsewhere.
+        # Unique, because `settle`, `cancel` and `refund` each exist twice, and
+        # judging the wrong one is worse than judging neither.
+        if not found:
+            candidates = [(n, f) for n, f in
+                          ((n, sol_implementations(b)) for n, b in contracts.items()) if fn in f]
+            if len(candidates) == 1:
+                found = candidates[0]
+        # Still nothing: the passport and the emergency facet are specified
         # only, and `L3.1` already holds them to their interfaces.
         if not found:
             continue

@@ -81,14 +81,19 @@ would break ordinary DeFi patterns without adding safety, because the transfer i
 
 ---
 
-## DiamondCutFacet and DiamondLoupeFacet
+## DiamondCutFacet and the loupe
 
-**What this is.** The EIP-2535 machinery: one facet changes the function table, the other reads it.
-Both are installed on the token, the factory and the offering registry — every diamond in the system.
+**What this is.** The EIP-2535 machinery: a facet changes the function table, and the diamond itself
+reads it out.
 
-**Who it is for.** `DiamondCutFacet` is for the upgrade admin. `DiamondLoupeFacet` is for **everyone
-else** — it is how an outsider proves which code a deployed token actually runs, without trusting
-anything we say about it.
+**Who it is for.** `DiamondCutFacet` is for the upgrade admin. The loupe is for **everyone else** —
+it is how an outsider proves which code a deployed token actually runs, without trusting anything we
+say about it.
+
+**The loupe is part of the ledger plane, not a facet.** Its five selectors are registered against the
+diamond, so `diamondCut` cannot replace or remove them. This is deliberate: introspection that an
+administrator can switch off is introspection nobody can rely on, and every claim the verifier makes
+about a token is read through these functions.
 
 | Function | Does | Called by | Why |
 |---|---|---|---|
@@ -402,14 +407,19 @@ operator who is absent, unwilling or insolvent must not be able to strand funds.
 | Function | Does | Called by | Why |
 |---|---|---|---|
 | `evaluate(from, to, amount) → (ok, failingRule, reason)` | Runs every rule | The token, agents | The compliance decision |
-| `addGroup(group)` | Creates an OR-group | UPGRADE_ADMIN | Expressing "professional **or** accredited" |
-| `removeGroup(group)` | Deletes one | UPGRADE_ADMIN | Regime change |
-| `addRule(group, rule)` | Adds a rule to a group | UPGRADE_ADMIN | Extending a regime |
-| `removeRule(group, rule)` | Removes one | UPGRADE_ADMIN | Same |
+| `addGroup(group)` | Creates an OR-group | The policy set's owner | Expressing "professional **or** accredited" |
+| `removeGroup(group)` | Deletes one | The policy set's owner | Regime change |
+| `addRule(group, rule)` | Adds a rule to a group | The policy set's owner | Extending a regime |
+| `removeRule(group, rule)` | Removes one | The policy set's owner | Same |
 | `groups() → bytes32[]` | All groups | **Anyone** | Public transparency of the live policy |
 | `rulesOf(group) → address[]` | Rules in a group | **Anyone** | Same |
 | `ruleCount() → uint256` | Total rules | Anyone, gas estimation | Cost visibility |
 | `maxRules() → uint256` | The hard cap | Anyone | Proof that an admin cannot gas-grief the token |
+
+**Why an owner rather than a token role.** A policy set is a standalone contract and may be shared
+by several tokens, so there is no one token whose role register could govern it. It answers to the
+address that deployed it. An issuer who wants a regime nobody else can change deploys their own,
+which costs one transaction.
 
 **How composition works.** Groups AND together; rules inside a group OR. `(identity) AND (EU
 professional OR US accredited) AND (sanctions clear)` covers essentially every real regime without a
@@ -554,7 +564,7 @@ accidentally break refundability.
 The factory is itself a diamond. `CreateFacet` serves the two creation calls; `PackageFacet` and
 `PresetFacet` hold the facet packages and policy presets they draw on; `RegistryFacet` records what
 was deployed and answers `isFactoryIssued`; `FeeFacet` holds the fee token and amount, **which are
-zero in the open distribution**; `DiamondCutFacet` and `DiamondLoupeFacet` are as above.
+zero in the open distribution**; `DiamondCutFacet` and the loupe are as above.
 
 | Function | Does | Called by | Why |
 |---|---|---|---|
@@ -650,7 +660,7 @@ path: `OfferingGovernanceFacet` (create, activate, pause, close, cancel), `Offer
 
 | Function | Does | Called by | Why |
 |---|---|---|---|
-| `createOffering(params) → id` | Defines a sale | OFFERING_OPERATOR | Price, caps, dates, rules, regime |
+| `createOffering(params) → id` | Defines a sale | Anyone — the caller becomes the offering's operator | Price, caps, dates, rules, regime. Creating one grants authority over that offering and no other |
 | `activate(id)` | Opens it | OFFERING_OPERATOR | Go live |
 | `pause(id)` / `unpause(id)` | Suspends and resumes | OFFERING_OPERATOR | Issues mid-raise |
 | `close(id)` | Ends purchasing | OFFERING_OPERATOR | End date or hard cap |

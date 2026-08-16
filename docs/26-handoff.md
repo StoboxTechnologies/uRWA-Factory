@@ -32,7 +32,7 @@ python3 report.py
 |---|---|---|
 | `verify.py` | The documentation agrees with itself and with the Solidity | `44/44 checks passed` |
 | `verify.py --self-test` | Every check still fails on its own known-bad fixture | `44/44 checks verified` |
-| `forge test` | The runtime invariants hold | `131 tests passed` |
+| `forge test` | The runtime invariants hold | `141 tests passed` |
 | `report.py` | Regenerates [33 — Test results](33-test-results.md) from a real run | A diff in the timestamp only |
 
 If any of the three is red before you have changed anything, stop and fix that first. Everything in
@@ -48,14 +48,14 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The registry
 
-87 items. **46 done, 4 ready, 34 planned, 3 parked.** Full census in
+87 items. **47 done, 3 ready, 34 planned, 3 parked.** Full census in
 [24 — Totals](24-work-registry.md#totals).
 
 | Group | Items | Done | State |
 |---|---:|---:|---|
 | SP — Specification | 7 | 7 | Complete |
 | IF — Interfaces | 4 | 4 | Complete; storage frozen |
-| CO — Core | 14 | 13 | `CO-02a`, the full loupe facet, remains |
+| CO — Core | 14 | 14 | Complete |
 | ID — Identity | 4 | 4 | Complete; three adapters, one interface |
 | PO — Policy | 9 | 8 | Rule library built; `PO-08`, the regime presets, remains |
 | CU — Custody | 7 | 3 | Treasury and registry built; pricing and the facet split remain |
@@ -81,12 +81,13 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The tests
 
-**131 tests across 12 suites, all passing.**
+**141 tests across 13 suites, all passing.**
 
 | Suite | Tests | Holds |
 |---|---:|---|
 | `InterfacePackage.t.sol` | 6 | The interface id is computed from our own declaration, not copied |
 | `LedgerPlane.t.sol` | 12 | The ledger cannot be cut out, and fails closed when compliance is |
+| `Loupe.t.sol` | 10 | The report and the router agree, after every kind of cut |
 | `CompliancePipeline.t.sol` | 13 | Seven gates, in order, with the reason preserved |
 | `SubjectAccounting.t.sol` | 6 | Caps count people; the counters cannot be moved from outside |
 | `Restrictions.t.sol` | 10 | Freeze and lockups compose into one available balance |
@@ -173,7 +174,7 @@ those fields hold live balances, and the field that moves takes somebody's money
 
 ## Part 4 · Invariants and their owners
 
-Fifteen runtime invariants, each named in [31](31-verification.md#l4--runtime-invariants) and each
+Sixteen runtime invariants, each named in [31](31-verification.md#l4--runtime-invariants) and each
 claimed by at least one test. `L3.8` fails the build if any of them stops having an owner.
 
 | Invariant | Holds | Owner |
@@ -193,6 +194,7 @@ claimed by at least one test. `L3.8` fails the build if any of them stops having
 | `L4.13` | The whole stack deploys with no Stobox contract present | `FreshChain.t.sol` |
 | `L4.14` | A payment leg cannot settle without its security leg | `AgentsAndSettlement.t.sol` |
 | `L4.15` | No agent action exceeds its mandate | `AgentsAndSettlement.t.sol` |
+| `L4.16` | The loupe agrees with the router, after every kind of cut | `Loupe.t.sol` |
 
 An invariant with an owner is not the same as an invariant that is well tested. `L3.8` proves the
 first, and nothing automatic can prove the second.
@@ -254,7 +256,7 @@ permissionless deliberately, and say so in their own comments.
 |---|---|
 | The documentation agrees with the code | `python3 verify.py` — 44 checks, all four levels |
 | The checks are not decorative | `python3 verify.py --self-test` — each one fails on its own known-bad fixture |
-| The invariants hold at runtime | `forge test` — 131 tests, 12 suites |
+| The invariants hold at runtime | `forge test` — 141 tests, 13 suites |
 | Every invariant has an owner | `L3.8`, which fails if a test stops naming one |
 | Every documented caller is enforced | `L3.6` — delete any guard in `src/` and it names the function |
 | The documentation cannot drift | Edit any `docs/*.md`, push, and watch CI fail until `build-docs.py` is run and committed |
@@ -293,11 +295,10 @@ results changed, not on every run.
 
 | # | Item | Why this order |
 |---|---|---|
-| 1 | `CO-02a` — the full loupe facet | The last item in Phase 1, and every tool that introspects a diamond wants it |
-| 2 | `PO-08` — the four regime presets, with the MiCA key names confirmed | Closes Phase 2 and settles finding 7 |
-| 3 | `CU-03`, `CU-06`, `CU-07` — pricing, the purchase facet, the registry split | Closes the money paths before the pre-audit freeze |
-| 4 | Branch coverage on `uRWAToken`, `uRWAFactory`, `RolesFacet`, `AtomicDvP` | Findings 2 and 3, before anything is frozen |
-| 5 | `TO-01` — the conformance kit | Unparks `ST-02`, and is the piece that makes the work useful to somebody else's token |
+| 1 | `PO-08` — the four regime presets, with the MiCA key names confirmed | Closes Phase 2 and settles finding 7 |
+| 2 | `CU-03`, `CU-06`, `CU-07` — pricing, the purchase facet, the registry split | Closes the money paths before the pre-audit freeze |
+| 3 | Branch coverage on `uRWAToken`, `uRWAFactory`, `RolesFacet`, `AtomicDvP` | Findings 2 and 3, before anything is frozen |
+| 4 | `TO-01` — the conformance kit | Unparks `ST-02`, and is the piece that makes the work useful to somebody else's token |
 
 Phase 4 (`PA-*`) and Phase 5 (`UI-*`) can start in parallel at any point. Neither is on the critical
 path to an audit.
@@ -309,8 +310,8 @@ path to an audit.
 ```
   HERE                                                     AUDIT      LIVE
    │                                                         │          │
-   ├─ CO-02a ─▶ PO-08 ─▶ CU ─────────────────────────────────┼──▶ OP ──▶│
-   │   0.25w    0.5w     2.75w                               │   audit  │
+   ├─ PO-08 ─▶ CU ───────────────────────────────────────────┼──▶ OP ──▶│
+   │   0.5w     2.75w                                        │   audit  │
    │                                                         │
    ├──▶ PA   5.25w   (parallel, not on the critical path)    │
    ├──▶ TO   3.75w   (conformance kit first)                 │
@@ -320,14 +321,14 @@ path to an audit.
 | Phase | Registry | State |
 |---|---|---|
 | **0 · Interfaces** | IF-01…04 | **Done** — storage frozen |
-| **1 · Core** | CO, ID | **13 of 14** — `CO-02a` remains |
+| **1 · Core** | CO, ID | **Done** — 14 of 14 |
 | **2 · Policy** | PO | **8 of 9** — `PO-08` remains |
 | **3 · Custody** | CU, AG | **6 of 11** — pricing, purchase facet, registry split |
 | **4 · Passport** | PA | Not started |
 | **5 · Interfaces** | UI | Prototypes only |
 | **6 · Release** | OP-05…08 | Audit, remediation, mainnet |
 
-**≈29.75 engineer-weeks remaining**, arithmetic over the registry rather than a fresh estimate. The
+**≈29.5 engineer-weeks remaining**, arithmetic over the registry rather than a fresh estimate. The
 groups that have shipped were re-estimated by being built; `PA`, `UI` and `OP` still carry their
 original figures and should be re-argued before anyone commits to them.
 

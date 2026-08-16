@@ -103,8 +103,7 @@
 <script>
 (function(){
 const FACETS=[
- {n:"DiamondCutFacet",v:"1.0.0",a:"0x3d5aE1c0…8b41",s:1,req:1,ver:1,d:"Adds, replaces and removes facets."},
- {n:"DiamondLoupeFacet",v:"1.0.0",a:"0x91cc04dE…2a77",s:5,req:1,ver:1,d:"Introspection and ERC-165."},
+ {n:"DiamondCutFacet",v:"1.0.0",a:"0x3d5aE1c0…8b41",s:5,req:1,ver:1,d:"Adds, replaces and removes facets; holds the upgrade delay."},
  {n:"ComplianceFacet",v:"1.0.0",a:"0x5c8Fd91b…d9e2",s:16,req:1,ver:1,d:"The transfer pipeline, ERC-7943 views, trust list, pause."},
  {n:"FreezeFacet",v:"1.0.0",a:"0xA47b20cE…11f4",s:4,req:1,ver:1,d:"Admin freeze and the composed frozen total."},
  {n:"LockupFacet",v:"1.0.0",a:"0xEe0913aD…6c30",s:6,req:1,ver:1,d:"Dated lockups that expire without a transaction."},
@@ -178,7 +177,7 @@ function ov(){
 function fa(){
  if(S.facet) return facetDetail(S.facet);
  return `<h1>Facets</h1><p class="sub">Every function the token exposes comes from one of these. The list is read from the diamond loupe, so it is what is actually installed — not what someone recorded.</p>
- <div class="note"><b>The core is not here</b>ERC-20 accounting is registered against the diamond itself, so it cannot be replaced or removed by any cut. Nothing on this page can change a balance.</div>
+ <div class="note"><b>The core is not here</b>ERC-20 accounting and the loupe are registered against the diamond itself — nineteen selectors that no cut can replace or remove. Nothing on this page can change a balance, and nothing on it can stop you reading this list.</div>
  <div class="card"><div class="tw"><table>
   <thead><tr><th>Facet</th><th>Version</th><th class="m">Address</th><th>Selectors</th><th>Verified</th><th></th></tr></thead>
   <tbody>${FACETS.map(f=>{
@@ -204,8 +203,7 @@ function facetDetail(n){
   MonetaryFacet:["issue","redeem","distributeFromTreasury","totalIssued","setMaxSupply","capLocked","treasury","setTreasury","offeringRegistry","setOfferingRegistry"],
   RolesFacet:["grantRole","revokeRole","renounceRole","hasRole","getRoleMember","getRoleMemberCount","roleAdmin"],
   EmergencyFacet:["forcedTransfer","forcedTransfer(reason)","forcedMint","forcedBurn"],
-  DiamondCutFacet:["diamondCut"],
-  DiamondLoupeFacet:["facets","facetFunctionSelectors","facetAddresses","facetAddress","supportsInterface"],
+  DiamondCutFacet:["diamondCut","cancelCut","upgradeDelay","scheduledAt","setUpgradeDelay"],
   PurchaseFacet:["purchase","previewPurchase","refundPurchase"]
  }[n]||[];
  return `<button class="btn s" data-go="fa" style="margin-bottom:14px">← All facets</button>

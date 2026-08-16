@@ -51,7 +51,7 @@ and every holder's trust.
 | Task | Output | Proves |
 |---|---|---|
 | `CO-01` Diamond core: immutable ERC-20, ERC-2612, fallback router | `uRWAToken.sol` | `L4.1` — selectors cannot be replaced |
-| `CO-02` Cut and loupe facets | facets | Loupe report matches the published package |
+| `CO-02` Cut facet; the loupe in the core | facets | Loupe report matches the published package, and agrees with the router after every kind of cut |
 | `CO-03` `ComplianceFacet`: pipeline, ERC-7943 views, `whyBlocked` | facet | `L4.2` — no view reverts, fuzzed |
 | `CO-04` Trust list and global pause | facet | `L4.9` — trust never bypasses pause |
 | `CO-05` Subject-level holder accounting | facet | `L4.5`, `L4.6` — caps count subjects |

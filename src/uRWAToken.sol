@@ -44,6 +44,18 @@ contract uRWAToken is IuRWAToken, IEvents, IErrors {
         sel[13] = IuRWAToken.DOMAIN_SEPARATOR.selector;
     }
 
+    /// @dev The loupe. Immutable for the same reason the ledger is: an outsider
+    ///      proving what a token runs must not depend on the issuer having left
+    ///      the means to prove it installed.
+    function _loupeSelectors() private pure returns (bytes4[] memory sel) {
+        sel = new bytes4[](5);
+        sel[0] = IDiamond.facets.selector;
+        sel[1] = IDiamond.facetAddresses.selector;
+        sel[2] = IDiamond.facetAddress.selector;
+        sel[3] = IDiamond.facetFunctionSelectors.selector;
+        sel[4] = IDiamond.supportsInterface.selector;
+    }
+
     /// @param cutFacet The upgrade machinery, registered here because a diamond
     ///        cannot install its own installer through a cut.
     /// @param bootstrapAdmin_ Granted both `UPGRADE_ADMIN` and `ISSUER_ADMIN`,
@@ -70,9 +82,10 @@ contract uRWAToken is IuRWAToken, IEvents, IErrors {
         c.maxSupply = maxSupply_;
 
         LibDiamond.registerImmutable(_immutableSelectors());
-        LibDiamond.s().facetOf[IDiamond.facetAddress.selector] = address(this);
-        LibDiamond.s().facetOf[IDiamond.facets.selector] = address(this);
-        LibDiamond.s().facetOf[IDiamond.supportsInterface.selector] = address(this);
+        // The loupe is registered against the diamond too, and for the same
+        // reason as the ledger: a loupe an admin can cut out proves nothing on
+        // the day somebody needs it to.
+        LibDiamond.registerImmutable(_loupeSelectors());
 
         // The installer cannot be installed by a cut, so it is registered
         // directly — as a facet, not against the diamond, so it stays
@@ -84,6 +97,10 @@ contract uRWAToken is IuRWAToken, IEvents, IErrors {
         d.facetOf[DiamondCutFacet.scheduledAt.selector] = cutFacet;
         d.facetOf[DiamondCutFacet.setUpgradeDelay.selector] = cutFacet;
         d.selectorsOf[cutFacet].push(DiamondCutFacet.diamondCut.selector);
+        d.selectorsOf[cutFacet].push(DiamondCutFacet.cancelCut.selector);
+        d.selectorsOf[cutFacet].push(DiamondCutFacet.upgradeDelay.selector);
+        d.selectorsOf[cutFacet].push(DiamondCutFacet.scheduledAt.selector);
+        d.selectorsOf[cutFacet].push(DiamondCutFacet.setUpgradeDelay.selector);
         d.facetAddresses.push(cutFacet);
 
         Layout.upgrade().delay = upgradeDelay_;
@@ -272,6 +289,18 @@ contract uRWAToken is IuRWAToken, IEvents, IErrors {
         for (uint256 i = 0; i < addrs.length; i++) {
             out[i] = IDiamond.Facet(addrs[i], LibDiamond.s().selectorsOf[addrs[i]]);
         }
+    }
+
+    function facetAddresses() external view returns (address[] memory) {
+        return LibDiamond.s().facetAddresses;
+    }
+
+    /// @notice The selectors one facet serves
+    /// @dev Empty for an address that is not installed. Passing the token's own
+    ///      address returns the immutable set — the ledger and the loupe — which
+    ///      is how an outsider enumerates what no cut can reach.
+    function facetFunctionSelectors(address facet) external view returns (bytes4[] memory) {
+        return LibDiamond.s().selectorsOf[facet];
     }
 
     function supportsInterface(bytes4 interfaceId) external view returns (bool) {

@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import {IErrors} from "./interfaces/IErrors.sol";
 import {IEvents} from "./interfaces/IEvents.sol";
 import {OfferingParams, Purchase} from "./interfaces/ITreasuryAndOfferings.sol";
+import {Roles} from "./interfaces/Roles.sol";
 
 interface IERC20Payment {
     function transferFrom(address from, address to, uint256 amount) external returns (bool);
@@ -334,11 +335,17 @@ contract OfferingRegistry is IErrors {
         emit IEvents.OfferingStatusChanged(id, previous, uint8(to));
     }
 
+    /// @dev The operator is bound per offering, at creation, rather than being
+    ///      a role on the registry: one registry serves every issuer on the
+    ///      chain, and a chain-wide operator role would let one issuer's
+    ///      operator touch another issuer's raise. The error names the
+    ///      authority that was missing, so an integrator reading a revert
+    ///      learns which one.
     function _onlyOperator(uint256 id) private view {
-        if (msg.sender != operatorOf[id]) revert NotAuthorized(msg.sender, bytes32(0));
+        if (msg.sender != operatorOf[id]) revert NotAuthorized(msg.sender, Roles.OFFERING_OPERATOR);
     }
 
     function _onlyAdmin() private view {
-        if (msg.sender != admin) revert NotAuthorized(msg.sender, bytes32(0));
+        if (msg.sender != admin) revert NotAuthorized(msg.sender, Roles.REGISTRY_ADMIN);
     }
 }

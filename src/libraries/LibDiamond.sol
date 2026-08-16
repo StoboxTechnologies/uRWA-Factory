@@ -54,8 +54,14 @@ library LibDiamond {
     ///      whole design exists to remove.
     function registerImmutable(bytes4[] memory selectors) internal {
         DiamondStorage storage d = s();
+        // The diamond appears in its own loupe report. An outsider reading
+        // `facets()` sees which selectors the core serves, and a selector
+        // served by the diamond's own address is one no cut can reach — that
+        // is how immutability is proven from outside rather than asserted.
+        _track(d, address(this));
         for (uint256 i = 0; i < selectors.length; i++) {
             d.facetOf[selectors[i]] = address(this);
+            d.selectorsOf[address(this)].push(selectors[i]);
         }
     }
 
@@ -94,6 +100,7 @@ library LibDiamond {
         for (uint256 i = 0; i < selectors.length; i++) {
             bytes4 sel = selectors[i];
             _enforceMutable(sel);
+            _untrack(d, d.facetOf[sel], sel);
             _track(d, facet);
             d.facetOf[sel] = facet;
             d.selectorsOf[facet].push(sel);
@@ -105,6 +112,7 @@ library LibDiamond {
         for (uint256 i = 0; i < selectors.length; i++) {
             bytes4 sel = selectors[i];
             _enforceMutable(sel);
+            _untrack(d, d.facetOf[sel], sel);
             d.facetOf[sel] = address(0);
         }
     }
@@ -112,6 +120,34 @@ library LibDiamond {
     function _track(DiamondStorage storage d, address facet) private {
         if (d.selectorsOf[facet].length == 0) {
             d.facetAddresses.push(facet);
+        }
+    }
+
+    /// @notice Take a selector off the facet that used to serve it
+    /// @dev Without this the loupe keeps reporting a selector after it has been
+    ///      replaced or removed, and an outsider reading `facets()` is told
+    ///      something the router would contradict. The loupe exists to be
+    ///      believed by people who cannot ask us, so it has to be maintained on
+    ///      the way out as well as the way in.
+    function _untrack(DiamondStorage storage d, address facet, bytes4 sel) private {
+        if (facet == address(0)) return;
+        bytes4[] storage owned = d.selectorsOf[facet];
+        for (uint256 i = 0; i < owned.length; i++) {
+            if (owned[i] != sel) continue;
+            owned[i] = owned[owned.length - 1];
+            owned.pop();
+            break;
+        }
+        if (owned.length != 0) return;
+
+        // A facet serving nothing is not installed. Leaving it in the list
+        // would show an address in the loupe report that no call can reach.
+        address[] storage addrs = d.facetAddresses;
+        for (uint256 i = 0; i < addrs.length; i++) {
+            if (addrs[i] != facet) continue;
+            addrs[i] = addrs[addrs.length - 1];
+            addrs.pop();
+            break;
         }
     }
 

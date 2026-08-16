@@ -142,13 +142,20 @@ anybody at all — the ledger, either party, the holder — must check *somethin
 Views are exempt: a function that cannot write cannot be abused by being called.
 
 The third rule is the one that earns its keep. It was written after two functions were found whose
-only guard was the sentence in the documentation, and it fails on exactly that shape.
+only guard was the sentence in the documentation, and it fails on exactly that shape. Where a
+contract holds a single administrator rather than a role register — the factory, the offering
+registry — the role it stands in for is named in the error it reverts with, and that is what this
+check reads.
+
+It reads what the code says it enforces, not what happens at runtime. A contract that named a role
+and then checked the wrong address would pass here and fail in Foundry, which is where behaviour is
+established.
 
 `L3.7` still needs a previous release to diff against, so it stays specified rather than pretended.
 
 ## L4 — Runtime
 
-The fifteen invariants in [17](17-security.md), plus the behaviour the standard demands.
+The sixteen invariants in [17](17-security.md), plus the behaviour the standard demands.
 
 | Check | Rule |
 |---|---|
@@ -167,6 +174,7 @@ The fifteen invariants in [17](17-security.md), plus the behaviour the standard 
 | `L4.13` | The whole stack deploys on a clean chain with no Stobox contract |
 | `L4.14` | A payment leg cannot settle without its security leg |
 | `L4.15` | No agent action exceeds its mandate |
+| `L4.16` | The loupe agrees with the router, after every kind of cut |
 
 ## L5 — Verifying the verifier
 
