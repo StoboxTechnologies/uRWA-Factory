@@ -79,15 +79,15 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| PO-01 | PolicySet: AND groups of OR alternatives, gas ceiling, rule cap | Planned | IF-01 | 1 |
-| PO-02 | HasValidIdentity | Planned | PO-01, ID-01 | 0.25 |
-| PO-03 | JurisdictionAllow / JurisdictionDeny | Planned | PO-01 | 0.5 |
-| PO-04 | USAccreditedOnly, EUProfessionalOnly, EUQualifiedExemption | Planned | PO-01 | 0.75 |
-| PO-05 | MaxHolders, MaxBalancePerHolder | Planned | PO-01, CO-05 | 0.5 |
-| PO-06 | HoldPeriod, TransferWindow | Planned | PO-01, CO-06 | 0.5 |
-| PO-07 | SanctionsScreen, TravelRuleThreshold | Planned | PO-01 | 0.5 |
+| PO-01 | PolicySet: AND groups of OR alternatives, gas ceiling, rule cap | **Done** | IF-01 | — |
+| PO-02 | HasValidIdentity | **Done** | PO-01, ID-01 | — |
+| PO-03 | JurisdictionAllow / JurisdictionDeny — one contract, both directions | **Done** | PO-01 | — |
+| PO-04 | US accredited, EU professional, EU qualified — one `RequiresClaim` per key | **Done** | PO-01 | — |
+| PO-05 | MaxHolders done; MaxBalancePerHolder outstanding | Ready | PO-01, CO-05 | 0.25 |
+| PO-06 | TransferWindow done; HoldPeriod rides the lockup mechanism | **Done** | PO-01, CO-06 | — |
+| PO-07 | SanctionsScreen via `RequiresClaim` with a freshness window | **Done** | PO-01 | — |
 | PO-08 | Four regime presets registered in the factory — RegD506c, RegS, MiCA-ART, MiCA-EMT, Open | Planned | PO-02…09, CO-10 | 0.5 |
-| PO-09 | MiCA rules: issuer authorised, token class, whitepaper notified, reserve attested | Ready | PO-01 | 0.75 |
+| PO-09 | MiCA rules — one contract parameterised by key and freshness | **Done** | PO-01 | — |
 
 ### CU — Custody and offerings · Phase 3
 
