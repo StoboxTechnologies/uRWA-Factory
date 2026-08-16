@@ -61,9 +61,17 @@ Keys are `keccak256` of a dotted namespace. Stobox owns `urwa.*`. Anyone may def
 `ch.finma.qualified` needs no permission from Stobox and no core upgrade. **This is the extensibility
 guarantee**, and it is why the schema is a key-value registry rather than a fixed struct.
 
+The **base identity gate** — the sender-verified and recipient-verified checks every transfer passes —
+is `isActive(wallet)`, not a subject-keyed claim read. Across all three tiers `isActive` is the
+authoritative answer: the allowlist's permission, EAS's identity attestation (whose `isActive` *is*
+its `hasValidClaim(subject, urwa.identity.valid)`), and StoboxDID's live, unblocked, unexpired DID.
+This matters because StoboxDID is **wallet-keyed** and cannot be read by subject on chain, so a base
+gate that required a subject-keyed `hasValidClaim(urwa.identity.valid)` refused every tier-2 transfer.
+The subject-keyed claim reads below are for the **rules**, which read the other keys.
+
 | Key | Carries | Used by |
 |---|---|---|
-| `urwa.identity.valid` | Existence, expiry, block status | `canSend`, `canReceive` — the base gate |
+| `urwa.identity.valid` | Existence, expiry, block status | The base gate, via `isActive`; a preset may also add the `HasValidIdentity` rule |
 | `urwa.jurisdiction.country` | Hashed ISO 3166-1 alpha-2 | `JurisdictionAllow` / `JurisdictionDeny` |
 | `urwa.investor.type` | Retail, professional, institutional | Reporting only — no rule in the default library reads it |
 | `us.regd.accredited` | US accredited-investor status + expiry | `USAccreditedOnly` |

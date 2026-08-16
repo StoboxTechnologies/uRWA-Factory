@@ -85,6 +85,55 @@ contract GasBurningRegistry is IIdentityRegistry {
     }
 }
 
+/// @dev A policy set that passes, but only after doing real work — more than a
+///      single rule's 100k budget, like a documented multi-rule preset. Under a
+///      per-set cap of 100k it runs out of gas and reads as a refusal; under a
+///      cap sized for the whole set it passes.
+contract HungryPolicySet {
+    uint256 public immutable burn;
+
+    constructor(uint256 burnGas) {
+        burn = burnGas;
+    }
+
+    function evaluate(address, address, uint256) external view returns (bool, address, string memory) {
+        uint256 start = gasleft();
+        uint256 x;
+        while (start - gasleft() < burn) {
+            x = uint256(keccak256(abi.encode(x)));
+        }
+        return (x == type(uint256).max ? false : true, address(0), "");
+    }
+}
+
+/// @dev A wallet-keyed registry, like the StoboxDID adapter: `isActive` is the
+///      real identity gate, and the subject-keyed `hasValidClaim` returns false
+///      because the backing registry cannot be read by subject. A pipeline that
+///      required `hasValidClaim(IDENTITY_VALID)` would refuse every transfer.
+contract WalletKeyedRegistry is IIdentityRegistry {
+    mapping(address => bool) public live;
+
+    function setActive(address w, bool v) external {
+        live[w] = v;
+    }
+
+    function subjectOf(address wallet) external pure returns (bytes32) {
+        return keccak256(abi.encodePacked(wallet));
+    }
+
+    function isActive(address wallet) external view returns (bool) {
+        return live[wallet];
+    }
+
+    function claim(bytes32, bytes32) external pure returns (Claim memory c) {
+        return c;
+    }
+
+    function hasValidClaim(bytes32, bytes32) external pure returns (bool) {
+        return false; // subject-keyed reads are not supported, as on StoboxDID
+    }
+}
+
 contract CompliancePipelineTest is Test {
     uRWAToken token;
     ComplianceFacet compliance;
@@ -148,6 +197,42 @@ contract CompliancePipelineTest is Test {
     function test_viewsSurviveAGasBurningRegistry() public {
         ComplianceFacet(address(token)).setIdentityRegistry(address(new GasBurningRegistry()));
         assertFalse(ComplianceFacet(address(token)).canTransfer(alice, bob, 1e18));
+    }
+
+    /// @notice A multi-rule policy set is given enough gas to run
+    /// @dev The ceiling is per rule, not per set. Capping the whole evaluation
+    ///      at one rule's 100k budget made every documented preset (identity +
+    ///      sanctions + several MiCA rules) run out of gas and refuse every
+    ///      transfer. A set doing ~500k of honest work must pass.
+    function test_aMultiRulePolicySetIsNotStarvedOfGas() public {
+        ComplianceFacet(address(token)).setPolicySet(address(new HungryPolicySet(500_000)));
+
+        vm.prank(alice);
+        token.transfer(bob, 100e18);
+        assertEq(token.balanceOf(bob), 100e18, "an honest multi-rule set was starved and refused");
+    }
+
+    /// @notice A wallet-keyed registry (StoboxDID's shape) admits active wallets
+    /// @dev The tier-2 defect, as a transfer. Its `hasValidClaim` returns false
+    ///      for everyone because the backing registry cannot be read by subject,
+    ///      so a pipeline that required it refused every transfer — the flagship
+    ///      tier was inoperable. The base identity gate is `isActive`, which the
+    ///      adapter answers correctly.
+    function test_aWalletKeyedRegistryAdmitsActiveWallets() public {
+        WalletKeyedRegistry wk = new WalletKeyedRegistry();
+        ComplianceFacet(address(token)).setIdentityRegistry(address(wk));
+        wk.setActive(alice, true);
+        wk.setActive(bob, true);
+
+        vm.prank(alice);
+        token.transfer(bob, 100e18);
+        assertEq(token.balanceOf(bob), 100e18, "an active tier-2 wallet was refused");
+
+        // And an inactive wallet is still refused.
+        wk.setActive(bob, false);
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.ERC7943CannotReceive.selector, bob));
+        token.transfer(bob, 1e18);
     }
 
     // ── the gates, in order ─────────────────────────────────────────────────

@@ -26,10 +26,16 @@ contract ComplianceFacet is IErrors {
     uint8 internal constant GATE_RULES = 6;
     uint8 internal constant GATE_OK = 0;
 
-    /// @dev A rule may consume at most this much gas. A constant, identical for
-    ///      every token: a configurable ceiling turns a working rule into a
-    ///      silent refusal that reads as a compliance decision.
-    uint256 internal constant RULE_GAS_CEILING = 100_000;
+    /// @dev The whole policy set gets this much gas — enough for its full
+    ///      complement of rules, not one rule's worth. The **per-rule** ceiling
+    ///      (100k, in `PolicySet`) is what bounds each untrusted rule; capping
+    ///      the whole evaluation at one rule's budget instead, as this once did,
+    ///      made every documented multi-rule preset run out of gas and refuse
+    ///      every transfer — the exact silent refusal the ceiling must not
+    ///      cause. Sized for `MAX_RULES` (24) at the per-rule ceiling plus the
+    ///      context reads, so an honest set never hits it and a griefing one is
+    ///      still caught and read as a refusal.
+    uint256 internal constant POLICY_SET_GAS_CEILING = 3_000_000;
 
     // ── the pipeline ────────────────────────────────────────────────────────
 
@@ -188,18 +194,18 @@ contract ComplianceFacet is IErrors {
     function _eligible(address registry, address wallet) internal view returns (bool) {
         if (registry == address(0)) return false;
 
+        // `isActive` is the authoritative identity gate across every adapter:
+        // the allowlist's permission, EAS's identity attestation (its `isActive`
+        // *is* `hasValidClaim(subject, IDENTITY_VALID)`), StoboxDID's live,
+        // unblocked, unexpired DID. Requiring a subject-keyed
+        // `hasValidClaim(IDENTITY_VALID)` on top of it — as this once did — is
+        // redundant where it works and impossible where the backing registry is
+        // wallet-keyed: StoboxDID cannot invert subject → wallet on chain, so
+        // that call returned false for everyone and refused every tier-2
+        // transfer. The claim mechanism serves the *other* claims that rules
+        // read; the base identity gate is `isActive`.
         try IIdentityRegistry(registry).isActive(wallet) returns (bool active) {
-            if (!active) return false;
-        } catch {
-            return false;
-        }
-
-        try IIdentityRegistry(registry).subjectOf(wallet) returns (bytes32 subject) {
-            try IIdentityRegistry(registry).hasValidClaim(subject, ClaimKeys.IDENTITY_VALID) returns (bool ok) {
-                return ok;
-            } catch {
-                return false;
-            }
+            return active;
         } catch {
             return false;
         }
@@ -212,7 +218,7 @@ contract ComplianceFacet is IErrors {
         view
         returns (bool ok, address failing, string memory reason)
     {
-        try IPolicySet(policies).evaluate{gas: RULE_GAS_CEILING}(from, to, amount) returns (
+        try IPolicySet(policies).evaluate{gas: POLICY_SET_GAS_CEILING}(from, to, amount) returns (
             bool passed, address failingRule, string memory why
         ) {
             return (passed, failingRule, why);

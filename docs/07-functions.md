@@ -706,7 +706,7 @@ absent operator hold investor funds hostage.
 | `grant(mandate) → mandateId` | Authorises an agent within limits | Principal | Delegation with a hard ceiling |
 | `revoke(mandateId)` | Cancels, immediately | Principal | **The kill switch — no timelock** |
 | `check(mandateId, scope, token, counterparty, amount) → (bool, reason)` | Is this action permitted? | The agent, before acting | Free pre-flight, same idea as `canTransfer` |
-| `consume(mandateId, amount)` | Draws against the mandate's limits, or reverts | The scoped function being called | The agent cannot exceed its mandate, rather than being trusted not to |
+| `consume(mandateId, scope, token, counterparty, amount)` | Draws against the mandate, or reverts | The scoped function being called | Enforces **every** dimension — scope, token, counterparty and limits — so an agent that skips `check` still cannot act outside its mandate |
 | `mandateOf(mandateId) → Mandate` | The mandate's terms | Principal, agent, anyone | Bounds are public, so a counterparty can see them |
 | `consumed(mandateId) → (thisEpoch, epochEnds)` | Budget used and remaining | Principal, agent | Monitoring |
 | `mandatesOf(principal) → bytes32[]` | Every live mandate | Principal | **You cannot lose track of your own agents** |

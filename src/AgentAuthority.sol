@@ -94,12 +94,23 @@ contract AgentAuthority is IErrors {
 
     /// @notice Draw against the mandate, or revert
     /// @dev Called by the scoped function **before** it changes anything, so a
-    ///      refusal leaves no partial effect behind.
-    function consume(bytes32 mandateId, uint256 amount) external {
+    ///      refusal leaves no partial effect behind. It enforces **every**
+    ///      dimension of the mandate — scope, token, counterparty and the
+    ///      limits — not just the amounts. `check` is the free advisory mirror
+    ///      of this; an agent that skips it and calls `consume` directly is
+    ///      still unable to act outside its scope, spend on the wrong token or
+    ///      trade with the wrong counterparty, because this is the path that
+    ///      actually authorises the action.
+    function consume(bytes32 mandateId, bytes32 scope, address token, address counterparty, uint256 amount) external {
         Mandate storage m = _mandates[mandateId];
         if (msg.sender != m.agent) revert NotAuthorized(msg.sender, bytes32(0));
         if (m.revoked) revert MandateIsRevoked(mandateId);
         if (m.expiresAt <= block.timestamp) revert MandateExpired(mandateId, m.expiresAt);
+        if (!_listed(m.scopes, scope)) revert OutOfScope(mandateId, scope);
+        if (m.tokens.length != 0 && !_listedAddress(m.tokens, token)) revert TokenNotInMandate(token);
+        if (m.counterparties.length != 0 && !_listedAddress(m.counterparties, counterparty)) {
+            revert CounterpartyNotInMandate(counterparty);
+        }
         if (m.maxPerAction != 0 && amount > m.maxPerAction) {
             revert PerActionLimitExceeded(amount, m.maxPerAction);
         }

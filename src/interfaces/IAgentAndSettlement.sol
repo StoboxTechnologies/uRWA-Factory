@@ -34,7 +34,7 @@ interface IAgentAuthority {
         returns (bool ok, string memory reason);
 
     /// @notice Consume against the mandate's limits, or revert
-    function consume(bytes32 mandateId, uint256 amount) external;
+    function consume(bytes32 mandateId, bytes32 scope, address token, address counterparty, uint256 amount) external;
 
     function mandateOf(bytes32 mandateId) external view returns (Mandate memory);
     function consumed(bytes32 mandateId) external view returns (uint256 thisEpoch, uint64 epochEnds);

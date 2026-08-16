@@ -190,17 +190,27 @@ contract PolicyTest is Test {
         assertEq(reason, "rule reverted or exceeded its gas ceiling");
     }
 
-    /// @notice So does one that exhausts its ceiling
-    /// @dev And the whole call still returns rather than running out of gas —
-    ///      which is what makes `canTransfer` safe to call on a token whose
-    ///      rules a stranger configured.
-    function test_aGasEatingRuleRefusesAndTheCallReturns() public {
+    /// @notice So does one that exhausts its ceiling — and it is *capped*, not
+    ///         merely survived by the 63/64 rule
+    /// @dev The whole call still returns rather than running out of gas, which
+    ///      is what makes `canTransfer` safe on a token whose rules a stranger
+    ///      configured. But "it returned" is not enough: EIP-150 leaves the
+    ///      outer frame 1/64 of the gas whether or not the rule is capped, so a
+    ///      test that only checks the reason string passes even with the ceiling
+    ///      removed. This measures the gas the evaluation actually spent and
+    ///      holds it near the per-rule ceiling — with the ceiling gone, the rule
+    ///      would burn 63/64 of everything offered, orders of magnitude more.
+    function test_aGasEatingRuleRefusesAndIsCapped() public {
         policy.addGroup(IDENTITY);
         policy.addRule(IDENTITY, address(new GasEatingRule()));
 
+        uint256 before = gasleft();
         (bool ok,, string memory reason) = token.ask(alice, bob, 1e18);
+        uint256 spent = before - gasleft();
+
         assertFalse(ok, "a gas-eating rule let the transfer through");
         assertEq(reason, "rule reverted or exceeded its gas ceiling");
+        assertLt(spent, 500_000, "the rule was not capped: it burned far past its ceiling");
     }
 
     /// @notice One broken rule does not brick the token

@@ -9,7 +9,8 @@ import {Instruction, Mandate} from "../src/interfaces/IAgentAndSettlement.sol";
 
 contract Token {
     mapping(address => uint256) public balanceOf;
-    bool public allowTransfers = true;
+    bool public allowTransfers = true; // whether the ERC-20 move itself succeeds
+    bool public complianceAllows = true; // the compliance view — deliberately separate
     string public refusal = "a compliance rule refused";
 
     function mint(address to, uint256 v) external {
@@ -18,6 +19,15 @@ contract Token {
 
     function setAllowed(bool v) external {
         allowTransfers = v;
+        complianceAllows = v;
+    }
+
+    /// @dev Decoupled from the ERC-20 move on purpose: a test can make
+    ///      compliance refuse while `transferFrom` would otherwise succeed, so a
+    ///      settlement that skipped the compliance check would go through — and
+    ///      a test that pins the ERC-7943 error would catch its removal.
+    function setComplianceAllows(bool v) external {
+        complianceAllows = v;
     }
 
     function transferFrom(address f, address t, uint256 v) external returns (bool) {
@@ -29,11 +39,11 @@ contract Token {
     }
 
     function canTransfer(address, address, uint256) external view returns (bool) {
-        return allowTransfers;
+        return complianceAllows;
     }
 
     function whyBlocked(address, address, uint256) external view returns (uint8, address, string memory) {
-        return (allowTransfers ? 0 : 6, address(0), allowTransfers ? "" : refusal);
+        return (complianceAllows ? 0 : 6, address(0), complianceAllows ? "" : refusal);
     }
 }
 
@@ -58,6 +68,7 @@ contract AgentsAndSettlementTest is Test {
     address buyer;
     uint256 buyerKey;
     address venue = address(0x1EE);
+    bytes32 scopeTransfer; // cached: a call in a pranked argument list eats the prank
 
     bytes32 mandateId;
 
@@ -75,6 +86,7 @@ contract AgentsAndSettlementTest is Test {
         security.mint(seller, 1000e18);
         cash.mint(buyer, 1000e18);
 
+        scopeTransfer = authority.SCOPE_TRANSFER();
         mandateId = _grant(100e18, 250e18, 1 days);
     }
 
@@ -86,7 +98,7 @@ contract AgentsAndSettlementTest is Test {
         assertTrue(ok);
 
         vm.prank(agent);
-        authority.consume(mandateId, 50e18);
+        authority.consume(mandateId, scopeTransfer, address(security), venue, 50e18);
         (uint256 spent,) = authority.consumed(mandateId);
         assertEq(spent, 50e18);
     }
@@ -104,7 +116,7 @@ contract AgentsAndSettlementTest is Test {
 
         vm.prank(agent);
         vm.expectRevert(abi.encodeWithSelector(IErrors.PerActionLimitExceeded.selector, 150e18, 100e18));
-        authority.consume(mandateId, 150e18);
+        authority.consume(mandateId, scopeTransfer, address(security), venue, 150e18);
     }
 
     /// @notice And so does the epoch limit, until the epoch turns
@@ -113,16 +125,16 @@ contract AgentsAndSettlementTest is Test {
         mandateId = _grantFor(100e18, 250e18, 1 days, 30 days);
 
         vm.startPrank(agent);
-        authority.consume(mandateId, 100e18);
-        authority.consume(mandateId, 100e18);
+        authority.consume(mandateId, scopeTransfer, address(security), venue, 100e18);
+        authority.consume(mandateId, scopeTransfer, address(security), venue, 100e18);
 
         vm.expectRevert(abi.encodeWithSelector(IErrors.PerEpochLimitExceeded.selector, 100e18, 50e18));
-        authority.consume(mandateId, 100e18);
+        authority.consume(mandateId, scopeTransfer, address(security), venue, 100e18);
         vm.stopPrank();
 
         vm.warp(block.timestamp + 1 days + 1);
         vm.prank(agent);
-        authority.consume(mandateId, 100e18);
+        authority.consume(mandateId, scopeTransfer, address(security), venue, 100e18);
 
         (uint256 spent,) = authority.consumed(mandateId);
         assertEq(spent, 100e18, "the epoch did not reset");
@@ -148,6 +160,37 @@ contract AgentsAndSettlementTest is Test {
         assertEq(why, "counterparty not in the mandate");
     }
 
+    /// @notice `consume` enforces scope, token and counterparty — not just amounts
+    /// @dev The state-changing path, not only the advisory `check`. An agent
+    ///      that skips the free check and calls `consume` directly must still be
+    ///      unable to act out of scope, on the wrong token, or with the wrong
+    ///      counterparty — otherwise the mandate's three non-amount dimensions
+    ///      are advisory only and the "unable to exceed it" guarantee is a
+    ///      third true and two-thirds hoped-for.
+    function test_consumeEnforcesEveryDimensionNotJustAmounts() public {
+        // Cached before the pranks: a call in a pranked/expectRevert argument
+        // list would consume the cheat and break the assertion.
+        bytes32 settle = authority.SCOPE_SETTLE();
+        address bad = address(0xBAD);
+        vm.startPrank(agent);
+
+        // Out of scope.
+        vm.expectRevert(abi.encodeWithSelector(IErrors.OutOfScope.selector, mandateId, settle));
+        authority.consume(mandateId, settle, address(security), venue, 1e18);
+
+        // Wrong token.
+        vm.expectRevert(abi.encodeWithSelector(IErrors.TokenNotInMandate.selector, bad));
+        authority.consume(mandateId, scopeTransfer, bad, venue, 1e18);
+
+        // Wrong counterparty.
+        vm.expectRevert(abi.encodeWithSelector(IErrors.CounterpartyNotInMandate.selector, bad));
+        authority.consume(mandateId, scopeTransfer, address(security), bad, 1e18);
+
+        // The in-mandate action still goes through.
+        authority.consume(mandateId, scopeTransfer, address(security), venue, 1e18);
+        vm.stopPrank();
+    }
+
     /// @notice Revocation takes effect on the next action, with no timelock
     /// @dev An agent misbehaving at three in the morning is stopped at three in
     ///      the morning.
@@ -162,7 +205,7 @@ contract AgentsAndSettlementTest is Test {
 
         vm.prank(agent);
         vm.expectRevert(abi.encodeWithSelector(IErrors.MandateIsRevoked.selector, mandateId));
-        authority.consume(mandateId, 1e18);
+        authority.consume(mandateId, scopeTransfer, address(security), venue, 1e18);
     }
 
     /// @notice Every mandate expires
@@ -222,16 +265,21 @@ contract AgentsAndSettlementTest is Test {
         assertEq(security.balanceOf(buyer), 0);
     }
 
-    /// @notice Compliance is checked inside settlement
-    /// @dev Not before it, where the answer could go stale between the check
-    ///      and the move.
+    /// @notice Compliance is checked inside settlement, by the specific error
+    /// @dev Not before it, where the answer could go stale. Compliance is
+    ///      refused while the security token's own `transferFrom` would
+    ///      otherwise succeed, and the revert is asserted **by the ERC-7943
+    ///      selector**. A bare `expectRevert` against a mock whose compliance
+    ///      and transfer are the same flag would pass even if `settle` dropped
+    ///      the compliance check — the payment or security leg would revert for
+    ///      a different reason and the test would never notice.
     function test_aRefusedSecurityLegStopsTheTrade() public {
         Instruction memory i = _instruction(100e18, 500e18);
         bytes memory s1 = _sign(sellerKey, i);
         bytes memory s2 = _sign(buyerKey, i);
-        security.setAllowed(false);
+        security.setComplianceAllows(false); // compliance refuses; the move itself would work
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IErrors.ERC7943CannotTransfer.selector, seller, buyer, i.securityAmount));
         dvp.settle(i, s1, s2);
         assertEq(cash.balanceOf(seller), 0, "the buyer paid for a trade that could not settle");
     }

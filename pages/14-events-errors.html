@@ -566,6 +566,8 @@ error UpgradeNotReady(bytes32 cutHash, uint64 executableAt);
 error MandateExpired(bytes32 mandateId, uint64 expiredAt);
 error MandateIsRevoked(bytes32 mandateId);   // named apart from the event, as CapIsLocked is
 error EpochlessCap();                         // a per-epoch cap with a zero-length epoch never binds
+error TokenNotInMandate(address token);       // consume: token outside the mandate&#x27;s list
+error CounterpartyNotInMandate(address counterparty); // consume: counterparty outside the list
 error OutOfScope(bytes32 mandateId, bytes32 scope);
 error PerActionLimitExceeded(uint256 requested, uint256 limit);
 error PerEpochLimitExceeded(uint256 requested, uint256 remaining);
@@ -664,4 +666,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 1cc4fa7cef02f704f7385c46433cb959dead867834d066984a5780ed31ca67a8 -->
+<!-- source-digest: 1b703f55dc21295dfe480f5891720b4e95d9353ad8a3ae5ff6859d747dda90c1 -->

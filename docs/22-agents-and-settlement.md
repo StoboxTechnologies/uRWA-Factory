@@ -160,6 +160,9 @@ interface IAgentAuthority {
     function revoke(bytes32 mandateId) external;              // immediate, no timelock
     function check(bytes32 mandateId, bytes32 scope, address token,
                    address counterparty, uint256 amount) external view returns (bool, string memory);
+    // consume enforces the same dimensions as check — the state-changing mirror.
+    function consume(bytes32 mandateId, bytes32 scope, address token,
+                     address counterparty, uint256 amount) external;
     function consumed(bytes32 mandateId) external view returns (uint256 thisEpoch, uint64 epochEnds);
     function mandatesOf(bytes32 principal) external view returns (bytes32[] memory);
 }
