@@ -86,7 +86,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | PO-05 | MaxHolders, MaxBalancePerHolder | **Done** | PO-01, CO-05 | — |
 | PO-06 | TransferWindow done; HoldPeriod rides the lockup mechanism | **Done** | PO-01, CO-06 | — |
 | PO-07 | SanctionsScreen via `RequiresClaim` with a freshness window | **Done** | PO-01 | — |
-| PO-08 | Four regime presets registered in the factory — RegD506c, RegS, MiCA-ART, MiCA-EMT, Open | Planned | PO-02…09, CO-10 | 0.5 |
+| PO-08 | Regime presets registered and **applied at creation** — the factory bakes each token its own policy set, owned by its compliance officer | **Done** | PO-02…09, CO-10 | — |
 | PO-09 | MiCA rules — one contract parameterised by key and freshness | **Done** | PO-01 | — |
 
 ### CU — Custody and offerings · Phase 3
@@ -289,7 +289,7 @@ merge → registry status updated in this document
 | IF — Interfaces | 4 | 4 | 0 | 0 | 0 | — |
 | CO — Core | 14 | 14 | 0 | 0 | 0 | — |
 | ID — Identity | 4 | 4 | 0 | 0 | 0 | — |
-| PO — Policy | 9 | 8 | 0 | 1 | 0 | 0.5 |
+| PO — Policy | 9 | 9 | 0 | 0 | 0 | — |
 | CU — Custody | 7 | 3 | 1 | 3 | 0 | 2.75 |
 | AG — Agents | 4 | 3 | 0 | 1 | 0 | 1 |
 | PA — Passport | 7 | 0 | 0 | 7 | 0 | 5.25 |
@@ -297,7 +297,7 @@ merge → registry status updated in this document
 | TO — Tooling | 5 | 0 | 0 | 4 | 1 | 3.75 |
 | OP — Operations | 9 | 2 | 0 | 7 | 0 | 2.75 |
 | ST — Standards | 6 | 0 | 0 | 4 | 2 | 3.5 |
-| **Total** | **87** | **47** | **3** | **34** | **3** | **≈29.5 engineer-weeks** |
+| **Total** | **87** | **48** | **3** | **33** | **3** | **≈29 engineer-weeks** |
 
 The remaining figure is the sum of the effort column over every row not marked Done — it is arithmetic
 over this table, not a fresh estimate. The original plan was ≈54 engineer-weeks over 79 items; the

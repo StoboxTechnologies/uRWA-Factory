@@ -265,6 +265,7 @@ error MandateIsRevoked(bytes32 mandateId);   // named apart from the event, as C
 error EpochlessCap();                         // a per-epoch cap with a zero-length epoch never binds
 error TokenNotInMandate(address token);       // consume: token outside the mandate's list
 error CounterpartyNotInMandate(address counterparty); // consume: counterparty outside the list
+error PresetLengthMismatch(uint256 rules, uint256 groups); // registerPreset: parallel arrays differ
 error OutOfScope(bytes32 mandateId, bytes32 scope);
 error PerActionLimitExceeded(uint256 requested, uint256 limit);
 error PerEpochLimitExceeded(uint256 requested, uint256 remaining);

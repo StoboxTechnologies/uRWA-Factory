@@ -37,6 +37,17 @@ contract PolicySet is IErrors {
         owner = owner_;
     }
 
+    /// @notice Hand the policy set to a new owner
+    /// @dev The factory builds a preset's policy set as owner, then transfers it
+    ///      to the token's compliance officer, so no shared central party can
+    ///      alter one token's live compliance. Owner-only, and refuses the zero
+    ///      address — an ownerless policy set could never be changed again.
+    function transferOwnership(address newOwner) external {
+        _onlyOwner();
+        if (newOwner == address(0)) revert ZeroAddress();
+        owner = newOwner;
+    }
+
     /// @notice Would this transfer pass every group
     /// @dev Never reverts. A rule that reverts or exhausts its ceiling counts
     ///      as a refusal — a broken rule never opens the gate.

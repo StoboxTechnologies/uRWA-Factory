@@ -196,6 +196,14 @@ defaults is a trap: issuers misconfigure compliance and blame the tool.
 MiCA presets exist because commodity-backed tokens and stablecoins fall under MiCA rather than under
 securities law. See [15 — Standards](15-standards.md#regulatory-regimes).
 
+**How a preset is applied.** A preset is registered in the factory as parallel arrays — `rules[i]`
+belongs to group `groups[i]`, so rules in the same group OR and distinct groups AND. When an issuer
+picks a preset at `createToken`, the factory deploys **that token its own policy set** from the
+recipe, fills it, and hands ownership to the token's compliance officer before letting go. Nothing is
+shared: changing one token's compliance touches no other token, and no central party can. An
+unregistered or empty preset attaches no policy set, and only the base identity gate applies — a
+visible outcome, not a silent one.
+
 ### No EU securities preset, deliberately
 
 There is **no MiFID II preset**. EU security-token issuance is a later phase, and shipping a preset

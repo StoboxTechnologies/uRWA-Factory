@@ -568,6 +568,7 @@ error MandateIsRevoked(bytes32 mandateId);   // named apart from the event, as C
 error EpochlessCap();                         // a per-epoch cap with a zero-length epoch never binds
 error TokenNotInMandate(address token);       // consume: token outside the mandate&#x27;s list
 error CounterpartyNotInMandate(address counterparty); // consume: counterparty outside the list
+error PresetLengthMismatch(uint256 rules, uint256 groups); // registerPreset: parallel arrays differ
 error OutOfScope(bytes32 mandateId, bytes32 scope);
 error PerActionLimitExceeded(uint256 requested, uint256 limit);
 error PerEpochLimitExceeded(uint256 requested, uint256 remaining);
@@ -666,4 +667,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 8aa9c982ecb5dc60488659ecc87352e30348438f6c0b3a38b6c37cfbc05e9c59 -->
+<!-- source-digest: 6117639f31aa0344c8b08f7306a48eb024766420000e24f3f7abf577ed7df4b8 -->

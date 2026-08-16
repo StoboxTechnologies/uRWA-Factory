@@ -411,6 +411,7 @@ operator who is absent, unwilling or insolvent must not be able to strand funds.
 | `removeGroup(group)` | Deletes one | The policy set's owner | Regime change |
 | `addRule(group, rule)` | Adds a rule to a group | The policy set's owner | Extending a regime |
 | `removeRule(group, rule)` | Removes one | The policy set's owner | Same |
+| `transferOwnership(newOwner)` | Hands the policy set to a new owner | The policy set's owner | The factory builds a preset's set, then hands it to the token's compliance officer |
 | `groups() → bytes32[]` | All groups | **Anyone** | Public transparency of the live policy |
 | `rulesOf(group) → address[]` | Rules in a group | **Anyone** | Same |
 | `ruleCount() → uint256` | Total rules | Anyone, gas estimation | Cost visibility |
@@ -577,7 +578,7 @@ zero in the open distribution**; `DiamondCutFacet` and the loupe are as above.
 | `packages(id) → FacetCut[]` | Reads one | Anyone | Verify what you are deploying |
 | `packageOf(id) → FacetCut[]` | The facets a package installs | Anyone | Diff a deployed token against the published package |
 | `presetOf(id) → (rules, groups)` | The rules a preset composes | Anyone | An investor reads the regime before the token exists |
-| `registerPreset(id, rules, groups)` | Defines a regime | FACTORY_ADMIN | Reg D, Reg S, MiFID II, MiCA |
+| `registerPreset(id, rules, groups)` | Defines a regime — **parallel arrays**, `rules[i]` in `groups[i]` | FACTORY_ADMIN | Reg D, Reg S, MiCA. `createToken` bakes each token its own policy set from the recipe |
 | `presets(id) → (address[], bytes32[])` | Reads one | Anyone | Verify before choosing |
 | `setFeeToken(address)` / `setFee(uint256)` | Configures a fee | FACTORY_ADMIN | **Zero in the open distribution** |
 | `feeToken()` / `fee()` | Reads it | Anyone | Anyone can verify the open build charges nothing |

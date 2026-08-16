@@ -11,6 +11,7 @@ import {IEvents} from "./interfaces/IEvents.sol";
 import {TokenParams} from "./interfaces/IuRWAFactory.sol";
 import {Roles} from "./interfaces/Roles.sol";
 import {Clones} from "./libraries/Clones.sol";
+import {PolicySet} from "./PolicySet.sol";
 import {Treasury} from "./Treasury.sol";
 import {uRWAToken} from "./uRWAToken.sol";
 
@@ -85,6 +86,11 @@ contract uRWAFactory is IErrors {
         // 4 · wiring, then the regime
         _wire(token, treasury, offeringRegistry, params);
 
+        // 4b · the preset, if the issuer chose a registered one. Its own policy
+        //      set, owned by this token's compliance officer, so no shared
+        //      central party can alter one token's live compliance.
+        _applyPreset(token, params.preset, params.complianceOfficer);
+
         // 5 · the four roles, to the four addresses given
         _grantRoles(token, params);
 
@@ -155,12 +161,41 @@ contract uRWAFactory is IErrors {
         return _packageIds;
     }
 
+    /// @notice Register a named regime
+    /// @dev The arrays are **parallel**: `rules[i]` is placed in group
+    ///      `groups[i]`. Rules sharing a group OR; distinct groups AND. That is
+    ///      the whole composition model — "professional OR accredited" is two
+    ///      rules in one group; "identity AND sanctions" is two rules in two
+    ///      groups. The rule contracts are stateless and shared across the
+    ///      chain; the preset is the recipe, and `createToken` bakes each token
+    ///      its own policy set from it.
     function registerPreset(bytes32 id, address[] calldata rules, bytes32[] calldata groups) external {
         _onlyAdmin();
+        if (rules.length != groups.length) revert PresetLengthMismatch(rules.length, groups.length);
         _presetRules[id] = rules;
         _presetGroups[id] = groups;
         _presetIds.push(id);
         emit IEvents.PresetRegistered(id);
+    }
+
+    /// @dev Build this token its own policy set from the preset and attach it.
+    ///      The factory owns the set while it fills it, then hands it to the
+    ///      compliance officer. If the preset is unregistered or empty, the
+    ///      token simply has no policy set and only the base identity gate
+    ///      applies — a deliberate, inspectable outcome, not a silent failure.
+    function _applyPreset(address token, bytes32 presetId, address complianceOfficer) private {
+        address[] storage rules = _presetRules[presetId];
+        if (rules.length == 0) return;
+
+        bytes32[] storage groups = _presetGroups[presetId];
+        PolicySet ps = new PolicySet(address(this));
+        for (uint256 i = 0; i < rules.length; i++) {
+            ps.addGroup(groups[i]); // idempotent: a repeated group is a no-op
+            ps.addRule(groups[i], rules[i]);
+        }
+        ps.transferOwnership(complianceOfficer);
+        ComplianceFacet(token).setPolicySet(address(ps));
+        emit IEvents.PolicySetChanged(address(0), address(ps));
     }
 
     function presetOf(bytes32 id) external view returns (address[] memory rules, bytes32[] memory groups) {

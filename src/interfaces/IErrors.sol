@@ -79,6 +79,7 @@ interface IErrors {
     error EpochlessCap();
     error TokenNotInMandate(address token);
     error CounterpartyNotInMandate(address counterparty);
+    error PresetLengthMismatch(uint256 rules, uint256 groups);
     error OutOfScope(bytes32 mandateId, bytes32 scope);
     error PerActionLimitExceeded(uint256 requested, uint256 limit);
     error PerEpochLimitExceeded(uint256 requested, uint256 remaining);
