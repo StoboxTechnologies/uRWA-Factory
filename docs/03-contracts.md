@@ -30,7 +30,7 @@ Facets share the token's storage through `delegatecall`. Each owns one namespace
 | `LockupFacet` | Dated lockup schedules | `LockupStorage` | Yes |
 | `MonetaryFacet` | Issue, redeem, distribute, supply caps | `MonetaryStorage` | Yes |
 | `RolesFacet` | Role grant and revoke | `RolesStorage` | Yes |
-| `PurchaseFacet` | Offering entry point on the token side | — | Optional |
+| `PurchaseFacet` | Offering entry point on the token side — forwards the caller to the registry's guarded door | — | Optional |
 | `EmergencyFacet` | Forced transfer, mint, burn | — | **No — opt-in only** |
 
 **The loupe is not a facet.** `facets`, `facetAddresses`, `facetAddress`, `facetFunctionSelectors`

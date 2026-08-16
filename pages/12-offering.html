@@ -559,7 +559,7 @@ struct Tier {
 <p>Allocations are keyed to <strong>subjects</strong>, not addresses, for the same reason holder caps are.</p>
 <h3 id="12-offering-level-rules-versus-token-level-rules">Offering-level rules versus token-level rules</h3>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Level</th><th style="text-align:left">Governs</th><th style="text-align:left">Typical rules</th></tr></thead><tbody><tr><td style="text-align:left"><strong>Token</strong></td><td style="text-align:left">Every transfer, forever</td><td style="text-align:left">identity, jurisdiction, holder caps, hold period</td></tr><tr><td style="text-align:left"><strong>Offering</strong></td><td style="text-align:left">Primary purchase only</td><td style="text-align:left">accreditation, minimum investment, allocation, regime-specific attestations</td></tr></tbody></table></div>
-<p>A token-level jurisdiction ban cannot be relaxed by an offering. An offering may only be <strong>more</strong> restrictive than the token, never less.</p>
+<p>A token-level jurisdiction ban cannot be relaxed by an offering. An offering may only be <strong>more</strong> restrictive than the token, never less — which is why offering rules have no OR groups: every attached rule must pass. Each runs under the same 100k gas ceiling the policy plane uses, a rule that reverts counts as a refusal, the list is capped at 24, and a rule&#x27;s <code>bounds</code> can raise the offering&#x27;s minimum or lower its maximum for a given investor but never the reverse. The refusal names the rule and its reason, so an investor learns which requirement they missed.</p>
 <h3 id="12-hold-periods">Hold periods</h3>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Source</th><th style="text-align:left">Applies</th></tr></thead><tbody><tr><td style="text-align:left">Token-level baseline</td><td style="text-align:left">Every acquisition, regardless of route</td></tr><tr><td style="text-align:left">Offering <code>lockupUntil</code></td><td style="text-align:left">Tokens purchased in that offering</td></tr></tbody></table></div>
 <p>Both apply; the longer wins. An offering may lengthen a hold period, never shorten it. The lockup is created at distribution and surfaces through <code>getFrozenTokens</code>, so it is visible to any ERC-7943 integrator without offering-specific knowledge.</p>
@@ -648,4 +648,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: c58a271b7ff654a8e0c6ebefea085e135f68d19bc0786a508c5eeeaa79cb3adb -->
+<!-- source-digest: 41ccd9cd98e83c718a5f069b4dd7e04fe08bfb854b2f7cece90d0806d6643a19 -->

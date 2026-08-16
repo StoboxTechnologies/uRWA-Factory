@@ -254,6 +254,8 @@ error HardCapExceeded(uint256 raised, uint256 hardCap);
 error AllocationExceeded(bytes32 subject, uint256 allocated, uint256 requested);
 error AlreadyRefunded(uint256 purchaseId);
 error PaymentTokenNotAccepted(address paymentToken); // purchase: paid in a currency the offering does not list
+error PurchaseRefused(address rule, string reason);   // an offering rule said no, or could not be read — both refuse
+error OfferingRegistryNotSet();                       // the token's purchase door with no registry wired
 error AddressIsPaused(address account);
 
 error CannotReplaceImmutableFunction(bytes4 selector);

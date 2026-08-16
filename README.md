@@ -8,7 +8,7 @@
 [![Standard: ERC-7943](https://img.shields.io/badge/Standard-ERC--7943-166B5C.svg)](https://eips.ethereum.org/EIPS/eip-7943)
 [![Interface: 0x3edbb4c4](https://img.shields.io/badge/Interface-0x3edbb4c4-4A5C58.svg)](docs/15-standards.md)
 [![Chain: Base](https://img.shields.io/badge/Chain-Base-4A5C58.svg)](docs/16-deployment.md)
-[![Status: Specification](https://img.shields.io/badge/Status-Specification-8A5712.svg)](docs/20-development-plan.md)
+[![Status: Implementation](https://img.shields.io/badge/Status-Implementation-166B5C.svg)](docs/20-development-plan.md)
 
 **[📖 Documentation](https://stoboxtechnologies.github.io/uRWA-Factory/)** ·
 **[🖥 Prototypes](https://stoboxtechnologies.github.io/uRWA-Factory/prototypes/)** ·
@@ -125,7 +125,7 @@ All four surfaces at **[the prototypes index](https://stoboxtechnologies.github.
 
 ## Status
 
-**Implementation stage. Phases 0 to 2 are all but closed.** 32 Solidity files, 168 passing tests,
+**Implementation stage. Phases 0 to 2 are all but closed.** 33 Solidity files, 180 passing tests,
 44 documentation checks that fail the build when the code and the documentation disagree. The
 [handoff](docs/26-handoff.md) records what is delivered, what is deliberately not, the findings from
 the last audit pass, and how to verify all of it without asking anyone. The full work breakdown — 87
@@ -137,7 +137,7 @@ items with dependencies, handoff contracts and review gates — is in the
 | 0 | Interface package, storage layout frozen | **Done** |
 | 1 | Core token, factory, identity adapters | **Done** |
 | 2 | Policy engine, rule library, presets | **Done** |
-| 3 | Treasury, offerings, agent authority, atomic DvP | **7 of 11** |
+| 3 | Treasury, offerings, agent authority, atomic DvP | **9 of 11** |
 | 4 | Passport, proofs, verifier library | Not started |
 | 5 | Interfaces and SDK | Prototypes only |
 | 6 | Audit, then mainnet | Planned |
@@ -165,15 +165,15 @@ open-source claim has broken and the build stops. Details in
 ## Build
 
 ```bash
-forge build                 # once the interface package lands
-forge test
-python3 build-docs.py       # regenerates the documentation site
-python3 verify.py           # 36 checks across structure, documents and models
-python3 verify.py --self-test   # proves those 36 checks can still fail
+forge build
+forge test                      # 180 tests across 15 suites
+python3 build-docs.py           # regenerates the documentation site
+python3 verify.py               # 44 checks: structure, documents, models, code against spec
+python3 verify.py --self-test   # proves those 44 checks can still fail
 ```
 
-The [verification framework](docs/31-verification.md) has six levels. Thirty-six checks run today;
-the rest arrive with the code they test. The last level checks the checks: every one ships with a
+The [verification framework](docs/31-verification.md) has six levels. Forty-four checks run today,
+and the runtime invariants run in Foundry. The last level checks the checks: every one ships with a
 deliberately broken fixture, and any check that passes its own broken input is reported dead rather
 than counted as a pass. It found six on its first run.
 

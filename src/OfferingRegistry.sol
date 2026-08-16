@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {IErrors} from "./interfaces/IErrors.sol";
 import {IEvents} from "./interfaces/IEvents.sol";
+import {IRule, RuleContext} from "./interfaces/IPolicy.sol";
 import {OfferingParams, Purchase, Tier} from "./interfaces/ITreasuryAndOfferings.sol";
 import {Roles} from "./interfaces/Roles.sol";
 
@@ -14,6 +15,13 @@ interface IERC20Payment {
 
 interface ITokenSupply {
     function distributeFromTreasury(address to, uint256 amount, uint64 unlockAt) external;
+}
+
+/// @dev The reads offering rules need from the token, wrapped like the policy
+///      plane wraps them: a token that cannot answer does not break a purchase.
+interface ITokenView {
+    function subjectOf(address wallet) external view returns (bytes32);
+    function subjectHolderCount() external view returns (uint256);
 }
 
 interface ITreasuryCustody {
@@ -64,6 +72,12 @@ contract OfferingRegistry is IErrors {
     mapping(address => uint256[]) private _byInvestor;
     mapping(uint256 => uint256[]) private _byOffering;
     mapping(uint256 => uint256) public paidBySubject;
+
+    /// @dev The same discipline the policy plane runs rules under: one budget
+    ///      per rule, identical for every offering, and a hard cap on how many
+    ///      an operator can attach — griefing by configuration is still griefing.
+    uint256 public constant RULE_GAS_CEILING = 100_000;
+    uint256 public constant MAX_RULES = 24;
 
     /// @dev Purchase states. `Refunded` is terminal and checked on both refund
     ///      paths, which is the whole of `L4.10`.
@@ -133,6 +147,24 @@ contract OfferingRegistry is IErrors {
     ///      here — and would let a purchase succeed for an amount nobody
     ///      agreed to.
     function purchase(uint256 id, uint256 amount, address paymentToken) external {
+        _purchase(id, amount, paymentToken, msg.sender);
+    }
+
+    /// @notice Subscribe on behalf of an investor — the token-facet door
+    /// @dev Only the token an offering sells may call it, and only that token:
+    ///      the `PurchaseFacet` forwards its own `msg.sender` as the investor,
+    ///      so a wallet can do everything against one address. The money still
+    ///      moves from the investor on their allowance to this registry — the
+    ///      token never holds either leg. Both doors funnel into `_purchase`,
+    ///      where every check lives once.
+    function purchaseFor(uint256 id, uint256 amount, address paymentToken, address investor) external {
+        if (msg.sender != _offerings[id].params.token) {
+            revert NotAuthorized(msg.sender, bytes32(0));
+        }
+        _purchase(id, amount, paymentToken, investor);
+    }
+
+    function _purchase(uint256 id, uint256 amount, address paymentToken, address investor) private {
         Offering storage o = _offerings[id];
         if (o.status != Status.Active) revert OfferingNotActive(id, uint8(o.status));
         if (block.timestamp < o.params.startAt || block.timestamp >= o.params.endAt) {
@@ -141,28 +173,33 @@ contract OfferingRegistry is IErrors {
 
         (uint256 cost, uint256 tokens,) = _quote(o, amount);
 
-        if (o.params.minPerInvestor != 0 && tokens < o.params.minPerInvestor) {
-            revert BelowMinimum(tokens, o.params.minPerInvestor);
-        }
-        if (o.params.maxPerInvestor != 0 && tokens > o.params.maxPerInvestor) {
-            revert AboveMaximum(tokens, o.params.maxPerInvestor);
-        }
+        // The offering's own bounds, tightened — never loosened — by what the
+        // attached rules imply for this investor. An accreditation rule with a
+        // regulatory minimum raises the floor; nothing a rule returns can lower
+        // it below what the offering set.
+        (uint256 minimum, uint256 maximum) = _bounds(id, o, investor);
+        if (minimum != 0 && tokens < minimum) revert BelowMinimum(tokens, minimum);
+        if (maximum != 0 && tokens > maximum) revert AboveMaximum(tokens, maximum);
         if (o.sold + tokens > o.params.hardCap) {
             revert HardCapExceeded(tokens, o.params.hardCap - o.sold);
         }
+
+        // Offering-level rules: accreditation, allocation, regime attestations.
+        // All must pass — an offering may only be more restrictive than its
+        // token, never less, so there are no OR groups here.
+        _checkRules(id, o, investor, tokens);
 
         // The buyer names which of the offering's accepted currencies to pay in.
         // All are priced equally, so the same cost is charged whichever is used;
         // paying in a currency the offering does not list is refused rather than
         // silently retargeted to the first one.
         if (!_accepts(o, paymentToken)) revert PaymentTokenNotAccepted(paymentToken);
-        if (!IERC20Payment(paymentToken).transferFrom(msg.sender, o.treasury, cost)) {
+        if (!IERC20Payment(paymentToken).transferFrom(investor, o.treasury, cost)) {
             revert InsufficientAvailable(cost, 0);
         }
-        address payment = paymentToken;
         // Lock the money the instant it lands. Until the offering settles it is
         // the investor's, refundable and unreachable by the issuer.
-        ITreasuryCustody(o.treasury).lockPayment(id, payment, cost);
+        ITreasuryCustody(o.treasury).lockPayment(id, paymentToken, cost);
 
         o.raised += cost;
         o.sold += tokens;
@@ -170,9 +207,9 @@ contract OfferingRegistry is IErrors {
         _purchases.push(
             Purchase({
                 offeringId: id,
-                investor: msg.sender,
+                investor: investor,
                 subject: bytes32(0),
-                paymentToken: payment,
+                paymentToken: paymentToken,
                 paid: cost,
                 tokens: tokens,
                 unlockAt: o.params.lockupUntil,
@@ -180,7 +217,7 @@ contract OfferingRegistry is IErrors {
             })
         );
         uint256 pid = _purchases.length - 1;
-        _byInvestor[msg.sender].push(pid);
+        _byInvestor[investor].push(pid);
         _byOffering[id].push(pid);
 
         // Tokens are **not** delivered here. A purchase during the raise is a
@@ -188,7 +225,64 @@ contract OfferingRegistry is IErrors {
         // and clawing back on failure would need a seizure primitive the design
         // deliberately keeps opt-in; delivering at settlement needs none,
         // because a failed offering delivered nothing.
-        emit IEvents.PurchaseRecorded(id, pid, msg.sender, cost, tokens);
+        emit IEvents.PurchaseRecorded(id, pid, investor, cost, tokens);
+    }
+
+    /// @dev Every attached rule, each under its own gas ceiling. A rule that
+    ///      reverts or exhausts its budget counts as a refusal — a broken rule
+    ///      never admits a buyer it can no longer judge.
+    function _checkRules(uint256 id, Offering storage o, address investor, uint256 tokens) private view {
+        address[] storage rules = _rules[id];
+        if (rules.length == 0) return;
+
+        RuleContext memory ctx = _context(o, investor);
+        for (uint256 i = 0; i < rules.length; i++) {
+            try IRule(rules[i]).check{gas: RULE_GAS_CEILING}(address(0), investor, tokens, ctx) returns (
+                bool ok, string memory reason
+            ) {
+                if (!ok) revert PurchaseRefused(rules[i], reason);
+            } catch {
+                revert PurchaseRefused(rules[i], "rule reverted or exceeded its gas ceiling");
+            }
+        }
+    }
+
+    /// @dev The offering's floor and ceiling, tightened by rule `bounds`. A rule
+    ///      whose bounds cannot be read refuses the purchase — fail closed, the
+    ///      same reading a broken `check` gets.
+    function _bounds(uint256 id, Offering storage o, address investor)
+        private
+        view
+        returns (uint256 minimum, uint256 maximum)
+    {
+        minimum = o.params.minPerInvestor;
+        maximum = o.params.maxPerInvestor;
+
+        address[] storage rules = _rules[id];
+        for (uint256 i = 0; i < rules.length; i++) {
+            try IRule(rules[i]).bounds{gas: RULE_GAS_CEILING}(investor) returns (uint256 lo, uint256 hi) {
+                if (lo > minimum) minimum = lo;
+                if (hi != type(uint256).max && (maximum == 0 || hi < maximum)) maximum = hi;
+            } catch {
+                revert PurchaseRefused(rules[i], "rule bounds unavailable");
+            }
+        }
+    }
+
+    /// @dev What a rule is told. Subjects come from the offering's token, which
+    ///      already resolves wallets through its identity registry; if the token
+    ///      cannot answer, the wallet stands in for the subject — the same
+    ///      fallback the policy plane uses.
+    function _context(Offering storage o, address investor) private view returns (RuleContext memory ctx) {
+        ctx.token = o.params.token;
+        try ITokenView(o.params.token).subjectOf(investor) returns (bytes32 s) {
+            ctx.toSubject = s;
+        } catch {
+            ctx.toSubject = keccak256(abi.encodePacked(investor));
+        }
+        try ITokenView(o.params.token).subjectHolderCount() returns (uint256 n) {
+            ctx.subjectHolderCount = n;
+        } catch {}
     }
 
     /// @notice Cost, tokens and unlock date before signing anything
@@ -317,6 +411,19 @@ contract OfferingRegistry is IErrors {
         _refund(purchaseId);
     }
 
+    /// @notice Refund an investor through the token facet — the other door
+    /// @dev Only the token of that purchase's offering may call it, forwarding
+    ///      its own caller as the investor. Funnels into `_refund` like every
+    ///      other path, so `L4.10` still holds through this door too.
+    function claimRefundFor(uint256 purchaseId, address investor) external {
+        Purchase storage p = _purchases[purchaseId];
+        if (msg.sender != _offerings[p.offeringId].params.token) {
+            revert NotAuthorized(msg.sender, bytes32(0));
+        }
+        if (p.investor != investor) revert NotAuthorized(investor, bytes32(0));
+        _refund(purchaseId);
+    }
+
     /// @notice Operator-pushed refund of a single purchase
     function refundPurchase(uint256 purchaseId) external {
         _onlyOperator(_purchases[purchaseId].offeringId);
@@ -362,7 +469,13 @@ contract OfferingRegistry is IErrors {
 
     function addRule(uint256 id, address rule) external {
         _onlyOperator(id);
+        if (rule == address(0)) revert ZeroAddress();
+        if (_rules[id].length >= MAX_RULES) revert RuleLimitExceeded(_rules[id].length, MAX_RULES);
         _rules[id].push(rule);
+    }
+
+    function rulesOf(uint256 id) external view returns (address[] memory) {
+        return _rules[id];
     }
 
     function removeRule(uint256 id, address rule) external {

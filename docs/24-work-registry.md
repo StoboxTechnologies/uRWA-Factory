@@ -97,8 +97,8 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | CU-02 | OfferingRegistry — one contract; the facet split is CU-07 | **Done** | CU-01 | — |
 | CU-03 | Purchase, bounds, hard cap, **tiered pricing and multi-currency** | **Done** | CU-02 | — |
 | CU-04 | Dual-path refunds with idempotency | **Done** | CU-03 | — |
-| CU-05 | Offering-level rule engine | Planned | CU-02, PO-01 | 0.5 |
-| CU-06 | PurchaseFacet on the token side | Planned | CU-03 | 0.5 |
+| CU-05 | Offering-level rule engine — evaluated at purchase, bounded, fail-closed | **Done** | CU-02, PO-01 | — |
+| CU-06 | PurchaseFacet — the token-side door into the registry's guarded `purchaseFor` | **Done** | CU-03 | — |
 | CU-07 | Split the offering registry into its five facets | Planned | CU-02, audit | 1 |
 
 ### AG — Agents and settlement · Phase 3
@@ -290,14 +290,14 @@ merge → registry status updated in this document
 | CO — Core | 14 | 14 | 0 | 0 | 0 | — |
 | ID — Identity | 4 | 4 | 0 | 0 | 0 | — |
 | PO — Policy | 9 | 9 | 0 | 0 | 0 | — |
-| CU — Custody | 7 | 4 | 0 | 3 | 0 | 2 |
+| CU — Custody | 7 | 6 | 0 | 1 | 0 | 1 |
 | AG — Agents | 4 | 3 | 0 | 1 | 0 | 1 |
 | PA — Passport | 7 | 0 | 0 | 7 | 0 | 5.25 |
 | UI — Interfaces | 11 | 2 | 2 | 7 | 0 | 10 |
 | TO — Tooling | 5 | 0 | 0 | 4 | 1 | 3.75 |
 | OP — Operations | 9 | 2 | 0 | 7 | 0 | 2.75 |
 | ST — Standards | 6 | 0 | 0 | 4 | 2 | 3.5 |
-| **Total** | **87** | **49** | **2** | **33** | **3** | **≈28.25 engineer-weeks** |
+| **Total** | **87** | **51** | **2** | **31** | **3** | **≈27.25 engineer-weeks** |
 
 The remaining figure is the sum of the effort column over every row not marked Done — it is arithmetic
 over this table, not a fresh estimate. The original plan was ≈54 engineer-weeks over 79 items; the

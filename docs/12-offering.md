@@ -145,7 +145,11 @@ Allocations are keyed to **subjects**, not addresses, for the same reason holder
 | **Offering** | Primary purchase only | accreditation, minimum investment, allocation, regime-specific attestations |
 
 A token-level jurisdiction ban cannot be relaxed by an offering. An offering may only be **more**
-restrictive than the token, never less.
+restrictive than the token, never less — which is why offering rules have no OR groups: every
+attached rule must pass. Each runs under the same 100k gas ceiling the policy plane uses, a rule that
+reverts counts as a refusal, the list is capped at 24, and a rule's `bounds` can raise the offering's
+minimum or lower its maximum for a given investor but never the reverse. The refusal names the rule
+and its reason, so an investor learns which requirement they missed.
 
 ## Hold periods
 

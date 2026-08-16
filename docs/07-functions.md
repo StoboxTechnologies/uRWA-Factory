@@ -390,6 +390,9 @@ destination, that destination is onboarded first.
 | Function | Does | Called by | Why |
 |---|---|---|---|
 | `purchase(offeringId, amount, paymentToken)` | Buys tokens in an active offering, paying in any accepted currency | Investor | The primary sale; tiered pricing is consumed across the raise |
+| `purchaseFor(offeringId, amount, paymentToken, investor)` | The token-facet door | **The offering's token only** | `PurchaseFacet` forwards its caller as the investor; both doors funnel into one internal path |
+| `claimRefundFor(purchaseId, investor)` | The refund, through the token | **The offering's token only** | Same door, reversed; `L4.10` holds through it |
+| `rulesOf(offeringId) → address[]` | The rules attached to an offering | Anyone | An investor reads what will be asked of them |
 | `previewPurchase(offeringId, amount) → (cost, tokens, unlockAt)` | Calculates before committing | Investor, UI | Nobody should sign before seeing the price and the lockup |
 | `refundPurchase(purchaseId)` | Claims a refund | Investor | Soft cap missed — the investor gets their money back without anyone's permission |
 
@@ -675,7 +678,7 @@ path: `OfferingGovernanceFacet` (create, activate, pause, close, cancel), `Offer
 | `beginRefunding(id)` | Starts refunds | **Anyone**, once soft cap missed | Investors get their money back |
 | `refundBatch(id, limit)` | Refunds many at once | OFFERING_OPERATOR | Good UX at scale |
 | `claimRefund(purchaseId)` | Refunds yourself | Investor | The backstop that makes refunds a guarantee |
-| `addRule(id, rule)` / `removeRule(id, rule)` | Offering-level compliance | OFFERING_OPERATOR | Accreditation, geography, allocations |
+| `addRule(id, rule)` / `removeRule(id, rule)` | Offering-level compliance — **evaluated at purchase**, all must pass, capped at 24, each under the 100k gas ceiling | OFFERING_OPERATOR | Accreditation, allocations, regime attestations; rule `bounds` tighten the offering's min/max, never loosen |
 | `offeringOf(id) → Offering` | Full terms | Anyone | An investor reads terms before buying |
 | `statusOf(id) → uint8` | Current state | Anyone | Can I still buy? |
 | `purchaseOf(purchaseId) → Purchase` | One purchase | Investor, audit | Receipts |

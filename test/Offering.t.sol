@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import {Test} from "forge-std/Test.sol";
 import {OfferingRegistry} from "../src/OfferingRegistry.sol";
 import {IErrors} from "../src/interfaces/IErrors.sol";
+import {RuleContext} from "../src/interfaces/IPolicy.sol";
 import {OfferingParams, Purchase, Tier} from "../src/interfaces/ITreasuryAndOfferings.sol";
 
 /// @dev A payment currency.
@@ -79,6 +80,71 @@ contract TreasuryStub {
         lockedOf[offeringId] = locked - dec;
         lockedPayments[asset] -= dec;
         Cash(asset).transfer(investor, amount);
+    }
+}
+
+/// @dev Offering-level rules for the CU-05 tests: one of each temperament.
+contract AdmittingRule {
+    function check(address, address, uint256, RuleContext calldata) external pure returns (bool, string memory) {
+        return (true, "");
+    }
+
+    function bounds(address) external pure returns (uint256, uint256) {
+        return (0, type(uint256).max);
+    }
+
+    function ruleId() external pure returns (bytes32) {
+        return keccak256("Admitting");
+    }
+}
+
+contract RefusingRule {
+    function check(address, address, uint256, RuleContext calldata) external pure returns (bool, string memory) {
+        return (false, "not accredited for this offering");
+    }
+
+    function bounds(address) external pure returns (uint256, uint256) {
+        return (0, type(uint256).max);
+    }
+
+    function ruleId() external pure returns (bytes32) {
+        return keccak256("Refusing");
+    }
+}
+
+contract BrokenRule {
+    function check(address, address, uint256, RuleContext calldata) external pure returns (bool, string memory) {
+        revert("boom");
+    }
+
+    function bounds(address) external pure returns (uint256, uint256) {
+        return (0, type(uint256).max);
+    }
+
+    function ruleId() external pure returns (bytes32) {
+        return keccak256("Broken");
+    }
+}
+
+/// @dev A regulatory minimum, the `RequiresClaim.bounds` shape: this rule
+///      admits anyone but demands they invest at least `floor`.
+contract MinimumRule {
+    uint256 public immutable floor;
+
+    constructor(uint256 floor_) {
+        floor = floor_;
+    }
+
+    function check(address, address, uint256, RuleContext calldata) external pure returns (bool, string memory) {
+        return (true, "");
+    }
+
+    function bounds(address) external view returns (uint256, uint256) {
+        return (floor, type(uint256).max);
+    }
+
+    function ruleId() external pure returns (bytes32) {
+        return keccak256("Minimum");
     }
 }
 
@@ -471,6 +537,124 @@ contract OfferingTest is Test {
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(IErrors.PaymentTokenNotAccepted.selector, address(cash2)));
         registry.purchase(id, 100e18, address(cash2));
+    }
+
+    // ── CU-05 · offering-level rules ────────────────────────────────────────
+
+    /// @notice An attached rule that refuses stops the purchase, by name
+    /// @dev The error carries the rule and its reason, so the investor learns
+    ///      which requirement they missed rather than that "it failed".
+    function test_anOfferingRuleRefusesAPurchase() public {
+        RefusingRule refusing = new RefusingRule();
+        registry.addRule(id, address(refusing));
+
+        vm.prank(alice);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IErrors.PurchaseRefused.selector, address(refusing), "not accredited for this offering"
+            )
+        );
+        registry.purchase(id, 100e18, address(cash));
+    }
+
+    /// @notice Rules AND: one refusal among admissions still refuses
+    /// @dev An offering may only be more restrictive than its token, never
+    ///      less — so there are no OR groups at this level.
+    function test_offeringRulesAllMustPass() public {
+        registry.addRule(id, address(new AdmittingRule()));
+        RefusingRule refusing = new RefusingRule();
+        registry.addRule(id, address(refusing));
+
+        vm.prank(alice);
+        vm.expectRevert();
+        registry.purchase(id, 100e18, address(cash));
+
+        registry.removeRule(id, address(refusing));
+        vm.prank(alice);
+        registry.purchase(id, 100e18, address(cash));
+        assertEq(registry.raisedOf(id), 100e18, "admitting rules alone should admit");
+    }
+
+    /// @notice A rule that reverts counts as a refusal, not an exemption
+    /// @dev The same reading the policy plane gives a broken rule: it never
+    ///      admits a buyer it can no longer judge.
+    function test_aBrokenOfferingRuleRefuses() public {
+        BrokenRule broken = new BrokenRule();
+        registry.addRule(id, address(broken));
+
+        vm.prank(alice);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IErrors.PurchaseRefused.selector, address(broken), "rule reverted or exceeded its gas ceiling"
+            )
+        );
+        registry.purchase(id, 100e18, address(cash));
+    }
+
+    /// @notice A rule's bounds tighten the offering's floor, never loosen it
+    /// @dev The `RequiresClaim.bounds` route: a regulatory minimum reaches the
+    ///      registry without the rule mutating anything.
+    function test_ruleBoundsRaiseTheMinimum() public {
+        registry.addRule(id, address(new MinimumRule(50e18)));
+
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.BelowMinimum.selector, 40e18, 50e18));
+        registry.purchase(id, 40e18, address(cash));
+
+        vm.prank(alice);
+        registry.purchase(id, 50e18, address(cash));
+        assertEq(registry.raisedOf(id), 50e18);
+    }
+
+    /// @notice The rule list is capped, like the policy plane's
+    /// @dev Griefing by configuration is still griefing: an operator cannot
+    ///      attach rules until a purchase no longer fits in a block.
+    function test_offeringRulesAreBounded() public {
+        AdmittingRule fine = new AdmittingRule();
+        for (uint256 i = 0; i < registry.MAX_RULES(); i++) {
+            registry.addRule(id, address(fine));
+        }
+        vm.expectRevert(
+            abi.encodeWithSelector(IErrors.RuleLimitExceeded.selector, registry.MAX_RULES(), registry.MAX_RULES())
+        );
+        registry.addRule(id, address(fine));
+    }
+
+    // ── CU-06 · the token-facet door ────────────────────────────────────────
+
+    /// @notice Only the offering's own token may buy on an investor's behalf
+    /// @dev The forwarding door is safe because the registry checks the caller
+    ///      is the token the offering sells — a stranger naming somebody else
+    ///      as investor is refused before anything is quoted.
+    function test_onlyTheOfferingsTokenMayPurchaseFor() public {
+        vm.prank(stranger);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, stranger, bytes32(0)));
+        registry.purchaseFor(id, 100e18, address(cash), alice);
+    }
+
+    /// @notice The token door buys for the investor, on the investor's money
+    function test_theTokenDoorPurchasesForTheInvestor() public {
+        vm.prank(address(token));
+        registry.purchaseFor(id, 100e18, address(cash), alice);
+
+        Purchase memory p = registry.purchaseOf(0);
+        assertEq(p.investor, alice, "the investor of record must be the forwarded caller");
+        assertEq(cash.balanceOf(address(treasury)), 100e18, "paid from the investor's balance");
+    }
+
+    /// @notice And the refund door refuses everyone but that token
+    function test_onlyTheOfferingsTokenMayRefundFor() public {
+        vm.prank(alice);
+        registry.purchase(id, 100e18, address(cash));
+
+        vm.prank(stranger);
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, stranger, bytes32(0)));
+        registry.claimRefundFor(0, alice);
+
+        // The token door cannot refund one investor's purchase to another.
+        vm.prank(address(token));
+        vm.expectRevert(abi.encodeWithSelector(IErrors.NotAuthorized.selector, bob, bytes32(0)));
+        registry.claimRefundFor(0, bob);
     }
 
     function _one(address a) internal pure returns (address[] memory out) {

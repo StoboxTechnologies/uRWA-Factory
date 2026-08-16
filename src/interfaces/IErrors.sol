@@ -81,6 +81,12 @@ interface IErrors {
     error CounterpartyNotInMandate(address counterparty);
     error PresetLengthMismatch(uint256 rules, uint256 groups);
     error PaymentTokenNotAccepted(address paymentToken);
+
+    /// @dev An offering-level rule said no, or could not be read — both refuse.
+    ///      Carries the rule and its reason, so the investor learns which
+    ///      requirement they missed rather than that "the purchase failed".
+    error PurchaseRefused(address rule, string reason);
+    error OfferingRegistryNotSet();
     error OutOfScope(bytes32 mandateId, bytes32 scope);
     error PerActionLimitExceeded(uint256 requested, uint256 limit);
     error PerEpochLimitExceeded(uint256 requested, uint256 remaining);

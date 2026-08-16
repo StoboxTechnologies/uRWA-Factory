@@ -17,6 +17,38 @@ An entry is written even when a session finds nothing — "audited, clean" is a 
 
 ---
 
+## 2026-08-16 · Session 6 — offering rules enforced, and the token-side door
+
+**Shipped.** `CU-05` and `CU-06`, taking Phase 3 to 9 of 11. This was also the first session run
+under the protocol this log records — it opened from session 5's open items, exactly as intended.
+
+- **`CU-05`** — offering-level rules were stored and never evaluated. Purchases now run every
+  attached rule under the policy plane's discipline: one 100k gas budget per rule, a rule that
+  reverts counts as a refusal, the list capped at 24, and rule `bounds` tighten the offering's
+  min/max per investor but never loosen them. The refusal names the rule and its reason.
+- **`CU-06`** — the `PurchaseFacet`: a wallet does everything against the token's address. The facet
+  forwards its caller into the registry's `purchaseFor`/`claimRefundFor`, which only the offering's
+  own token may call; both doors funnel into the registry's single `_purchase`/`_refund` paths, so
+  the facet cannot be a way around any check. The refactor that made this safe was one internal
+  path with two doors — the `L4.10` shape again.
+
+**Audited.** `verify.py` 44/44 and self-test 44/44; `forge test` 180/180 across 15 suites; 7/7
+tools. Every mechanism proven by reverting it: removing the rule evaluation fails three tests,
+removing the `purchaseFor` guard fails a fourth. The end-to-end suite `PurchaseDoor.t.sol` runs
+primary issuance with **no stubs on the money path** — factory-made diamond, real treasury clone,
+real registry: wallet → token door → registry → treasury lock → settlement → delivery through the
+real pipeline, and the refund chain reversed. This is the standing answer to session 4's finding
+that a permissive stub had hidden a broken production path.
+
+**Found.** Two stale claims in the README (a "Specification" status badge, "36 checks" in the build
+section) — corrected. Nothing in this session's own code.
+
+**Open.** The deployment script — factory, package, rules and presets stood up in one run: the
+executable core of the implementation manual and the path to the first demo token. Then branch
+coverage on the thin files, and `TO-01`. `CU-07` and `AG-04` stay parked/planned as recorded.
+
+---
+
 ## 2026-08-16 · Session 5 — presets applied, tiered and multi-currency pricing
 
 **Shipped.** `PO-08` and `CU-03`, closing Phase 2 and taking Phase 3 to 7 of 11.
