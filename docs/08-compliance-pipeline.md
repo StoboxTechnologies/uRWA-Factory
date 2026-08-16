@@ -16,7 +16,7 @@ operations in `EmergencyFacet`, which are separately access-controlled and separ
 
 ## The pipeline
 
-![Seven gates in fixed order, each with the error it raises. Trusted addresses skip gates 3 to 6 but never gate 1 — pause binds everything.](diagrams/transfer-pipeline.svg)
+![Seven gates in fixed order, each with the error it raises. A trusted party skips its own claim check; the rules are skipped only when both are trusted. Nothing skips gate 1.](diagrams/transfer-pipeline.svg)
 
 ```
   transfer · transferFrom · mint · burn
@@ -28,7 +28,7 @@ operations in `EmergencyFacet`, which are separately access-controlled and separ
                  │ no
                  ▼
         ┌────────────────────┐
-        │ 2. both trusted?   ├──── yes ──────────────────┐
+        │ 2. trusted?        ├── both ──────────────────┐
         └────────┬───────────┘                           │
                  │ no                                    │
                  ▼                                       │
@@ -59,27 +59,39 @@ operations in `EmergencyFacet`, which are separately access-controlled and separ
 | Position | Check | Reason |
 |---|---|---|
 | 1 | Pause | One storage read; overrides everything including trust |
-| 2 | Trust bypass | Skips the expensive external call — system addresses move at near-plain-ERC-20 cost |
+| 2 | Trust | Skips the expensive external call for a trusted party; skips the rules only when both are |
 | 3–4 | Identity | An unverified wallet fails regardless of amount, so the cheaper and more informative error comes first |
 | 5 | Frozen balance | Local storage beats an external call — never pay for a call a local check would short-circuit |
 | 6 | Policy set | The only unbounded-cost step, and the only swappable one |
 
 ## Trusted bypass — precise semantics
 
-Trust skips **step 6 only**. It does not skip:
+**Trust exempts a party from its own claim check; it exempts the pair from the rules.**
 
-- **Step 1, pause.** A paused token blocks trusted addresses too.
-- **Step 5, frozen balance.** This is what stops a compromised treasury from draining locked supply.
+| | Skipped for a trusted address |
+|---|---|
+| Its own `canSend` / `canReceive` claim check | ✅ |
+| The rule set | Only when **both** parties are trusted |
+| Global pause | ❌ never |
+| Address pause | ❌ never |
+| Its frozen balance | ❌ never |
 
-Trust applies when **both** parties are trusted. A transfer from a trusted treasury to an untrusted
-investor still runs the full rule set on the receiving side.
+The asymmetry is deliberate and was found by a test rather than by reasoning. An earlier version
+required both parties to be trusted before skipping either claim check — which meant a trusted
+treasury could not distribute to a verified investor without itself being registered in the identity
+system. That defeats the reason a treasury is trusted at all.
 
-| From | To | Rules run |
-|---|---|---|
-| trusted | trusted | ❌ skipped |
-| trusted | untrusted | ✅ run |
-| untrusted | trusted | ✅ run |
-| untrusted | untrusted | ✅ run |
+Rules stay pair-wise because a rule about holder counts or concentration is a fact about the
+**untrusted** party. Skipping it because their counterparty happens to be a treasury would let the
+cap be evaded through any trusted address.
+
+
+| From | To | Claim checks | Rules |
+|---|---|---|---|
+| trusted | trusted | both skipped | ❌ skipped |
+| trusted | untrusted | sender's skipped | ✅ run |
+| untrusted | trusted | recipient's skipped | ✅ run |
+| untrusted | untrusted | both run | ✅ run |
 
 ## Mint and burn
 

@@ -538,6 +538,7 @@ error RuleLimitExceeded(uint256 count, uint256 max);
 error CapIsLocked();
 error MaxSupplyExceeded(uint256 supplyAfterMint, uint256 maxSupply);
 error ZeroAddress();
+error CloneFailed();            // the treasury proxy could not be deployed
 error NotAuthorized(address caller, bytes32 role);
 error ReasonRequired();
 error TreasuryNotSet();</pre>
@@ -662,4 +663,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 1dc8f495afc707bcd193af9beb885d2bfa5ddc8088e6254c35a17a348a5f4ec3 -->
+<!-- source-digest: c2b5bdc727583cd6f909184af975d49c51d75c43dc39d795383af36a1d4f7ee8 -->

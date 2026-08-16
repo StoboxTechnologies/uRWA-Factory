@@ -52,7 +52,6 @@ must be **complete in mechanism and empty of knowledge**.
 - Access grants: group-scoped, always-expiring, revocable
 - Attestation records: attestor, group, issued, valid-until, revoked
 - Proof verification: `verify` and `verifyAbsence` against the anchored root
-- Public-leaf storage and reads
 
 ### It does not contain
 
@@ -62,7 +61,7 @@ must be **complete in mechanism and empty of knowledge**.
 - **Any attestor list.** `AttestorRegistry` is open, but it ships empty. Who is worth trusting is the
   product.
 - **Any ingestion.** Nothing that fetches, parses, normalises or enriches.
-- **Any visibility policy.** The three tiers are documented; which datapoint sits in which tier is not.
+- **Any disclosure policy.** The two tiers are documented; which datapoint sits in which is not.
 
 A fork therefore gets a working commitment ledger with no idea what to put in it. That is the correct
 outcome: the mechanism is a public good, the knowledge is the business.
@@ -87,6 +86,13 @@ These are enforced, not merely intended.
 | No Stobox address in any contract | Test invariant scanning bytecode and source for known addresses |
 | No STBU reference | Test invariant; the default deployment returns `fee() == 0` and `feeToken() == address(0)` |
 
+| No datapoint schema in the reference passport | Code review checklist; `bytes32 code` must remain opaque |
+| The default identity adapter is the allowlist | Deployment default; StoboxDID is opt-in configuration |
+| A fork deploys with no external dependency | `test/FreshChain.t.sol` — deploys the factory, a tier-0 registry, a token and its treasury with no Stobox contract present, then issues, distributes and transfers |
+
+The last one is the important one. It runs on every commit, so the credibility test is not a promise —
+it is a build step that fails.
+
 ### On the fee, precisely
 
 `FeeFacet` keeps a setter. **No fee is charged today, and any fee ever set is readable by anyone
@@ -95,12 +101,7 @@ free forever, which would be a promise about the future that nothing in the code
 
 A fork is unaffected either way: it deploys its own factory, its own `FeeFacet` and its own
 configuration, and never calls ours. Our fee policy is not something a fork can be exposed to.
-| No datapoint schema in the reference passport | Code review checklist; `bytes32 code` must remain opaque |
-| The default identity adapter is the allowlist | Deployment default; StoboxDID is opt-in configuration |
-| A fork deploys with no external dependency | CI job deploys the full stack to a fresh anvil chain and runs an end-to-end sale |
 
-The last one is the important one. It runs on every commit, so the credibility test is not a promise —
-it is a build step that fails.
 
 ## Naming and trademark
 

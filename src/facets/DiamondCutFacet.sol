@@ -50,6 +50,30 @@ contract DiamondCutFacet is IErrors {
         emit IEvents.UpgradeCancelled(cutHash);
     }
 
+    /// @notice Change the delay
+    /// @dev **Raising is immediate; lowering waits out the current delay.**
+    ///      Otherwise the guarantee is worthless: an admin would set the delay
+    ///      to zero and cut in the same transaction, and a holder who relied on
+    ///      having a week's notice would have had none.
+    ///
+    ///      A pending reduction is scheduled like any other change and is
+    ///      publicly visible for exactly the period it is shortening.
+    function setUpgradeDelay(uint64 newDelay) external {
+        _onlyUpgradeAdmin();
+        Layout.UpgradeStorage storage u = Layout.upgrade();
+
+        if (newDelay >= u.delay) {
+            u.delay = newDelay;
+            emit IEvents.UpgradeDelaySet(newDelay);
+            return;
+        }
+
+        bytes32 key = keccak256(abi.encode("setUpgradeDelay", newDelay));
+        if (!LibDiamond.scheduleOrCheck(key)) return;
+        u.delay = newDelay;
+        emit IEvents.UpgradeDelaySet(newDelay);
+    }
+
     function upgradeDelay() external view returns (uint64) {
         return Layout.upgrade().delay;
     }

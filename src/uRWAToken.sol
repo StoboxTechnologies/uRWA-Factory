@@ -46,8 +46,10 @@ contract uRWAToken is IuRWAToken, IEvents, IErrors {
 
     /// @param cutFacet The upgrade machinery, registered here because a diamond
     ///        cannot install its own installer through a cut.
-    /// @param upgradeAdmin_ Granted `UPGRADE_ADMIN`; the only account that may
-    ///        cut, and still unable to reach a balance.
+    /// @param bootstrapAdmin_ Granted both `UPGRADE_ADMIN` and `ISSUER_ADMIN`,
+    ///        because a token with no administrator cannot be configured and a
+    ///        diamond cannot grant its first role through a cut. The factory
+    ///        passes itself here and gives both up before the call returns.
     /// @param upgradeDelay_ Seconds a cut waits before it may execute; `0` for
     ///        none. Public through the loupe, because a token with a delay and
     ///        one without are different instruments.
@@ -58,7 +60,7 @@ contract uRWAToken is IuRWAToken, IEvents, IErrors {
         uint256 maxSupply_,
         address owner_,
         address cutFacet,
-        address upgradeAdmin_,
+        address bootstrapAdmin_,
         uint64 upgradeDelay_
     ) {
         Layout.CoreStorage storage c = Layout.core();
@@ -80,13 +82,18 @@ contract uRWAToken is IuRWAToken, IEvents, IErrors {
         d.facetOf[DiamondCutFacet.cancelCut.selector] = cutFacet;
         d.facetOf[DiamondCutFacet.upgradeDelay.selector] = cutFacet;
         d.facetOf[DiamondCutFacet.scheduledAt.selector] = cutFacet;
+        d.facetOf[DiamondCutFacet.setUpgradeDelay.selector] = cutFacet;
         d.selectorsOf[cutFacet].push(DiamondCutFacet.diamondCut.selector);
         d.facetAddresses.push(cutFacet);
 
         Layout.upgrade().delay = upgradeDelay_;
-        Layout.roles().roles[Roles.UPGRADE_ADMIN][upgradeAdmin_] = true;
-        Layout.roles().members[Roles.UPGRADE_ADMIN].push(upgradeAdmin_);
-        emit RoleGranted(Roles.UPGRADE_ADMIN, upgradeAdmin_, msg.sender);
+        Layout.RolesStorage storage roles = Layout.roles();
+        roles.roles[Roles.UPGRADE_ADMIN][bootstrapAdmin_] = true;
+        roles.members[Roles.UPGRADE_ADMIN].push(bootstrapAdmin_);
+        roles.roles[Roles.ISSUER_ADMIN][bootstrapAdmin_] = true;
+        roles.members[Roles.ISSUER_ADMIN].push(bootstrapAdmin_);
+        emit RoleGranted(Roles.UPGRADE_ADMIN, bootstrapAdmin_, msg.sender);
+        emit RoleGranted(Roles.ISSUER_ADMIN, bootstrapAdmin_, msg.sender);
 
         _owner = owner_;
         _domainAtDeploy = _buildDomain(name_);

@@ -57,7 +57,7 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 | CO-07 | MonetaryFacet: issue, redeem, distribute, caps | **Done** | CO-01 | — |
 | CO-08 | RolesFacet | **Done** | CO-01 | — |
 | CO-09 | Treasury clone | **Done** | CO-07 | — |
-| CO-10 | uRWAFactory: create, packages, presets, registry | Planned | CO-01…09 | 1.5 |
+| CO-10 | uRWAFactory: create, packages, presets, registry | **Done** | CO-01…09 | — |
 | CO-11 | ERC-1404 compatibility surface | **Done** | CO-03 | — |
 | CO-12 | Per-address pause — blocks sending and receiving, reason evented | **Done** | CO-01 | — |
 | CO-13 | Configurable upgrade delay in TokenParams, exposed for the verifier | **Done** | CO-01 | — |

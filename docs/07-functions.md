@@ -100,6 +100,7 @@ anything we say about it.
 | `supportsInterface(id) → bool` | ERC-165 | Anyone | How conformance is claimed and checked |
 | `upgradeDelay() → uint64` | The delay the issuer configured; `0` means immediate | **Anyone** | A token with a seven-day delay is a different instrument from one without |
 | `scheduledAt(cutHash) → uint64` | When a pending cut becomes executable | Anyone | A scheduled upgrade is inspectable before it lands |
+| `setUpgradeDelay(newDelay)` | Changes the delay — **raising is immediate, lowering waits out the current delay** | `UPGRADE_ADMIN` | Otherwise the delay is worthless: an admin would zero it and cut in the same transaction |
 | `cancelCut(cutHash)` | Abandons a scheduled cut | `UPGRADE_ADMIN` | An upgrade announced and then reconsidered must be withdrawable, and visibly so |
 
 **`diamondCut` cannot replace or remove the ERC-20 selectors.** They are immutable selectors —

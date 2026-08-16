@@ -512,7 +512,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <text class="fa" x="452" y="434">unbounded external call last. Refusing a</text>
 <text class="fa" x="452" y="450">paused token costs almost nothing.</text></g>
 </svg>
-<figcaption>Seven gates in fixed order, each with the error it raises. Trusted addresses skip gates 3 to 6 but never gate 1 — pause binds everything.</figcaption></figure>
+<figcaption>Seven gates in fixed order, each with the error it raises. A trusted party skips its own claim check; the rules are skipped only when both are trusted. Nothing skips gate 1.</figcaption></figure>
 <pre>  transfer · transferFrom · mint · burn
                  │
                  ▼
@@ -522,7 +522,7 @@ footer p{max-width:76ch;margin:0 0 8px}
                  │ no
                  ▼
         ┌────────────────────┐
-        │ 2. both trusted?   ├──── yes ──────────────────┐
+        │ 2. trusted?        ├── both ──────────────────┐
         └────────┬───────────┘                           │
                  │ no                                    │
                  ▼                                       │
@@ -547,15 +547,13 @@ footer p{max-width:76ch;margin:0 0 8px}
                  ▼
         7. execute · update accounting · emit Transfer</pre>
 <h3 id="08-why-this-order">Why this order</h3>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Position</th><th style="text-align:left">Check</th><th style="text-align:left">Reason</th></tr></thead><tbody><tr><td style="text-align:left">1</td><td style="text-align:left">Pause</td><td style="text-align:left">One storage read; overrides everything including trust</td></tr><tr><td style="text-align:left">2</td><td style="text-align:left">Trust bypass</td><td style="text-align:left">Skips the expensive external call — system addresses move at near-plain-ERC-20 cost</td></tr><tr><td style="text-align:left">3–4</td><td style="text-align:left">Identity</td><td style="text-align:left">An unverified wallet fails regardless of amount, so the cheaper and more informative error comes first</td></tr><tr><td style="text-align:left">5</td><td style="text-align:left">Frozen balance</td><td style="text-align:left">Local storage beats an external call — never pay for a call a local check would short-circuit</td></tr><tr><td style="text-align:left">6</td><td style="text-align:left">Policy set</td><td style="text-align:left">The only unbounded-cost step, and the only swappable one</td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Position</th><th style="text-align:left">Check</th><th style="text-align:left">Reason</th></tr></thead><tbody><tr><td style="text-align:left">1</td><td style="text-align:left">Pause</td><td style="text-align:left">One storage read; overrides everything including trust</td></tr><tr><td style="text-align:left">2</td><td style="text-align:left">Trust</td><td style="text-align:left">Skips the expensive external call for a trusted party; skips the rules only when both are</td></tr><tr><td style="text-align:left">3–4</td><td style="text-align:left">Identity</td><td style="text-align:left">An unverified wallet fails regardless of amount, so the cheaper and more informative error comes first</td></tr><tr><td style="text-align:left">5</td><td style="text-align:left">Frozen balance</td><td style="text-align:left">Local storage beats an external call — never pay for a call a local check would short-circuit</td></tr><tr><td style="text-align:left">6</td><td style="text-align:left">Policy set</td><td style="text-align:left">The only unbounded-cost step, and the only swappable one</td></tr></tbody></table></div>
 <h3 id="08-trusted-bypass-precise-semantics">Trusted bypass — precise semantics</h3>
-<p>Trust skips <strong>step 6 only</strong>. It does not skip:</p>
-<ul>
-<li><strong>Step 1, pause.</strong> A paused token blocks trusted addresses too.</li>
-<li><strong>Step 5, frozen balance.</strong> This is what stops a compromised treasury from draining locked supply.</li>
-</ul>
-<p>Trust applies when <strong>both</strong> parties are trusted. A transfer from a trusted treasury to an untrusted investor still runs the full rule set on the receiving side.</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">From</th><th style="text-align:left">To</th><th style="text-align:left">Rules run</th></tr></thead><tbody><tr><td style="text-align:left">trusted</td><td style="text-align:left">trusted</td><td style="text-align:left">❌ skipped</td></tr><tr><td style="text-align:left">trusted</td><td style="text-align:left">untrusted</td><td style="text-align:left">✅ run</td></tr><tr><td style="text-align:left">untrusted</td><td style="text-align:left">trusted</td><td style="text-align:left">✅ run</td></tr><tr><td style="text-align:left">untrusted</td><td style="text-align:left">untrusted</td><td style="text-align:left">✅ run</td></tr></tbody></table></div>
+<p><strong>Trust exempts a party from its own claim check; it exempts the pair from the rules.</strong></p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left"></th><th style="text-align:left">Skipped for a trusted address</th></tr></thead><tbody><tr><td style="text-align:left">Its own <code>canSend</code> / <code>canReceive</code> claim check</td><td style="text-align:left">✅</td></tr><tr><td style="text-align:left">The rule set</td><td style="text-align:left">Only when <strong>both</strong> parties are trusted</td></tr><tr><td style="text-align:left">Global pause</td><td style="text-align:left">❌ never</td></tr><tr><td style="text-align:left">Address pause</td><td style="text-align:left">❌ never</td></tr><tr><td style="text-align:left">Its frozen balance</td><td style="text-align:left">❌ never</td></tr></tbody></table></div>
+<p>The asymmetry is deliberate and was found by a test rather than by reasoning. An earlier version required both parties to be trusted before skipping either claim check — which meant a trusted treasury could not distribute to a verified investor without itself being registered in the identity system. That defeats the reason a treasury is trusted at all.</p>
+<p>Rules stay pair-wise because a rule about holder counts or concentration is a fact about the <strong>untrusted</strong> party. Skipping it because their counterparty happens to be a treasury would let the cap be evaded through any trusted address.</p>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">From</th><th style="text-align:left">To</th><th style="text-align:left">Claim checks</th><th style="text-align:left">Rules</th></tr></thead><tbody><tr><td style="text-align:left">trusted</td><td style="text-align:left">trusted</td><td style="text-align:left">both skipped</td><td style="text-align:left">❌ skipped</td></tr><tr><td style="text-align:left">trusted</td><td style="text-align:left">untrusted</td><td style="text-align:left">sender&#x27;s skipped</td><td style="text-align:left">✅ run</td></tr><tr><td style="text-align:left">untrusted</td><td style="text-align:left">trusted</td><td style="text-align:left">recipient&#x27;s skipped</td><td style="text-align:left">✅ run</td></tr><tr><td style="text-align:left">untrusted</td><td style="text-align:left">untrusted</td><td style="text-align:left">both run</td><td style="text-align:left">✅ run</td></tr></tbody></table></div>
 <h3 id="08-mint-and-burn">Mint and burn</h3>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Case</th><th style="text-align:left"><code>from</code></th><th style="text-align:left"><code>to</code></th><th style="text-align:left">Checks applied</th></tr></thead><tbody><tr><td style="text-align:left">Mint</td><td style="text-align:left"><code>address(0)</code></td><td style="text-align:left">recipient</td><td style="text-align:left">Pause, <code>canReceive(to)</code>, policy set. <code>canSend</code> and frozen-balance are skipped — there is no sender.</td></tr><tr><td style="text-align:left">Burn</td><td style="text-align:left">holder</td><td style="text-align:left"><code>address(0)</code></td><td style="text-align:left">Pause, <code>canSend(from)</code>, frozen balance, policy set. <code>canReceive</code> is skipped.</td></tr></tbody></table></div>
 <p>ERC-7943 requires that minting in permissioned contexts rejects recipients where <code>canReceive</code> would return false, and that burning respects <code>canSend</code>. Both hold here.</p>
@@ -681,4 +679,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 1dc8f495afc707bcd193af9beb885d2bfa5ddc8088e6254c35a17a348a5f4ec3 -->
+<!-- source-digest: c2b5bdc727583cd6f909184af975d49c51d75c43dc39d795383af36a1d4f7ee8 -->

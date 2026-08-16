@@ -227,6 +227,7 @@ error RuleLimitExceeded(uint256 count, uint256 max);
 error CapIsLocked();
 error MaxSupplyExceeded(uint256 supplyAfterMint, uint256 maxSupply);
 error ZeroAddress();
+error CloneFailed();            // the treasury proxy could not be deployed
 error NotAuthorized(address caller, bytes32 role);
 error ReasonRequired();
 error TreasuryNotSet();

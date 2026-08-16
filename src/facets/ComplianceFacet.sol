@@ -141,16 +141,20 @@ contract ComplianceFacet is IErrors {
 
         // 3 · minting and burning are accounted elsewhere; the pipeline governs
         //     movement between holders
-        bool bothTrusted = s.trusted[from] && s.trusted[to];
-
-        if (!bothTrusted) {
-            if (!_eligible(s.identityRegistry, from)) {
-                return (GATE_SEND, address(0), "sender is not verified");
-            }
-            if (!_eligible(s.identityRegistry, to)) {
-                return (GATE_RECEIVE, address(0), "recipient is not verified");
-            }
+        // Trust exempts **that party**, not the pair. A trusted treasury must
+        // be able to distribute to a verified investor without itself being in
+        // the identity registry — which is the whole reason it is trusted.
+        if (!s.trusted[from] && !_eligible(s.identityRegistry, from)) {
+            return (GATE_SEND, address(0), "sender is not verified");
         }
+        if (!s.trusted[to] && !_eligible(s.identityRegistry, to)) {
+            return (GATE_RECEIVE, address(0), "recipient is not verified");
+        }
+
+        // Rules are skipped only when **both** sides are trusted: a rule about
+        // holder counts or concentration is about the untrusted party, and
+        // skipping it because their counterparty is a treasury would be wrong.
+        bool bothTrusted = s.trusted[from] && s.trusted[to];
 
         // 5 · restrictions apply to trusted addresses too
         if (amount > _unfrozen(from)) {

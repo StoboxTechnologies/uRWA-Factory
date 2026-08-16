@@ -484,7 +484,6 @@ footer p{max-width:76ch;margin:0 0 8px}
 <li>Access grants: group-scoped, always-expiring, revocable</li>
 <li>Attestation records: attestor, group, issued, valid-until, revoked</li>
 <li>Proof verification: <code>verify</code> and <code>verifyAbsence</code> against the anchored root</li>
-<li>Public-leaf storage and reads</li>
 </ul>
 <h4 id="19-it-does-not-contain">It does not contain</h4>
 <ul>
@@ -498,7 +497,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <p>  product.</p>
 <ul>
 <li><strong>Any ingestion.</strong> Nothing that fetches, parses, normalises or enriches.</li>
-<li><strong>Any visibility policy.</strong> The three tiers are documented; which datapoint sits in which tier is not.</li>
+<li><strong>Any disclosure policy.</strong> The two tiers are documented; which datapoint sits in which is not.</li>
 </ul>
 <p>A fork therefore gets a working commitment ledger with no idea what to put in it. That is the correct outcome: the mechanism is a public good, the knowledge is the business.</p>
 <h4 id="19-the-test">The test</h4>
@@ -507,13 +506,13 @@ footer p{max-width:76ch;margin:0 0 8px}
 <h3 id="19-guardrails-in-the-repository">Guardrails in the repository</h3>
 <p>These are enforced, not merely intended.</p>
 <div class="tscroll"><table><thead><tr><th style="text-align:left">Guardrail</th><th style="text-align:left">Enforcement</th></tr></thead><tbody><tr><td style="text-align:left">No Stobox address in any contract</td><td style="text-align:left">Test invariant scanning bytecode and source for known addresses</td></tr><tr><td style="text-align:left">No STBU reference</td><td style="text-align:left">Test invariant; the default deployment returns <code>fee() == 0</code> and <code>feeToken() == address(0)</code></td></tr></tbody></table></div>
+<p>| No datapoint schema in the reference passport | Code review checklist; <code>bytes32 code</code> must remain opaque |</p>
+<p>| The default identity adapter is the allowlist | Deployment default; StoboxDID is opt-in configuration |</p>
+<p>| A fork deploys with no external dependency | <code>test/FreshChain.t.sol</code> — deploys the factory, a tier-0 registry, a token and its treasury with no Stobox contract present, then issues, distributes and transfers |</p>
+<p>The last one is the important one. It runs on every commit, so the credibility test is not a promise — it is a build step that fails.</p>
 <h4 id="19-on-the-fee-precisely">On the fee, precisely</h4>
 <p><code>FeeFacet</code> keeps a setter. <strong>No fee is charged today, and any fee ever set is readable by anyone through <code>fee()</code> and <code>feeToken()</code> before they transact.</strong> That is the claim — not that the factory is free forever, which would be a promise about the future that nothing in the code enforces.</p>
 <p>A fork is unaffected either way: it deploys its own factory, its own <code>FeeFacet</code> and its own configuration, and never calls ours. Our fee policy is not something a fork can be exposed to.</p>
-<p>| No datapoint schema in the reference passport | Code review checklist; <code>bytes32 code</code> must remain opaque |</p>
-<p>| The default identity adapter is the allowlist | Deployment default; StoboxDID is opt-in configuration |</p>
-<p>| A fork deploys with no external dependency | CI job deploys the full stack to a fresh anvil chain and runs an end-to-end sale |</p>
-<p>The last one is the important one. It runs on every commit, so the credibility test is not a promise — it is a build step that fails.</p>
 <h3 id="19-naming-and-trademark">Naming and trademark</h3>
 <p>MIT grants rights to the code, not to the name. The repository name, the Stobox name and the Compass name are trademarks and are not licensed by the code licence.</p>
 <p>The claim a fork may make is <strong>&quot;passes the uRWA conformance suite&quot;</strong>. The claim it may not make is &quot;built by Stobox&quot; or &quot;Stobox-certified&quot;. This is normal open-source practice and needs stating once, in <code>NOTICE</code>.</p>
@@ -603,4 +602,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 1dc8f495afc707bcd193af9beb885d2bfa5ddc8088e6254c35a17a348a5f4ec3 -->
+<!-- source-digest: c2b5bdc727583cd6f909184af975d49c51d75c43dc39d795383af36a1d4f7ee8 -->

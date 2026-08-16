@@ -94,7 +94,7 @@ phase. See the status below.
 | **Diagrams** | 17, generated from source and checked in CI |
 | **Prototypes** | Four surfaces, clickable, wired to nothing |
 | **Verification** | 42 automated checks plus 55 contract tests, each check proven to fail on its own broken input |
-| **Solidity** | Phase 0 done; Phase 1 in progress — everything but the factory; 64 tests |
+| **Solidity** | Phase 0 done; **Phase 1 complete** — the whole stack deploys on a clean chain and transfers; 73 tests |
 | **Audit** | Booked after the core, before any real issuance |
 | **Mainnet** | Not until the audit clears |
 
