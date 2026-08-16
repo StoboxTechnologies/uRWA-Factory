@@ -125,7 +125,7 @@ All four surfaces at **[the prototypes index](https://stoboxtechnologies.github.
 
 ## Status
 
-**Implementation stage. Phases 0 to 2 are all but closed.** 33 Solidity files, 180 passing tests,
+**Implementation stage. Phases 0 to 2 are all but closed.** 33 Solidity files, 184 passing tests,
 44 documentation checks that fail the build when the code and the documentation disagree. The
 [handoff](docs/26-handoff.md) records what is delivered, what is deliberately not, the findings from
 the last audit pass, and how to verify all of it without asking anyone. The full work breakdown — 87
@@ -166,7 +166,7 @@ open-source claim has broken and the build stops. Details in
 
 ```bash
 forge build
-forge test                      # 180 tests across 15 suites
+forge test                      # 184 tests across 16 suites
 python3 build-docs.py           # regenerates the documentation site
 python3 verify.py               # 44 checks: structure, documents, models, code against spec
 python3 verify.py --self-test   # proves those 44 checks can still fail

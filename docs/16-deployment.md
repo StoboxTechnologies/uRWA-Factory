@@ -52,6 +52,11 @@ These are shared by every token on the chain and deployed once.
 Facets are deployed once and referenced by every token. A token deployment is therefore a diamond
 constructor plus a treasury clone — cheap enough to target under one dollar on Base.
 
+Steps 2 to 7 are executable: `script/Deploy.s.sol:DeployStack` stands the stack up in one run, and
+`DeployDemoToken` performs steps 9 to 11 for a first token. CI runs the same code as a test on every
+commit, so the scripts cannot rot silently. Commands, environment and post-deploy verification are in
+[script/README.md](../script/README.md). Steps 1 and 8 arrive with Phase 4.
+
 ## Per asset
 
 ```

@@ -433,6 +433,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 7  OfferingRegistry                   // optional
 8  AssetPassport                      // Stobox instance only</pre>
 <p>Facets are deployed once and referenced by every token. A token deployment is therefore a diamond constructor plus a treasury clone — cheap enough to target under one dollar on Base.</p>
+<p>Steps 2 to 7 are executable: <code>script/Deploy.s.sol:DeployStack</code> stands the stack up in one run, and <code>DeployDemoToken</code> performs steps 9 to 11 for a first token. CI runs the same code as a test on every commit, so the scripts cannot rot silently. Commands, environment and post-deploy verification are in <a href="../script/README.md">script/README.md</a>. Steps 1 and 8 arrive with Phase 4.</p>
 <h3 id="16-per-asset">Per asset</h3>
 <pre> 9  factory.createToken(params) → (token, treasury)
 10  token trusted list: trust(treasury), trust(offeringRegistry)
@@ -645,4 +646,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 41ccd9cd98e83c718a5f069b4dd7e04fe08bfb854b2f7cece90d0806d6643a19 -->
+<!-- source-digest: e3b317702f935f7bb96f2d8a3ef39dda3463ec1d34af2b4ea201d6c17b63f471 -->

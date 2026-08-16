@@ -17,6 +17,39 @@ An entry is written even when a session finds nothing — "audited, clean" is a 
 
 ---
 
+## 2026-08-16 · Session 7 — the stack becomes a script an operator can run
+
+**Shipped.** `script/Deploy.s.sol` — doc 16's deployment flow, executable. `DeployStack` stands up
+everything a chain needs once: facet implementations, the factory, the offering registry, the tier-0
+allowlist, the shared rules, and registers the `base.v1` / `base+purchase.v1` packages and the
+`RegD506c` / `RegS` / `Open` presets. `DeployDemoToken` performs the per-asset steps for a first
+token. `script/README.md` is the operator manual: commands, environment, and a post-deploy
+verification section where every check is a `cast` call needing no trust in the deployer — including
+proving seizure absent through the loupe.
+
+**Design decisions recorded.** The deploy logic lives in `StackDeployer`, which both the broadcast
+scripts and `Deploy.t.sol` run — CI deploys through the operator's exact code on every commit, so
+the script cannot rot silently. No emergency package: installing seizure stays a deliberate act by
+cut. No MiCA presets: `MiCARule` is parameterised by the issuer's subject, so a MiCA regime is
+composed per issuance. Sanctions freshness ships at zero until `PA-03` settles the windows — noted
+in the script where an operator will read it. The factory's admin is the broadcaster and is not
+transferable; the manual says to deploy from the multisig that should hold it permanently.
+
+**Audited.** `verify.py` 44/44, self-test 44/44, `forge test` 184/184 across 16 suites, 7/7 tools.
+`Deploy.t.sol` proves: the deployed stack sells a token end to end (create → issue → offer →
+purchase through the token door → settle → deliver → onward transfer); the registered preset is
+attached, officer-owned and enforcing; **every selector both packages promise routes to its facet**
+— the drift between a registered package and the real facet surfaces that unit tests cannot see; and
+the presets compose exactly as doc 10 writes them.
+
+**Found.** Nothing new in this session's work.
+
+**Open.** `OP-04`: run the two scripts on Base Sepolia, verify the contracts, publish the addresses —
+the first demo token on a real chain. Needs funded keys and RPC/BaseScan env, so it is an operator
+step, not a CI one. Then branch coverage on the thin files, then `TO-01`.
+
+---
+
 ## 2026-08-16 · Session 6 — offering rules enforced, and the token-side door
 
 **Shipped.** `CU-05` and `CU-06`, taking Phase 3 to 9 of 11. This was also the first session run

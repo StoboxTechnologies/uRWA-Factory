@@ -81,7 +81,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 
 ### The tests
 
-**180 tests across 15 suites, all passing.**
+**184 tests across 16 suites, all passing.**
 
 | Suite | Tests | Holds |
 |---|---:|---|
@@ -98,6 +98,7 @@ document, [24 — Work registry](24-work-registry.md) for what is left, and
 | `Identity.t.sol` | 11 | Three adapters behind one interface; a reverting registry is survived |
 | `Offering.t.sol` | 30 | Purchases, pricing, offering rules that fail closed, refunds that cannot be taken twice |
 | `PurchaseDoor.t.sol` | 4 | Primary issuance end to end through the real stack — no stubs on the money path |
+| `Deploy.t.sol` | 4 | The deployment script's own code stands the stack up and sells through it |
 | `AgentsAndSettlement.t.sol` | 21 | Mandates that cannot be exceeded; trades that cannot half-settle |
 | `Preset.t.sol` | 6 | A regime preset is applied at creation and enforces |
 
@@ -285,12 +286,13 @@ permissionless deliberately, and say so in their own comments.
 |---|---|
 | The documentation agrees with the code | `python3 verify.py` — 44 checks, all four levels |
 | The checks are not decorative | `python3 verify.py --self-test` — each one fails on its own known-bad fixture |
-| The invariants hold at runtime | `forge test` — 180 tests, 15 suites |
+| The invariants hold at runtime | `forge test` — 184 tests, 16 suites |
 | Every invariant has an owner | `L3.8`, which fails if a test stops naming one |
 | Every documented caller is enforced | `L3.6` — delete any guard in `src/` and it names the function |
 | The documentation cannot drift | Edit any `docs/*.md`, push, and watch CI fail until `build-docs.py` is run and committed |
 | The open boundary is enforced | Add a Stobox address under `src/` and watch the `open-boundary` job fail |
 | The stack needs nothing of ours | `forge test --match-contract FreshChain` — deploys and transfers with no Stobox contract present |
+| The deploy script works | `forge test --match-contract DeployTest` — CI runs the operator's exact code |
 | The ledger cannot be cut out | `forge test --match-test test_theLedgerCannotBeReplaced` |
 | ERC-7943 is genuinely absent from STV3 | `cast call --rpc-url https://arb1.arbitrum.io/rpc 0x998a0beaf37ca4ba61b5cfac59fdee0da2211a46 "facetAddress(bytes4)(address)" $(cast sig "canTransfer(address,address,uint256)")` returns the zero address |
 
@@ -324,7 +326,7 @@ results changed, not on every run.
 
 | # | Item | Why this order |
 |---|---|---|
-| 1 | The deployment script — factory, package, rules and presets stood up in one run | The executable core of the implementation manual, and the path to a first demo token on a testnet |
+| 1 | `OP-04` — run `DeployStack` + `DeployDemoToken` on Base Sepolia, verify, publish the addresses | The scripts and their CI test exist; a real chain is the remaining step to the first demo token |
 | 2 | Branch coverage on `uRWAToken`, `uRWAFactory`, `RolesFacet`, `AtomicDvP` | Findings 2 and 3, before anything is frozen |
 | 3 | `TO-01` — the conformance kit | Unparks `ST-02`, and is the piece that makes the work useful to somebody else's token |
 
