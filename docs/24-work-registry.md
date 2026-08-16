@@ -105,9 +105,9 @@ Effort is a planning estimate in engineer-weeks, to be re-estimated once `IF-01`
 
 | ID | Item | Status | Depends on | Effort |
 |---|---|---|---|---|
-| AG-01 | AgentAuthority: mandates, scopes, epoch limits, revoke | Planned | CO-08 | 1 |
-| AG-02 | AtomicDvP: settle, previewSettle, cancel | Planned | CO-03 | 1.5 |
-| AG-03 | EIP-712 instruction format and signature verification | Planned | AG-02 | 0.5 |
+| AG-01 | AgentAuthority: mandates, scopes, epoch limits, revoke | **Done** | CO-08 | — |
+| AG-02 | AtomicDvP: settle, previewSettle, cancel | **Done** | CO-03 | — |
+| AG-03 | EIP-712 instruction format, signature verification, malleability guard | **Done** | AG-02 | — |
 | AG-04 | Reference monitoring agent | Planned | AG-01, TO-04 | 1 |
 
 ### PA — Passport · Phase 4
