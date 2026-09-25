@@ -1,0 +1,380 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbit Functions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#0D1424; --ink-2:#2B3447; --muted:#5A6477; --rule:#D8DEE8;
+  --region:#E9EDF4; --region-base:#E6EEFF; --accent:#0046E0;
+  --live:#12804F; --ready:#4B4BC8; --pending:#A86200; --gap:#C42D25; --option:#6B7489;
+  --display:"Unbounded",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+    --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+    --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+  --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+  --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+main{max-width:1180px;margin:0 auto;padding:56px 28px 96px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font:700 clamp(30px,4.6vw,48px)/1.08 var(--display);letter-spacing:-.01em}
+h2{font:700 22px/1.25 var(--display);letter-spacing:-.005em}
+h3{font:600 17px/1.35 var(--body)}
+p{margin:0}
+.prose{max-width:68ch;color:var(--ink-2)}
+.prose code{overflow-wrap:anywhere}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.meta{font:12.5px/1.5 var(--mono);color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+header{display:grid;gap:18px;margin-bottom:56px}
+header .lede{font-size:19px;line-height:1.5;max-width:62ch;color:var(--ink-2)}
+section{display:grid;gap:20px;padding-top:44px;margin-top:44px;border-top:1px solid var(--rule)}
+section > .head{display:grid;gap:10px}
+.kicker{font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.tag{display:inline-block;font:700 9.5px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1.4px solid;white-space:nowrap}
+.tag.live{color:var(--live);border-color:var(--live)} .tag.ready{color:var(--ready);border-color:var(--ready)}
+.tag.pending{color:var(--pending);border-color:var(--pending);border-style:dashed} .tag.gap{color:var(--gap);border-color:var(--gap);border-style:dashed}
+.tag.option{color:var(--option);border-color:var(--option);border-style:dotted}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+th,td{padding:10px 13px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--region) 60%,var(--surface))}
+tr:last-child td{border-bottom:0}
+td.v{font-weight:600;white-space:nowrap}
+td code{white-space:nowrap}
+.four{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card p,.card li{font-size:15px;color:var(--ink-2)}
+.card .big{font:700 28px/1 var(--display);color:var(--ink)}
+.note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--ink-2);max-width:78ch}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);display:grid;gap:6px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Stobox · internal architecture · v0.1 · 25 Sep 2026 · part of Stobox Orbit</div>
+  <h1>Orbit Functions</h1>
+  <p class="lede">Every principal function of Stobox Orbit, module by module: what exists in <code>src/</code> today, what changes, what is new. Read from the code on 25.09.2026 – 145 public functions across 13 contracts – and from the five design pages. The status is the function's, not the module's: a module can be "ready" and still carry one function that must change.</p>
+  <div class="legend" aria-label="Status legend">
+    <span><span class="tag ready">exists</span> in src/, unchanged</span>
+    <span><span class="tag pending">change</span> exists, behaviour or access changes</span>
+    <span><span class="tag gap">new</span> not in src/ yet</span>
+    <span><span class="tag option">drop</span> exists, removed in STV4</span>
+  </div>
+  <p class="meta">Hub: <a href="stv4.html">STV4</a> · product: <a href="orbit.html">Orbit</a> · layers: <a href="identity.html">Identity</a> · <a href="terms.html">Terms</a> · <a href="offering.html">Offering</a> · <a href="intelligence.html">Intelligence</a></p>
+</header>
+
+<section aria-labelledby="sum-h">
+  <div class="head">
+    <span class="kicker">0 · The count</span>
+    <h2 id="sum-h">What the catalogue adds up to</h2>
+  </div>
+  <div class="four">
+    <div class="card"><span class="big">145</span><p>public functions in <code>src/</code> today, 13 contracts, 220 tests</p></div>
+    <div class="card"><span class="big">~40</span><p>functions that change access, behaviour or events in STV4</p></div>
+    <div class="card"><span class="big">~90</span><p>new functions across 9 new contracts and 3 off-chain services</p></div>
+    <div class="card"><span class="big">6</span><p>functions dropped: CCT, fiat records, permissionless offering creation, unbounded force-status, global skip-validation, unpinned defaults</p></div>
+  </div>
+  <p class="note">Convention: "role" is who may call; "event" is what the auditor pack reads; "changes" cites the gap it closes on the <a href="stv4.html">hub</a> (G-numbers) or the requirement on the <a href="orbit.html">Orbit</a> page (O-numbers).</p>
+</section>
+
+<!-- ===================================================== TOKEN CORE -->
+<section aria-labelledby="t-h">
+  <div class="head"><span class="kicker">1 · Token core</span><h2 id="t-h"><code>uRWAToken</code> – immutable selectors, ERC-20, permit, loupe</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>name · symbol · decimals · totalSupply · maxSupply · balanceOf · allowance · nonces · owner</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>transfer(to, value)</code> · <code>transferFrom(from, to, value)</code></td><td>holder / spender</td><td><code>Transfer</code></td><td><span class="tag ready">exists</span> runs <code>beforeUpdate</code>, fails closed without a compliance facet</td></tr>
+      <tr><td><code>approve(spender, value)</code></td><td>holder</td><td><code>Approval</code></td><td><span class="tag ready">exists</span> no compliance check by design</td></tr>
+      <tr><td><code>permit(holder, spender, value, deadline, v, r, s)</code> · <code>DOMAIN_SEPARATOR()</code></td><td>anyone with a signature</td><td><code>Approval</code></td><td><span class="tag pending">change</span> accept ERC-1271 and ERC-6492 so Safes and smart wallets can sign (G22, O22)</td></tr>
+      <tr><td><code>facets · facetAddresses · facetAddress · facetFunctionSelectors · supportsInterface</code></td><td>view</td><td>–</td><td><span class="tag pending">change</span> <code>supportsInterface(0x3edbb4c4)</code> answers true only once <code>forcedTransfer</code> is installed (G3)</td></tr>
+      <tr><td><code>deployer()</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>upgradeDelay minimum</code> (constructor)</td><td>factory</td><td><code>UpgradeDelaySet</code></td><td><span class="tag gap">new</span> a 7-day floor enforced in code; the deploy script refuses 0 (O10, O23)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== COMPLIANCE -->
+<section aria-labelledby="c-h">
+  <div class="head"><span class="kicker">2 · Compliance</span><h2 id="c-h"><code>ComplianceFacet</code> – the pipeline, ERC-7943 views, trust, pause, subject accounting</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>beforeUpdate(from, to, amount)</code></td><td>the token</td><td>–</td><td><span class="tag ready">exists</span> pause → address pause → sender → recipient → frozen → rules; stays a view</td></tr>
+      <tr><td><code>afterUpdate(from, to, amount)</code></td><td>the token</td><td><code>SubjectHolderCountChanged</code></td><td><span class="tag pending">change</span> a failure is no longer ignored silently: emit <code>AccountingDrift</code> so the auditor pack sees it (auditor gap 3)</td></tr>
+      <tr><td><code>canSend · canReceive · canTransfer · whyBlocked</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span> never revert; <code>whyBlocked</code> returns stage, rule, reason</td></tr>
+      <tr><td><code>getFrozenTokens · unfrozenBalanceOf</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>subjectOf(wallet) · holderCount · subjectHolderCount · subjectBalanceOf(subject)</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>resyncSubject(wallet)</code></td><td>anyone, after a registry <code>SubjectChanged</code></td><td><code>SubjectResynced(wallet, old, new, amount)</code></td><td><span class="tag gap">new</span> moves <code>subjectBalance</code> and the holder flag on a wallet re-bind (G4)</td></tr>
+      <tr><td><code>setPolicySet(addr)</code> · <code>setIdentityRegistry(addr)</code></td><td>UPGRADE_ADMIN</td><td><code>PolicySetChanged</code> · <code>IdentityRegistryChanged</code></td><td><span class="tag pending">change</span> scheduled under the upgrade delay, not immediate (G6, O10)</td></tr>
+      <tr><td><code>policySet() · identityRegistry()</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>trust(account, reason)</code> · <code>distrust(account, reason)</code> · <code>isTrusted · trustList · trustReasonOf</code></td><td>ISSUER_ADMIN</td><td><code>Trusted</code> · <code>Distrusted</code></td><td><span class="tag pending">change</span> <code>distrust</code> requires a reason and removes the address from <code>trustList</code></td></tr>
+      <tr><td><code>pause(reason) · unpause() · paused()</code></td><td>COMPLIANCE_OFFICER</td><td><code>Paused(by, reason)</code> · <code>Unpaused</code></td><td><span class="tag pending">change</span> interface aligned to <code>pause(string)</code> (G16); a KMS pauser may call <code>pause</code> only, never <code>unpause</code></td></tr>
+      <tr><td><code>pauseAddress(account, reason) · unpauseAddress · addressPaused</code></td><td>COMPLIANCE_OFFICER</td><td><code>AddressPaused</code> · <code>AddressUnpaused</code></td><td><span class="tag ready">exists</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== MONETARY -->
+<section aria-labelledby="m-h">
+  <div class="head"><span class="kicker">3 · Supply and treasury</span><h2 id="m-h"><code>MonetaryFacet</code> · <code>Treasury</code></h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>issue(to, amount)</code></td><td>SUPPLY_OPERATOR</td><td><code>Issued</code> · <code>Transfer</code></td><td><span class="tag ready">exists</span> mints only into the treasury, respects the cap</td></tr>
+      <tr><td><code>redeem(amount)</code></td><td>SUPPLY_OPERATOR</td><td><code>Redeemed</code></td><td><span class="tag pending">change</span> event carries <code>from</code>; holder-initiated redemption stays out – the Board and payout cover exits</td></tr>
+      <tr><td><code>distributeFromTreasury(to, amount, unlockAt)</code></td><td>SUPPLY_OPERATOR or the registry</td><td><code>Transfer</code> · <code>LockupAdded</code></td><td><span class="tag pending">change</span> the registry may call it only for an offering the issuer confirmed and within its reserve (G2)</td></tr>
+      <tr><td><code>setMaxSupply(max) · lockCap() · capLocked() · totalIssued()</code></td><td>ISSUER_ADMIN</td><td><code>MaxSupplyChanged</code> · <code>CapLocked</code></td><td><span class="tag pending">change</span> the factory honours <code>TokenParams.lockCap</code> at creation (G17); STBX locks at 1,415,000 before any issuance</td></tr>
+      <tr><td><code>setTreasury(addr) · setOfferingRegistry(addr)</code></td><td>ISSUER_ADMIN</td><td><code>TreasuryChanged</code> · <code>OfferingRegistryChanged</code></td><td><span class="tag pending">change</span> under the upgrade delay (O10)</td></tr>
+      <tr><td><code>Treasury.initialise · availableBalance · paymentBalance · freeBalance</code></td><td>factory / view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>Treasury.reserve(amount, offeringId) · release(amount, offeringId)</code></td><td>the registry</td><td><code>Reserved</code> · <code>Released</code></td><td><span class="tag pending">change</span> actually called on purchase and on cancel; today never called (G10)</td></tr>
+      <tr><td><code>Treasury.lockPayment · unlockPayments(offeringId)</code></td><td>the registry</td><td><code>PaymentsLocked</code> · <code>PaymentsUnlocked</code></td><td><span class="tag pending">change</span> per-asset locks; multi-currency unlock no longer deducts one asset's total (G10)</td></tr>
+      <tr><td><code>Treasury.refund(offeringId, asset, investor, amount)</code></td><td>the registry</td><td><code>PurchaseRefunded</code></td><td><span class="tag pending">change</span> transfers exactly what it unlocks (G20)</td></tr>
+      <tr><td><code>Treasury.withdrawERC20 · withdrawPayments</code></td><td>SUPPLY_OPERATOR · ISSUER_ADMIN</td><td><code>Withdrawn</code></td><td><span class="tag ready">exists</span> free balance only</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== RESTRICTIONS -->
+<section aria-labelledby="r-h">
+  <div class="head"><span class="kicker">4 · Restrictions and emergencies</span><h2 id="r-h"><code>FreezeFacet</code> · <code>LockupFacet</code> · <code>EmergencyFacet</code></h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>setFrozenTokens(account, amount) · adminFrozenOf</code></td><td>COMPLIANCE_OFFICER</td><td><code>Frozen(account, total)</code></td><td><span class="tag pending">change</span> event carries <code>by</code> and <code>reason</code> (auditor completeness)</td></tr>
+      <tr><td><code>addLockup(account, amount, unlockAt, note)</code></td><td>COMPLIANCE_OFFICER, PayoutFacet, Board (company lot)</td><td><code>LockupAdded</code></td><td><span class="tag pending">change</span> gains <code>basis</code> (903/904, 144, DCP, SPA 5.1) appended to <code>Lockup</code> for ERC-1404 reason codes (offering §3)</td></tr>
+      <tr><td><code>clearLockups(account, reason) · releaseExpired(account)</code></td><td>COMPLIANCE_OFFICER · anyone</td><td><code>LockupsCleared</code> · <code>ExpiredReleased</code></td><td><span class="tag pending">change</span> clearing SPA 5.1 needs two founder signatures via a mandate (terms §3)</td></tr>
+      <tr><td><code>lockupsOf · lockupCount · lockedAmountOf</code></td><td>view</td><td>–</td><td><span class="tag pending">change</span> <code>lockedAmountOf</code> saturates like <code>frozenOf</code></td></tr>
+      <tr><td><code>forcedTransfer(from, to, amount, reason)</code></td><td>COMPLIANCE_OFFICER</td><td><code>ForcedTransfer</code> · <code>ForcedOperation</code></td><td><span class="tag gap">new</span> works while paused, bypasses freeze, never bypasses <code>canReceive</code>, carries lockups (G3; four STV3 defects as tests)</td></tr>
+      <tr><td><code>forcedMint(to, amount, reason) · forcedBurn(from, amount, reason)</code></td><td>COMPLIANCE_OFFICER</td><td><code>ForcedOperation</code></td><td><span class="tag gap">new</span> respect <code>maxSupply</code> and keep <code>totalIssued</code> consistent</td></tr>
+      <tr><td><code>recover(from, to, attestationId)</code></td><td>COMPLIANCE_OFFICER under a mandate</td><td><code>RecoveryExecuted</code></td><td><span class="tag gap">new</span> loss-of-key and succession, on an attestation (terms §3, Bylaws 5.4)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== ROLES -->
+<section aria-labelledby="ro-h">
+  <div class="head"><span class="kicker">5 · Roles and upgrades</span><h2 id="ro-h"><code>RolesFacet</code> · <code>Erc1404Facet</code> · <code>DiamondCutFacet</code></h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>grantRole(role, account) · revokeRole · renounceRole</code></td><td>the role's admin</td><td><code>RoleGranted</code> · <code>RoleRevoked</code></td><td><span class="tag pending">change</span> <code>UPGRADE_ADMIN</code> administers itself; <code>ISSUER_ADMIN</code> administers the business roles only (G5)</td></tr>
+      <tr><td><code>proposeRoleTransfer(role, successor) · acceptRoleTransfer(role)</code></td><td>holder → successor</td><td><code>RoleTransferProposed</code> · <code>RoleTransferred(role, from, to)</code></td><td><span class="tag gap">new</span> two-step handover; <code>UPGRADE_ADMIN</code> under the delay, operator roles immediate (Orbit §3b)</td></tr>
+      <tr><td><code>hasRole · roleAdmin · getRoleMemberCount · getRoleMember</code></td><td>view</td><td>–</td><td><span class="tag pending">change</span> <code>roleAdmin</code> returns per role, not a constant</td></tr>
+      <tr><td><code>detectTransferRestriction · messageForTransferRestriction</code></td><td>view</td><td>–</td><td><span class="tag pending">change</span> codes by legal basis, not only by pipeline stage (offering §3)</td></tr>
+      <tr><td><code>diamondCut(cuts, init, data)</code></td><td>UPGRADE_ADMIN</td><td><code>UpgradeScheduled</code> · <code>UpgradeExecuted</code> · <code>DiamondCut</code></td><td><span class="tag pending">change</span> always emits, including at creation; a post-init check that <code>totalSupply</code>, <code>maxSupply</code>, <code>capLocked</code> are unchanged (G7)</td></tr>
+      <tr><td><code>cancelCut(hash) · setUpgradeDelay(delay) · upgradeDelay() · scheduledAt(hash)</code></td><td>UPGRADE_ADMIN</td><td><code>UpgradeCancelled</code> · <code>UpgradeDelaySet</code></td><td><span class="tag pending">change</span> delay cannot go below the code floor</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== POLICY -->
+<section aria-labelledby="p-h">
+  <div class="head"><span class="kicker">6 · Policy engine</span><h2 id="p-h"><code>PolicySet</code> · <code>RuleLibrary</code></h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>evaluate(from, to, amount)</code></td><td>the token</td><td>–</td><td><span class="tag ready">exists</span> AND of groups, OR within; 100k gas per rule, 3M per set</td></tr>
+      <tr><td><code>addGroup · removeGroup · addRule(group, rule) · removeRule · transferOwnership</code></td><td>owner (compliance officer)</td><td><code>RuleAdded</code> · <code>RuleRemoved</code> · <code>GroupChanged</code></td><td><span class="tag pending">change</span> every mutation emits (G12)</td></tr>
+      <tr><td><code>groups · rulesOf(group) · maxRules</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>HasValidIdentity · JurisdictionRule (allow/deny) · RequiresClaim(key, min, freshness) · MaxHolders · TransferWindow · MiCARule · MaxBalancePerHolder</code></td><td>rules · view</td><td>–</td><td><span class="tag pending">change</span> each rule gains <code>acceptedIssuers[]</code> so trust is scoped per token (identity §4)</td></tr>
+      <tr><td><code>IssuerScopedClaim(key, issuers[])</code></td><td>rule</td><td>–</td><td><span class="tag gap">new</span> the securities presets' base requirement</td></tr>
+      <tr><td><code>MaxTransferPerPeriod(pct, period)</code></td><td>rule</td><td>–</td><td><span class="tag gap">new</span> Bylaws 5.3(e) once the number is settled</td></tr>
+      <tr><td><code>InsiderBlackout(key)</code></td><td>rule</td><td>–</td><td><span class="tag gap">new</span> refuses listing and buying by a subject with <code>insider.blackout</code> (O15)</td></tr>
+      <tr><td><code>OmnibusAttribution(channel)</code></td><td>rule</td><td>–</td><td><span class="tag gap">new</span> holder counts read a custodian-signed attribution (O4)</td></tr>
+      <tr><td><code>PassportValidRule</code></td><td>rule</td><td>–</td><td><span class="tag gap">new</span> opt-in: a stale passport or channel suspends a scope (PA-07)</td></tr>
+      <tr><td><code>RuleFailed(rule, from, to, reason)</code></td><td>Board · DvP · payout emit it</td><td>event</td><td><span class="tag pending">change</span> declared today, emitted by nobody; emitted by every executing contract on refusal (G12, O3)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== IDENTITY -->
+<section aria-labelledby="i-h">
+  <div class="head"><span class="kicker">7 · Identity</span><h2 id="i-h"><code>StoboxIdentityRegistry</code> (new) · adapters · <code>AttestorRegistry</code> (new)</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>subjectOf(wallet) · isActive(wallet) · claim(subject, key) · hasValidClaim(subject, key)</code></td><td>view · surface A</td><td>–</td><td><span class="tag gap">new</span> <code>IIdentityRegistry</code> served by subject; never reverts (G1)</td></tr>
+      <tr><td><code>getUserDID(wallet) · walletsOf(subject)</code></td><td>view · surface B</td><td>–</td><td><span class="tag gap">new</span> for STBU tiers and any Base app</td></tr>
+      <tr><td><code>createSubject(subject, validTo) · renew · block(subject, reasonHash) · unblock</code></td><td>SUBJECT_WRITER (KMS)</td><td><code>SubjectCreated</code> · <code>SubjectRenewed</code> · <code>SubjectBlocked</code></td><td><span class="tag gap">new</span> daily rate limit in the contract</td></tr>
+      <tr><td><code>bindWallet(wallet, subject, sigExisting, sigNew) · unbindWallet(wallet) · deactivateWallet()</code></td><td>SUBJECT_WRITER with both owners' signatures · the wallet</td><td><code>WalletBound</code> · <code>WalletUnbound</code> · <code>SubjectChanged</code></td><td><span class="tag gap">new</span> a bind with a non-zero balance requires <code>resyncSubject</code> in the same transaction</td></tr>
+      <tr><td><code>setClaim(subject, key, valueHash, numeric, expiresAt) · revokeClaim(subject, key)</code></td><td>CLAIM_ISSUER for that key</td><td><code>ClaimSet</code> · <code>ClaimRevoked</code></td><td><span class="tag gap">new</span> salted hashes only; the SDK refuses plaintext</td></tr>
+      <tr><td><code>trustIssuer(key, issuer) · untrustIssuer</code></td><td>REGISTRY_ADMIN</td><td><code>IssuerTrusted</code> · <code>IssuerUntrusted</code></td><td><span class="tag gap">new</span> L1 client issuers and L3 federated attesters</td></tr>
+      <tr><td><code>AllowlistRegistry · EASAdapter · StoboxDIDAdapter</code> (all functions)</td><td>adapters</td><td>–</td><td><span class="tag pending">change</span> mutations emit events (G12); <code>StoboxDIDAdapter</code> kept for Arbitrum legacy only</td></tr>
+      <tr><td><code>AttestorRegistry.registerKey(attestor, key, validFrom, validTo) · revokeKey · isValidAt(attestor, key, t) · attestors()</code></td><td>REGISTRY_ADMIN</td><td><code>AttestorKeyRegistered</code> · <code>AttestorKeyRevoked</code></td><td><span class="tag gap">new</span> interface exists; every oracle signature is checked against the key valid at <code>observedAt</code> (O8)</td></tr>
+      <tr><td><code>AttestorRegistry.declareConflict(attestor, issuer)</code></td><td>attestor</td><td><code>ConflictDeclared</code></td><td><span class="tag gap">new</span> ISSUER and ATTESTOR keys may never coincide</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== ORACLE -->
+<section aria-labelledby="o-h">
+  <div class="head"><span class="kicker">8 · Data</span><h2 id="o-h"><code>StoboxOracle</code> (new) · <code>IntelligenceFacet</code> (new)</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>setChannelPolicy(instrument, channel, signers[], threshold, maxAge, maxDeviationBps, ccy, calendar)</code></td><td>ISSUER_ADMIN under the delay</td><td><code>ChannelPolicySet</code></td><td><span class="tag gap">new</span> signer roles ISSUER · RELAY · ATTESTOR · REGULATED (intelligence §4b, O7 <code>ccy</code>, O18 calendar)</td></tr>
+      <tr><td><code>publish(Record r, bytes[] sigs)</code></td><td>anyone carrying the threshold of signatures</td><td><code>RecordPublished(channel, sequence, valueHash, signers[])</code> · <code>RecordHeld</code></td><td><span class="tag gap">new</span> sequence strictly increasing; a step above <code>maxDeviationBps</code> is held for Safe confirmation; cumulative deviation checked against the last confirmed value</td></tr>
+      <tr><td><code>confirm(instrument, channel, sequence)</code> · <code>pauseChannel · unpauseChannel</code></td><td>REGISTRY_ADMIN (Safe)</td><td><code>RecordConfirmed</code> · <code>ChannelPaused</code></td><td><span class="tag gap">new</span></td></tr>
+      <tr><td><code>latest(instrument, channel)</code> → <code>(numeric, valueHash, observedAt, sequence, stale, held)</code></td><td>view</td><td>–</td><td><span class="tag gap">new</span> one reader function for the Board, the facet and lenders</td></tr>
+      <tr><td><code>schedule(instrument, channel)</code> → next due items</td><td>view</td><td>–</td><td><span class="tag gap">new</span> schedule channels: coupon, amortisation, lease expiry, capital call (O18)</td></tr>
+      <tr><td><code>latestRoundData()</code> adapter over <code>nav.perUnit</code> / <code>price.reference</code></td><td>view</td><td>–</td><td><span class="tag gap">new</span> Chainlink-compatible view for lenders and exchanges (O19)</td></tr>
+      <tr><td><code>IntelligenceFacet.oracle() · referencePrice() · valuation() · sharesOutstanding() · capTableRoot() · lastCorporateAction() · nav() · identifiers()</code></td><td>view</td><td>–</td><td><span class="tag gap">new</span> the token stores which oracle it trusts, never a value; <code>identifiers()</code> returns DTI, ISIN, LEI (O6)</td></tr>
+      <tr><td><code>IntelligenceFacet.setOracle(addr)</code></td><td>UPGRADE_ADMIN under the delay</td><td><code>OracleChanged</code></td><td><span class="tag gap">new</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== TERMS -->
+<section aria-labelledby="te-h">
+  <div class="head"><span class="kicker">9 · Terms and passport</span><h2 id="te-h"><code>AssetPassport</code> (new) · <code>TermsFacet</code> (new) · <code>DocumentRegistry</code> (new)</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>mint(passportId, issuer) · declareToken · confirmToken · revokeToken · tokensOf · passportOf</code></td><td>PASSPORT_ISSUER · token</td><td><code>PassportMinted</code> · <code>TokenLinkConfirmed</code></td><td><span class="tag gap">new</span> interface exists (PA-01…03)</td></tr>
+      <tr><td><code>anchorSnapshot(passportId, root, revocationRoot, version, schemaVersion) · snapshotOf · verify(code, value, salt, proof) · verifyAbsence</code></td><td>PASSPORT_ISSUER · view</td><td><code>SnapshotAnchored</code></td><td><span class="tag gap">new</span> (PA-04)</td></tr>
+      <tr><td><code>anchorTerms(instrumentId, termsRoot, docsRoot, version, issuerSig, counterpartySig)</code></td><td>PASSPORT_ISSUER with both signatures</td><td><code>TermsAnchored</code> · <code>TermsAmended</code></td><td><span class="tag gap">new</span> terms §3</td></tr>
+      <tr><td><code>TermsFacet.termsRoot() · enforce(termId, params, proof)</code></td><td>view · rules</td><td>–</td><td><span class="tag gap">new</span> a rule proves its parameters sit in the signed root</td></tr>
+      <tr><td><code>setDocument(name, uri, hash) · getDocument · removeDocument · getAllDocuments</code></td><td>PASSPORT_ISSUER</td><td><code>DocumentUpdated</code> · <code>DocumentRemoved</code></td><td><span class="tag gap">new</span> ERC-1643 shape</td></tr>
+      <tr><td><code>recordAttestation(passportId, group, validUntil) · attestationsOf · grantAccess(grantee, groups, expiresAt, termsHash) · revokeAccess · accessOf</code></td><td>ATTESTOR · PASSPORT_ISSUER</td><td><code>AttestationRecorded</code> · <code>AccessGranted</code></td><td><span class="tag gap">new</span> (PA-05, PA-06); disclosure schedule with <code>DisclosureDue / Recorded / Overdue</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== PAYOUT -->
+<section aria-labelledby="pa-h">
+  <div class="head"><span class="kicker">10 · Corporate actions</span><h2 id="pa-h"><code>PayoutFacet</code> (new) · <code>ConsentFacet</code> (new) · <code>ROFRHook</code> (new)</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>declare(actionId)</code> – reads the structured <code>corporate.action</code> record</td><td>SUPPLY_OPERATOR or an agent under <code>SCOPE_DISTRIBUTE</code></td><td><code>DividendDeclared</code> · <code>CouponDeclared</code></td><td><span class="tag gap">new</span> executable only if <code>ref</code> is a term in <code>termsRoot</code> and the record met its threshold</td></tr>
+      <tr><td><code>snapshot(actionId)</code> → subject-level balances at <code>recordDate</code></td><td>anyone after <code>recordDate</code></td><td><code>SnapshotTaken(actionId, root)</code></td><td><span class="tag gap">new</span> by subject, not wallet; <code>entitle.frozen</code> per term; ACCRUAL_TWA mode for daily-yield funds</td></tr>
+      <tr><td><code>elect(actionId, optionId)</code></td><td>holder, before the deadline</td><td><code>PaymentElected</code></td><td><span class="tag gap">new</span> CHOS actions (SPA 4.3 in-kind election)</td></tr>
+      <tr><td><code>pay(actionId, batch) · claim(actionId, proof)</code></td><td>agent under mandate · holder</td><td><code>DividendPaid(subject, amount, asset)</code> · <code>TermExecuted</code></td><td><span class="tag gap">new</span> USDC or any cash asset; in-kind by mint; calls <code>AgentAuthority.consume</code> – the first contract that does (G11)</td></tr>
+      <tr><td><code>attestPayment(actionId, batchHash, sig)</code></td><td>ATTESTOR (paying agent)</td><td><code>PaymentAttested</code></td><td><span class="tag gap">new</span> the off-chain fiat or deposit-token leg (O7); without it <code>PayoutLate</code> at <code>dueBy</code></td></tr>
+      <tr><td><code>waterfall(actionId, tranches[])</code></td><td>agent under mandate</td><td><code>WaterfallRun</code></td><td><span class="tag gap">new</span> liquidation preference and credit tranches, once a schedule exists</td></tr>
+      <tr><td><code>ConsentFacet.propose(matterHash, threshold, deadline) · vote(id, for) · result(id)</code></td><td>ISSUER_ADMIN · holders by subject balance</td><td><code>ConsentProposed</code> · <code>ConsentRecorded</code> · <code>RepresentativeChanged</code></td><td><span class="tag gap">new</span> reserved matters, waivers, Class C representative</td></tr>
+      <tr><td><code>ROFRHook.notice(qty, price, buyer) · exercise(noticeId, qty) · lapse(noticeId)</code></td><td>seller · corporation and holders pro rata</td><td><code>SaleNoticed</code> · <code>ROFRExercised</code> · <code>ROFRLapsed</code></td><td><span class="tag gap">new</span> a transfer outside Permitted needs a lapsed notice; 7 + 7 BD once counsel settles the number</td></tr>
+      <tr><td><code>dragNotice(valuationAttId, price) · tagWindow(saleId)</code></td><td>founders · holders</td><td><code>DragNoticed</code> · <code>TagWindowOpened</code> · <code>TagJoined</code></td><td><span class="tag gap">new</span> on top of <code>forcedTransfer</code> and treasury reserve</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== OFFERING -->
+<section aria-labelledby="of-h">
+  <div class="head"><span class="kicker">11 · Primary offering</span><h2 id="of-h"><code>OfferingRegistry</code> · <code>PurchaseFacet</code></h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>createOffering(params, treasury)</code></td><td>OFFERING_OPERATOR on the token</td><td><code>OfferingCreated</code></td><td><span class="tag pending">change</span> no longer permissionless; treasury must equal <code>token.treasury()</code>; the regime applies its preset (G2, G13)</td></tr>
+      <tr><td><code>activate · pause · unpause · close · cancel(reason)</code></td><td>operator</td><td><code>OfferingStatusChanged</code></td><td><span class="tag pending">change</span> explicit transition table, no path back from Settled, Refunding or Cancelled; cancel reason emitted (G9)</td></tr>
+      <tr><td><code>purchase(id, amount, paymentToken, subscriptionSig)</code> · <code>purchaseFor</code></td><td>investor · the token</td><td><code>PurchaseRecorded</code></td><td><span class="tag pending">change</span> aggregate limits by subject (<code>paidBySubject</code>), signed subscription over <code>docsHash</code>, per-country counters in <code>RuleContext</code> (G8, offering §3)</td></tr>
+      <tr><td><code>withdrawPurchase(purchaseId)</code></td><td>investor while Active</td><td><code>PurchaseWithdrawn</code></td><td><span class="tag gap">new</span> Reg CF T−48h, EU withdrawal, ECSP reflection</td></tr>
+      <tr><td><code>settle(id)</code></td><td>operator, plus the intermediary's closing signature where the regime requires one</td><td><code>OfferingSettled</code></td><td><span class="tag pending">change</span> not from Active, not by anyone (G9); starts the tranche's DCP</td></tr>
+      <tr><td><code>beginRefunding · claimTokens · deliverBatch · claimRefund · refundPurchase · refundBatch</code></td><td>operator · investor · the token</td><td><code>PurchaseRefunded</code> · <code>TokensDelivered</code></td><td><span class="tag pending">change</span> delivery emits its own event, not a second <code>PurchaseRecorded</code> (G17)</td></tr>
+      <tr><td><code>addRule(id, rule) · removeRule · rulesOf</code></td><td>operator</td><td><code>OfferingRuleAdded</code> · <code>OfferingRuleRemoved</code></td><td><span class="tag pending">change</span> no removal after activation (G9)</td></tr>
+      <tr><td><code>forceStatus(id, status, reason)</code></td><td>admin</td><td><code>OfferingStatusChanged</code></td><td><span class="tag pending">change</span> bounded to an explicit recovery list (G9)</td></tr>
+      <tr><td><code>previewPurchase · offeringOf · statusOf · raisedOf · purchaseOf · purchasesOf</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>setDefaultPaymentTokens</code></td><td>admin</td><td>–</td><td><span class="tag option">drop</span> a no-op today</td></tr>
+      <tr><td><code>registerFiatInvestment</code> (STV3)</td><td>–</td><td>–</td><td><span class="tag option">drop</span> replaced by <code>PaymentAttested</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== BOARD -->
+<section aria-labelledby="b-h">
+  <div class="head"><span class="kicker">12 · Secondary and settlement</span><h2 id="b-h"><code>CompassBoard</code> (new) · <code>AtomicDvP</code> · <code>MigrationClaim</code> (new)</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>list(amount, price, expiry, minFill)</code></td><td>holder (not under blackout)</td><td><code>Listed</code></td><td><span class="tag gap">new</span> tokens to escrow; the escrow is a trusted address; lot immutable</td></tr>
+      <tr><td><code>listAtReference(amount, expiry, buyerLockup)</code></td><td>ISSUER role</td><td><code>Listed</code></td><td><span class="tag gap">new</span> the company lot; price = <code>oracle.latest(price.reference)</code>; refused when stale</td></tr>
+      <tr><td><code>buy(id, amount, maxCost, certificationSig)</code></td><td>admitted buyer</td><td><code>Filled</code> · <code>TransferRefused</code> · <code>RuleFailed</code></td><td><span class="tag gap">new</span> <code>canTransfer(board, buyer)</code>, self-trade block by subject, cash to seller and tokens to buyer in one transaction, Reg S certification signed (O15, offering §5)</td></tr>
+      <tr><td><code>cancel(id) · forceCancel(id, reason)</code></td><td>seller · COMPLIANCE_OFFICER (time-bounded, per counsel)</td><td><code>Cancelled</code> · <code>ForceCancelled</code></td><td><span class="tag gap">new</span> O16 decides <code>forceCancel</code>'s shape</td></tr>
+      <tr><td><code>priceOf(id) · lotsOf(subject)</code></td><td>view</td><td>–</td><td><span class="tag gap">new</span></td></tr>
+      <tr><td><code>AtomicDvP.settle(instruction, sellerSig, buyerSig) · previewSettle · cancel · digestOf · isSettled · isCancelled</code></td><td>either party</td><td><code>Settled</code> · <code>TransferRefused</code></td><td><span class="tag pending">change</span> any ERC-20 cash asset with recipient pre-check (O7); ERC-1271 / 6492 signatures; unique <code>settlementId</code>; <code>cancel</code> emits; calls <code>AgentAuthority.consume</code> when an agent settles</td></tr>
+      <tr><td><code>MigrationClaim.open(root, snapshotBlock, arbitrumTx) · claim(proof, amount) · unclaimed()</code></td><td>SUPPLY_OPERATOR · holder after KYC</td><td><code>MigrationOpened</code> · <code>Claimed</code></td><td><span class="tag gap">new</span> Merkle snapshot of the 107 Arbitrum holders; lockups recreated; unclaimed stays in reserve indefinitely</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== AGENTS -->
+<section aria-labelledby="ag-h">
+  <div class="head"><span class="kicker">13 · Agents</span><h2 id="ag-h"><code>AgentAuthority</code></h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>grant(Mandate)</code></td><td>principal</td><td><code>MandateGranted</code></td><td><span class="tag pending">change</span> <code>principal</code> becomes a <code>bytes32</code> DID subject; scopes gain <code>DISTRIBUTE</code>, <code>LOCKUP</code>, <code>QUOTE</code>, <code>PLEDGE</code>; a scope may be a <code>termId</code></td></tr>
+      <tr><td><code>revoke(mandateId)</code></td><td>principal</td><td><code>MandateRevoked</code></td><td><span class="tag ready">exists</span> immediate</td></tr>
+      <tr><td><code>check(mandateId, scope, token, counterparty, amount)</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>consume(mandateId, scope, token, counterparty, amount)</code></td><td>the executing contract on behalf of the agent</td><td><code>AgentActed</code></td><td><span class="tag pending">change</span> called by PayoutFacet, CompassBoard and AtomicDvP, not by the agent itself (G11)</td></tr>
+      <tr><td><code>mandateOf · mandatesOf(principal) · consumed(mandateId)</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span></td></tr>
+      <tr><td><code>propose(intent, sig)</code> (off-chain queue via MCP <code>action.propose</code>)</td><td>agent DID</td><td>–</td><td><span class="tag gap">new</span> queues, never executes; a human confirms above thresholds (intelligence §5)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== FACTORY -->
+<section aria-labelledby="f-h">
+  <div class="head"><span class="kicker">14 · The factory</span><h2 id="f-h"><code>uRWAFactory</code> · presets · deployment</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Role</th><th>Event</th><th>Status · what changes</th></tr></thead>
+    <tbody>
+      <tr><td><code>createToken(params, packageId, offeringRegistry)</code></td><td>anyone (the issuer)</td><td><code>TokenCreated</code></td><td><span class="tag pending">change</span> honours <code>lockCap</code> and <code>installEmergencyFacet</code>; refuses delay below the floor and EOA admins; interface reconciled (G16, G17); the factory keeps no role after creation</td></tr>
+      <tr><td><code>registerPackage · registerPreset · packages · presets</code></td><td>factory admin</td><td><code>PackageRegistered</code> · <code>PresetRegistered</code></td><td><span class="tag pending">change</span> admin transferable (two-step); presets: RegD506b, RegD506c, RegS-Cat3, RegCF-rail, EU-PR, UK-FPO, BVI-SIBA, Open-with-opinion, plus the ten instrument presets on the Orbit page</td></tr>
+      <tr><td><code>setFee · setFeeToken · fee · feeToken</code></td><td>factory admin</td><td><code>FeeChanged</code></td><td><span class="tag option">drop</span> read but never charged; flat fees are billed off chain by canon</td></tr>
+      <tr><td><code>isFactoryIssued(token)</code></td><td>view</td><td>–</td><td><span class="tag gap">new</span> so every issuer can be notified of a facet fix</td></tr>
+      <tr><td><code>script/Deploy.s.sol</code></td><td>CI</td><td>–</td><td><span class="tag pending">change</span> no defaults; CREATE2 facets; pinned forge-std; signed tags; Sourcify full match (O23)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== OFF-CHAIN -->
+<section aria-labelledby="oc-h">
+  <div class="head"><span class="kicker">15 · Off-chain services</span><h2 id="oc-h">DID service · oracle relay · auditor pack · MCP · exports</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Service · function</th><th>Owner</th><th>Evidence</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><b>DID service</b> · <code>verify(stripeSession) → subject</code> · <code>writeBothChains(subject, wallets, claims)</code> · <code>reconcile()</code> · <code>erase(subject)</code> (revoke + destroy salt and Stripe session)</td><td>Stobox · KMS key</td><td>registry events · reconciler report · erasure log</td><td><span class="tag gap">new</span> identity §3; KYC Vault with per-subject DEK</td></tr>
+      <tr><td><b>Oracle relay</b> · <code>pull(source)</code> · <code>sign(record)</code> · <code>collect(signatures)</code> · <code>publish()</code> · <code>alertStale()</code></td><td>Stobox · KMS key (RELAY role)</td><td><code>RecordPublished</code> · evidence files by hash</td><td><span class="tag gap">new</span> intelligence §4; information barrier and access log (O15)</td></tr>
+      <tr><td><b>Auditor pack</b> · <code>reconstruct(fromBlock, toBlock)</code> · <code>register@block</code> · <code>reconcile(chain, TA, capTable)</code> · <code>oracleHistory()</code> · <code>cutoffSheet()</code> · <code>changeLog()</code></td><td>Stobox · runs anywhere</td><td>manifest, ABI, hashes – no dependency on the indexer</td><td><span class="tag gap">new</span> orbit §7 auditor criteria</td></tr>
+      <tr><td><b>ISO 20022 export</b> · <code>seev031(action)</code> · <code>seev036(paid)</code> · <code>sese023/025(settlement)</code> · <code>camt054(cash)</code> · <code>importSeev033()</code></td><td>Stobox · reads events only</td><td>message files</td><td><span class="tag gap">new</span> O5</td></tr>
+      <tr><td><b>Regulatory export</b> · <code>formD()</code> · <code>countryCounters()</code> · <code>mifir()</code> · <code>holderCounts12g()</code></td><td>Stobox for the issuer or BD</td><td>signed CSV</td><td><span class="tag gap">new</span> offering §3</td></tr>
+      <tr><td><b>MCP</b> · existing: <code>stobox_knowledge_search · term_lookup · related_topics · answer_context · fact_check · start_tokenization</code></td><td>Stobox · public and partner tiers</td><td>–</td><td><span class="tag live">live</span></td></tr>
+      <tr><td><b>MCP</b> · new: <code>record.read · instrument.terms · eligibility.check · board.quote · oracle.latest · transfer.simulate · action.propose · standing.verify</code></td><td>Stobox · seat token or agent DID</td><td>audit log per call</td><td><span class="tag gap">new</span> intelligence §6</td></tr>
+      <tr><td><b>Monitoring</b> · role, upgrade, policy, pause, forced, stale-oracle, registry-drift and Safe-module alerts; pre-signed pause via L1</td><td>Stobox ops</td><td>alert log · drill reports</td><td><span class="tag gap">new</span> O12</td></tr>
+      <tr><td><b>Upgrade-log page</b> · generated from <code>UpgradeScheduled / Executed / Cancelled</code></td><td>Stobox</td><td>the page and the events</td><td><span class="tag gap">new</span> O23</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section aria-labelledby="cl-h">
+  <div class="head"><span class="kicker">Changelog</span><h2 id="cl-h">Versions</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
+    <tbody><tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First catalogue: 145 existing public functions read from src/, the changes each needs, and the new functions of nine new contracts and the off-chain services, each tied to a gap or requirement.</td></tr></tbody>
+  </table></div>
+</section>
+
+<footer>
+  <span class="meta">Sources · function lists extracted from src/uRWAToken.sol, src/facets/*.sol, src/PolicySet.sol, src/rules/RuleLibrary.sol, src/identity/Adapters.sol, src/OfferingRegistry.sol, src/Treasury.sol, src/AgentAuthority.sol, src/AtomicDvP.sol, src/uRWAFactory.sol on 25.09.2026; new functions from the five design pages in this folder; STV3 functions from the verified facets of 0x998a…1a46 on Arbitrum.</span>
+  <span class="meta">Uncertain · counts are approximate (they change with every design decision); signatures of new functions are proposals until the interface files exist and L3.1/L3.2 compare them with doc 07.</span>
+</footer>
+</main>
