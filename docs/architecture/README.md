@@ -5,11 +5,12 @@ with statuses read from the chain or the code, one sequence or flow diagram, pro
 analysis, criteria, build order, decisions and a changelog. The HTML shows the canon; rulings live in
 the vault first.
 
-STV4 is the hub; the four layer pages hang off it.
+**Stobox Orbit** is the product name; the Orbit page carries the institutional review. STV4 is the protocol hub; the four layer pages hang off it.
 
 | Page | Version | Date | Scope | Live view |
 |---|---|---|---|---|
-| [STV4](stv4.html) | v1.1 | 25 Sep 2026 | Hub: STV3 facets rebuilt on the uRWA Factory on Base, Intelligence facet + Stobox Oracle, the four layers, gap register G1–G18, criteria at four levels, build order | https://claude.ai/artifact/HGt7iTSE1dthwSGbhYZ2Tk |
+| [Stobox Orbit](orbit.html) | v0.1 | 25 Sep 2026 | Institutional review from six seats: requirements register O1–O28, BUIDL element mapping, ten instrument presets, institutional-grade criteria, revised build order with keys on day one | (recorded on first publish) |
+| [STV4](stv4.html) | v1.2 | 25 Sep 2026 | Hub: STV3 facets rebuilt on the uRWA Factory on Base, Intelligence facet + Stobox Oracle, the four layers, gap register G1–G18, criteria at four levels, build order | https://claude.ai/artifact/HGt7iTSE1dthwSGbhYZ2Tk |
 | [STV4 Identity](identity.html) | v0.2 | 25 Sep 2026 | One subject-keyed DID registry on Base; data map and GDPR; plug-in levels; trust scoping; privacy tech; regulatory table | https://claude.ai/artifact/KLne6f52aejwNPkNJNnoGz |
 | [STV4 Terms](terms.html) | v0.2 | 25 Sep 2026 | Rights register of 38 clauses; Terms model and anchoring; Factory bindings; clauses for the paper; events; gaps | https://claude.ai/artifact/1m7zrcLyeuH4mP23VGHQfn |
 | [STV4 Offering](offering.html) | v0.2 | 25 Sep 2026 | Regimes as presets; contract-to-law map; OfferingRegistry defects; role boundary; the STBX stack | https://claude.ai/artifact/TRMXB6NikN3naCAZuzhZpp |

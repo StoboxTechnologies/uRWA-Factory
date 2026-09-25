@@ -116,7 +116,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · v1.1 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · v1.2 · 25 Sep 2026 · part of Stobox Orbit</div>
   <h1>STV4</h1>
   <p class="lede">The next Stobox security-token protocol: every STV3 facet rebuilt on the uRWA Factory on Base, four layers on top – identity, terms, offering, intelligence – and agents acting within mandates. This page is the hub; each layer has its own page. The one gap that matters: the Factory's rules read claims by subject, and Stobox DID cannot answer by subject – so every preset on Stobox DID refuses every transfer.</p>
   <div class="legend" aria-label="Status legend">
@@ -320,6 +320,7 @@ a{color:var(--accent)}
     <h2 id="ly-h">One page per layer, statuses read from code</h2>
     <p class="prose">The Factory is the engine. Four layers give it identity, rights, a regulatory route and data. Each has its own page in this folder, in the same form as this one, with its own map, gaps and decisions.</p>
   </div>
+  <p class="note"><b>Stobox Orbit</b> is the name over the whole product; the institutional review – six seats, the requirements register O1–O28, instrument presets and the revised build order – is on its own page: <a href="orbit.html">orbit.html</a>.</p>
   <div class="four">
     <div class="card"><h3><a href="identity.html">1 · Identity</a></h3><p>One subject-keyed registry of Stobox DIDs on Base with two read surfaces; salted hashes only; GDPR erasure by salt destruction; three levels for a client's own KYC; trust scoped per token.</p><p class="meta">Gap: rules cannot read claims from Stobox DID · Ruling 25.09: one registry</p></div>
     <div class="card"><h3><a href="terms.html">2 · Terms</a></h3><p>38 clauses from the signed documents classed as enforced, executed, attested or disclosed; a typed Terms model anchored on the passport; seven clauses that make code the agreed performance.</p><p class="meta">Gap: the STBX holder is not a party to any signed document; passport, payout, consent and ROFR do not exist</p></div>
@@ -375,6 +376,11 @@ a{color:var(--accent)}
       <tr><td>G15</td><td>Payout, consent, ROFR, tag, drag, document registry: none exist</td><td>–</td><td class="v meh">medium</td><td>Terms · Phase 4–5</td></tr>
       <tr><td>G16</td><td>Interfaces disagree with code: <code>createToken</code>, <code>createOffering</code>, <code>pause()</code>, <code>deposit</code>, <code>createTokenWithOffering</code>; L3.1/L3.2 compare docs to interfaces, so this is invisible to verify.py</td><td><code>src/interfaces/IuRWAFactory.sol:35-39</code> and peers</td><td class="v meh">low</td><td>Phase 0 · docs</td></tr>
       <tr><td>G17</td><td>Factory ignores <code>lockCap</code> and <code>installEmergencyFacet</code>; fee is read but never charged; <code>PurchaseRecorded</code> fires twice</td><td><code>src/uRWAFactory.sol</code>, <code>src/OfferingRegistry.sol:228, 401</code></td><td class="v meh">low</td><td>Phase 0</td></tr>
+      <tr><td>G19</td><td>The Technical Safe <code>0xcAFA…E8b6</code> that is to hold every STV4 role has threshold 1 and a single owner <code>0x777e…3777</code> carrying an EIP-7702 delegation; the same key sits alone on the finance Safe and signs the Admin Safe, whose delay module lets one EOA take any role in 28 days</td><td>Base, read 25.09.2026; <code>wiki/Ключи-и-Safe.md</code></td><td class="v no">critical · operations</td><td>Phase 0 · day 1 – three Safes on hardware signers, different people</td></tr>
+      <tr><td>G20</td><td><code>Treasury.refund</code> decrements the lock by <code>min(amount, locked)</code> but transfers the full <code>amount</code> – read from code, not reproduced</td><td><code>src/Treasury.sol:147-151</code></td><td class="v meh">high</td><td>Phase 0</td></tr>
+      <tr><td>G21</td><td>No <code>invariant_</code> test exists and the CI fuzzing job is commented out, while doc 23 says "every commit"</td><td><code>.github/workflows/ci.yml:86-88</code>, <code>docs/23-testing-plan.md</code></td><td class="v meh">high</td><td>Phase 1</td></tr>
+      <tr><td>G22</td><td><code>permit</code> and <code>AtomicDvP</code> verify ECDSA only: Safes and smart wallets cannot sign; the deploy script defaults to delay 0 and EOA admins; forge-std unpinned</td><td><code>src/uRWAToken.sol:222</code>, <code>src/AtomicDvP.sol:163-174</code>, <code>script/Deploy.s.sol:294-297</code></td><td class="v meh">high</td><td>Phase 0</td></tr>
+      <tr><td>G23</td><td>Institutional surfaces absent: custodian omnibus, ISO 20022, DTI/ISIN/LEI on chain, a cash leg beyond USDC, schedule channels, monitoring and DR, an AML programme – the Orbit register O1–O28</td><td><a href="orbit.html">orbit.html</a> §3</td><td class="v meh">blocks enterprise sale</td><td>Phases 0–4 as on the Orbit page</td></tr>
       <tr><td>G18</td><td>The STBX holder is not a party to any signed document; the STEL governance framework is absent; four conflicts in the paper (ROFR period, drag threshold, pre-emption, transfer cap)</td><td><code>raw/legal-2026-04</code></td><td class="v no">blocks Terms</td><td>Max · before Phase 4</td></tr>
     </tbody>
   </table>
@@ -551,6 +557,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v1.2</td><td>25 Sep 2026</td><td>Named part of Stobox Orbit; the Orbit page linked; gap register extended with G19–G23 from the institutional review, G19 being the 1-of-1 Technical Safe read from Base.</td></tr>
       <tr><td class="v">v1.1</td><td>25 Sep 2026</td><td>Evening rulings recorded on the hub and the layer pages; AttestorRegistry moved to Phase 1; the umbrella-name decision opened with candidates checked against the vault.</td></tr>
       <tr><td class="v">v1.0</td><td>25 Sep 2026</td><td>Hub restructure: four layer pages added (identity, terms, offering, intelligence) and linked; gap register G1–G18 consolidated from the facet inventory, the offering review and the rights register, each read against the code; Phase 0 widened to three weeks; lede and totals updated.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. STV3 inventory from the nine verified facets on Arbitrum; Factory status from code and 220 passing tests; Intelligence facet and Stobox Oracle designed; identity gap named; four-level criteria; four-phase build order.</td></tr>

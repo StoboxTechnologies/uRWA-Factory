@@ -489,6 +489,28 @@ footer p{max-width:76ch;margin:0 0 8px}
 </ul>
 <p>  all transfers, not only Reg S – a sharpening of the morning&#x27;s G1.</p>
 <p>Outside the code: the STBX holder is a party to no signed document in the vault, and the STEL governance framework that SPA 3.2 points to is absent (<strong>G18</strong>) – the Terms layer has nothing to anchor until Max closes it. All of this is open; nothing in <code>src/</code> changed.</p>
+<p><strong>Evening, third pass – the institutional review.</strong> Gene named the whole product <strong>Stobox Orbit</strong> and asked, before Phase 0, for a review against what banks, custodians, auditors and regulated buyers require. Six agents took six seats (custodian, external auditor, compliance officer, enterprise RFP, infrastructure architect, asset-class specialist); the result is <code>docs/architecture/orbit.html</code> v0.1 with a requirements register <strong>O1–O28</strong>, ten instrument presets and a revised build order. Chain facts re-read by this session before they went on the page:</p>
+<ul>
+<li><strong>G19</strong> The Technical Safe <code>0xcAFA…E8b6</code> on Base has <code>getThreshold() = 1</code> and one owner,</li>
+</ul>
+<p>  <code>0x777e…3777</code>, whose code is <code>0xef0100…</code> (an EIP-7702 delegation). Per the vault the same key is   alone on the finance Safe and signs the Admin Safe, whose delay module lets one EOA take any role   after 28 days. No STV4 role may be granted to it as it stands. <strong>Phase 0, day one.</strong></p>
+<ul>
+<li><strong>G20</strong> <code>Treasury.refund</code> transfers <code>amount</code> while decrementing the lock by</li>
+</ul>
+<p>  <code>min(amount, locked)</code> (<code>src/Treasury.sol:147-151</code>) – read from code, not reproduced.</p>
+<ul>
+<li><strong>G21</strong> No <code>invariant_</code> test exists; the CI fuzzing job is commented out</li>
+</ul>
+<p>  (<code>.github/workflows/ci.yml:86-88</code>) while doc 23 promises it on every commit.</p>
+<ul>
+<li><strong>G22</strong> <code>permit</code> and <code>AtomicDvP</code> accept ECDSA only, so a Safe or smart wallet cannot sign; the</li>
+</ul>
+<p>  deploy script defaults to delay 0 and EOA admins; forge-std is unpinned.</p>
+<ul>
+<li><strong>G23</strong> Institutional surfaces absent entirely: custodian omnibus with beneficiary attribution,</li>
+</ul>
+<p>  ISO 20022 (the string appears nowhere in docs or src), DTI/ISIN/LEI on chain, any cash leg beyond   USDC, schedule channels, monitoring and DR, a written AML programme.</p>
+<p>Also recorded: the price list still carries a &quot;5–15 bps of tokenized AUM&quot; row that canon withdrew on 11.08.2026 (O27). Documentation only; nothing in <code>src/</code> changed.</p>
 <hr class="soft">
 <h3 id="34-2026-08-16-session-10-the-conformance-kit-and-its-first-stranger-is-us">2026-08-16 · Session 10 — the conformance kit, and its first stranger is us</h3>
 <p><strong>Shipped.</strong> <code>TO-01</code>. <code>test/conformance/ERC7943Conformance.sol</code> is the liftable kit: it imports nothing from <code>src/</code>, declares the ERC-7943 surface locally, and judges <strong>any</strong> implementation whose binding answers six hooks — the token, an eligible holder and receiver, an ineligible account, the freeze authority, and optionally a force authority. Ten checks across five groups: the interface claim, the four views fuzzed to never revert or write (the exact failure mode found live in a deployed registry), the pair semantics with allowances explicitly not <code>canTransfer</code>&#x27;s business, the refusals binding the ledger and not only the preview, the freeze exceeding balance without reverting, and — only where seizure exists — compulsion bypassing the freeze but never <code>canReceive</code>.</p>
@@ -660,4 +682,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: eb3929e4ad306624382729fd73513cde17986854ed377f1c23084ead39d25593 -->
+<!-- source-digest: 83013622acbfd1ffb356ec46c9fd6135b2ed576c44770beb99742bf4e55f3347 -->

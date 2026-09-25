@@ -1,0 +1,531 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stobox Orbit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#0D1424; --ink-2:#2B3447; --muted:#5A6477; --rule:#D8DEE8;
+  --region:#E9EDF4; --region-base:#E6EEFF; --accent:#0046E0;
+  --live:#12804F; --ready:#4B4BC8; --pending:#A86200; --gap:#C42D25; --option:#6B7489;
+  --display:"Unbounded",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+    --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+    --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+  --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+  --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+main{max-width:1180px;margin:0 auto;padding:56px 28px 96px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font:700 clamp(30px,4.6vw,48px)/1.08 var(--display);letter-spacing:-.01em}
+h2{font:700 22px/1.25 var(--display);letter-spacing:-.005em}
+h3{font:600 17px/1.35 var(--body)}
+p{margin:0}
+.prose{max-width:68ch;color:var(--ink-2)}
+.prose code{overflow-wrap:anywhere}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.meta{font:12.5px/1.5 var(--mono);color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+header{display:grid;gap:18px;margin-bottom:56px}
+header .lede{font-size:19px;line-height:1.5;max-width:62ch;color:var(--ink-2)}
+section{display:grid;gap:20px;padding-top:44px;margin-top:44px;border-top:1px solid var(--rule)}
+section > .head{display:grid;gap:10px}
+.kicker{font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:14px;border-radius:3px;border:1.6px solid;background:var(--surface)}
+.sw.live{border-color:var(--live)} .sw.ready{border-color:var(--ready)}
+.sw.pending{border-color:var(--pending);border-style:dashed} .sw.gap{border-color:var(--gap);border-style:dashed;background:color-mix(in srgb,var(--gap) 10%,var(--surface))}
+.sw.option{border-color:var(--option);border-style:dotted}
+figure{margin:0;display:grid;gap:12px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+.scroll svg{display:block;width:100%;height:auto;min-width:980px}
+figcaption{font-size:14px;color:var(--muted);max-width:80ch}
+.hint{display:none;font:12px var(--mono);color:var(--muted)}
+@media (max-width:980px){.hint{display:block}}
+.rg{fill:var(--region);stroke:var(--rule);stroke-width:1}
+.rg.base{fill:var(--region-base);stroke:var(--accent);stroke-opacity:.45;stroke-dasharray:6 5}
+.rl{font:600 10.5px var(--body);letter-spacing:.13em;fill:var(--muted)}
+.rl.base{fill:var(--accent)}
+.n rect{fill:var(--surface);stroke-width:1.6}
+.n.live rect{stroke:var(--live)}
+.n.ready rect{stroke:var(--ready)}
+.n.pending rect{stroke:var(--pending);stroke-dasharray:6 4}
+.n.gap rect{stroke:var(--gap);stroke-dasharray:6 4;fill:color-mix(in srgb,var(--gap) 8%,var(--surface))}
+.n.option rect{stroke:var(--option);stroke-dasharray:2 3}
+.n.plain rect{stroke:var(--rule)}
+.t{font:600 13px var(--body);fill:var(--ink)}
+.s{font:400 10.5px var(--mono);fill:var(--muted)}
+.st{font:700 9px var(--body);letter-spacing:.1em}
+.live .st{fill:var(--live)} .ready .st{fill:var(--ready)} .pending .st{fill:var(--pending)} .gap .st{fill:var(--gap)} .option .st{fill:var(--option)}
+.e{fill:none;stroke:var(--muted);stroke-width:1.4}
+.e.hot{stroke:var(--accent);stroke-width:1.8}
+.e.bad{stroke:var(--gap);stroke-dasharray:5 4}
+.e.dot{stroke-dasharray:2 3}
+.e.ret{stroke-dasharray:5 4}
+.ah{fill:var(--muted)} .ah.hot{fill:var(--accent)} .ah.bad{fill:var(--gap)}
+.el{font:500 10.5px var(--mono);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.el.hot{fill:var(--accent)}
+.el.bad{fill:var(--gap)}
+.life{stroke:var(--rule);stroke-width:1.2;stroke-dasharray:3 4}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.four{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card p,.card li{font-size:15px;color:var(--ink-2)}
+.card ul,.card ol{margin:0;padding-left:18px;display:grid;gap:6px}
+.card .big{font:700 28px/1 var(--display);color:var(--ink)}
+.note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--ink-2);max-width:78ch}
+.note.warn{border-color:var(--gap)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--region) 60%,var(--surface))}
+tr:last-child td{border-bottom:0}
+td.v{font-weight:600;white-space:nowrap}
+.yes{color:var(--live)} .no{color:var(--gap)} .meh{color:var(--pending)}
+.tag{display:inline-block;font:700 9.5px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1.4px solid;white-space:nowrap}
+.tag.live{color:var(--live);border-color:var(--live)} .tag.ready{color:var(--ready);border-color:var(--ready)}
+.tag.pending{color:var(--pending);border-color:var(--pending);border-style:dashed} .tag.gap{color:var(--gap);border-color:var(--gap);border-style:dashed}
+.tag.option{color:var(--option);border-color:var(--option);border-style:dotted}
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.phases{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.phases{grid-template-columns:1fr}}
+.ph{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:10px;align-content:start}
+.ph .when{font:700 16px var(--display)}
+.ph .why{font-size:13.5px;color:var(--muted)}
+.ph ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2)}
+ol.dec{margin:0;padding-left:22px;display:grid;gap:12px;max-width:80ch}
+ol.dec li{padding-left:6px;color:var(--ink-2)}
+ol.dec b{color:var(--ink)}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);display:grid;gap:6px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Stobox · internal architecture · v0.1 · 25 Sep 2026</div>
+  <h1>Stobox Orbit</h1>
+  <p class="lede">The whole Web3 product under one name – the open-source uRWA Factory a client can deploy, our hosted Factory, Intelligence, the signed oracle and the agents – reviewed from six institutional seats: custodian, auditor, compliance officer, enterprise buyer, infrastructure architect, asset-class specialist. The one gap that matters is not in Solidity: the Technical Safe that is to hold every STV4 role is a 1-of-1 on a hot key, read from the chain today.</p>
+  <div class="legend" aria-label="Status legend">
+    <span><i class="sw live"></i>Live on chain or in production</span>
+    <span><i class="sw ready"></i>Code and tests ready, not deployed</span>
+    <span><i class="sw pending"></i>Planned, not built or created yet</span>
+    <span><i class="sw gap"></i>Gap: missing, blocks a feature</span>
+    <span><i class="sw option"></i>Optional</span>
+  </div>
+  <p class="meta">Protocol hub: <a href="stv4.html">STV4</a> · layers: <a href="identity.html">Identity</a> · <a href="terms.html">Terms</a> · <a href="offering.html">Offering</a> · <a href="intelligence.html">Intelligence</a> · Not a legal opinion; items marked "counsel" go to Max and outside counsel.</p>
+</header>
+
+<!-- ============================================================ MAP -->
+<section aria-labelledby="map-h">
+  <div class="head">
+    <span class="kicker">1 · The whole system, institutionally</span>
+    <h2 id="map-h">Who sits around the token, and what each one needs from us</h2>
+    <p class="prose">Left: the regulated parties an issuer works with – each one signs something in Orbit's channel model or reads something from its logs. Centre: what the Factory gives them on Base. Right: what Stobox must run around it. Bottom: the standards those parties speak. Arrows point from what feeds to what uses it; the blue path is a corporate action from declaration to the custodian's confirmation.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1200 720" role="img" aria-label="Institutional map: custodian, transfer agent, fund administrator, paying agent, auditor and bank money on the left; the Factory token, identity registry, oracle channels, terms and passport, payout and pledge, and the Board on Base in the centre; keys and Safes, monitoring and DR, AML and MLRO, SOC 1 and 2, ISO 20022 export and the auditor pack on the right; DTI/ISIN/LEI, ISO 20022 CAEV, ERC-7943 and the Basel SCO60 position along the bottom. Gaps in red: custodian omnibus, cash-leg adapter, identity registry, payout and pledge, Safe keys, monitoring, AML programme, ISO 20022.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah bad" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <rect class="rg" x="20" y="44" width="280" height="546" rx="10"/><text class="rl" x="34" y="66">REGULATED PARTIES</text>
+      <rect class="rg base" x="330" y="44" width="540" height="546" rx="12"/><text class="rl base" x="346" y="66">BASE · ORBIT ON CHAIN</text>
+      <rect class="rg" x="900" y="44" width="280" height="546" rx="10"/><text class="rl" x="914" y="66">STOBOX OPERATIONS</text>
+      <rect class="rg" x="20" y="620" width="1160" height="90" rx="10"/><text class="rl" x="34" y="642">STANDARDS THEY SPEAK</text>
+
+      <!-- edges -->
+      <path class="e bad" d="M275,113 H343" marker-end="url(#ab)"/><text class="el bad" x="309" y="105" text-anchor="middle">omnibus</text>
+      <path class="e" d="M275,223 H343" marker-end="url(#a)"/><text class="el" x="309" y="215" text-anchor="middle">REGULATED</text>
+      <path class="e hot" d="M275,333 H343" marker-end="url(#ah)"/><text class="el hot" x="309" y="325" text-anchor="middle">ATTESTOR</text>
+      <path class="e dot" d="M275,443 H343" marker-end="url(#a)"/><text class="el" x="309" y="435" text-anchor="middle">reads logs</text>
+      <path class="e bad" d="M275,553 H343" marker-end="url(#ab)"/><text class="el bad" x="309" y="545" text-anchor="middle">cash leg</text>
+      <path class="e hot" d="M455,362 V412" marker-end="url(#ah)"/><text class="el hot" x="465" y="392">structured</text>
+      <path class="e hot" d="M565,443 H633" marker-end="url(#ah)"/><text class="el hot" x="599" y="435" text-anchor="middle">execute</text>
+      <path class="e" d="M455,142 V192" marker-end="url(#a)"/><text class="el" x="465" y="172">eligibility</text>
+      <path class="e" d="M745,142 V192" marker-end="url(#a)"/><text class="el" x="755" y="172">anchor</text>
+      <path class="e" d="M745,252 V302" marker-end="url(#a)"/><text class="el" x="755" y="282">price</text>
+      <path class="e hot" d="M855,443 H913" marker-end="url(#ah)"/><text class="el hot" x="884" y="435" text-anchor="middle">seev.036</text>
+      <path class="e bad" d="M913,113 H890 V255 H855" marker-end="url(#ab)"/><text class="el bad" x="896" y="190" text-anchor="end">roles</text>
+      <path class="e dot" d="M913,553 H890 V475 H855" marker-end="url(#a)"/><text class="el" x="896" y="520" text-anchor="end">logs</text>
+
+      <!-- parties -->
+      <g class="n gap"><rect x="35" y="84" width="240" height="58" rx="8"/><text class="t" x="47" y="108">Custodian</text><text class="s" x="47" y="127">omnibus · sub-accounts · none</text><text class="st" x="265" y="100" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="35" y="194" width="240" height="58" rx="8"/><text class="t" x="47" y="218">Transfer agent · registrar</text><text class="s" x="47" y="237">Silicon Prairie · signs register</text><text class="st" x="265" y="210" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="35" y="304" width="240" height="58" rx="8"/><text class="t" x="47" y="328">Administrator · paying agent</text><text class="s" x="47" y="347">NAV · coupon · PaymentAttested</text><text class="st" x="265" y="320" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="35" y="414" width="240" height="58" rx="8"/><text class="t" x="47" y="438">External auditor</text><text class="s" x="47" y="457">SOC 1 · pack from eth_getLogs</text><text class="st" x="265" y="430" text-anchor="end">PLANNED</text></g>
+      <g class="n gap"><rect x="35" y="524" width="240" height="58" rx="8"/><text class="t" x="47" y="548">Bank money</text><text class="s" x="47" y="567">USDC only · no deposit token</text><text class="st" x="265" y="540" text-anchor="end">GAP</text></g>
+
+      <!-- base -->
+      <g class="n ready"><rect x="345" y="84" width="220" height="58" rx="8"/><text class="t" x="357" y="108">Factory token</text><text class="s" x="357" y="127">ERC-7943 · 220 tests</text><text class="st" x="555" y="100" text-anchor="end">READY</text></g>
+      <g class="n gap"><rect x="345" y="194" width="220" height="58" rx="8"/><text class="t" x="357" y="218">Identity registry</text><text class="s" x="357" y="237">subject-keyed · G1</text><text class="st" x="555" y="210" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="345" y="304" width="220" height="58" rx="8"/><text class="t" x="357" y="328">Oracle channels</text><text class="s" x="357" y="347">signer sets · schedules missing</text><text class="st" x="555" y="320" text-anchor="end">PLANNED</text></g>
+      <g class="n gap"><rect x="345" y="414" width="220" height="58" rx="8"/><text class="t" x="357" y="438">Payout · pledge</text><text class="s" x="357" y="457">none built · consume unused</text><text class="st" x="555" y="430" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="345" y="524" width="220" height="58" rx="8"/><text class="t" x="357" y="548">Compass Board</text><text class="s" x="357" y="567">perimeter · counsel</text><text class="st" x="555" y="540" text-anchor="end">PLANNED</text></g>
+      <g class="n gap"><rect x="635" y="84" width="220" height="58" rx="8"/><text class="t" x="647" y="108">Terms · passport</text><text class="s" x="647" y="127">interface only · PA 0 of 7</text><text class="st" x="845" y="100" text-anchor="end">GAP</text></g>
+      <g class="n gap"><rect x="635" y="194" width="220" height="58" rx="8"/><text class="t" x="647" y="218">Roles on Safes</text><text class="s" x="647" y="237">planned 2-of-3 · today 1-of-1</text><text class="st" x="845" y="210" text-anchor="end">GAP</text></g>
+      <g class="n ready"><rect x="635" y="304" width="220" height="58" rx="8"/><text class="t" x="647" y="328">AtomicDvP · Treasury</text><text class="s" x="647" y="347">USDC leg · reserve unused</text><text class="st" x="845" y="320" text-anchor="end">READY</text></g>
+      <g class="n pending"><rect x="635" y="414" width="220" height="58" rx="8"/><text class="t" x="647" y="438">Corporate action</text><text class="s" x="647" y="457">CAEV codes · options · legs</text><text class="st" x="845" y="430" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="635" y="524" width="220" height="58" rx="8"/><text class="t" x="647" y="548">Auditor pack</text><text class="s" x="647" y="567">register · oracle · terms</text><text class="st" x="845" y="540" text-anchor="end">PLANNED</text></g>
+
+      <!-- ops -->
+      <g class="n gap"><rect x="915" y="84" width="250" height="58" rx="8"/><text class="t" x="927" y="108">Keys · Safes</text><text class="s" x="927" y="127">0xcAFA…E8b6 = 1-of-1 hot key</text><text class="st" x="1155" y="100" text-anchor="end">GAP</text></g>
+      <g class="n gap"><rect x="915" y="194" width="250" height="58" rx="8"/><text class="t" x="927" y="218">Monitoring · on-call · DR</text><text class="s" x="927" y="237">none · no RTO/RPO</text><text class="st" x="1155" y="210" text-anchor="end">GAP</text></g>
+      <g class="n gap"><rect x="915" y="304" width="250" height="58" rx="8"/><text class="t" x="927" y="328">AML programme · MLRO</text><text class="s" x="927" y="347">none written · sanctions daily</text><text class="st" x="1155" y="320" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="915" y="414" width="250" height="58" rx="8"/><text class="t" x="927" y="438">ISO 20022 export</text><text class="s" x="927" y="457">seev.031/036 · sese · camt.054</text><text class="st" x="1155" y="430" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="915" y="524" width="250" height="58" rx="8"/><text class="t" x="927" y="548">SOC 1 · SOC 2 · DORA</text><text class="s" x="927" y="567">Vanta card archived · no owner</text><text class="st" x="1155" y="540" text-anchor="end">PLANNED</text></g>
+
+      <!-- standards -->
+      <g class="n pending"><rect x="40" y="652" width="260" height="46" rx="8"/><text class="t" x="52" y="672">DTI · ISIN · LEI</text><text class="s" x="52" y="690">ISO 24165 · in Terms, not on chain</text><text class="st" x="290" y="668" text-anchor="end">PLANNED</text></g>
+      <g class="n gap"><rect x="330" y="652" width="260" height="46" rx="8"/><text class="t" x="342" y="672">ISO 20022 CAEV</text><text class="s" x="342" y="690">not mentioned anywhere in docs or src</text><text class="st" x="580" y="668" text-anchor="end">GAP</text></g>
+      <g class="n live"><rect x="620" y="652" width="260" height="46" rx="8"/><text class="t" x="632" y="672">ERC-7943 · uRWA</text><text class="s" x="632" y="690">Final · CMTAT and ACE compatible</text><text class="st" x="870" y="668" text-anchor="end">LIVE</text></g>
+      <g class="n pending"><rect x="910" y="652" width="260" height="46" rx="8"/><text class="t" x="922" y="672">Basel SCO60 position</text><text class="s" x="922" y="690">Base is permissionless = Group 2</text><text class="st" x="1160" y="668" text-anchor="end">PLANNED</text></g>
+    </svg>
+    </div>
+    <span class="hint">Scroll sideways to see the full map.</span>
+    <figcaption>Red is what an institution asks for on day one and we do not have. Two of them are outside the code: the Technical Safe <code>0xcAFA…E8b6</code> has threshold 1 with a single owner <code>0x777e…3777</code> that carries an EIP-7702 delegation – read on Base on 25.09.2026 – and no written AML programme or MLRO exists for the operating entities. Three are missing product surfaces: a custodian as a first-class holder with sub-account attribution, a cash leg other than USDC, and ISO 20022 for corporate actions, a standard that appears nowhere in the documentation or the code.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ FLOW -->
+<section aria-labelledby="flow-h">
+  <div class="head">
+    <span class="kicker">2 · One flow</span>
+    <h2 id="flow-h">A coupon, from the administrator's signature to the custodian's confirmation</h2>
+    <p class="prose">The flow every asset class shares in some form: a corporate action is signed by the parties the channel policy names, the token snapshots entitlements by person, the payout executes under a mandate, the money moves on chain or is attested by a paying agent, the term is marked executed, and the custodian receives a standard message. Nothing in this flow exists in code yet except the DvP leg.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1100 560" role="img" aria-label="Sequence: the administrator signs a coupon record; the Stobox Oracle publishes it once the signer threshold is met; the token's Intelligence facet exposes it; the PayoutFacet snapshots entitlements by subject at the record date and consumes the agent's mandate; the money moves in USDC or the paying agent attests an off-chain payment; TermExecuted is emitted; an ISO 20022 seev.036 confirmation is exported to the custodian.">
+      <defs>
+        <marker id="sa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="sh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <g class="n pending"><rect x="15" y="20" width="140" height="40" rx="8"/><text class="t" x="85" y="45" text-anchor="middle">Administrator</text></g>
+      <g class="n pending"><rect x="185" y="20" width="140" height="40" rx="8"/><text class="t" x="255" y="45" text-anchor="middle">Stobox Oracle</text></g>
+      <g class="n pending"><rect x="355" y="20" width="130" height="40" rx="8"/><text class="t" x="420" y="45" text-anchor="middle">Token</text></g>
+      <g class="n gap"><rect x="515" y="20" width="130" height="40" rx="8"/><text class="t" x="580" y="45" text-anchor="middle">PayoutFacet</text></g>
+      <g class="n pending"><rect x="675" y="20" width="130" height="40" rx="8"/><text class="t" x="740" y="45" text-anchor="middle">Paying agent</text></g>
+      <g class="n pending"><rect x="835" y="20" width="120" height="40" rx="8"/><text class="t" x="895" y="45" text-anchor="middle">Export</text></g>
+      <g class="n plain"><rect x="985" y="20" width="100" height="40" rx="8"/><text class="t" x="1035" y="45" text-anchor="middle">Custodian</text></g>
+      <path class="life" d="M85,60 V540 M255,60 V540 M420,60 V540 M580,60 V540 M740,60 V540 M895,60 V540 M1035,60 V540"/>
+      <path class="e hot" d="M85,100 H253" marker-end="url(#sh)"/><text class="el hot" x="169" y="93" text-anchor="middle">sign INTR record</text>
+      <path class="e hot" d="M255,144 H418" marker-end="url(#sh)"/><text class="el hot" x="337" y="137" text-anchor="middle">publish · threshold met</text>
+      <path class="e hot" d="M420,188 H578" marker-end="url(#sh)"/><text class="el hot" x="499" y="181" text-anchor="middle">lastCorporateAction</text>
+      <path class="e" d="M580,232 H422" marker-end="url(#sa)"/><text class="el" x="501" y="225" text-anchor="middle">snapshot by subject · recordDate</text>
+      <path class="e" d="M580,276 H422" marker-end="url(#sa)"/><text class="el" x="501" y="269" text-anchor="middle">consume(SCOPE_DISTRIBUTE)</text>
+      <path class="e hot" d="M580,320 H738" marker-end="url(#sh)"/><text class="el hot" x="659" y="313" text-anchor="middle">USDC · or fiat instruction</text>
+      <path class="e ret hot" d="M740,364 H582" marker-end="url(#sh)"/><text class="el hot" x="661" y="357" text-anchor="middle">PaymentAttested(batchHash)</text>
+      <path class="e" d="M580,408 H893" marker-end="url(#sa)"/><text class="el" x="736" y="401" text-anchor="middle">TermExecuted(ref) · DividendPaid</text>
+      <path class="e" d="M895,452 H1033" marker-end="url(#sa)"/><text class="el" x="964" y="445" text-anchor="middle">seev.036</text>
+      <path class="e ret" d="M580,496 H87" marker-end="url(#sa)"/><text class="el" x="333" y="489" text-anchor="middle">PayoutLate if dueBy passes</text>
+    </svg>
+    </div>
+    <figcaption>Failure behaviour: no record without the threshold of distinct signer roles; no execution unless the action's <code>ref</code> is a term in the signed <code>termsRoot</code>; an off-chain payment without <code>PaymentAttested</code> never closes the term and emits <code>PayoutLate</code> at <code>dueBy</code>; a stale channel pauses the executing agent, never the holders' transfers. <code>AgentAuthority.consume</code> is called here by the PayoutFacet – the first contract that must.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ REGISTER -->
+<section aria-labelledby="reg-h">
+  <div class="head">
+    <span class="kicker">3 · The institutional requirements register</span>
+    <h2 id="reg-h">What each seat asks for, and where Orbit stands</h2>
+    <p class="prose">Consolidated from the six reviews. "Source" names the seat that raised it. Statuses are read from the code, the chain and the vault, not from intent.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>#</th><th>Requirement</th><th>Source</th><th>Orbit today</th><th>Fix</th><th>Phase</th></tr></thead>
+    <tbody>
+      <tr><td>O1</td><td>Every privileged role on a hardware-backed multisig with separated duties; no hot key, no single owner</td><td>infra · auditor · CCO</td><td><span class="tag gap">gap</span> Technical Safe 1-of-1, owner with EIP-7702; same key alone on the finance Safe; Admin Safe's delay module lets one EOA take everything in 28 days</td><td>Governance 3-of-5, Ops 2-of-4, Treasury 2-of-3 on hardware, different people; no STV4 role on <code>0xcAFA…</code> as it stands; watch <code>TransactionAdded</code> today</td><td class="v">0 · day 1</td></tr>
+      <tr><td>O2</td><td>External audit with a public report and the explorer tag</td><td>custodian · CCO · RFP</td><td><span class="tag gap">gap</span> none; internal only</td><td>Book the firm in October (queues 4–12 weeks); ChainSecurity, Trail of Bits or Spearbit; $60–150k</td><td class="v">3</td></tr>
+      <tr><td>O3</td><td>Holder register, lockups, roles and oracle history reconstructible from <code>eth_getLogs</code> by the custodian itself</td><td>custodian · auditor</td><td><span class="tag pending">partial</span> principle stated; G12: <code>RuleFailed</code> never emitted, PolicySet and adapter mutations silent, cuts at delay 0 silent</td><td>Events on every mutation; <code>ComplianceDecision</code> off-chain log with nightly anchor; verify.py check "every declared event is emitted"</td><td class="v">1</td></tr>
+      <tr><td>O4</td><td>Custodian as a first-class holder: omnibus wallet with beneficiary attribution, sub-accounts, holder counts by beneficiary</td><td>custodian · asset</td><td><span class="tag gap">gap</span> no concept</td><td>Claim <code>custodian.omnibus</code>; custodian signs a beneficiary-attribution channel as ATTESTOR; rules read attribution for caps</td><td class="v">2</td></tr>
+      <tr><td>O5</td><td>Corporate actions mapped to ISO 20022 (seev.031 notification, seev.036 confirmation) and MT564/566</td><td>custodian · asset · RFP</td><td><span class="tag gap">gap</span> "ISO 20022" appears nowhere in docs or src</td><td>CAEV-aligned codes in <code>CorporateAction</code>; off-chain export adapter (seev, sese.023/025, camt.054); import seev.033 into <code>action.propose</code></td><td class="v">2</td></tr>
+      <tr><td>O6</td><td>Standard identifiers on the instrument: DTI (ISO 24165), ISIN, issuer LEI, readable on chain</td><td>custodian · asset · RFP</td><td><span class="tag pending">partial</span> in the Terms model, not on chain</td><td>Register a DTI per token, pair with ISIN per ANNA guide, LEI in the passport; a public view</td><td class="v">1</td></tr>
+      <tr><td>O7</td><td>A cash leg other than USDC: tokenized deposits, MiCA EMT, fiat via paying agent</td><td>custodian · asset · RFP</td><td><span class="tag gap">gap</span> USDC hard-coded in DvP</td><td><code>AtomicDvP</code> with any ERC-20 cash asset plus recipient allow-list pre-check; <code>PaymentAttested</code> leg with timeout and auto-unwind; <code>ccy</code> on every channel</td><td class="v">2</td></tr>
+      <tr><td>O8</td><td>Named signer roles per oracle channel with independence: KYB of attestors, no shared keys between ISSUER and ATTESTOR, key validity at <code>observedAt</code></td><td>auditor · CCO</td><td><span class="tag gap">gap</span> AttestorRegistry is an interface only</td><td>AttestorRegistry in Phase 1 with validity windows and conflict declarations; ATTESTOR mandatory on <code>price.reference</code> used by a term</td><td class="v">1</td></tr>
+      <tr><td>O9</td><td>Money-path defects closed with failing-first tests before any audit</td><td>infra · CCO · RFP</td><td><span class="tag gap">gap</span> G2, G8–G10, plus <code>Treasury.refund</code> transfers <code>amount</code> while decrementing only <code>min(amount, locked)</code> (read from code, not reproduced)</td><td>Phase 0 as on the hub, one more row for <code>refund</code></td><td class="v">0</td></tr>
+      <tr><td>O10</td><td>Root role and setters under the upgrade delay; storage-write reality documented</td><td>infra · auditor</td><td><span class="tag gap">gap</span> G5, G6, G7; deploy script defaults to delay 0 and EOA admins</td><td>UPGRADE_ADMIN self-administered; setters and <code>setTreasury</code> under a 7-day minimum enforced in code; deploy script refuses defaults; doc 17 and L4.8 corrected</td><td class="v">0</td></tr>
+      <tr><td>O11</td><td>Invariant fuzzing and formal verification of the compliance pipeline and treasury</td><td>infra · auditor</td><td><span class="tag gap">gap</span> no <code>invariant_</code> test; the CI job is commented out while doc 23 says "every commit"</td><td>Foundry invariants + Echidna in CI; Halmos in-house; Certora on pipeline and treasury before the external audit</td><td class="v">1</td></tr>
+      <tr><td>O12</td><td>Monitoring, on-call, incident runbooks, RTO/RPO, DR tests; pause reachable within 30 minutes including through L1 forced inclusion</td><td>infra · custodian · RFP</td><td><span class="tag gap">gap</span> none; OpenZeppelin Defender hosted service ended 1 July 2026</td><td>OpenZeppelin Monitor + Hypernative + Tenderly; pager; pre-signed pause transaction deliverable via <code>OptimismPortal.depositTransaction</code>; RTO/RPO table; quarterly drills</td><td class="v">1</td></tr>
+      <tr><td>O13</td><td>SOC 1 for fund clients, SOC 2 Type II, DORA contractual addendum, sub-service carve-outs (Stripe, KMS, Base sequencer, Eqvista)</td><td>auditor · RFP · CCO</td><td><span class="tag gap">gap</span> Vanta card archived, no owner; targets contradict the services register</td><td>Owner named; SOC 2 Type I in 3 months after Phase 1, Type II after 6–12 months, SOC 1 for funds; DORA addendum drafted with Max</td><td class="v">1 → 3</td></tr>
+      <tr><td>O14</td><td>Written AML/CFT programme and an MLRO for the operating entities; sanctions screening of wallet addresses daily, at <code>bindWallet</code> and before every Board purchase; retroactive screening on list changes</td><td>CCO</td><td><span class="tag gap">gap</span> a 30-day sanctions claim only</td><td>Programme, risk assessment, KYB of issuers, SAR path; daily list delta; block within 24 hours; Innovations' VASP status – BVI counsel</td><td class="v">1 · ops</td></tr>
+      <tr><td>O15</td><td>Insider and blackout policy for the Board; information barrier around the oracle relay; self-trade prevention by subject; layering and oracle front-running surveillance</td><td>CCO · custodian</td><td><span class="tag gap">gap</span> in "enterprise-grade per year", not in a phase</td><td>Claim <code>insider.blackout</code> + rule; relay access log; subject-level self-trade block in the Board; alert rules</td><td class="v">2</td></tr>
+      <tr><td>O16</td><td>Board perimeter settled in writing before launch</td><td>CCO · custodian · offering</td><td><span class="tag pending">open</span> escrow executes and the operator holds <code>forceCancel</code></td><td>Counsel opinion; non-EU and non-US first; <code>forceCancel</code> to the lot owner or time-bounded; no order matching, ever</td><td class="v">2 · counsel</td></tr>
+      <tr><td>O17</td><td>Structured corporate actions with CAEV codes, MAND/CHOS/VOLU, options, payment legs, withholding, record-date semantics by subject</td><td>asset</td><td><span class="tag pending">partial</span> struct ruled 25.09 lacks options, legs, <code>ccy</code>, withholding, SUSP</td><td>v2 struct on the Intelligence page; snapshot by subject; ACCRUAL_TWA mode for daily-yield funds</td><td class="v">1 · 4</td></tr>
+      <tr><td>O18</td><td>Schedule channels beside value channels: coupon schedule with day-count and calendar, amortisation, lease expiry, capital calls; <code>rate.reference</code> for floaters</td><td>asset</td><td><span class="tag gap">gap</span> all ten channels are "value now"</td><td>Schedule channel type; calendar and cut-off next to <code>maxAge</code></td><td class="v">4</td></tr>
+      <tr><td>O19</td><td>Payout and pledge: Merkle payout, <code>PaymentAttested</code>, a collateral path (sToken wrapper or PledgeFacet) with a Chainlink-compatible price view for lenders</td><td>asset · RFP</td><td><span class="tag gap">gap</span> none built; <code>consume</code> unused</td><td>PayoutFacet first (calls <code>consume</code>); sToken wrapper for collateral; <code>latestRoundData</code>-style adapter over <code>nav.perUnit</code></td><td class="v">4</td></tr>
+      <tr><td>O20</td><td>Look-through for feeders and funds of funds: a channel that references another instrument's channel</td><td>asset</td><td><span class="tag gap">gap</span> no cross-instrument dependency</td><td><code>ref</code> to a master channel; feeder NAV derived with its own ATTESTOR</td><td class="v">5</td></tr>
+      <tr><td>O21</td><td>Reserve attestation for any prepaid distribution reserve, not only backed assets; a suspension/gate event</td><td>asset</td><td><span class="tag pending">partial</span> <code>reserve.attested</code> scoped to backed assets</td><td>Generalise; add <code>SUSP</code> and <code>liquidity.status</code> (class A)</td><td class="v">4</td></tr>
+      <tr><td>O22</td><td>ERC-1271 and ERC-6492 in <code>permit</code> and DvP so Safes and smart wallets can sign</td><td>infra</td><td><span class="tag gap">gap</span> ECDSA only</td><td>Signature router in both</td><td class="v">0</td></tr>
+      <tr><td>O23</td><td>Reproducible builds, pinned dependencies, signed tags, CREATE2 facets, Sourcify full match, verified source for every clone</td><td>infra · auditor</td><td><span class="tag gap">gap</span> forge-std unpinned; deploy defaults to EOA</td><td>Pin, sign, verify; a public upgrade-log page generated from events</td><td class="v">0 · 1</td></tr>
+      <tr><td>O24</td><td>Privacy for institutions on a public chain: balances are public even with hashed identity</td><td>infra · custodian</td><td><span class="tag pending">partial</span> hashes and roots only</td><td>Omnibus via custodian (O4) now; ZK admission pilot 2027; FHE (ERC-7984) pilot on one instrument after the core audit; Canton only on client request, as a separate issuance</td><td class="v">4 · 2027</td></tr>
+      <tr><td>O25</td><td>Basel SCO60: a permissionless chain is Group 2 for a bank's balance sheet</td><td>custodian</td><td><span class="tag gap">gap</span> no position</td><td>One-page position; option to deploy the open-source Factory on a client's permissioned chain</td><td class="v">1 · doc</td></tr>
+      <tr><td>O26</td><td>Insurance (E&amp;O, cyber, crime), verified source-code escrow for the closed services, SLA 99.9% with credits, audit rights, client sandbox, issuer SDK, tax reporting (1099 / FATCA / CRS)</td><td>RFP</td><td><span class="tag gap">gap</span> none of these appear anywhere</td><td>Enterprise contract package with Max; sandbox tenant on Base Sepolia with mock KYC; SDK after Phase 3; tax reporting through the TA partner</td><td class="v">3</td></tr>
+      <tr><td>O27</td><td>Price list carries "tokenized-AUM 5–15 bps/yr" though canon withdrew it on 11.08.2026</td><td>RFP</td><td><span class="tag gap">gap</span> internal contradiction a buyer will see</td><td>Remove the row; one "Orbit Enterprise · annual" line with volume tiers by instrument count, never by AUM</td><td class="v">now</td></tr>
+      <tr><td>O28</td><td>Holder-facing terms for STBX and the four conflicts in the paper</td><td>terms · CCO</td><td><span class="tag gap">gap</span> G18</td><td>Max: STBX Token Terms, conflicts resolved, PPM amendment disclosing Reg S, the Board and the reference price</td><td class="v">before 4 · counsel</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note warn">Nothing in this register is deployed on Base except Stobox DID and EAS. An institution today evaluates design and process discipline, not a running system. That is a normal pre-onboarding stage; it is not a stage at which an SLA can be signed.</p>
+</section>
+
+<!-- ============================================================ ANALYSIS -->
+<section aria-labelledby="an-h">
+  <div class="head">
+    <span class="kicker">4 · Analysis</span>
+    <h2 id="an-h">Where Orbit sets the category, where it follows, what it missed</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Genuinely different – verified against the market</h3>
+      <ul>
+        <li><b>The record with tiered provenance.</b> None of Securitize, Tokeny, Fireblocks, Chainlink, Kinexys or Canton carries <code>tier_held</code>, <code>confidence</code>, <code>as_of</code>, <code>valid_until</code>, <code>document_id + locator</code> and an <code>evidenceHash</code> on every fact. Securitize's MCP answers what exists on chain; Orbit answers who said it, when, on which document.</li>
+        <li><b>Multi-party signed oracle channels.</b> ISSUER + RELAY + ATTESTOR / REGULATED with a threshold per instrument – a chain of responsibility a regulator can read, closer to what MAS GFIF asks than oracle-as-a-service.</li>
+        <li><b>Terms as code.</b> A corporate action executes only if its <code>ref</code> is a term in the signed root. Neither DS Protocol nor T-REX links document to executable term.</li>
+        <li><b>Mandates by construction unable to mint, freeze, seize, cut or pause.</b> Nobody in the set has it – and today it is a promise (G11).</li>
+        <li><b>An open-source factory the client deploys, with no Stobox role left on the token.</b> DS and T-REX are open source too, but hosted; ours is designed for "we control the keys" buyers.</li>
+        <li><b>Deterministic settlement:</b> <code>canTransfer</code> never reverts, <code>whyBlocked</code> names the rule, both legs in one transaction – the ICMA DvP target model.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Behind – said plainly</h3>
+      <ul>
+        <li><b>Custody:</b> no integrated qualified custodian; Securitize lists BNY, Anchorage, Copper, Fireblocks.</li>
+        <li><b>Cross-chain:</b> dropped by design ("one register"); defensible for a regulated buyer, but a "No" in every RFP row where BUIDL runs on nine chains.</li>
+        <li><b>Track record:</b> STBX on Arbitrum, 107 holders, no audit, register rebuilt by hand; against Securitize's $3.4B AUM and a public listing.</li>
+        <li><b>Licensed venue:</b> none; the Board is a BVI bulletin board with a perimeter question open.</li>
+        <li><b>Assurance:</b> no SOC 1, no SOC 2, no external audit, no insurance.</li>
+        <li><b>RFP score:</b> of 72 questions a regulated buyer sends, about 12 pass today, about 30 more after Phase 3, about 18 in Phases 4–6, and 12 never – 5 by canon (no full white-label, no venue, no percentage of a raise, no bps, no professional services for self-serve), 7 simply not done.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>BUIDL element</th><th>What it means to a buyer</th><th>Orbit as technology provider</th><th>Partner for the rest</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Transfer agent</td><td>legal register, SEC reporting, corporate-action processing</td><td>on-chain register, <code>captable.root</code>, REGULATED signer role – <b>not a TA</b></td><td>Silicon Prairie, Texture, tZERO; an on-chain TA model like Apex/Tokeny plugs in through REGULATED</td></tr>
+      <tr><td class="v">Custodian</td><td>safekeeping of money and securities, segregation</td><td>role keys on Safes; investor custody – <b>no</b></td><td>Fireblocks, Anchorage, Copper, Zodia – one signed partner before any "BlackRock-grade" claim</td></tr>
+      <tr><td class="v">Daily NAV</td><td>administrator computes, signs, publishes</td><td><code>nav.perUnit</code> with a mandatory ATTESTOR; freshness class B</td><td>Apex, SS&amp;C, Citco; Chainlink NAVLink as a second publisher</td></tr>
+      <tr><td class="v">24/7 subscriptions</td><td>primary round the clock, KYC before entry</td><td>OfferingRegistry + DvP in USDC, after Phase 0 and 2</td><td>Circle</td></tr>
+      <tr><td class="v">Redemption in USDC</td><td>stablecoin exit without a bank window</td><td>AtomicDvP + treasury; the limit is the fund's liquidity reserve, not code</td><td>Circle; a liquidity provider (the Ondo OUSG model)</td></tr>
+      <tr><td class="v">Chainlink NAV feeds</td><td>an external network publishes NAV for DeFi and collateral</td><td>the Stobox Oracle covers the channel; Chainlink as an optional second publisher (ACE is ERC-7943-compatible)</td><td>Chainlink Data Link</td></tr>
+      <tr><td class="v">Multi-chain</td><td>distribution across ecosystems</td><td><b>no, by design</b>: one register on Base; distribution through partner wrappers, never token copies</td><td>Wormhole or CCIP only if a client accepts two-copy risk</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>What we had missed entirely</h3>
+      <ol>
+        <li>Bank money as a cash leg (JPMD on Base, EMT under MiCA, the TCH deposit-token network targeted for 2027).</li>
+        <li>Collateral mobility and repo – what turned BUIDL from a fund into infrastructure.</li>
+        <li>Fund-administrator and paying-agent integration as signer roles with contracts behind them.</li>
+        <li>ISO 20022 for corporate actions and settlement messages.</li>
+        <li>Standard-body presence: ERC3643 Association, Canton Foundation and CMTA are where buyers look; ERC-7943 and CMTAT compatibility are ours to claim.</li>
+        <li>Insurance, verified escrow, SLA credits, audit rights, client sandbox, issuer SDK, tax reporting.</li>
+        <li>Disaster recovery, RTO/RPO, multi-region, on-call.</li>
+        <li>A written AML programme, an MLRO, daily sanctions screening, blackout policy.</li>
+        <li>Schedule channels, currency and calendar on channels, suspension events, look-through.</li>
+        <li>A Basel SCO60 position and a permissioned deployment option.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>What must never be claimed</h3>
+      <ul>
+        <li>"Custody", "safekeeping", "qualified custodian" – Stobox holds no keys of clients and is no trust company.</li>
+        <li>"Settlement finality" beyond what Base gives – atomic within one transaction, not legally final as SDX or Fnality are.</li>
+        <li>"Official register" – the legal register is the issuer's or the TA's.</li>
+        <li>"Compliant with Reg S / Reg D", "ISO 20022-compliant", "travel-rule compliant" – until the adapters and partners exist.</li>
+        <li>"Immutable ledger" – selectors are immutable, storage is not (G7); say "no key changes a balance outside issue and redeem, under the upgrade delay".</li>
+        <li>"ERC-7943 conformant" while <code>forcedTransfer</code> is unimplemented; "bank-grade MPC" for a multisig; "insured"; "multi-chain"; "audit-ready" before SOC 1 / SOC 2 Type II; "agents cannot exceed mandates" before <code>consume</code> is called.</li>
+        <li>Allowed and honest: <b>"auditable by construction – every balance, figure and term reconstructible from public events and signed records without Stobox; assurance (SOC 1, SOC 2 Type II) in progress, target period [date]."</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ PRESETS -->
+<section aria-labelledby="pr-h">
+  <div class="head">
+    <span class="kicker">5 · Instrument presets</span>
+    <h2 id="pr-h">Ten presets Orbit should ship, each with its channels, terms and signers</h2>
+    <p class="prose">Asterisked channels do not exist today. The presets turn "we support any asset" into a catalogue a buyer can point at.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Preset</th><th>Channels</th><th>Key terms</th><th>Enforced rules</th><th>Signer roles</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Equity-Class-Share</td><td>captable.root, shares.outstanding, price.reference, corporate.action</td><td>dividend, ROFR, drag/tag, consent, liq.pref, vesting</td><td>identity, jurisdiction, adherence claim, lockup, window, MaxTransferPerPeriod</td><td>ISSUER, RELAY, secretary/TA REGULATED, valuer ATTESTOR</td></tr>
+      <tr><td class="v">Fund-Unit-NAV</td><td>nav.perUnit, accrual.rate*, liquidity.status*, shares.outstanding, corporate.action</td><td>distribution in kind, redemption at NAV, gate notice, look-through*</td><td>QP/accredited, min subscription, record-date freeze</td><td>administrator ATTESTOR (mandatory), TA REGULATED, custodian ATTESTOR</td></tr>
+      <tr><td class="v">Fund-Unit-Closed</td><td>nav.perUnit (quarterly), corporate.action {CAPI, DVCA}</td><td>capital call, waterfall with hurdle and carry, lockup</td><td>lockup, transfer consent</td><td>GP ISSUER, administrator ATTESTOR, valuer ATTESTOR</td></tr>
+      <tr><td class="v">Bond-Fixed-Coupon</td><td>coupon.schedule*, corporate.action {INTR, REDM, PRED, MCAL}, covenant.status</td><td>coupon pay with day-count, redeem, call, covenant test, consent</td><td>record-date freeze, eligibility</td><td>registrar REGULATED, paying agent ATTESTOR, trustee ATTESTOR</td></tr>
+      <tr><td class="v">Bond-Floating</td><td>+ rate.reference*</td><td>+ rate fix</td><td>same</td><td>+ calculation agent ATTESTOR</td></tr>
+      <tr><td class="v">Private-Credit-Note</td><td>servicer.report*, covenant.status, nav.perUnit, waterfall.run*, corporate.action</td><td>interest, amortise, waterfall(tranches), waiver, recovery</td><td>tranche subordination, lockup</td><td>servicer ATTESTOR, valuer ATTESTOR, agent bank REGULATED</td></tr>
+      <tr><td class="v">Revenue-Share</td><td>revenue.period (CFO-signed), corporate.action {DVCA}</td><td>revenue distribute (basis, pct, cap), audit right</td><td>eligibility, holder cap</td><td>ISSUER (CFO), RELAY, auditor ATTESTOR optional</td></tr>
+      <tr><td class="v">RE-SPV-Unit</td><td>occupancy, noi.ltm, valuation (appraisal), title.status*, distribution.reserve*, corporate.action</td><td>rent distribute from reserve, sale waterfall, appraisal cadence</td><td>max holders, jurisdiction</td><td>property manager ISSUER-delegate, appraiser ATTESTOR, title company ATTESTOR</td></tr>
+      <tr><td class="v">Commodity-Receipt</td><td>reserve.attested, custody.receipt*, price.reference (benchmark)</td><td>fee debit, physical redemption (minimum)</td><td>eligibility</td><td>vault ATTESTOR, auditor ATTESTOR</td></tr>
+      <tr><td class="v">Deposit-Token-Wrapper · cash-leg adapter</td><td>settlement.confirmed*, reserve.attested (bank)</td><td>par redemption, allow-list sync</td><td>bank allow-list mirror</td><td>bank REGULATED + ISSUER</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">The RealT lesson, built in: "daily rent" there was a prepaid platform reserve, and holders learned it was empty from a press release. Any prepaid distribution reserve gets <code>reserve.attested</code> at freshness class A, and a gate or suspension is a first-class event (<code>SUSP</code>, <code>liquidity.status</code>), because it is the most important event a holder will ever read.</p>
+</section>
+
+<!-- ============================================================ CRITERIA -->
+<section aria-labelledby="c-h">
+  <div class="head">
+    <span class="kicker">6 · Institutional-grade criteria</span>
+    <h2 id="c-h">Added to the four levels on the hub</h2>
+  </div>
+  <div class="four">
+    <div class="card">
+      <h3>Custodian says "we want this" when</h3>
+      <ol>
+        <li>G1–G3 closed and an external audit published with the explorer tag.</li>
+        <li>The auditor pack rebuilds from <code>eth_getLogs</code> in their hands, G12 closed.</li>
+        <li>Custodian omnibus is a first-class holder with attributed beneficiaries.</li>
+        <li>ISO 20022 seev export exists; seev.033 instructions import.</li>
+        <li>DTI, ISIN and LEI readable on the instrument.</li>
+        <li>Upgrade delay on everything, a public change calendar.</li>
+        <li>Instructing-party mandates enforced by contracts.</li>
+        <li>DR document, RTO/RPO, runbooks, SLA classes.</li>
+        <li>A second settlement asset beside USDC.</li>
+        <li>An honest SCO60 position and a permissioned deployment option.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Auditor relies when</h3>
+      <ul>
+        <li>Controls exist per assertion – existence, completeness, rights, valuation, cut-off – each with an evidence artefact, owner and frequency.</li>
+        <li>The pack carries manifest, ABI and event schema, a reconstruction script the auditor runs, the register at a block with its hash, the three-way reconciliation, oracle history with signer keys and evidence, Terms root and JSON, key-management evidence, the change log and a cut-off sheet.</li>
+        <li>SOC 1 covers transaction processing for the client's statements; SOC 2 Type II shows the controls operated for a period; carve-outs name Stripe, KMS, the Base sequencer and Eqvista.</li>
+        <li>A key file maps subject ids to persons under NDA, or existence by person cannot be tested.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Compliance officer approves when</h3>
+      <ul>
+        <li>An AML programme, an MLRO, sanctions cadence, incident and breach reporting, complaints, conflicts (Eqvista, related-party issuers), blackout rules, marketing approval and geo-gating, record retention and DORA addenda exist in writing.</li>
+        <li>Every compliance decision leaves a trail: <code>RuleFailed</code> and setter events on chain, a signed off-chain decision log with a nightly anchor.</li>
+        <li>The Board's perimeter is settled by counsel; the related-party sale of STBX has holder terms, an amended PPM and tranches.</li>
+        <li>Surveillance runs: self-trade by subject, layering, insider windows, oracle front-running.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Buyer signs when</h3>
+      <ul>
+        <li>The RFP scores above 50 of 72 – after Phase 3 – and the "never" rows are canon, not omissions.</li>
+        <li>One signed custodian partner and one signed TA or administrator exist.</li>
+        <li>The enterprise package carries SLA 99.9% with credits, an insurance limit, verified escrow of the closed services, audit rights, a sandbox tenant, and one annual line with instrument-count tiers – never AUM basis points.</li>
+        <li>The price list no longer contradicts the canon.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ORDER -->
+<section aria-labelledby="o-h">
+  <div class="head">
+    <span class="kicker">7 · Build order, revised</span>
+    <h2 id="o-h">Keys before code, assurance alongside features</h2>
+    <p class="prose">The STV4 hub's four phases stand; this page adds what the six seats require inside each, and an operations track that runs in parallel and is owned by people, not engineers.</p>
+  </div>
+  <div class="phases">
+    <div class="ph"><div class="when">Phase 0 · 3 weeks</div><div class="why">Foundation – and the keys first</div>
+      <ul><li><b>Day 1:</b> Governance, Ops and Treasury Safes on hardware signers, different people; watch the Admin Safe's delay module; no STV4 role on the 1-of-1</li><li>Money paths G2, G8–G10 plus <code>Treasury.refund</code></li><li>Root role split; setters and <code>setTreasury</code> under a 7-day minimum in code; deploy script refuses defaults</li><li>EmergencyFacet; <code>resyncSubject</code>; ERC-1271 / 6492</li><li>Pinned, signed, reproducible builds</li><li>Remove the bps row from the price list</li></ul></div>
+    <div class="ph"><div class="when">Phase 1 · 5 weeks</div><div class="why">Identity, data, evidence</div>
+      <ul><li>Identity registry; DID service; 305 DID migrated</li><li>Stobox Oracle with <b>AttestorRegistry</b>, signer sets, <code>ccy</code> and calendar; Intelligence facet</li><li>Events on every mutation; <code>RuleFailed</code>; decision log with nightly anchor; verify.py "declared events are emitted"</li><li>DTI, ISIN, LEI on the instrument</li><li>Invariant fuzzing in CI; Halmos; Certora scoped</li><li>Monitoring, on-call, pause via L1, RTO/RPO, DR drill</li><li>Base Sepolia from CI; auditor pack v1; SOC 2 Type I started; SCO60 position</li></ul></div>
+    <div class="ph"><div class="when">Phase 2 · 5 weeks</div><div class="why">Market, migration, standards</div>
+      <ul><li>MigrationClaim; Compass Board with <code>TransferRefused</code>, self-trade by subject, blackout claim</li><li>Custodian omnibus claim and attribution channel</li><li>Corporate-action struct v2 (CAEV, options, legs, withholding, SUSP); ISO 20022 seev export</li><li>DvP with any ERC-20 cash asset; <code>PaymentAttested</code> leg</li><li>Regime presets that bind; Board perimeter opinion in hand</li><li>Internal adversarial audit of the whole scope</li></ul></div>
+    <div class="ph"><div class="when">Phase 3 · 6–8 weeks</div><div class="why">Assurance and launch</div>
+      <ul><li>Code freeze; external audit (booked in October); fixes; re-check; public report and explorer tag</li><li>Enterprise contract package: SLA, insurance, escrow, audit rights, DORA addendum, sandbox tenant</li><li>Pause STBX on Arbitrum; snapshot; issue 1,415,000 on Base; claims; Board</li><li>SOC 2 Type I complete; Type II observation period starts; SOC 1 scoped for funds</li></ul></div>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Phases 4–6 · the asset-class catalogue</h3>
+      <ul>
+        <li><b>4:</b> PayoutFacet (first caller of <code>consume</code>), Merkle payout, schedule channels, Consent, ROFR, document registry, generalised reserve attestation, sToken collateral wrapper with a lender-compatible price view; presets Fund-Unit-NAV, Bond-Fixed-Coupon, Revenue-Share.</li>
+        <li><b>5:</b> Connectors (Eqvista as direct signer, Xero / QuickBooks, Plaid, fund administrators), look-through channels, <code>AgentAuthority</code> with DID principals, agent SDK, MCP "my deal" plane, Attest phase 1; presets Private-Credit-Note, RE-SPV-Unit, Fund-Unit-Closed.</li>
+        <li><b>6:</b> Agent leash level 4 after a tamper-tested audit; FHE pilot on one instrument; Deposit-Token-Wrapper with a bank partner; Commodity-Receipt.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Operations track · owned by people</h3>
+      <ul>
+        <li><b>Now:</b> AML programme and MLRO; sanctions cadence; conflicts register (Eqvista, STBX); Vanta owner named; TA and custodian partner conversations opened; audit firm booked.</li>
+        <li><b>Phase 1:</b> DPIA; DORA addendum; incident and breach procedures; key ceremony documented; complaints process.</li>
+        <li><b>Phase 2:</b> insider and blackout policy live; marketing approval workflow; Board terms of use; regulatory obligations register with quarterly review (TA rule comments due 03.11.2026; FCA gateway window 30.09.2026 – 28.02.2027).</li>
+        <li><b>Phase 3:</b> insurance bound; escrow agreement; SLA document; investor letter; support FAQ.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">Total to STBX on Base: 19–21 weeks from start, Q1 2027, unchanged in substance from the hub – the additions are inside the phases, and the keys move to day one because everything else stands on them.</p>
+</section>
+
+<!-- ============================================================ DECISIONS -->
+<section aria-labelledby="dec-h">
+  <div class="head">
+    <span class="kicker">8 · Decisions</span>
+    <h2 id="dec-h">Settled and open</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Settled (Gene, 25.09.2026)</h3>
+      <ol class="dec">
+        <li><b>The name is Stobox Orbit</b> – over the open-source uRWA Factory, the hosted Factory, Intelligence, the oracle and the agents; inner product names stay canon; trademark and domain checks before public use.</li>
+        <li><b>Operate is not a fourth product</b> – mandates and channels inside Compass, agent access inside Intelligence.</li>
+        <li>STBX stays an economic interest through STEL; Terms precedence term-by-term; <code>corporate.action</code> structured; attested figures signed by client and Stobox with third-party signer roles per channel; trust scoped by securities law; the Factory work proceeds.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Open – Gene</h3>
+      <ol class="dec">
+        <li><b>Restructure the Safes now</b> – three Safes on hardware signers with different people, before any STV4 role is granted. Recommended: yes, this week.</li>
+        <li><b>Board perimeter:</b> a display-only board with bilateral settlement, or escrow execution under a written opinion, or a licensed partner as operator?</li>
+        <li><b>First custodian partner</b> to approach (Fireblocks, Anchorage, Copper, Zodia) and first TA/administrator beyond Silicon Prairie.</li>
+        <li><b>Cash leg:</b> pursue a deposit-token partner on Base (JPMD-class) in 2027, or USDC plus fiat-attested only for the first year?</li>
+        <li><b>Permissioned option:</b> offer the open-source Factory on a client's permissioned chain as the SCO60 answer, or stay Base-only?</li>
+        <li><b>Assurance owner and budget:</b> who owns Vanta and SOC; audit firm and contest budget ($60–150k + $40–100k); insurance limit.</li>
+        <li><b>Price list:</b> confirm removal of the bps row and the single "Orbit Enterprise · annual" line with instrument-count tiers.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CHANGELOG -->
+<section aria-labelledby="cl-h">
+  <div class="head">
+    <span class="kicker">Changelog</span>
+    <h2 id="cl-h">Versions</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Six institutional reviews consolidated into the requirements register O1–O28; the Technical Safe read from Base; BUIDL element mapping; ten instrument presets; institutional-grade criteria; the build order revised with keys on day one and an operations track.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <span class="meta">Sources · chain reads 25.09.2026: Safe 0xcAFA6961F2f7e650AF9861f45bFfCD67b4bAE8b6 on Base – getThreshold = 1, getOwners = [0x777e2e45d525bbc4a97be6b549eec6c2b58e3777], owner code 0xef0100… (EIP-7702) · uRWA-Factory: src/, docs/architecture/stv4.html and the four layer pages, docs/05, 16, 17, 23, .github/workflows/ci.yml · Vault: wiki/Ключи-и-Safe.md, wiki/STBU-аудит-контрактов-2026-09-15.md, STOBOX-STACK-CANON-2026.md, STOBOX-STACK-PRICE-LIST.md · AICPA Digital Assets Practice Aid (rev. 30.09.2025) and Criteria for Stablecoin Reporting Part II · SEC transfer-agent modernisation proposal (Federal Register 04.09.2026; comments to 03.11.2026) · SEC 17a-4 audit-trail alternative · FASB ASU 2023-08 · EU DORA and RTS (EU) 2025/532 · ESMA statement on the end of MiCA transitional periods · EU DLT Pilot reform (MISP, 04.12.2025) · FCA gateway (30.09.2026 – 28.02.2027) · FINMA BX Digital DLT TF licence · MAS Guide on Tokenisation of CMPs (14.11.2025) · HKMA EnsembleTX · VARA VA Issuance Rulebook · Basel SCO60 (BIS d579) · SAB 122 · GENIUS Act rulemakings · DTC no-action letter (11.12.2025) · Euroclear D-FMI · SDX · Fnality SFD designation · Canton privacy · ISO 24165 DTI, ANNA–DTIF · DTCC ISO 20022 corporate actions · CMTAT v3.1 · ERC-7943 Final · Securitize S-1 and quarterly results · BUIDL, Benji, USTB, OUSG, ACRED operating descriptions · HKMA digital bonds · SG-Forge / Swift · JPMD on Base · Centrifuge NAV · Paxos PAXG transparency · Robinhood stock-token corporate actions · OpenZeppelin Defender sunset and Monitor · OP Stack forced transactions · GCP KMS protection levels · Zama ERC-7984.</span>
+  <span class="meta">Uncertain · the Treasury.refund over-transfer is read from code and not reproduced; the Admin Safe's delay-module behaviour is from the vault's STBU audit; Securitize and Tokeny pricing, Securitize's SOC 2 status, BUIDL's USDC redemption mechanics and Chainlink NAV use, Tokeny's "$32bn", Canton volumes, the number of BUIDL chains, the CLARITY cloture count and the AICPA SC1–SC15 list are from secondary sources; audit, verification, contest, bounty and insurance prices are estimates, not quotes; whether DORA applies to Stobox directly or only through client contracts is for counsel.</span>
+</footer>
+</main>

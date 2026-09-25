@@ -87,6 +87,30 @@ Outside the code: the STBX holder is a party to no signed document in the vault,
 governance framework that SPA 3.2 points to is absent (**G18**) – the Terms layer has nothing to
 anchor until Max closes it. All of this is open; nothing in `src/` changed.
 
+**Evening, third pass – the institutional review.** Gene named the whole product **Stobox Orbit**
+and asked, before Phase 0, for a review against what banks, custodians, auditors and regulated
+buyers require. Six agents took six seats (custodian, external auditor, compliance officer,
+enterprise RFP, infrastructure architect, asset-class specialist); the result is
+`docs/architecture/orbit.html` v0.1 with a requirements register **O1–O28**, ten instrument presets
+and a revised build order. Chain facts re-read by this session before they went on the page:
+
+- **G19** The Technical Safe `0xcAFA…E8b6` on Base has `getThreshold() = 1` and one owner,
+  `0x777e…3777`, whose code is `0xef0100…` (an EIP-7702 delegation). Per the vault the same key is
+  alone on the finance Safe and signs the Admin Safe, whose delay module lets one EOA take any role
+  after 28 days. No STV4 role may be granted to it as it stands. **Phase 0, day one.**
+- **G20** `Treasury.refund` transfers `amount` while decrementing the lock by
+  `min(amount, locked)` (`src/Treasury.sol:147-151`) – read from code, not reproduced.
+- **G21** No `invariant_` test exists; the CI fuzzing job is commented out
+  (`.github/workflows/ci.yml:86-88`) while doc 23 promises it on every commit.
+- **G22** `permit` and `AtomicDvP` accept ECDSA only, so a Safe or smart wallet cannot sign; the
+  deploy script defaults to delay 0 and EOA admins; forge-std is unpinned.
+- **G23** Institutional surfaces absent entirely: custodian omnibus with beneficiary attribution,
+  ISO 20022 (the string appears nowhere in docs or src), DTI/ISIN/LEI on chain, any cash leg beyond
+  USDC, schedule channels, monitoring and DR, a written AML programme.
+
+Also recorded: the price list still carries a "5–15 bps of tokenized AUM" row that canon withdrew
+on 11.08.2026 (O27). Documentation only; nothing in `src/` changed.
+
 ---
 
 ## 2026-08-16 · Session 10 — the conformance kit, and its first stranger is us
