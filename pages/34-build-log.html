@@ -449,6 +449,46 @@ footer p{max-width:76ch;margin:0 0 8px}
 </ol>
 <p>   runs; its <code>CCTFacet</code> is not installed on STBX. The handoff&#x27;s cross-chain note should say so.</p>
 <p><strong>Open.</strong> Items 1–3 above; the &quot;deactivated linker&quot; semantics differ between STV3&#x27;s <code>HasDIDRule</code> and the adapter; <code>CLAUDE.md</code> still says <code>src/</code> is interfaces only; the handoff&#x27;s test count (141 in Part 0) is stale against 220.</p>
+<p><strong>Same day, second pass – the four layers.</strong> By Gene&#x27;s word (&quot;write the whole technical construction before we build&quot;), the hub went to v1.0 and four layer pages were added under <code>docs/architecture/</code>: <code>identity.html</code> (one subject-keyed DID registry on Base, GDPR data map, three plug-in levels, trust scoped per token), <code>terms.html</code> (38 clauses from the April 2026 documents classed enforced / executed / attested / disclosed, a Terms model anchored on the passport, seven clauses for the paper), <code>offering.html</code> (regimes as presets, contract-to-law map, the STBX stack) and <code>intelligence.html</code> (client intake into the record, oracle channels, agents and mandates, MCP). Five agents read the code and the vault; every claim about the code was re-read before it went on a page. The hub now carries a gap register <strong>G1–G18</strong>. New, beyond the morning&#x27;s three:</p>
+<ul>
+<li><strong>G5</strong> <code>roleAdmin</code> returns <code>ISSUER_ADMIN</code> for every role (<code>src/facets/RolesFacet.sol:46-48</code>):</li>
+</ul>
+<p>  ISSUER_ADMIN can grant itself UPGRADE_ADMIN. Doc 05 says otherwise.</p>
+<ul>
+<li><strong>G6</strong> <code>setPolicySet</code> / <code>setIdentityRegistry</code> take effect at once, outside the upgrade delay</li>
+</ul>
+<p>  (<code>src/facets/ComplianceFacet.sol:294-306</code>). Doc 05:89 calls them timelocked.</p>
+<ul>
+<li><strong>G7</strong> Only selectors are immutable; any facet or <code>diamondCut</code> init can write <code>balances</code> by</li>
+</ul>
+<p>  delegatecall. L4.8 overstates the guarantee; the real control is the delay plus loupe visibility.</p>
+<ul>
+<li><strong>G8</strong> Per-investor limits are per transaction; <code>Purchase.subject</code> is written as zero</li>
+</ul>
+<p>  (<code>src/OfferingRegistry.sol:182, 211</code>).</p>
+<ul>
+<li><strong>G9</strong> <code>removeRule</code> in any state; <code>settle</code> from <code>Active</code> by anyone; <code>forceStatus</code> to any state;</li>
+</ul>
+<p>  <code>activate</code> / <code>unpause</code> back from Settled or Refunding (<code>:104-125, 341, 481, 520</code>).</p>
+<ul>
+<li><strong>G10</strong> Treasury <code>reserve</code> / <code>release</code> never called; multi-currency <code>unlockPayments</code> deducts one</li>
+</ul>
+<p>  asset&#x27;s total lock (<code>src/Treasury.sol:97-111</code>) – read from code, not reproduced by test.</p>
+<ul>
+<li><strong>G11</strong> <code>AgentAuthority.consume</code> is called by nothing in <code>src/</code>; a mandate limits nothing.</li>
+<li><strong>G12</strong> <code>RuleFailed</code> never emitted; cuts at delay 0 and all PolicySet / adapter mutations emit</li>
+</ul>
+<p>  nothing, so the subject register cannot be rebuilt from logs.</p>
+<ul>
+<li><strong>G13</strong> The offering <code>regime</code> field is a label; no preset is applied (<code>:94-101</code>).</li>
+<li><strong>G16</strong> Interfaces disagree with code (<code>createToken</code>, <code>createOffering</code>, <code>pause()</code>, <code>deposit</code>,</li>
+</ul>
+<p>  <code>createTokenWithOffering</code>); L3.1 / L3.2 compare docs to interfaces, so verify.py cannot see it.</p>
+<ul>
+<li>Every shipped preset includes <code>HasValidIdentity</code>, so on Stobox DID <strong>all three</strong> presets refuse</li>
+</ul>
+<p>  all transfers, not only Reg S – a sharpening of the morning&#x27;s G1.</p>
+<p>Outside the code: the STBX holder is a party to no signed document in the vault, and the STEL governance framework that SPA 3.2 points to is absent (<strong>G18</strong>) – the Terms layer has nothing to anchor until Max closes it. All of this is open; nothing in <code>src/</code> changed.</p>
 <hr class="soft">
 <h3 id="34-2026-08-16-session-10-the-conformance-kit-and-its-first-stranger-is-us">2026-08-16 · Session 10 — the conformance kit, and its first stranger is us</h3>
 <p><strong>Shipped.</strong> <code>TO-01</code>. <code>test/conformance/ERC7943Conformance.sol</code> is the liftable kit: it imports nothing from <code>src/</code>, declares the ERC-7943 surface locally, and judges <strong>any</strong> implementation whose binding answers six hooks — the token, an eligible holder and receiver, an ineligible account, the freeze authority, and optionally a force authority. Ten checks across five groups: the interface claim, the four views fuzzed to never revert or write (the exact failure mode found live in a deployed registry), the pair semantics with allowances explicitly not <code>canTransfer</code>&#x27;s business, the refusals binding the ledger and not only the preview, the freeze exceeding balance without reverting, and — only where seizure exists — compulsion bypassing the freeze but never <code>canReceive</code>.</p>
@@ -620,4 +660,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: f8affd369b80e22ba8e648d8f5d044d69122d1b308b707566bca773465a19839 -->
+<!-- source-digest: eb3929e4ad306624382729fd73513cde17986854ed377f1c23084ead39d25593 -->

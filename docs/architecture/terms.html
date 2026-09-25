@@ -1,0 +1,443 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STV4 Terms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#0D1424; --ink-2:#2B3447; --muted:#5A6477; --rule:#D8DEE8;
+  --region:#E9EDF4; --region-base:#E6EEFF; --accent:#0046E0;
+  --live:#12804F; --ready:#4B4BC8; --pending:#A86200; --gap:#C42D25; --option:#6B7489;
+  --display:"Unbounded",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+    --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+    --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+  --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+  --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+main{max-width:1180px;margin:0 auto;padding:56px 28px 96px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font:700 clamp(30px,4.6vw,48px)/1.08 var(--display);letter-spacing:-.01em}
+h2{font:700 22px/1.25 var(--display);letter-spacing:-.005em}
+h3{font:600 17px/1.35 var(--body)}
+p{margin:0}
+.prose{max-width:68ch;color:var(--ink-2)}
+.prose code{overflow-wrap:anywhere}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.meta{font:12.5px/1.5 var(--mono);color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+header{display:grid;gap:18px;margin-bottom:56px}
+header .lede{font-size:19px;line-height:1.5;max-width:62ch;color:var(--ink-2)}
+section{display:grid;gap:20px;padding-top:44px;margin-top:44px;border-top:1px solid var(--rule)}
+section > .head{display:grid;gap:10px}
+.kicker{font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:14px;border-radius:3px;border:1.6px solid;background:var(--surface)}
+.sw.live{border-color:var(--live)} .sw.ready{border-color:var(--ready)}
+.sw.pending{border-color:var(--pending);border-style:dashed} .sw.gap{border-color:var(--gap);border-style:dashed;background:color-mix(in srgb,var(--gap) 10%,var(--surface))}
+.sw.option{border-color:var(--option);border-style:dotted}
+figure{margin:0;display:grid;gap:12px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+.scroll svg{display:block;width:100%;height:auto;min-width:980px}
+figcaption{font-size:14px;color:var(--muted);max-width:80ch}
+.hint{display:none;font:12px var(--mono);color:var(--muted)}
+@media (max-width:980px){.hint{display:block}}
+.rg{fill:var(--region);stroke:var(--rule);stroke-width:1}
+.rg.base{fill:var(--region-base);stroke:var(--accent);stroke-opacity:.45;stroke-dasharray:6 5}
+.rl{font:600 10.5px var(--body);letter-spacing:.13em;fill:var(--muted)}
+.rl.base{fill:var(--accent)}
+.n rect{fill:var(--surface);stroke-width:1.6}
+.n.live rect{stroke:var(--live)}
+.n.ready rect{stroke:var(--ready)}
+.n.pending rect{stroke:var(--pending);stroke-dasharray:6 4}
+.n.gap rect{stroke:var(--gap);stroke-dasharray:6 4;fill:color-mix(in srgb,var(--gap) 8%,var(--surface))}
+.n.option rect{stroke:var(--option);stroke-dasharray:2 3}
+.n.plain rect{stroke:var(--rule)}
+.t{font:600 13px var(--body);fill:var(--ink)}
+.s{font:400 10.5px var(--mono);fill:var(--muted)}
+.st{font:700 9px var(--body);letter-spacing:.1em}
+.live .st{fill:var(--live)} .ready .st{fill:var(--ready)} .pending .st{fill:var(--pending)} .gap .st{fill:var(--gap)} .option .st{fill:var(--option)}
+.e{fill:none;stroke:var(--muted);stroke-width:1.4}
+.e.hot{stroke:var(--accent);stroke-width:1.8}
+.e.bad{stroke:var(--gap);stroke-dasharray:5 4}
+.e.dot{stroke-dasharray:2 3}
+.ah{fill:var(--muted)} .ah.hot{fill:var(--accent)} .ah.bad{fill:var(--gap)}
+.el{font:500 10.5px var(--mono);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.el.hot{fill:var(--accent)}
+.el.bad{fill:var(--gap)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.four{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card p,.card li{font-size:15px;color:var(--ink-2)}
+.card ul,.card ol{margin:0;padding-left:18px;display:grid;gap:6px}
+.card .big{font:700 28px/1 var(--display);color:var(--ink)}
+.note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--ink-2);max-width:78ch}
+.note.warn{border-color:var(--gap)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--region) 60%,var(--surface))}
+tr:last-child td{border-bottom:0}
+td.v{font-weight:600;white-space:nowrap}
+.tag{display:inline-block;font:700 9.5px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1.4px solid;white-space:nowrap}
+.tag.enf{color:var(--live);border-color:var(--live)} .tag.exe{color:var(--ready);border-color:var(--ready)}
+.tag.att{color:var(--pending);border-color:var(--pending)} .tag.dis{color:var(--option);border-color:var(--option)} .tag.conf{color:var(--gap);border-color:var(--gap);border-style:dashed}
+pre{margin:0;background:color-mix(in srgb,var(--region) 60%,var(--surface));border:1px solid var(--rule);border-radius:10px;padding:16px 18px;overflow-x:auto;font:13px/1.55 var(--mono);color:var(--ink-2)}
+ol.dec{margin:0;padding-left:22px;display:grid;gap:12px;max-width:80ch}
+ol.dec li{padding-left:6px;color:var(--ink-2)}
+ol.dec b{color:var(--ink)}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);display:grid;gap:6px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 2 · v0.1 · 25 Sep 2026</div>
+  <h1>STV4 Terms</h1>
+  <p class="lede">Every right in the paper agreement represented as a typed, signed, hash-anchored term that the token enforces, executes, attests or discloses – so that an agent reads the substance, executes within a mandate, and an auditor rebuilds performance from logs. The gap that matters: the STBX holder is not a party to any signed document in the vault, so today there is nothing to anchor.</p>
+  <div class="legend" aria-label="Term class legend">
+    <span><i class="sw live"></i>ENFORCED · the code refuses or permits</span>
+    <span><i class="sw ready"></i>EXECUTED · the code performs</span>
+    <span><i class="sw pending"></i>ATTESTED · hash + signatures on chain, performance off chain</span>
+    <span><i class="sw option"></i>DISCLOSED · machine-readable text only</span>
+    <span><i class="sw gap"></i>Conflict in the paper</span>
+  </div>
+  <p class="meta">Hub: <a href="stv4.html">STV4</a> · siblings: <a href="identity.html">Identity</a> · <a href="offering.html">Offering</a> · <a href="intelligence.html">Intelligence</a></p>
+</header>
+
+<!-- ============================================================ MAP -->
+<section aria-labelledby="map-h">
+  <div class="head">
+    <span class="kicker">1 · From clause to code</span>
+    <h2 id="map-h">How a right travels</h2>
+    <p class="prose">A clause is extracted into a typed term with its source reference, the terms are hashed into one root that both parties sign, the root is anchored on the instrument's passport, and each enforceable or executable term is bound to a Factory rule or facet parameter. Reading goes the other way: an agent fetches the JSON, recomputes the root, checks the signatures against the chain, and only then treats the terms as the agreement.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1200 500" role="img" aria-label="Terms flow: signed documents are extracted into typed terms with clause references; a Merkle root over the terms and a root over the document hashes are signed by both parties and anchored on the passport; enforced terms bind to Factory rules and lockups, executed terms bind to payout, consent, ROFR and forced-transfer facets; agents and auditors read the root from the chain and the JSON from the record and verify both.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah bad" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <rect class="rg" x="20" y="44" width="260" height="436" rx="10"/><text class="rl" x="34" y="66">PAPER · SIGNED</text>
+      <rect class="rg" x="310" y="44" width="260" height="436" rx="10"/><text class="rl" x="324" y="66">RECORD · INTELLIGENCE</text>
+      <rect class="rg base" x="600" y="44" width="300" height="436" rx="12"/><text class="rl base" x="616" y="66">BASE · TOKEN + PASSPORT</text>
+      <rect class="rg" x="930" y="44" width="250" height="436" rx="10"/><text class="rl" x="944" y="66">READERS</text>
+
+      <path class="e" d="M255,113 H323" marker-end="url(#a)"/><text class="el" x="289" y="105" text-anchor="middle">extract</text>
+      <path class="e bad" d="M255,223 H323" marker-end="url(#ab)"/><text class="el bad" x="289" y="215" text-anchor="middle">missing</text>
+      <path class="e" d="M435,142 V192" marker-end="url(#a)"/><text class="el" x="445" y="172">Merkle</text>
+      <path class="e hot" d="M545,223 H613" marker-end="url(#ah)"/><text class="el hot" x="579" y="215" text-anchor="middle">anchor</text>
+      <path class="e hot" d="M750,252 V302" marker-end="url(#ah)"/><text class="el hot" x="760" y="282">bind</text>
+      <path class="e hot" d="M750,362 V412" marker-end="url(#ah)"/><text class="el hot" x="760" y="392">bind</text>
+      <path class="e" d="M895,223 H943" marker-end="url(#a)"/><text class="el" x="919" y="215" text-anchor="middle">root</text>
+      <path class="e dot" d="M545,240 H580 V460 H915 V240 H943" marker-end="url(#a)"/><text class="el" x="750" y="452" text-anchor="middle">terms.json · verify root and signatures</text>
+      <path class="e" d="M1055,252 V302" marker-end="url(#a)"/><text class="el" x="1065" y="282">simulate</text>
+
+      <g class="n live"><rect x="35" y="84" width="220" height="58" rx="8"/><text class="t" x="47" y="108">SPA · SHA · Articles</text><text class="s" x="47" y="127">Parent ↔ STEL · founders</text><text class="st" x="245" y="100" text-anchor="end">LIVE</text></g>
+      <g class="n gap"><rect x="35" y="194" width="220" height="58" rx="8"/><text class="t" x="47" y="218">Holder terms · STEL</text><text class="s" x="47" y="237">governance framework · absent</text><text class="st" x="245" y="210" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="35" y="304" width="220" height="58" rx="8"/><text class="t" x="47" y="328">Deed of Adherence</text><text class="s" x="47" y="347">per holder · DocuSign</text><text class="st" x="245" y="320" text-anchor="end">PLANNED</text></g>
+
+      <g class="n pending"><rect x="325" y="84" width="220" height="58" rx="8"/><text class="t" x="337" y="108">Typed terms</text><text class="s" x="337" y="127">termId · class · clause · params</text><text class="st" x="535" y="100" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="325" y="194" width="220" height="58" rx="8"/><text class="t" x="337" y="218">termsRoot · docsRoot</text><text class="s" x="337" y="237">salted leaves · EIP-712 × 2</text><text class="st" x="535" y="210" text-anchor="end">PLANNED</text></g>
+      <g class="n option"><rect x="325" y="304" width="220" height="58" rx="8"/><text class="t" x="337" y="328">Document registry</text><text class="s" x="337" y="347">name · uri · sha256 · ERC-1643</text><text class="st" x="535" y="320" text-anchor="end">OPTION</text></g>
+
+      <g class="n gap"><rect x="615" y="194" width="270" height="58" rx="8"/><text class="t" x="627" y="218">Passport · TermsAnchored</text><text class="s" x="627" y="237">interface only · PA 0 of 7</text><text class="st" x="875" y="210" text-anchor="end">GAP</text></g>
+      <g class="n ready"><rect x="615" y="304" width="270" height="58" rx="8"/><text class="t" x="627" y="328">ENFORCED · rules · lockups</text><text class="s" x="627" y="347">RequiresClaim · Window · Lockup</text><text class="st" x="875" y="320" text-anchor="end">READY</text></g>
+      <g class="n gap"><rect x="615" y="414" width="270" height="58" rx="8"/><text class="t" x="627" y="438">EXECUTED · payout · consent</text><text class="s" x="627" y="457">ROFR · tag · drag · none built</text><text class="st" x="875" y="430" text-anchor="end">GAP</text></g>
+
+      <g class="n pending"><rect x="945" y="194" width="220" height="58" rx="8"/><text class="t" x="957" y="218">Agent · MCP</text><text class="s" x="957" y="237">terms.read · verify · simulate</text><text class="st" x="1155" y="210" text-anchor="end">PLANNED</text></g>
+      <g class="n ready"><rect x="945" y="304" width="220" height="58" rx="8"/><text class="t" x="957" y="328">canTransfer · whyBlocked</text><text class="s" x="957" y="347">same code as the chain</text><text class="st" x="1155" y="320" text-anchor="end">READY</text></g>
+      <g class="n option"><rect x="945" y="414" width="220" height="58" rx="8"/><text class="t" x="957" y="438">Auditor</text><text class="s" x="957" y="457">due and done events per term</text><text class="st" x="1155" y="430" text-anchor="end">OPTION</text></g>
+    </svg>
+    </div>
+    <span class="hint">Scroll sideways to see the full flow.</span>
+    <figcaption>Two reds. The paper: Doc 3.6 "STBX Investor Agreement" is a contract between Stobox Technologies Inc. and STEL, not with investors; Articles 4.3 and SPA 3.3(ii) say token holders have no direct rights against the corporation; the STEL "token governance framework" that SPA 3.2 points to is not in the vault. The code: the passport that would carry <code>termsRoot</code> is an interface only, and no payout, consent or ROFR facet exists. Enforced terms are the only class the Factory serves today.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ REGISTER -->
+<section aria-labelledby="reg-h">
+  <div class="head">
+    <span class="kicker">2 · The rights register</span>
+    <h2 id="reg-h">38 clauses from the signed documents</h2>
+    <p class="prose">Read from the April 2026 restructuring pack: SPA (Doc 3.6), Omnibus Shareholders' Agreement, Tokenization Rights Agreement (Doc 1.9), Platform Operator Agreement v2.6, Resolution 2026-006 (STEL Deed of Adherence), Articles ART-001 and Bylaws 1.2 (share classes, transfers, dividends, records). Not read because absent: the Deed of Adherence text itself (SHA Schedule 2 is a placeholder), the Investor Rights Agreement that Articles 4.3 cites, and the STEL governance framework.</p>
+  </div>
+  <div class="four">
+    <div class="card"><span class="big">11</span><p><span class="tag enf">Enforced</span> lock-up, ROFR gate, adherence claim, eligibility, windows, caps, supply cap, wholly-owned rule, vesting</p></div>
+    <div class="card"><span class="big">8</span><p><span class="tag exe">Executed</span> dividend, 15-day deadline, drag, tag, Class C representative, request timers, liquidation waterfall, key recovery</p></div>
+    <div class="card"><span class="big">13</span><p><span class="tag att">Attested</span> document hashes, reports, consents, notices, disclosure schedule, observer thresholds, amendments</p></div>
+    <div class="card"><span class="big">6 + 4</span><p><span class="tag dis">Disclosed</span> governing law, arbitration, fiduciary standards, confidentiality · <span class="tag conf">Conflicts</span> ROFR 7 BD vs 30 days, drag 50% vs 70%, pre-emption vs "no pre-emptive rights", cap "25% (50%)"</p></div>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>#</th><th>Clause</th><th>Right or mechanism</th><th>Parties</th><th>Today</th><th>Class · binding</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>SPA 1.1, 2.1–2.2</td><td>1,415,000 Class C, certificate STBT-C-002, fully vested</td><td>Parent → STEL</td><td>ledger, resolutions</td><td><span class="tag att">ATT</span> docHash + <code>underlying</code></td></tr>
+      <tr><td>2</td><td>SPA 1.2, 3.1; Art 4.3</td><td>STBX = economic interest in Class C; no direct rights against the corporation</td><td>STEL ↔ holder</td><td>text</td><td><span class="tag dis">DIS</span> mandatory disclaimer in Terms</td></tr>
+      <tr><td>3</td><td>SPA 3.2; Art 4.3</td><td>Holder rights defined by the STEL governance framework</td><td>STEL ↔ holder</td><td>document absent</td><td><span class="tag conf">GAP</span> §7 item 1</td></tr>
+      <tr><td>4</td><td>SPA 4.1; SHA 5.3; Bylaws 6.1(c)</td><td>Dividend pro rata, pari passu</td><td>Parent → STEL</td><td>board resolution</td><td><span class="tag exe">EXE</span> PayoutFacet, pro rata by snapshot</td></tr>
+      <tr><td>5</td><td>SPA 4.2</td><td>USD, wire or stablecoin, within 15 business days of declaration</td><td>Parent → STEL</td><td>manual</td><td><span class="tag exe">EXE</span> deadline in Terms; <code>PayoutDue</code>, <code>PayoutLate</code></td></tr>
+      <tr><td>6</td><td>SPA 4.3</td><td>Option to pay in STBX within 5 BD at 10-BD VWAP, agreed in writing</td><td>STEL → Parent</td><td>letter</td><td><span class="tag att">ATT</span> + partial EXE (election on chain; VWAP by oracle – counsel)</td></tr>
+      <tr><td>7</td><td>SPA 4.4; 6.1</td><td>Distribution report ≤30 days; annual report ≤60 days</td><td>STEL → Parent</td><td>letter</td><td><span class="tag att">ATT</span> passport disclosure schedule</td></tr>
+      <tr><td>8</td><td>SPA 5.1</td><td><b>Lock-up 24 months, to 01.04.2028</b>, unless both Founder Shareholders consent in writing</td><td>STEL</td><td>trust</td><td><span class="tag enf">ENF</span> <code>LockupFacet.addLockup(unlockAt = 1806451200)</code>; waiver = two signatures</td></tr>
+      <tr><td>9</td><td>SPA 5.2; SHA 4.1–4.3</td><td>ROFR: sale notice, 7 BD corporation + 7 BD shareholders, then 60 days to close on no better terms; buyer signs adherence</td><td>all shareholders</td><td>letters</td><td><span class="tag enf">ENF</span> ROFR hook + <span class="tag exe">EXE</span> timers</td></tr>
+      <tr><td>10</td><td>Bylaws 5.3(a)</td><td>Same ROFR, 30 + 30 days</td><td>–</td><td>conflicts with SHA</td><td><span class="tag conf">CONFLICT</span> one number needed</td></tr>
+      <tr><td>11</td><td>SPA 5.3</td><td>Shares only in a wholly-owned subsidiary, else a Reserved Matter</td><td>STEL</td><td>–</td><td><span class="tag enf">ENF</span> <code>RequiresClaim(urwa.wholly-owned.&lt;parent&gt;)</code></td></tr>
+      <tr><td>12</td><td>SHA 4.4; Bylaws 5.3(c)</td><td>Drag-along: Founder Majority &gt;50% (SHA) vs 70% Common A (Bylaws); ≥1.0× last round or FMV; valuer's report in 10 BD; close in 20 BD</td><td>founders → all</td><td>letters</td><td><span class="tag exe">EXE</span> partial via <code>forcedTransfer</code> · <span class="tag conf">CONFLICT</span> thresholds</td></tr>
+      <tr><td>13</td><td>SHA 4.5; Bylaws 5.3(b)</td><td>Tag-along on a founder sale ≥10%; 10 BD</td><td>all</td><td>letters</td><td><span class="tag exe">EXE</span> tag window on the Board, pro rata from snapshot</td></tr>
+      <tr><td>14</td><td>SHA 1.19, 4.7</td><td>Permitted transfer with board consent and adherence</td><td>all</td><td>letter</td><td><span class="tag enf">ENF</span> <code>RequiresClaim</code> + approval claim</td></tr>
+      <tr><td>15</td><td>Bylaws 5.3(d)</td><td>After lock-up: one 30-day transfer window a year, set by the board</td><td>all</td><td>never applied</td><td><span class="tag enf">ENF</span> <code>TransferWindow</code></td></tr>
+      <tr><td>16</td><td>Bylaws 5.3(e)</td><td>Annual transfer cap "twenty-five percent (50%)"</td><td>all</td><td>–</td><td><span class="tag enf">ENF</span> new <code>MaxTransferPerPeriod</code> · <span class="tag conf">CONFLICT</span> pick the number</td></tr>
+      <tr><td>17</td><td>Bylaws 5.3(f); SHA 9.12</td><td>Securities-law compliance, AML/KYC, ≥20 BD for documents</td><td>all</td><td>KYC vendor</td><td><span class="tag enf">ENF</span> <code>HasValidIdentity</code>, <code>JurisdictionRule</code></td></tr>
+      <tr><td>18</td><td>SHA 9.4; Res 006</td><td><b>No transfer registered without a Deed of Adherence</b>; register of executed deeds</td><td>all</td><td>Excel register</td><td><span class="tag enf">ENF</span> <code>RequiresClaim(urwa.adherence.&lt;instrument&gt;)</code></td></tr>
+      <tr><td>19</td><td>SHA 2.4(a)</td><td>ISSUED-RESTRICTED: no vote, no distributions, no transfer until signed</td><td>–</td><td>cap-table status</td><td><span class="tag enf">ENF</span> same claim; without it, frozen</td></tr>
+      <tr><td>20</td><td>SHA 3.4(a–j); Bylaws 2.7</td><td>Reserved Matters – 66.7% total voting power (SHA) vs 66.67% Common A + both directors (Bylaws)</td><td>shareholders</td><td>written consents</td><td><span class="tag att">ATT</span> <code>ConsentRecorded</code> with parent's hash; Class C and STBX do not vote (Art 4.3)</td></tr>
+      <tr><td>21</td><td>SHA 3.5</td><td>Information rights: audit ≤90 days, quarterlies ≤30 days, data room, Reserved Matter notice</td><td>all</td><td>letters</td><td><span class="tag att">ATT</span> disclosure schedule in passport</td></tr>
+      <tr><td>22</td><td>SHA 3.6, 3.8; Res 006</td><td>Class C Representative = STEL: notices, coordination, observer, Common C register; replaced by a Common C majority</td><td>Common C</td><td>resolution</td><td><span class="tag att">ATT</span> + <span class="tag exe">EXE</span> register = holder set on chain; replacement by Consent facet</td></tr>
+      <tr><td>23</td><td>SHA 3.8(c)</td><td>≥5% Common C: individual tag, pre-emptive, ROFR, observer; &lt;5% through the Representative</td><td>Common C</td><td>–</td><td><span class="tag enf">ENF</span> threshold <code>balance ≥ 5% supply</code> in Board rights</td></tr>
+      <tr><td>24</td><td>SHA 3.1(b)</td><td>Investor observer at ≥20%</td><td>investor</td><td>–</td><td><span class="tag att">ATT</span> threshold machine-readable</td></tr>
+      <tr><td>25</td><td>SHA 5.1; Bylaws 6.1(a–b)</td><td>Dividend ≤50% of distributable profits; cash floor $350,000; resolution to all within 5 BD</td><td>board</td><td>resolution</td><td><span class="tag att">ATT</span> resolution hash + <code>dividendPolicy</code></td></tr>
+      <tr><td>26</td><td>SHA 5.2</td><td>≥5% after 3 profitable quarters may request consideration; answer ≤30 days</td><td>shareholder</td><td>letter</td><td><span class="tag dis">DIS</span> + timer event <code>RequestFiled</code></td></tr>
+      <tr><td>27</td><td>SHA 5.4</td><td>Liquidation preference 1×, tranche by tranche; waterfall in a round schedule</td><td>Common C</td><td>schedule absent</td><td><span class="tag att">ATT</span> now; <span class="tag exe">EXE</span> once a waterfall schedule exists</td></tr>
+      <tr><td>28</td><td>SHA 6.1, 6.5; Art 4.5(a)</td><td>Pre-emptive rights pro rata, 10 BD; Articles: "No Preemptive Rights"</td><td>all</td><td>–</td><td><span class="tag conf">CONFLICT</span> nothing bound until resolved</td></tr>
+      <tr><td>29</td><td>Art 4.3</td><td>Broad-based weighted-average anti-dilution "as specified in the Investor Rights Agreement"</td><td>Class C</td><td>document absent</td><td><span class="tag dis">DIS</span> formula is machine-readable; source missing</td></tr>
+      <tr><td>30</td><td>SHA 2.3, 6.3</td><td>Pre-issuance notice 10 BD with pro-forma cap table; updated schedule ≤30 days after a round</td><td>all</td><td>–</td><td><span class="tag att">ATT</span> <code>IssuanceNoticed</code> before <code>Issued</code></td></tr>
+      <tr><td>31</td><td>SHA 4.6, 10.5–10.8</td><td>Class B vesting, good/bad leaver, repurchase at FMV or par</td><td>Class B</td><td>RSA-SD</td><td><span class="tag enf">ENF</span> lockups by schedule + <span class="tag att">ATT</span> leaver status</td></tr>
+      <tr><td>32</td><td>SHA 8; 9.5</td><td>Deadlock, buy-sell; amendment by 75% TVP + class majority</td><td>–</td><td>–</td><td><span class="tag att">ATT</span> <code>TermsAmended</code> needs threshold signatures</td></tr>
+      <tr><td>33</td><td>SPA 7.1–7.2; SHA 9.1–9.2; TRA 9; POA 12</td><td>Wyoming law; AAA arbitration, Cheyenne</td><td>all</td><td>–</td><td><span class="tag dis">DIS</span> never in code</td></tr>
+      <tr><td>34</td><td>SPA 7.6</td><td>Deemed acceptance 3 BD after confirmed delivery; delivery log</td><td>Parent → STEL</td><td>email log</td><td><span class="tag att">ATT</span> log hash · counsel: replace with a signature for external investors</td></tr>
+      <tr><td>35</td><td>Bylaws 5.4</td><td>Lost certificate: reissue under an indemnity bond</td><td>shareholder</td><td>–</td><td><span class="tag exe">EXE</span> <code>forcedTransfer</code> on a loss-of-key attestation – counsel</td></tr>
+      <tr><td>36</td><td>TRA 2.1(b), 2.3(b)</td><td>STEL administers the contracts; <b>never more tokens than shares allocated</b></td><td>Parent ↔ STEL</td><td>–</td><td><span class="tag enf">ENF</span> <code>lockCap</code> = 1,415,000 × ratio</td></tr>
+      <tr><td>37</td><td>TRA 5.5; SPA 6.3</td><td>Parent audit, licences, notifications</td><td>STEL</td><td>–</td><td><span class="tag dis">DIS</span></td></tr>
+      <tr><td>38</td><td>POA 3.1(h), 7.3</td><td>Admin keys, contract roles and KYC records pass to Technologies from 01.04.2026</td><td>Polska → Technologies</td><td>checklist</td><td><span class="tag att">ATT</span> <code>RoleGranted</code> log as handover evidence</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note warn"><b>Never on chain:</b> governing law, arbitration, fiduciary and good-faith standards (SHA 3.8(f)), "commercially reasonable efforts" (4.4(d), 10.9), confidentiality (SHA VII, TRA VI). <b>Oracle-dependent:</b> VWAP (6), FMV (12, 27, 31), "distributable profits" (25) – each needs a named attestor and a dispute path.</p>
+</section>
+
+<!-- ============================================================ MODEL -->
+<section aria-labelledby="m-h">
+  <div class="head">
+    <span class="kicker">3 · The Terms model</span>
+    <h2 id="m-h">One typed term per right, one root per instrument</h2>
+    <p class="prose">Concerto-style schema serialised as JSON-LD: text, data model and logic bound through one model, as the Accord Project does, and hashed the way Ricardian contracts did in 2000 – the signed document's hash is the identifier every transaction carries. Documents are registered ERC-1643-style (name, uri, hash). The root lands on the passport, not on a new facet: the passport already owns snapshot roots, attestations and <code>termsHash</code>, and the question "who may anchor" is settled there.</p>
+  </div>
+  <pre>InstrumentTerms {
+  termsId:      bytes32            // keccak(instrumentId ‖ version)
+  instrumentId: bytes32            // passport id · DTI / ISIN when they exist · issuer LEI
+  version:      uint32, supersedes: termsId?
+  documents:    [{ docId, role: SPA|SHA|Articles|Bylaws|DoA|Resolution, sha256, uri, signedBy[], envelopeId }]
+  parties:      [{ role, legalName, lei?, subjectId, signerAddress }]
+  terms:        [ Term ]
+  precedence:   "code" | "text" | "term-by-term"
+  signatures:   { issuer: EIP-712 over termsRoot, counterparty: EIP-712, attestor?: EIP-712 }
+}
+Term {
+  termId:   "lockup.primary", class: ENF | EXE | ATT | DIS,
+  source:   { docId, clause: "SPA 5.1" },
+  params:   { ... }                          // typed per termId
+  binding:  { facet, function, args } | { rule, args } | { schedule } | null,
+  waiver:   { threshold, signers[] },        // who may lift it
+  oracle?:  { kind, attestor, dispute }
+}
+
+// on chain, on the passport
+termsRoot = MerkleRoot( leaf_i = keccak(termId ‖ canonicalJSON(params) ‖ salt_i) )   // salted like passport leaves
+docsRoot  = MerkleRoot( sha256(document_j) )
+event TermsAnchored(instrumentId, termsRoot, docsRoot, version, issuerSig, counterpartySig)
+
+// on the token
+TermsFacet.termsRoot() view; TermsFacet.enforce(termId, params, proof) // a rule proves its parameters sit in the signed root</pre>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Term</th><th>Binding in the Factory</th><th>Exists</th></tr></thead>
+    <tbody>
+      <tr><td class="v">lockup.primary</td><td><code>LockupFacet.addLockup(STEL, all, 1806451200, "SPA 5.1")</code>; waiver = <code>clearLockups</code> only under a mandate needing two founder signatures</td><td class="v yes">yes</td></tr>
+      <tr><td class="v">transfer.window.annual</td><td><code>TransferWindow</code></td><td class="v yes">yes</td></tr>
+      <tr><td class="v">transfer.cap.annual</td><td>new rule <code>MaxTransferPerPeriod(pct, 365 d)</code> beside <code>MaxBalancePerHolder</code></td><td class="v no">no</td></tr>
+      <tr><td class="v">transfer.rofr</td><td>new <code>ROFRHook</code>: a transfer outside Permitted needs a <code>saleNoticeId</code> in state <code>lapsed</code>; the hook runs the 7 + 7 BD timers and pro-rata <code>exercise()</code></td><td class="v no">no</td></tr>
+      <tr><td class="v">transfer.adherence</td><td><code>RequiresClaim(urwa.adherence.&lt;instrumentId&gt;)</code>; claim issued by ATTESTOR from the DocuSign webhook, revoked on transfer</td><td class="v meh">rule yes, claim path no</td></tr>
+      <tr><td class="v">holder.eligibility</td><td><code>HasValidIdentity</code>, <code>JurisdictionRule</code>, <code>MiCARule</code></td><td class="v yes">yes</td></tr>
+      <tr><td class="v">holder.wholly-owned</td><td><code>RequiresClaim(urwa.wholly-owned.&lt;parentLEI&gt;)</code></td><td class="v yes">yes</td></tr>
+      <tr><td class="v">supply.cap</td><td><code>setMaxSupply</code> + <code>lockCap</code> = allocation × ratio (TRA 2.3(b))</td><td class="v yes">yes</td></tr>
+      <tr><td class="v">dividend.*</td><td>new <code>PayoutFacet</code>: <code>declare(resolutionHash, amount, asset, dueBy = +15 BD)</code> → subject-level snapshot → Merkle distributor <code>claim()</code>; STBX election <code>elect(kind, rateAttestationId)</code> within 5 BD</td><td class="v no">no</td></tr>
+      <tr><td class="v">consent.reserved-matter · representative.replace</td><td>new <code>ConsentFacet</code>: <code>propose(matterHash, threshold)</code> → <code>vote</code> by snapshot subject balance → <code>ConsentRecorded</code>; STBX holders vote inside the STEL layer, STEL carries the result up as Class C Representative</td><td class="v no">no</td></tr>
+      <tr><td class="v">drag · tag</td><td><code>DragNotice(valuationAttestationId, price)</code> → after the window <code>forcedTransfer</code>; <code>TagWindow</code> reserves pro rata through Treasury <code>reserve/release</code></td><td class="v meh">forcedTransfer interface only</td></tr>
+      <tr><td class="v">info.*</td><td>passport disclosure schedule <code>[{code, periodicity, dueDays}]</code>; performance = <code>AttestationRecorded</code> by the deadline, else <code>DisclosureOverdue</code></td><td class="v no">passport not built</td></tr>
+      <tr><td class="v">liq.pref</td><td>ATT until a waterfall schedule exists; then <code>PayoutFacet.waterfall(tranches[])</code></td><td class="v no">no</td></tr>
+      <tr><td class="v">recovery</td><td><code>forcedTransfer</code> under a mandate + a loss-of-key or death attestation</td><td class="v no">no</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============================================================ AI -->
+<section aria-labelledby="ai-h">
+  <div class="head">
+    <span class="kicker">4 · Read by agents, executed within mandates</span>
+    <h2 id="ai-h">What "AI can enforce" means, and the clauses that make it binding</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Reading</h3>
+      <ul>
+        <li>The MCP tool makes three calls: <code>passport.termsRoot(instrumentId)</code> from the chain; <code>GET record/&lt;instrumentId&gt;/terms.json</code> from the Intelligence record; locally recompute both roots and check the two EIP-712 signatures. Only a matching JSON counts as the agreement.</li>
+        <li>"Can subject X sell Y tokens today" is answered with the same code the chain runs: <code>canTransfer</code> and <code>whyBlocked</code>, plus <code>lockupsOf</code>. Not a PDF parse – typed terms with a back-reference to the clause.</li>
+      </ul>
+      <h3>Executing</h3>
+      <ul>
+        <li><code>AgentAuthority</code> mandates gain <code>scope = termId</code>: an agent may execute <code>dividend.pay</code> up to N per epoch, and cannot execute a term that is not in the signed root nor exceed the amount. <code>AgentActed</code> + <code>TermExecuted</code> are the proof.</li>
+        <li>Today <code>consume</code> is called by nobody in <code>src/</code>; the mandate becomes real only when the payout, consent and Board contracts call it.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Legal meaning (UK Law Commission, 2021; counsel to confirm)</h3>
+      <ul>
+        <li>Existing contract law accommodates smart legal contracts without new statute. Code can be a term, or the way a natural-language obligation is performed; where it merely automates a term, the code is <b>performance</b>, not a term.</li>
+        <li>Courts read code through a "reasonable coder". The Commission recommends the parties themselves say which layer prevails on conflict and allocate the risk of bugs and oracles.</li>
+        <li>Wyoming W.S. 17-16-625 lets a corporation issue share certificates as certificate tokens on a ledger – the route by which STBX could one day rise from "economic interest through STEL" to a tokenised Class C certificate, where "right in the SPA = right in the token" becomes literal.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Clause to add</th><th>Draft wording (counsel to finalise)</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Machine-readable Terms</td><td>The terms listed in Schedule T are represented in machine-readable form (the "Terms"), whose cryptographic root is recorded at [contract, chain, termsRoot]. Each Party has signed the Terms. The Terms form part of this Agreement.</td></tr>
+      <tr><td class="v">Code is performance</td><td>Where a Term is designated EXECUTED or ENFORCED, execution of the corresponding smart-contract function, evidenced by the events in Schedule T, constitutes performance of the corresponding obligation; a transfer the contract rejects in accordance with a Term is not a breach by any Party.</td></tr>
+      <tr><td class="v">Precedence</td><td>On inconsistency: (a) for ENFORCED and EXECUTED Terms, the signed Terms prevail over the text to the extent of the parameters they specify; (b) for everything else, and for any Term not signed by both, the text prevails; (c) nothing in the code varies governing law, dispute resolution or any DISCLOSED provision.</td></tr>
+      <tr><td class="v">Malfunction and oracle</td><td>If a function executes inconsistently with the signed Terms, the Parties restore the position the Terms required; the Party controlling the relevant administrative role bears the cost. Oracle values (VWAP, FMV) bind only if attested by the attestor named in the Term; a disputed attestation suspends the function pending [dispute].</td></tr>
+      <tr><td class="v">Amendment</td><td>The Terms are amended only by a new version signed by the persons whose consent Section 9.5 requires; the new root supersedes the prior. A text amendment without a Terms version is ineffective as to ENFORCED and EXECUTED Terms.</td></tr>
+      <tr><td class="v">Key loss and death</td><td>Loss of a private key does not extinguish the holder's rights; the holder or estate may request re-issuance under [procedure], executed by <code>forcedTransfer</code> upon attestation by [attestor], mirroring Bylaws 5.4.</td></tr>
+      <tr><td class="v">Deed of Adherence as claim</td><td>Execution of the Deed is evidenced by the identity claim <code>urwa.adherence.&lt;instrumentId&gt;</code>; no transfer is registered to a subject without it (SHA 9.4).</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">For an external investor, SPA 7.6 "deemed acceptance" must give way to an explicit signature of the Terms – otherwise there is no counterparty signature in the root.</p>
+</section>
+
+<!-- ============================================================ EVENTS -->
+<section aria-labelledby="ev-h">
+  <div class="head">
+    <span class="kicker">5 · Visibility</span>
+    <h2 id="ev-h">One "due" and one "done" event per term</h2>
+    <p class="prose">Existing in <code>IEvents.sol</code>: Transfer, Issued, Redeemed, LockupAdded, LockupsCleared, Frozen, ForcedTransfer, MandateGranted, AgentActed, SnapshotAnchored, AttestationRecorded, RoleGranted. Added, so that an auditor rebuilds performance and lateness from logs alone:</p>
+  </div>
+  <div class="two">
+    <div class="card">
+      <ul>
+        <li><code>TermsAnchored(instrumentId, termsRoot, docsRoot, version, issuerSig, counterpartySig)</code> · <code>TermsAmended(prev, next, consentId)</code></li>
+        <li><code>TermExecuted(termId, mandateId, ref)</code> · <code>TermWaived(termId, signers[])</code></li>
+        <li><code>SaleNoticed(noticeId, seller, qty, price, buyer)</code> · <code>ROFRExercised</code> · <code>ROFRLapsed</code></li>
+        <li><code>TagWindowOpened</code> · <code>TagJoined</code> · <code>DragNoticed(valuationAttId)</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <ul>
+        <li><code>DividendDeclared(resolutionHash, dueBy)</code> · <code>PaymentElected(kind, rateAttId)</code> · <code>DividendPaid(subject, amount, asset)</code> · <code>PayoutLate(declId)</code></li>
+        <li><code>ConsentProposed</code> · <code>ConsentRecorded(matterHash, for, against, threshold)</code> · <code>RepresentativeChanged</code></li>
+        <li><code>DisclosureDue</code> · <code>DisclosureRecorded</code> · <code>DisclosureOverdue(code)</code></li>
+        <li><code>AdherenceClaimed</code> · <code>AdherenceRevoked(subject)</code> · <code>RecoveryExecuted(from, to, attId)</code></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ GAPS -->
+<section aria-labelledby="g-h">
+  <div class="head">
+    <span class="kicker">6 · Gaps and order</span>
+    <h2 id="g-h">Nine to ten engineering weeks, after the paper is fixed</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>#</th><th>Gap</th><th>Effort</th><th>Order</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>Holder terms for STBX</b> – the STEL governance framework or a Deed: nothing to anchor without it</td><td>legal, 1–2 weeks (Max)</td><td class="v">1</td></tr>
+      <tr><td>2</td><td>Resolve the paper's conflicts: ROFR 7 BD vs 30 days, drag 50% vs 70%, pre-emption vs "no pre-emptive rights", cap "25% (50%)"</td><td>legal, same cycle</td><td class="v">1</td></tr>
+      <tr><td>3</td><td>Terms schema + passport extension (<code>termsRoot</code>, <code>docsRoot</code>, signatures, <code>TermsAnchored</code>); verify.py checks; docs 07 and 14</td><td>1 week</td><td class="v">2</td></tr>
+      <tr><td>4</td><td>Document registry, ERC-1643-style, as part of the passport</td><td>2–3 days</td><td class="v">2</td></tr>
+      <tr><td>5</td><td>Adherence as a claim: key, issuance by ATTESTOR from the DocuSign webhook; <code>RequiresClaim</code> exists</td><td>3–4 days</td><td class="v">3</td></tr>
+      <tr><td>6</td><td>STBX lock-up configuration + <code>MaxTransferPerPeriod</code> + <code>TransferWindow</code> binding</td><td>3 days</td><td class="v">3</td></tr>
+      <tr><td>7</td><td><b>PayoutFacet</b> + subject-level snapshot + Merkle distributor, 15-BD deadline, election</td><td>2 weeks</td><td class="v">4</td></tr>
+      <tr><td>8</td><td><b>ROFR hook</b> (sale notice, two windows, pro rata, lapse, 60-day close)</td><td>2 weeks</td><td class="v">5</td></tr>
+      <tr><td>9</td><td><b>ConsentFacet</b> (threshold, snapshot, representative replacement)</td><td>1.5 weeks</td><td class="v">6</td></tr>
+      <tr><td>10</td><td>Tag and drag on top of <code>forcedTransfer</code> + valuation attestation</td><td>1 week</td><td class="v">7</td></tr>
+      <tr><td>11</td><td>Disclosure schedule in the passport + overdue events</td><td>4 days</td><td class="v">7</td></tr>
+      <tr><td>12</td><td>MCP <code>terms.read / verify / simulate</code> + mapping into the record</td><td>1 week</td><td class="v">with 3</td></tr>
+      <tr><td>13</td><td>Recovery procedure under attestation</td><td>3 days + counsel</td><td class="v">8</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="prose">Each step runs the repository cycle: tests, <code>verify.py</code>, an adversarial audit, a build-log entry. Payout, ROFR and Consent all hold or move money or control, so each is audited before mainnet.</p>
+</section>
+
+<!-- ============================================================ DECISIONS -->
+<section aria-labelledby="dec-h">
+  <div class="head">
+    <span class="kicker">7 · Decisions</span>
+    <h2 id="dec-h">For Gene, and for Max</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Gene</h3>
+      <ol class="dec">
+        <li><b>Level of the token.</b> Stay "economic interest through STEL" (Terms anchor STEL ↔ holder), or lift STBX to a Class C certificate token under W.S. 17-16-625 (the holder becomes a shareholder, and "exactly the rights in the SPA" becomes literal). Larger, but the only route without an intermediary.</li>
+        <li><b>Default precedence</b> for every Factory instrument: <code>term-by-term</code> (recommended) or <code>code</code>.</li>
+        <li><b>Oracles</b> for VWAP and FMV: whose attestor counts – Stobox, an independent, or both.</li>
+        <li><b>Order</b>: PayoutFacet before ROFR (money visible first), or ROFR first because the lock-up to 2028 makes it moot until then.</li>
+        <li><b>Publicity of Terms</b>: full JSON open, or as the passport does – roots on chain, values by tiered access.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Max</h3>
+      <ol class="dec">
+        <li>Is there a signed STEL token governance framework or STBX issuance terms for holders? If not, what gives a holder the dividend right under SPA 4.1 today?</li>
+        <li>Which ROFR period and drag threshold apply: SHA (7 + 7 BD; Founder Majority &gt;50%) or Bylaws (30 + 30 days; 70% Common A)? Same for pre-emption (SHA 6.1) against Articles 4.5(a).</li>
+        <li>Bylaws 5.3(e): 25% or 50%?</li>
+        <li>Where are the Investor Rights Agreement with the anti-dilution formula (Articles 4.3) and the waterfall schedule (SHA 5.4(c))?</li>
+        <li>Will he sign "code is performance" with Terms prevailing for ENF/EXE, or prefer "text prevails" with code as the manner of performance?</li>
+        <li>Under Wyoming and BVI law, may deemed acceptance (SPA 7.6) be replaced by the holder's EIP-712 signature as an electronic signature (SPA 7.5)?</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CHANGELOG -->
+<section aria-labelledby="cl-h">
+  <div class="head">
+    <span class="kicker">Changelog</span>
+    <h2 id="cl-h">Versions</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Rights register of 38 clauses from the April 2026 documents with enforceability classes; Terms model and anchoring; Factory bindings; agent reading and execution; seven clauses for the paper; events; gaps and order; decisions.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <span class="meta">Sources · Gene-Second-Brain/raw/legal-2026-04/_текст: out_3_6_STBX_Investor_Agreement, OMNIBUS SHAREHOLDERS' AGREEMENT, 1_9_Tokenization_Rights_Agreement, 2.5_Platform_Operator_Agreement_v2.6, Resolution_2026_006_STEL_Deed_of_Adherence, ART-001 Articles (4.3, 4.5), Bylaws 1.2 (2.5–2.7, 5.2–5.4, 6, 7) · uRWA-Factory: src/rules/RuleLibrary.sol, src/facets/RestrictionFacets.sol, src/AgentAuthority.sol, src/interfaces/IEvents.sol, src/interfaces/IAssetPassport.sol, docs/11-passport.md, docs/19-open-boundary.md, docs/24-work-registry.md (PA-01…07) · Ricardian contracts (Grigg, FC 2000) · Accord Project (TemplateMark, Concerto) · ERC-1643, ERC-1594, ERC-3643, ERC-7943 final text · UK Law Commission, Smart legal contracts: advice to government (Nov 2021) · Wyoming W.S. 17-16-625 (HB 185, 2019) · ISO 24165 DTI, ANNA–DTIF MoU.</span>
+  <span class="meta">Uncertain · the Deed of Adherence text, the Investor Rights Agreement and the STEL governance framework are absent from the vault, so their content is not asserted; the Law Commission wording is confirmed through summaries, the primary PDF sits in the National Archives web archive; effort figures are estimates.</span>
+</footer>
+</main>

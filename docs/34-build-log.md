@@ -52,6 +52,41 @@ Both themes rendered; the SVG overflow check ran clean after two sub-lines were 
 and the adapter; `CLAUDE.md` still says `src/` is interfaces only; the handoff's test count
 (141 in Part 0) is stale against 220.
 
+**Same day, second pass – the four layers.** By Gene's word ("write the whole technical
+construction before we build"), the hub went to v1.0 and four layer pages were added under
+`docs/architecture/`: `identity.html` (one subject-keyed DID registry on Base, GDPR data map, three
+plug-in levels, trust scoped per token), `terms.html` (38 clauses from the April 2026 documents
+classed enforced / executed / attested / disclosed, a Terms model anchored on the passport, seven
+clauses for the paper), `offering.html` (regimes as presets, contract-to-law map, the STBX stack)
+and `intelligence.html` (client intake into the record, oracle channels, agents and mandates, MCP).
+Five agents read the code and the vault; every claim about the code was re-read before it went on a
+page. The hub now carries a gap register **G1–G18**. New, beyond the morning's three:
+
+- **G5** `roleAdmin` returns `ISSUER_ADMIN` for every role (`src/facets/RolesFacet.sol:46-48`):
+  ISSUER_ADMIN can grant itself UPGRADE_ADMIN. Doc 05 says otherwise.
+- **G6** `setPolicySet` / `setIdentityRegistry` take effect at once, outside the upgrade delay
+  (`src/facets/ComplianceFacet.sol:294-306`). Doc 05:89 calls them timelocked.
+- **G7** Only selectors are immutable; any facet or `diamondCut` init can write `balances` by
+  delegatecall. L4.8 overstates the guarantee; the real control is the delay plus loupe visibility.
+- **G8** Per-investor limits are per transaction; `Purchase.subject` is written as zero
+  (`src/OfferingRegistry.sol:182, 211`).
+- **G9** `removeRule` in any state; `settle` from `Active` by anyone; `forceStatus` to any state;
+  `activate` / `unpause` back from Settled or Refunding (`:104-125, 341, 481, 520`).
+- **G10** Treasury `reserve` / `release` never called; multi-currency `unlockPayments` deducts one
+  asset's total lock (`src/Treasury.sol:97-111`) – read from code, not reproduced by test.
+- **G11** `AgentAuthority.consume` is called by nothing in `src/`; a mandate limits nothing.
+- **G12** `RuleFailed` never emitted; cuts at delay 0 and all PolicySet / adapter mutations emit
+  nothing, so the subject register cannot be rebuilt from logs.
+- **G13** The offering `regime` field is a label; no preset is applied (`:94-101`).
+- **G16** Interfaces disagree with code (`createToken`, `createOffering`, `pause()`, `deposit`,
+  `createTokenWithOffering`); L3.1 / L3.2 compare docs to interfaces, so verify.py cannot see it.
+- Every shipped preset includes `HasValidIdentity`, so on Stobox DID **all three** presets refuse
+  all transfers, not only Reg S – a sharpening of the morning's G1.
+
+Outside the code: the STBX holder is a party to no signed document in the vault, and the STEL
+governance framework that SPA 3.2 points to is absent (**G18**) – the Terms layer has nothing to
+anchor until Max closes it. All of this is open; nothing in `src/` changed.
+
 ---
 
 ## 2026-08-16 · Session 10 — the conformance kit, and its first stranger is us

@@ -1,0 +1,432 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STV4 Identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#0D1424; --ink-2:#2B3447; --muted:#5A6477; --rule:#D8DEE8;
+  --region:#E9EDF4; --region-base:#E6EEFF; --accent:#0046E0;
+  --live:#12804F; --ready:#4B4BC8; --pending:#A86200; --gap:#C42D25; --option:#6B7489;
+  --display:"Unbounded",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+    --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+    --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+  --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+  --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+main{max-width:1180px;margin:0 auto;padding:56px 28px 96px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font:700 clamp(30px,4.6vw,48px)/1.08 var(--display);letter-spacing:-.01em}
+h2{font:700 22px/1.25 var(--display);letter-spacing:-.005em}
+h3{font:600 17px/1.35 var(--body)}
+p{margin:0}
+.prose{max-width:68ch;color:var(--ink-2)}
+.prose code{overflow-wrap:anywhere}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.meta{font:12.5px/1.5 var(--mono);color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+header{display:grid;gap:18px;margin-bottom:56px}
+header .lede{font-size:19px;line-height:1.5;max-width:62ch;color:var(--ink-2)}
+section{display:grid;gap:20px;padding-top:44px;margin-top:44px;border-top:1px solid var(--rule)}
+section > .head{display:grid;gap:10px}
+.kicker{font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:14px;border-radius:3px;border:1.6px solid;background:var(--surface)}
+.sw.live{border-color:var(--live)} .sw.ready{border-color:var(--ready)}
+.sw.pending{border-color:var(--pending);border-style:dashed} .sw.gap{border-color:var(--gap);border-style:dashed;background:color-mix(in srgb,var(--gap) 10%,var(--surface))}
+.sw.option{border-color:var(--option);border-style:dotted}
+figure{margin:0;display:grid;gap:12px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+.scroll svg{display:block;width:100%;height:auto;min-width:980px}
+figcaption{font-size:14px;color:var(--muted);max-width:80ch}
+.hint{display:none;font:12px var(--mono);color:var(--muted)}
+@media (max-width:980px){.hint{display:block}}
+.rg{fill:var(--region);stroke:var(--rule);stroke-width:1}
+.rg.base{fill:var(--region-base);stroke:var(--accent);stroke-opacity:.45;stroke-dasharray:6 5}
+.rl{font:600 10.5px var(--body);letter-spacing:.13em;fill:var(--muted)}
+.rl.base{fill:var(--accent)}
+.n rect{fill:var(--surface);stroke-width:1.6}
+.n.live rect{stroke:var(--live)}
+.n.ready rect{stroke:var(--ready)}
+.n.pending rect{stroke:var(--pending);stroke-dasharray:6 4}
+.n.gap rect{stroke:var(--gap);stroke-dasharray:6 4;fill:color-mix(in srgb,var(--gap) 8%,var(--surface))}
+.n.option rect{stroke:var(--option);stroke-dasharray:2 3}
+.n.plain rect{stroke:var(--rule)}
+.t{font:600 13px var(--body);fill:var(--ink)}
+.s{font:400 10.5px var(--mono);fill:var(--muted)}
+.st{font:700 9px var(--body);letter-spacing:.1em}
+.live .st{fill:var(--live)} .ready .st{fill:var(--ready)} .pending .st{fill:var(--pending)} .gap .st{fill:var(--gap)} .option .st{fill:var(--option)}
+.e{fill:none;stroke:var(--muted);stroke-width:1.4}
+.e.hot{stroke:var(--accent);stroke-width:1.8}
+.e.bad{stroke:var(--gap);stroke-dasharray:5 4}
+.e.dot{stroke-dasharray:2 3}
+.ah{fill:var(--muted)} .ah.hot{fill:var(--accent)} .ah.bad{fill:var(--gap)}
+.el{font:500 10.5px var(--mono);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.el.hot{fill:var(--accent)}
+.el.bad{fill:var(--gap)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card p,.card li{font-size:15px;color:var(--ink-2)}
+.card ul,.card ol{margin:0;padding-left:18px;display:grid;gap:6px}
+.note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--ink-2);max-width:78ch}
+.note.warn{border-color:var(--gap)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--region) 60%,var(--surface))}
+tr:last-child td{border-bottom:0}
+td.v{font-weight:600;white-space:nowrap}
+.yes{color:var(--live)} .no{color:var(--gap)} .meh{color:var(--pending)}
+pre{margin:0;background:color-mix(in srgb,var(--region) 60%,var(--surface));border:1px solid var(--rule);border-radius:10px;padding:16px 18px;overflow-x:auto;font:13px/1.55 var(--mono);color:var(--ink-2)}
+ol.dec{margin:0;padding-left:22px;display:grid;gap:12px;max-width:80ch}
+ol.dec li{padding-left:6px;color:var(--ink-2)}
+ol.dec b{color:var(--ink)}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);display:grid;gap:6px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 1 · v0.1 · 25 Sep 2026</div>
+  <h1>STV4 Identity</h1>
+  <p class="lede">One registry of Stobox DIDs on Base, keyed by person rather than by wallet, feeding every Compass token, the Board and STBU tiers through two read surfaces. KYC stays with Stripe and the DID service; the chain carries salted hashes, validity and claims. The gap: today's Stobox DID cannot answer a rule's question by subject, so every preset refuses every transfer on it.</p>
+  <div class="legend" aria-label="Status legend">
+    <span><i class="sw live"></i>Live on chain or in production</span>
+    <span><i class="sw ready"></i>Code and tests ready, not deployed</span>
+    <span><i class="sw pending"></i>Planned, not built or created yet</span>
+    <span><i class="sw gap"></i>Gap: missing, blocks a feature</span>
+    <span><i class="sw option"></i>Optional</span>
+  </div>
+  <p class="meta">Hub: <a href="stv4.html">STV4</a> · siblings: <a href="terms.html">Terms</a> · <a href="offering.html">Offering</a> · <a href="intelligence.html">Intelligence</a></p>
+</header>
+
+<!-- ============================================================ MAP -->
+<section aria-labelledby="map-h">
+  <div class="head">
+    <span class="kicker">1 · The identity system</span>
+    <h2 id="map-h">From a passport scan to a transfer check</h2>
+    <p class="prose">Left to right: what a person gives, where it is kept, what reaches the chain, who reads it. Nothing right of the DID service holds a name, a document or a country in clear – only hashes with a salt that lives in the KYC Vault. The blue path is the one a transfer takes: <code>isActive</code> and <code>hasValidClaim</code> read by the token's compliance pipeline.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1200 620" role="img" aria-label="Identity map: Stripe Identity verifies the person; the DID service with a KMS key keeps the KYC Vault and writes the Identity Registry on Base and the legacy Stobox DID on Arbitrum; the registry serves the STV4 token and the Compass Board through IIdentityRegistry, and STBU tiers through getUserDID; EAS on Base mirrors claims; client issuers and client registries plug in at three levels.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah bad" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <rect class="rg" x="20" y="44" width="250" height="556" rx="10"/><text class="rl" x="34" y="66">PERSON · OFF-CHAIN</text>
+      <rect class="rg" x="300" y="44" width="250" height="556" rx="10"/><text class="rl" x="314" y="66">STOBOX BACKEND</text>
+      <rect class="rg base" x="580" y="44" width="330" height="556" rx="12"/><text class="rl base" x="596" y="66">BASE · CHAIN 8453</text>
+      <rect class="rg" x="940" y="44" width="240" height="556" rx="10"/><text class="rl" x="954" y="66">READERS</text>
+
+      <!-- edges -->
+      <path class="e" d="M245,113 H313" marker-end="url(#a)"/><text class="el" x="279" y="105" text-anchor="middle">documents</text>
+      <path class="e" d="M425,142 V192" marker-end="url(#a)"/><text class="el" x="435" y="172">result only</text>
+      <path class="e hot" d="M525,223 H593" marker-end="url(#ah)"/><text class="el hot" x="559" y="215" text-anchor="middle">claims</text>
+      <path class="e" d="M425,252 V302" marker-end="url(#a)"/><text class="el" x="435" y="282">salts · PII</text>
+      <path class="e dot" d="M525,333 H560 V443 H593" marker-end="url(#a)"/><text class="el" x="566" y="395">legacy</text>
+      <path class="e dot" d="M745,252 V302" marker-end="url(#a)"/><text class="el" x="755" y="282">mirror</text>
+      <path class="e hot" d="M895,215 H953" marker-end="url(#ah)"/><text class="el hot" x="924" y="207" text-anchor="middle">isActive</text>
+      <path class="e hot" d="M895,235 H925 V333 H953" marker-end="url(#ah)"/><text class="el hot" x="931" y="290">claims</text>
+      <path class="e" d="M895,195 H925 V113 H953" marker-end="url(#a)"/><text class="el" x="931" y="160">getUserDID</text>
+      <path class="e" d="M245,443 H593" marker-end="url(#a)"/><text class="el" x="420" y="435" text-anchor="middle">L1 · client issuer writes claims, keeps PII</text>
+      <path class="e dot" d="M245,553 H925 V363 H953" marker-end="url(#a)"/><text class="el" x="590" y="545" text-anchor="middle">L2 · client registry, token points at it</text>
+      <path class="e dot" d="M745,472 V362" marker-end="url(#a)"/><text class="el" x="755" y="392">L3 · federated</text>
+
+      <!-- person -->
+      <g class="n live"><rect x="35" y="84" width="210" height="58" rx="8"/><text class="t" x="47" y="108">Investor</text><text class="s" x="47" y="127">passport · selfie · address</text><text class="st" x="235" y="100" text-anchor="end">LIVE</text></g>
+      <g class="n pending"><rect x="35" y="414" width="210" height="58" rx="8"/><text class="t" x="47" y="438">Client KYC · L1</text><text class="s" x="47" y="457">enterprise issuer key</text><text class="st" x="235" y="430" text-anchor="end">PLANNED</text></g>
+      <g class="n option"><rect x="35" y="524" width="210" height="58" rx="8"/><text class="t" x="47" y="548">Client registry · L2</text><text class="s" x="47" y="567">own IIdentityRegistry</text><text class="st" x="235" y="540" text-anchor="end">OPTION</text></g>
+      <!-- backend -->
+      <g class="n live"><rect x="315" y="84" width="210" height="58" rx="8"/><text class="t" x="327" y="108">Stripe Identity</text><text class="s" x="327" y="127">processor · holds PII</text><text class="st" x="515" y="100" text-anchor="end">LIVE</text></g>
+      <g class="n pending"><rect x="315" y="194" width="210" height="58" rx="8"/><text class="t" x="327" y="218">DID service · KMS</text><text class="s" x="327" y="237">one writer · both chains</text><text class="st" x="515" y="210" text-anchor="end">PLANNED</text></g>
+      <g class="n live"><rect x="315" y="304" width="210" height="58" rx="8"/><text class="t" x="327" y="328">KYC Vault</text><text class="s" x="327" y="347">results · salts · retention</text><text class="st" x="515" y="320" text-anchor="end">LIVE</text></g>
+      <!-- base -->
+      <g class="n gap"><rect x="595" y="194" width="300" height="58" rx="8"/><text class="t" x="607" y="218">Identity Registry · subject-keyed</text><text class="s" x="607" y="237">wallet → subject · subject × key → Claim</text><text class="st" x="885" y="210" text-anchor="end">GAP</text></g>
+      <g class="n live"><rect x="595" y="304" width="300" height="58" rx="8"/><text class="t" x="607" y="328">EAS · Base</text><text class="s" x="607" y="347">0x4200…0021 · public attestations</text><text class="st" x="885" y="320" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="595" y="414" width="300" height="58" rx="8"/><text class="t" x="607" y="438">Stobox DID · today</text><text class="s" x="607" y="457">Base 0x4e13…a89b · Arbitrum 305 DID</text><text class="st" x="885" y="430" text-anchor="end">LIVE</text></g>
+      <!-- readers -->
+      <g class="n ready"><rect x="955" y="84" width="210" height="58" rx="8"/><text class="t" x="967" y="108">STBU tiers · portal</text><text class="s" x="967" y="127">active? · wallets of subject</text><text class="st" x="1155" y="100" text-anchor="end">READY</text></g>
+      <g class="n pending"><rect x="955" y="194" width="210" height="58" rx="8"/><text class="t" x="967" y="218">STV4 token · pipeline</text><text class="s" x="967" y="237">sender · recipient gates</text><text class="st" x="1155" y="210" text-anchor="end">PLANNED</text></g>
+      <g class="n ready"><rect x="955" y="304" width="210" height="58" rx="8"/><text class="t" x="967" y="328">PolicySet · rules</text><text class="s" x="967" y="347">country · accredited · AML</text><text class="st" x="1155" y="320" text-anchor="end">READY</text></g>
+    </svg>
+    </div>
+    <span class="hint">Scroll sideways to see the full map.</span>
+    <figcaption>Red is the registry itself: the Factory's rules ask <code>hasValidClaim(subject, key)</code>, and Stobox DID today is keyed by wallet, so <code>StoboxDIDAdapter</code> returns empty for every claim (<code>src/identity/Adapters.sol:248-254</code>). Every shipped preset includes <code>HasValidIdentity</code>, so on tier 2 all three presets refuse all transfers, not only Reg S. The subject-keyed registry is the fix; Stobox DID stays for Arbitrum legacy until STBX moves.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ DATA -->
+<section aria-labelledby="d-h">
+  <div class="head">
+    <span class="kicker">2 · What lives where</span>
+    <h2 id="d-h">Data classification and the GDPR map</h2>
+    <p class="prose">The rule the whole layer is built on: the chain must hold nothing that identifies a person without the KYC Vault. Then "erasure" is real – revoke the claims, block the subject, destroy the salts and the Stripe session, and the hashes on chain point at nobody. This is the position the EDPB took in Guidelines 02/2025 on blockchain: effective anonymisation of the off-chain components, not deletion of the ledger.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Data</th><th>Where</th><th>Form</th><th>Retention</th><th>Erasure path</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Document scan, selfie, name, date of birth, address</td><td>Stripe Identity (processor)</td><td>plaintext at Stripe; Stobox sees the result</td><td>AML period (EU/UK 5 years after the relationship ends; BVI per AMLR – counsel)</td><td>delete at Stripe by API; delete the session id in our DB</td></tr>
+      <tr><td class="v">KYC result, document country, residence, investor type, accreditation, sanctions status, dates</td><td>DID service DB – the KYC Vault (source of truth)</td><td>plaintext + one salt per claim</td><td>as above</td><td>delete the row and the salt → the on-chain hash is irreversible</td></tr>
+      <tr><td class="v">uDID ↔ person</td><td>KYC Vault</td><td>plaintext</td><td>as above</td><td>delete the link; the chain keeps only <code>keccak256(uDID)</code></td></tr>
+      <tr><td class="v">Subject (uDID hash), wallet → subject, validity, block flag</td><td>Identity Registry on Base (and Arbitrum)</td><td><code>bytes32</code>; the wallet address is a pseudonym</td><td>forever (immutable)</td><td>effective anonymisation: revoke + destroy the off-chain link</td></tr>
+      <tr><td class="v">Claims: country, accredited, sanctions clear, investor type</td><td>Identity Registry; optional EAS mirror</td><td><code>valueHash = keccak(salt ‖ value)</code>; <code>numeric</code> only for thresholds</td><td>until <code>expiresAt</code>; history in events forever</td><td>revoke + destroy the salt</td></tr>
+      <tr><td class="v">Block reason, sanctions hit, adverse media</td><td>off-chain only (DB, screening provider)</td><td>plaintext</td><td>AML period</td><td>as above</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Why every hash is salted</h3>
+      <ul>
+        <li>A country is one of ~250 values: an unsalted hash is reversed in seconds. Names and document numbers never go on chain even hashed – the EDPB treats an unkeyed hash of personal data as personal data.</li>
+        <li>The salt lives only in the KYC Vault. Selective disclosure works by handing one <code>(value, salt)</code> pair to one counterparty, who checks <code>keccak == valueHash</code> on chain. Same mechanism as EAS private-data attestations and the passport leaves in <code>docs/11-passport.md</code>.</li>
+        <li>The DID service SDK refuses to write a claim whose value is not a hash; a test on a fixture keeps it honest.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Roles under GDPR (counsel to confirm)</h3>
+      <ul>
+        <li><b>Controller</b> per product: the issuer for its instrument (Stobox Tokenized Equities Ltd for STBX; a client issuer for its token); Stobox Innovations Ltd for STBU tiers and the portal. Where the DID service is shared infrastructure, Innovations is processor for each issuer, or joint controller under Art. 26.</li>
+        <li><b>Processors</b>: Stripe (standard DPA), database hosting, KMS.</li>
+        <li><b>Legal basis</b>: Art. 6(1)(c) legal obligation for KYC and sanctions; 6(1)(f) legitimate interest for the on-chain hash, justified in a DPIA – the EDPB says a public chain should be used only where essential, and the argument is verification at the moment of transfer, independent readability by an auditor, no single trusted party.</li>
+        <li><b>DPIA</b>: required – new technology, financial data, public ledger.</li>
+        <li>Client issuers at L1/L2 are controllers of their own KYC; we see claims only.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ REGISTRY -->
+<section aria-labelledby="r-h">
+  <div class="head">
+    <span class="kicker">3 · The one registry</span>
+    <h2 id="r-h">StoboxIdentityRegistry on Base</h2>
+    <p class="prose">One contract, subject-keyed inside, two read surfaces outside. Surface A is <code>IIdentityRegistry</code> unchanged, so the Factory's pipeline and rules need no edit. Surface B is the simple view STBU tiers and the portal want. The uDID string itself is not stored: <code>subject = keccak256(uDID)</code> is what the adapter already computes, so a person keeps the same subject on Arbitrum and on Base.</p>
+  </div>
+  <pre>// storage
+mapping(address => bytes32)                     subjectOf;          // wallet → keccak256(uDID)
+mapping(bytes32 => SubjectRecord)               subjects;           // validTo, blocked, blockReasonHash, walletCount
+mapping(bytes32 => mapping(bytes32 => Claim))   claims;             // subject × key → IIdentityRegistry.Claim
+mapping(bytes32 => mapping(address => bool))    trustedIssuerForKey; // key → issuer → allowed
+
+// surface A · IIdentityRegistry (Compass tokens, Board, rules) – never reverts
+function subjectOf(address wallet)              view returns (bytes32);
+function isActive(address wallet)               view returns (bool);   // subject exists ∧ !blocked ∧ validTo > now ∧ wallet not deactivated
+function claim(bytes32 subject, bytes32 key)    view returns (Claim);
+function hasValidClaim(bytes32 subject, bytes32 key) view returns (bool); // absent, expired and revoked all false
+
+// surface B · STBU tiers, portal, any Base app
+function getUserDID(address wallet)             view returns (bytes32 subject, uint64 validTo, bool blocked);
+function walletsOf(bytes32 subject)             view returns (address[] memory);
+
+// writers
+function createSubject(bytes32 subject, uint64 validTo)                                   // SUBJECT_WRITER
+function bindWallet(address wallet, bytes32 subject, bytes sigExisting, bytes sigNew)     // SUBJECT_WRITER + owner signatures
+function unbindWallet(address wallet)  · renew(subject, validTo) · block(subject, reasonHash) · unblock(subject)
+function setClaim(bytes32 subject, bytes32 key, bytes32 valueHash, uint256 numeric, uint64 expiresAt) // CLAIM_ISSUER for key
+function revokeClaim(bytes32 subject, bytes32 key)                                        // issuer or admin
+function deactivateWallet()                                                               // the wallet itself, self-service</pre>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Role</th><th>Holder</th><th>May</th></tr></thead>
+    <tbody>
+      <tr><td class="v">REGISTRY_ADMIN</td><td>Technical Safe</td><td>roles, <code>trustedIssuerForKey</code>, parameters</td></tr>
+      <tr><td class="v">SUBJECT_WRITER</td><td>one KMS key of the DID service, for both chains</td><td>create, bind, unbind, renew, block, unblock</td></tr>
+      <tr><td class="v">CLAIM_ISSUER (per key)</td><td>Stobox KMS for <code>urwa.*</code> and <code>aml.*</code>; a client for its own namespace; a third-party attestor for <code>us.regd.accredited</code></td><td><code>setClaim</code>, <code>revokeClaim</code> on that key</td></tr>
+      <tr><td class="v">Holder</td><td>the wallet</td><td>bind a second wallet only with both owners' signatures (EIP-712); deactivate its own wallet</td></tr>
+      <tr><td class="v">Self-attested VC</td><td>–</td><td>none: a claim without a trusted issuer is not read by any rule. A client who wants W3C VCs verifies them off chain and writes the claim as issuer</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Mechanics that matter</h3>
+      <ul>
+        <li><b><code>Claim.issuer</code> is the real writer</b>, never a proxy, so a token can scope trust by issuer (§4).</li>
+        <li><b>Three distinguishable states</b> – absent, expired, revoked – as the interface requires; <code>revokeClaim</code> by issuer or admin, <code>block</code> by the writer acts on every wallet of the subject.</li>
+        <li><b>Re-bind fixes handoff finding #1.</b> <code>bindWallet</code> and <code>unbindWallet</code> emit <code>SubjectChanged(wallet, old, new)</code>; every token exposes <code>resyncSubject(wallet)</code> that moves <code>subjectBalance</code> and the holder flag. A bind of a wallet with a non-zero balance on any Factory token is refused unless the resync runs in the same transaction – otherwise <code>MaxBalancePerHolder</code> is bypassed. Needs one appended field in <code>ComplianceStorage</code> (frozen layout: append only).</li>
+        <li><b>Cross-chain</b>: the same contract on Arbitrum (for STV3 through the adapter) and Base; the DID service writes both; a reconciler compares.</li>
+        <li><b>EAS is a mirror, not a second registry.</b> On <code>setClaim</code> the DID service may issue an EAS attestation with the same <code>valueHash</code> and <code>expiresAt</code> for public verification on EASScan and for Base apps that speak only EAS. The registry is the source of truth.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Events (the auditor pack reads these)</h3>
+      <ul>
+        <li><code>SubjectCreated(subject, validTo)</code> · <code>SubjectRenewed</code> · <code>SubjectBlocked(subject, reasonHash)</code></li>
+        <li><code>WalletBound(wallet, subject)</code> · <code>WalletUnbound</code> · <code>SubjectChanged(wallet, old, new)</code></li>
+        <li><code>ClaimSet(subject, key, issuer, valueHash, expiresAt)</code> · <code>ClaimRevoked</code></li>
+        <li><code>IssuerTrusted(key, issuer)</code> · <code>IssuerUntrusted</code></li>
+        <li>Never a value, never a name. All getters are <code>view</code> and unprotected – the pipeline must read them – hence the invariant "no plaintext in <code>valueHash</code>".</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ PLUG -->
+<section aria-labelledby="p-h">
+  <div class="head">
+    <span class="kicker">4 · Pluggable both ways</span>
+    <h2 id="p-h">A client brings its own KYC; others read ours</h2>
+    <p class="prose">Gene's requirement: an enterprise client says "we have our own KYC data, we will not share it, connect us to DID and we run it ourselves". Three integration levels, from cheapest to most independent, and the reverse direction with one safeguard: trust scoped per token, so that portal KYC does not admit a wallet to every issuer's instrument.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Level</th><th>Mechanism</th><th>What we require</th><th>Where the data is</th></tr></thead>
+    <tbody>
+      <tr><td class="v">L1 · client as trusted issuer</td><td>The Safe grants the client's key <code>CLAIM_ISSUER</code> on its namespace (<code>acme.kyc.valid</code>, <code>acme.country</code>) and, for subjects the client created, on <code>urwa.*</code></td><td>Issuer Agreement: KYC policy, liability, revoke within 24 h, salts kept by the client, audit answers to the issuer</td><td>Only hashes reach us; the client is controller, we are infrastructure</td></tr>
+      <tr><td class="v">L2 · client's own <code>IIdentityRegistry</code></td><td>The token's <code>setIdentityRegistry(client)</code>; nothing in our registry</td><td>Conformance kit: the four views never revert; <code>subjectOf</code> total and stable; <code>isActive</code> false for unknown wallets; absent/expired/revoked distinguished; <code>claim().issuer != 0</code> iff the claim exists; reads fit the rule gas ceiling; emits <code>SubjectChanged</code>; no plaintext in <code>valueHash</code> (tested on a fixture)</td><td>Nothing with us; correctness is the client's, fixed in the contract</td></tr>
+      <tr><td class="v">L3 · federation through EAS</td><td>Our registry accepts, for key K, attestations of schema S from attester A once the Safe lists (K, S, A) in <code>trustedIssuerForKey</code>; read through the EAS UID as <code>EASAdapter</code> does today</td><td>Schema without PII, revocable, with expiry; the attester is a legal entity under contract</td><td>Coinbase Verifications is the ready example (<code>verifiedAccount</code>, <code>verifiedCountry</code> in clear – acceptable only for non-security use)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Trust scoped per token (the ERC-3643 lesson)</h3>
+      <p>ERC-3643 pairs a Trusted Issuers Registry with a Claim Topics Registry: each token says which topics it needs and which issuers it accepts. We get the same with less: the rules already sit on the token, so <code>RuleLibrary</code> gains an <code>acceptedIssuers[]</code> parameter (or an <code>IssuerScopedClaim(key, issuers)</code> rule), and the base gate can require <code>claims[subject][urwa.identity.valid].issuer ∈ trusted(token)</code>. Portal KYC (issuer = Stobox KMS) then admits to STBU and Compass; issuer X may demand <code>x.kyc.valid</code> from its own key, or Stobox KYC plus <code>us.regd.accredited</code> from a named attestor. One registry, trust decided on the token. This closes gap T-05 in the vault.</p>
+    </div>
+    <div class="card">
+      <h3>Others reading Stobox DID</h3>
+      <ul>
+        <li>Publish the interface (MIT, like the rest of the Factory), the addresses, the event schema and the EAS mirror.</li>
+        <li>Publish a <b>Stobox Identity Trust Framework</b>: who issues, what each key means, how revocation works, SLAs, what stands behind <code>urwa.identity.valid</code> (Stripe + sanctions + residence), and what we do not assert.</li>
+        <li>A reader outside Stobox gets exactly what a Compass token gets: hashes, validity, issuer. Disclosure of a value is always a bilateral, off-chain act by the person or by us under contract.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ZK -->
+<section aria-labelledby="z-h">
+  <div class="head">
+    <span class="kicker">5 · Privacy technology</span>
+    <h2 id="z-h">What ships, what is piloted, what is not promised</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Approach</th><th>What it gives</th><th>Cost</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Salted hash commitments + <code>numeric</code> thresholds + EAS mirror + off-chain selective disclosure</td><td>No PII on chain; any counterparty can verify a disclosed value; holder counts by person still work</td><td>Nothing beyond the registry</td><td class="v yes">Ship now</td></tr>
+      <tr><td class="v">ZK proof "country ∉ deny-list" or "accredited" (Privado ID / iden3, Semaphore membership)</td><td>Eligibility without revealing which country; membership without revealing which wallet</td><td>Groth16 verifier 200–300k gas, above the 100k rule ceiling; ZK hides the subject, so per-person caps stop working – usable for admit/refuse predicates only</td><td class="v meh">Pilot 2027, after a regulated issuer appears</td></tr>
+      <tr><td class="v">zkPass-style proofs of a Web2 session</td><td>Proof of a Stripe result without the provider</td><td>Early stage</td><td class="v meh">Watch</td></tr>
+      <tr><td class="v">World ID</td><td>Proof of personhood</td><td>–</td><td class="v no">Not for securities: proves "a human", not "who"</td></tr>
+      <tr><td class="v">EUDI wallet (eIDAS 2.0)</td><td>Government-issued PID as SD-JWT / mdoc; regulated sectors must accept from 24.12.2027</td><td>An issuer slot in the DID service: "EUDI PID → <code>eu.eidas.pid.verified</code>"</td><td class="v meh">Keep the door open; do not build yet</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note warn"><b>Not to be promised anywhere.</b> "Stobox never sees the data" (we are the KYC controller); "full anonymity" (a regulated security needs a named register at the transfer agent or the BVI registrar); "deleted from the chain"; "ZK-KYC in production" before a circuit audit. Institutions in 2026 ask who the controller is, where PII sits, what the DPA with the provider says, how revoke and erasure run, and whether they can bring their own KYC. Securitize and Tokeny both keep KYC off chain and whitelist on chain; ZK is on nobody's critical path.</p>
+</section>
+
+<!-- ============================================================ REG -->
+<section aria-labelledby="g-h">
+  <div class="head">
+    <span class="kicker">6 · Regulatory table</span>
+    <h2 id="g-h">What the design must do, per regime</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Regime</th><th>Design obligation</th></tr></thead>
+    <tbody>
+      <tr><td class="v">EU GDPR · EDPB 02/2025</td><td>PII off chain; salted hashes only; DPIA justifying a public chain; erasure = revoke + destroy salt and link; a named controller per product; Art. 28 DPA with Stripe; records of processing</td></tr>
+      <tr><td class="v">UK GDPR · DPA 2018</td><td>Same; no ICO blockchain guidance yet, follow the EDPB; transfer basis to BVI (IDTA or adequacy – counsel)</td></tr>
+      <tr><td class="v">US state privacy (CPRA and peers)</td><td>GLBA exemption covers much financial data; the right to delete is met by the same erasure path</td></tr>
+      <tr><td class="v">SEC 17a-4 · 17Ad-6/7</td><td>The BD or transfer-agent partner keeps the books, and will ask us for an exportable immutable register: the auditor pack built from events. The SEC proposed modernising 17Ad-6/7 for digital-asset transfer agents on 04.09.2026 (comments to 03.11.2026) – track it</td></tr>
+      <tr><td class="v">BVI DPA 2021</td><td>Seven principles; liability for processors; transfer out of BVI only on adequacy or consent – Stripe (US) and an EU database need a basis; controller is Innovations or STE Ltd</td></tr>
+      <tr><td class="v">MiCA · TFR travel rule · FATF R.16</td><td>Not applicable to MiFID instruments; applies to STBU transfers with a CASP counterparty (zero threshold). The registry can confirm "wallet verified by Stobox" to a CASP, but originator and beneficiary data travel off chain (TRISA / IVMS101), never through the ledger</td></tr>
+      <tr><td class="v">eIDAS 2.0</td><td>Wallets mandatory in member states by 24.12.2026; acceptance by regulated sectors from 24.12.2027; reserve an issuer slot, build later</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============================================================ COMPARE -->
+<section aria-labelledby="c-h">
+  <div class="head">
+    <span class="kicker">7 · Against the alternatives</span>
+    <h2 id="c-h">Why one Stobox registry and not ERC-3643 whole</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th></th><th>Stobox unified registry</th><th>ERC-3643 ONCHAINID</th><th>EAS only</th><th>Coinbase Verifications</th><th>VC / DID wallets</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Institutions</td><td>subject-keyed, issuer per claim, auditor pack</td><td>de-facto standard, ISO track; ~1.5M gas per investor, vendor lock-in</td><td>no financial schemas; cannot say three wallets are one person</td><td>Coinbase customers only; country in clear</td><td>strong privacy; no regulated issuers yet</td></tr>
+      <tr><td class="v">Stobox operations</td><td>one writer, one contract, two surfaces</td><td>four contracts plus a deploy per investor</td><td>cheap, but subject accounting lives elsewhere</td><td>not ours</td><td>complex UX, wallet with the investor</td></tr>
+      <tr><td class="v">Regulators</td><td>hashes + salts, erasure path, DPIA</td><td>claims may carry PII hashes – same problem</td><td>public forever</td><td>operator is Coinbase</td><td>best GDPR profile</td></tr>
+      <tr><td class="v">Pluggability</td><td>L1 / L2 / L3 + trust scoping</td><td>TIR / CTR – the reference model</td><td>any schema, no trust model</td><td>none</td><td>W3C standard</td></tr>
+      <tr><td class="v">Verdict</td><td class="v yes">Recommended</td><td class="v meh">Borrow the trust model</td><td class="v meh">Mirror</td><td class="v meh">L3 example</td><td class="v meh">Issuer slot later</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="prose">The ERC-7943 pipeline in the Factory is five to ten times cheaper per transfer than T-REX and is already written and tested; ONCHAINID's value – trust scoped per token – arrives through <code>Claim.issuer</code> and one rule parameter.</p>
+</section>
+
+<!-- ============================================================ DECISIONS -->
+<section aria-labelledby="dec-h">
+  <div class="head">
+    <span class="kicker">8 · Decisions</span>
+    <h2 id="dec-h">For Gene, and for counsel</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Gene</h3>
+      <ol class="dec">
+        <li><b>Drop the uDID string on chain</b> – <code>bytes32</code> only; 4XR and STBU move to the new getter. Yes or no?</li>
+        <li><b>Controller of KYC</b>: Innovations as operator, or the issuer per product? Decides who signs the DPIA and answers erasure requests.</li>
+        <li><b>Trust scoping in the base gate</b> (issuer-aware <code>isActive</code>) or only in rules? The first ends "portal KYC = entry everywhere" from the 10.09 ruling – choose explicitly.</li>
+        <li><b>Re-bind with a balance</b>: refuse until resync, or allow with a mandatory resync in the same transaction?</li>
+        <li><b>EAS mirror</b> from day one or after launch?</li>
+        <li><b>ZK pilot budget</b> in 2027, or wait for a regulated issuer?</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Max (counsel)</h3>
+      <ol class="dec">
+        <li>Controller / processor allocation across Innovations (BVI), STE Ltd (BVI) and Technologies (WY); joint control?</li>
+        <li>KYC retention under BVI AMLR versus the EU five years; may the Stripe session be deleted earlier while the result is kept?</li>
+        <li>Is "effective anonymisation" by salt destruction a sufficient Art. 17 answer with an immutable hash, per EDPB v2?</li>
+        <li>Transfer basis for PII from BVI to Stripe (US) and to an EU database.</li>
+        <li>Liability of an L1 issuer to the issuer of the token for a false claim; our recourse.</li>
+        <li>Does portal KYC (Stripe) equal investor KYC for Reg S and a BVI private placement, and who attests <code>us.regd.accredited</code>?</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CHANGELOG -->
+<section aria-labelledby="cl-h">
+  <div class="head">
+    <span class="kicker">Changelog</span>
+    <h2 id="cl-h">Versions</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Gene's ruling of 25.09: one unified registry. Data map, GDPR roles, registry design with two surfaces, three plug-in levels, trust scoping, privacy-technology verdicts, regulatory table, comparison, decisions.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <span class="meta">Sources · uRWA-Factory: src/identity/Adapters.sol, src/interfaces/IIdentityRegistry.sol, src/interfaces/Roles.sol (ClaimKeys), src/rules/RuleLibrary.sol, src/facets/ComplianceFacet.sol, script/Deploy.s.sol (presets), docs/09-identity-did.md, docs/11-passport.md, docs/26-handoff.md · Vault: wiki/Stobox-DID.md, wiki/KYC-контур.md, wiki/реестр-гэпов.md (T-05…T-14), wiki/Stobox-Attest.md · Stobox DID: Arbitrum 0x25e6036178656b1329ee51696407b367d8c6ba84, Base 0x4e13…a89b (vault; not read by this page) · EDPB Guidelines 02/2025 on blockchain (v2) · ERC-3643 Trusted Issuers / Claim Topics registries · EAS SDK · coinbase/verifications · SEC transfer-agent modernisation fact sheet (04.09.2026) · Appleby BVI DPA guide · eIDAS 2.0 timeline.</span>
+  <span class="meta">Uncertain · the stobox-did-base deploy kit carries bytecode and role scripts but no contract source, so the live DID behaviour is taken from docs/09 and the vault; the EDPB v2 adoption date is from search results; retention periods under BVI AMLR, the tZERO identity practice and institutional checklists are generalisations from public material, not from interviews.</span>
+</footer>
+</main>

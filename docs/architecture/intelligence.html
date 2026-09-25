@@ -1,0 +1,433 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STV4 Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#0D1424; --ink-2:#2B3447; --muted:#5A6477; --rule:#D8DEE8;
+  --region:#E9EDF4; --region-base:#E6EEFF; --accent:#0046E0;
+  --live:#12804F; --ready:#4B4BC8; --pending:#A86200; --gap:#C42D25; --option:#6B7489;
+  --display:"Unbounded",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+    --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+    --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+  --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+  --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+main{max-width:1180px;margin:0 auto;padding:56px 28px 96px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font:700 clamp(30px,4.6vw,48px)/1.08 var(--display);letter-spacing:-.01em}
+h2{font:700 22px/1.25 var(--display);letter-spacing:-.005em}
+h3{font:600 17px/1.35 var(--body)}
+p{margin:0}
+.prose{max-width:68ch;color:var(--ink-2)}
+.prose code{overflow-wrap:anywhere}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.meta{font:12.5px/1.5 var(--mono);color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+header{display:grid;gap:18px;margin-bottom:56px}
+header .lede{font-size:19px;line-height:1.5;max-width:62ch;color:var(--ink-2)}
+section{display:grid;gap:20px;padding-top:44px;margin-top:44px;border-top:1px solid var(--rule)}
+section > .head{display:grid;gap:10px}
+.kicker{font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:14px;border-radius:3px;border:1.6px solid;background:var(--surface)}
+.sw.live{border-color:var(--live)} .sw.ready{border-color:var(--ready)}
+.sw.pending{border-color:var(--pending);border-style:dashed} .sw.gap{border-color:var(--gap);border-style:dashed;background:color-mix(in srgb,var(--gap) 10%,var(--surface))}
+.sw.option{border-color:var(--option);border-style:dotted}
+figure{margin:0;display:grid;gap:12px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+.scroll svg{display:block;width:100%;height:auto;min-width:980px}
+figcaption{font-size:14px;color:var(--muted);max-width:80ch}
+.hint{display:none;font:12px var(--mono);color:var(--muted)}
+@media (max-width:980px){.hint{display:block}}
+.rg{fill:var(--region);stroke:var(--rule);stroke-width:1}
+.rg.base{fill:var(--region-base);stroke:var(--accent);stroke-opacity:.45;stroke-dasharray:6 5}
+.rl{font:600 10.5px var(--body);letter-spacing:.13em;fill:var(--muted)}
+.rl.base{fill:var(--accent)}
+.n rect{fill:var(--surface);stroke-width:1.6}
+.n.live rect{stroke:var(--live)}
+.n.ready rect{stroke:var(--ready)}
+.n.pending rect{stroke:var(--pending);stroke-dasharray:6 4}
+.n.gap rect{stroke:var(--gap);stroke-dasharray:6 4;fill:color-mix(in srgb,var(--gap) 8%,var(--surface))}
+.n.option rect{stroke:var(--option);stroke-dasharray:2 3}
+.n.plain rect{stroke:var(--rule)}
+.t{font:600 13px var(--body);fill:var(--ink)}
+.s{font:400 10.5px var(--mono);fill:var(--muted)}
+.st{font:700 9px var(--body);letter-spacing:.1em}
+.live .st{fill:var(--live)} .ready .st{fill:var(--ready)} .pending .st{fill:var(--pending)} .gap .st{fill:var(--gap)} .option .st{fill:var(--option)}
+.e{fill:none;stroke:var(--muted);stroke-width:1.4}
+.e.hot{stroke:var(--accent);stroke-width:1.8}
+.e.bad{stroke:var(--gap);stroke-dasharray:5 4}
+.e.dot{stroke-dasharray:2 3}
+.ah{fill:var(--muted)} .ah.hot{fill:var(--accent)} .ah.bad{fill:var(--gap)}
+.el{font:500 10.5px var(--mono);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.el.hot{fill:var(--accent)}
+.el.bad{fill:var(--gap)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card p,.card li{font-size:15px;color:var(--ink-2)}
+.card ul,.card ol{margin:0;padding-left:18px;display:grid;gap:6px}
+.note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--ink-2);max-width:78ch}
+.note.warn{border-color:var(--gap)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--region) 60%,var(--surface))}
+tr:last-child td{border-bottom:0}
+td.v{font-weight:600;white-space:nowrap}
+.yes{color:var(--live)} .no{color:var(--gap)} .meh{color:var(--pending)}
+pre{margin:0;background:color-mix(in srgb,var(--region) 60%,var(--surface));border:1px solid var(--rule);border-radius:10px;padding:16px 18px;overflow-x:auto;font:13px/1.55 var(--mono);color:var(--ink-2)}
+ol.dec{margin:0;padding-left:22px;display:grid;gap:12px;max-width:80ch}
+ol.dec li{padding-left:6px;color:var(--ink-2)}
+ol.dec b{color:var(--ink)}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);display:grid;gap:6px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 4 · v0.1 · 25 Sep 2026</div>
+  <h1>STV4 Intelligence</h1>
+  <p class="lede">The record is the source; the oracle attests facts from the record to the chain; the token carries eligibility and terms; agents act within mandates. Any client system plugs into the same intake as documents do, and every figure arrives with its source, tier and expiry. The gap that matters: <code>AgentAuthority.consume</code> is called by nothing in <code>src/</code>, so a mandate today is a promise, not a limit.</p>
+  <div class="legend" aria-label="Status legend">
+    <span><i class="sw live"></i>Live on chain or in production</span>
+    <span><i class="sw ready"></i>Code and tests ready, not deployed</span>
+    <span><i class="sw pending"></i>Planned, not built or created yet</span>
+    <span><i class="sw gap"></i>Gap: missing, blocks a feature</span>
+    <span><i class="sw option"></i>Optional</span>
+  </div>
+  <p class="meta">Hub: <a href="stv4.html">STV4</a> · siblings: <a href="identity.html">Identity</a> · <a href="terms.html">Terms</a> · <a href="offering.html">Offering</a></p>
+</header>
+
+<!-- ============================================================ THESIS -->
+<section aria-labelledby="th-h">
+  <div class="head">
+    <span class="kicker">1 · The thesis</span>
+    <h2 id="th-h">Where BlackRock draws a box, we keep a record</h2>
+    <p class="prose">In every figure of "The Machine-Native Economy" there is a small box – eligibility flag, trusted agent, discovery API – where a machine must believe a fact about the world that the chain does not prove. That box is the record. Our flag is not a bit: it is the result of a chain – document → value candidate with tier, confidence and dates → human election → attestation → view on the token – and it carries a source, an expiry and a signature.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>BlackRock box</th><th>What it stands for there</th><th>Stobox component</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Eligibility flag</td><td>a field the chain "just knows"</td><td>the compliance pipeline (pause → trust → sender → recipient → frozen → rules), <code>canTransfer</code> / <code>whyBlocked</code> as free views, the subject-keyed Identity Registry with claims</td><td><a href="identity.html">Identity</a> · <code>ComplianceFacet</code></td></tr>
+      <tr><td class="v">Trusted agent</td><td>"this agent can be trusted"</td><td>three layers: <code>AgentAuthority</code> mandate (what it may do), the principal's DID subject (for whom), Stobox Attest / Standing (who stands behind it – legal entity, KYA)</td><td><code>AgentAuthority.sol</code> · doc 22 · Stobox Attest (deferred, K-129)</td></tr>
+      <tr><td class="v">Discovery API</td><td>find an asset or service and its terms</td><td>MCP server over the record plus on-chain views (<code>IIntelligenceFacet</code>, passport snapshots, <code>PolicySet</code> groups), <code>llms.txt</code>, schema.org</td><td>stobox-sig · <a href="terms.html">Terms</a></td></tr>
+      <tr><td class="v">Payment rails · x402 · ACP · AP2</td><td>money moves</td><td><b>consumed, not built</b>: the USDC leg of <code>AtomicDvP</code>, x402 for paid MCP calls</td><td>canon: built on Coinbase / x402 / USDC / EAS</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Three canon rules bound what may be said: proofs go on chain, never data; each field is a statement about the record, not about the world; an anchor proves nothing was rewritten, never that it is true. So "Intelligence contracts" are not contracts that know the truth – they are contracts where anyone can check who said what, when, and on which document.</p>
+</section>
+
+<!-- ============================================================ MAP -->
+<section aria-labelledby="map-h">
+  <div class="head">
+    <span class="kicker">2 · The pipeline</span>
+    <h2 id="map-h">From a client's API to an agent's action</h2>
+    <p class="prose">Left to right. Connectors are a second door into the same intake as documents: they produce value candidates, never elections. Elections become figures per period, figures become signed oracle records, records become views on the token. Agents read the views and the record, and act only through a mandate that the target contract checks.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1200 560" role="img" aria-label="Intelligence pipeline: client systems and documents feed the intake, which produces value candidates; human election produces the record and figures per period; the oracle relay signs records into the Stobox Oracle on Base; the Intelligence facet on the token exposes them; the Compass Board reads the reference price; agents read through MCP and views and act through AgentAuthority mandates that payout, Board and DvP contracts must check – today nothing calls consume.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah bad" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <rect class="rg" x="20" y="44" width="250" height="496" rx="10"/><text class="rl" x="34" y="66">CLIENT SYSTEMS</text>
+      <rect class="rg" x="300" y="44" width="300" height="496" rx="10"/><text class="rl" x="314" y="66">INTELLIGENCE · THE RECORD</text>
+      <rect class="rg base" x="630" y="44" width="300" height="496" rx="12"/><text class="rl base" x="646" y="66">BASE · CHAIN 8453</text>
+      <rect class="rg" x="960" y="44" width="220" height="496" rx="10"/><text class="rl" x="974" y="66">AGENTS</text>
+
+      <path class="e" d="M245,113 H313" marker-end="url(#a)"/><text class="el" x="279" y="105" text-anchor="middle">API</text>
+      <path class="e" d="M245,223 H313" marker-end="url(#a)"/><text class="el" x="279" y="215" text-anchor="middle">files</text>
+      <path class="e" d="M450,142 V192" marker-end="url(#a)"/><text class="el" x="460" y="172">candidates</text>
+      <path class="e" d="M450,252 V302" marker-end="url(#a)"/><text class="el" x="460" y="282">election</text>
+      <path class="e hot" d="M575,333 H643" marker-end="url(#ah)"/><text class="el hot" x="609" y="325" text-anchor="middle">signed</text>
+      <path class="e hot" d="M780,362 V412" marker-end="url(#ah)"/><text class="el hot" x="790" y="392">reads</text>
+      <path class="e" d="M780,252 V302" marker-end="url(#a)"/><text class="el" x="790" y="282">price</text>
+      <path class="e" d="M925,443 H973" marker-end="url(#a)"/><text class="el" x="949" y="435" text-anchor="middle">views</text>
+      <path class="e dot" d="M575,113 H610 V28 H1070 V82" marker-end="url(#a)"/><text class="el" x="840" y="20" text-anchor="middle">MCP · record.read · terms · simulate</text>
+      <path class="e bad" d="M1070,252 V302" marker-end="url(#ab)"/><text class="el bad" x="1080" y="282">consume</text>
+      
+      <g class="n live"><rect x="35" y="84" width="210" height="58" rx="8"/><text class="t" x="47" y="108">ERP · cap table · bank</text><text class="s" x="47" y="127">Xero · Eqvista · Plaid · PMS</text><text class="st" x="235" y="100" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="35" y="194" width="210" height="58" rx="8"/><text class="t" x="47" y="218">Documents</text><text class="s" x="47" y="237">160 types · one door</text><text class="st" x="235" y="210" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="35" y="304" width="210" height="58" rx="8"/><text class="t" x="47" y="328">Attestors</text><text class="s" x="47" y="347">auditor · valuer · custodian</text><text class="st" x="235" y="320" text-anchor="end">LIVE</text></g>
+
+      <g class="n pending"><rect x="315" y="84" width="270" height="58" rx="8"/><text class="t" x="327" y="108">Intake · connectors</text><text class="s" x="327" y="127">source_kind=integration · tier ≤ source</text><text class="st" x="575" y="100" text-anchor="end">PLANNED</text></g>
+      <g class="n live"><rect x="315" y="194" width="270" height="58" rx="8"/><text class="t" x="327" y="218">Value candidates</text><text class="s" x="327" y="237">tier · confidence · as_of · locator</text><text class="st" x="575" y="210" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="315" y="304" width="270" height="58" rx="8"/><text class="t" x="327" y="328">Record · figures per period</text><text class="s" x="327" y="347">899 datapoints · hash chain</text><text class="st" x="575" y="320" text-anchor="end">LIVE</text></g>
+      <g class="n pending"><rect x="315" y="414" width="270" height="58" rx="8"/><text class="t" x="327" y="438">Oracle relay · KMS</text><text class="s" x="327" y="457">EIP-712 · evidenceHash</text><text class="st" x="575" y="430" text-anchor="end">PLANNED</text></g>
+
+      <g class="n pending"><rect x="645" y="194" width="270" height="58" rx="8"/><text class="t" x="657" y="218">Compass Board</text><text class="s" x="657" y="237">company lot at reference price</text><text class="st" x="905" y="210" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="645" y="304" width="270" height="58" rx="8"/><text class="t" x="657" y="328">Stobox Oracle</text><text class="s" x="657" y="347">channels · sequence · stale</text><text class="st" x="905" y="320" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="645" y="414" width="270" height="58" rx="8"/><text class="t" x="657" y="438">Token · Intelligence facet</text><text class="s" x="657" y="457">price · valuation · shares · root</text><text class="st" x="905" y="430" text-anchor="end">PLANNED</text></g>
+
+      <g class="n live"><rect x="975" y="84" width="190" height="58" rx="8"/><text class="t" x="987" y="108">MCP server</text><text class="s" x="987" y="127">6 tools · read-only</text><text class="st" x="1155" y="100" text-anchor="end">LIVE</text></g>
+      <g class="n ready"><rect x="975" y="194" width="190" height="58" rx="8"/><text class="t" x="987" y="218">AgentAuthority</text><text class="s" x="987" y="237">mandate · check · consume</text><text class="st" x="1155" y="210" text-anchor="end">READY</text></g>
+      <g class="n gap"><rect x="975" y="304" width="190" height="58" rx="8"/><text class="t" x="987" y="328">Mandate enforcement</text><text class="s" x="987" y="347">no contract calls it</text><text class="st" x="1155" y="320" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="975" y="414" width="190" height="58" rx="8"/><text class="t" x="987" y="438">Agent · DID + Attest</text><text class="s" x="987" y="457">operator · KYA · bounds</text><text class="st" x="1155" y="430" text-anchor="end">PLANNED</text></g>
+    </svg>
+    </div>
+    <span class="hint">Scroll sideways to see the full pipeline.</span>
+    <figcaption>Red is the mandate. <code>AgentAuthority</code> has <code>grant</code>, <code>check</code>, <code>consume</code> and epochs, but no contract in <code>src/</code> calls <code>consume</code>: an agent reports its own spend, and its wallet with an allowance can move tokens around the mandate. The invariant "an agent cannot exceed its mandate" holds only for contracts that call <code>consume</code> themselves – payout, Board and DvP must. Also: the code's <code>principal</code> is an <code>address</code>, doc 22 says a <code>bytes32</code> DID subject; the agentic model needs the second.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ INTAKE -->
+<section aria-labelledby="in-h">
+  <div class="head">
+    <span class="kicker">3 · Enterprise intake</span>
+    <h2 id="in-h">"We take your API systems, any of them" – with the tier the source deserves</h2>
+    <p class="prose">Today the record has one door: documents (160 types, 886 of 899 datapoints reachable by document). Connectors are the second door into the same funnel and must not bypass rule 5.1 – "the threshold sorts, a human elects". A connector produces a value candidate with <code>source_kind = integration</code>, never an election. An integration never raises a tier above what its source earns: QuickBooks is T2, not an audit. That is the honest answer to "plug in any API": we plug in any, and every number arrives labelled with where it came from.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>System class</th><th>Examples</th><th>What it gives the record</th><th>Default tier</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Accounting · ERP</td><td>QuickBooks, Xero, NetSuite</td><td>P&amp;L, balance sheet, cash flow per period (basis = management)</td><td>T2 internal system; T3 if the export is signed; T5 only from audited statements</td></tr>
+      <tr><td class="v">Cap table</td><td>Carta, Eqvista</td><td>shares outstanding, classes, options, RTV</td><td>T2 / T3; Eqvista RTV feeds <code>price.reference</code></td></tr>
+      <tr><td class="v">Banking</td><td>Plaid, Reap</td><td>balances, flows, DSCR components</td><td>T2, <code>valid_until</code> in days</td></tr>
+      <tr><td class="v">Property · asset systems</td><td>PMS, Yardi-class, title registries</td><td>occupancy, rent roll, NOI, title</td><td>T2–T5 by source</td></tr>
+      <tr><td class="v">Custodians · reserves</td><td>custodian reports</td><td>proof of reserves</td><td>T4 (signed by a third party)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Normalisation into the record</h3>
+      <ul>
+        <li>Registry v13.1: 899 datapoints, five dimensions (Company → Project → Asset → Instrument → Offering), 109 groups. Routing by datapoint code is automatic; a connector's field → <code>dp_code</code> mapping is written once per connector.</li>
+        <li><b>A figure is per period, not per record</b> (ADR-0024): twelve months of Xero revenue do not overwrite each other.</li>
+        <li><b>Level of a financial fact</b> (ADR-0026): EBITDA from statements is a legal-entity fact (T4–T5); a project's EBITDA is an allocation, never above T1 without an allocation basis. A connector to an ERP may not write project EBITDA as a fact.</li>
+        <li>Provenance per fact already in the schema: <code>document_id</code> + <code>locator</code>, <code>tier_held</code>, <code>confidence</code>, <code>as_of</code>, <code>valid_until</code>, <code>created_by</code>, <code>superseded_by</code>; election with a rule and an event in the hash chain. For integrations add one field: <code>evidenceHash</code> of the raw API response.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Where PII never goes</h3>
+      <ul>
+        <li>Into the passport tree – never, even hashed: a passport hash is still a pseudonym.</li>
+        <li>Into the oracle – only roots and hashes; never names, documents, 409A figures or PII.</li>
+        <li>Into the model layer of Copilot – row values do not enter; only document bytes for reading.</li>
+        <li>Person-level facts live in the DID claim plane by subject. Identity documents do not enter Stobox at all – only the verification result.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CHANNELS -->
+<section aria-labelledby="ch-h">
+  <div class="head">
+    <span class="kicker">4 · Attested figures</span>
+    <h2 id="ch-h">Record → figure per period → oracle channel → view on the token</h2>
+    <p class="prose">The token never stores a value; it stores which oracle it trusts. For an enterprise that matters: changing the source is changing the oracle, not migrating the token. The first five channels ship with STV4 phase 1; the rest extend the same schema.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Channel</th><th>Scope</th><th>Value</th><th>maxAge</th><th>Guard</th></tr></thead>
+    <tbody>
+      <tr><td class="v">price.reference</td><td>generic, any equity with an RTV</td><td>USDC × 1e6 per share</td><td>36 h</td><td>&gt;15% step waits for Safe confirm</td></tr>
+      <tr><td class="v">valuation.enterprise</td><td>generic</td><td>USD</td><td>36 h</td><td>&gt;15% step waits</td></tr>
+      <tr><td class="v">shares.outstanding</td><td>generic</td><td>integer</td><td>none</td><td>any change waits for Safe confirm</td></tr>
+      <tr><td class="v">captable.root</td><td>generic</td><td>Merkle root</td><td>none</td><td>append-only sequence</td></tr>
+      <tr><td class="v">corporate.action</td><td>generic</td><td>doc hash + code</td><td>none</td><td>append-only sequence</td></tr>
+      <tr><td class="v">nav.perUnit</td><td>fund-specific</td><td>USD × 1e6</td><td>day / week</td><td>deviation</td></tr>
+      <tr><td class="v">revenue.period</td><td>generic for revenue share; period basis mandatory</td><td>USD, period</td><td>per period</td><td>CFO signature</td></tr>
+      <tr><td class="v">covenant.status</td><td>debt-specific</td><td>enum / bool</td><td>30 days</td><td>Safe</td></tr>
+      <tr><td class="v">occupancy · noi.ltm</td><td>real-estate-specific</td><td>pct, USD</td><td>30 days</td><td>deviation</td></tr>
+      <tr><td class="v">reserve.attested</td><td>backed-asset-specific</td><td>root + attestor</td><td>days</td><td>attestor signature</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Freshness classes for the client contract</h3>
+      <ul>
+        <li><b>A</b> · ≤24 h: price, sanctions, reserves.</li>
+        <li><b>B</b> · ≤7 days: NAV, cap table, covenants.</li>
+        <li><b>C</b> · on event: valuation, title, corporate action.</li>
+        <li>A date means "confirmed current", not "changed" (ADR-0023). Stale is read on chain as a flag, never hidden: a stale reference price closes only the company lot on the Board.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>The one decision that makes assets autonomous</h3>
+      <p>If <code>corporate.action</code> carries only a document hash, an agent can notice a dividend was declared but cannot pay it. If it carries structured fields – split, dividend with amount and record date, coupon, buyback – the payout facet can execute from the record under a mandate, and "autonomous asset" stops being a slogan. Open question for Gene, already on the hub.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ AGENTS -->
+<section aria-labelledby="ag-h">
+  <div class="head">
+    <span class="kicker">5 · Agents and mandates</span>
+    <h2 id="ag-h">Who the agent is, what it may do, how it is stopped</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Identity of an agent</h3>
+      <ul>
+        <li>A wallet bound to the principal's DID subject (access) <b>plus</b> attestations about the operator (trust): <code>agent.operator</code> – legal entity, jurisdiction, registration, uDID; <code>agent.kya</code> – the five Stobox Attest checks (entity exists, key control, responsible person, sanctions and adverse media, endpoint liveness). Never a score of the agent's work.</li>
+        <li>Spending and transfer bounds are not claims – they are the mandate: <code>maxPerAction</code>, <code>maxPerEpoch</code>, <code>tokens[]</code>, <code>counterparties[]</code>.</li>
+        <li>ERC-8004: Identity registry yes (discovery); Reputation optional and only with an Attest or payment proof behind it; Validation is where Stobox writes the KYA result. Reason: 3–15% of registered agents have a live endpoint and reputation is 259× cheaper to buy than the median payment it protects (vault note on the agentic economy).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Guardrails</h3>
+      <ul>
+        <li>Every action is a signed intent (EIP-712, as the DvP <code>Instruction</code> and the STBU voucher pattern), checked twice: <code>AgentAuthority.check / consume</code> (mandate) and the token's compliance pipeline (eligibility).</li>
+        <li>A human confirms above a threshold – the same pattern as the oracle's deviation guard and the Copilot ladder Observing → Proposing → Drafting → Acting-leashed: levels 1–3 read and prepare unsent intents; level 4 consumes within caps; above caps, the Safe.</li>
+        <li>Logs: <code>AgentActed(mandateId, agent, principal, selector, amount)</code>, <code>MandateGranted / Revoked</code>, <code>Settled</code>, <code>TransferRefused</code> – an agent's action is never indistinguishable from a human's.</li>
+        <li>Mandates can never express mint, roles, cuts, freeze, seizure or pause, by construction.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Action</th><th>Reads</th><th>Executes</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Read facts</td><td>MCP over the record; views <code>IIntelligenceFacet.*</code>, <code>canTransfer</code>, <code>whyBlocked</code>, <code>unfrozenBalanceOf</code>, <code>lockupsOf</code>, <code>rulesOf</code>, <code>passport.snapshotOf</code></td><td>–</td></tr>
+      <tr><td class="v">Pay a dividend when the oracle says a payout is due</td><td><code>corporate.action</code> with a structured code</td><td><code>consume(SCOPE_DISTRIBUTE)</code> → <code>distributeFromTreasury</code> or the Merkle payout contract</td></tr>
+      <tr><td class="v">Rebalance a treasury within a mandate</td><td>Treasury balances, <code>price.reference</code></td><td><code>AtomicDvP.settle</code> under <code>SCOPE_SETTLE</code>, <code>tokens[]</code> as allow-list</td></tr>
+      <tr><td class="v">List a lot on the Board at a policy price</td><td><code>price.reference</code> + stale flag</td><td><code>CompassBoard.list(id, price)</code> under <code>SCOPE_QUOTE</code> (price band)</td></tr>
+      <tr><td class="v">Refuse a transfer</td><td><code>whyBlocked</code></td><td>nothing to execute: the token refuses; the agent logs <code>TransferRefused</code></td></tr>
+      <tr><td class="v">Pay for data or a service</td><td>–</td><td>x402 USDC to a paid MCP endpoint</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Client case</th><th>Data in</th><th>Agent and calls</th></tr></thead>
+    <tbody>
+      <tr><td class="v">SME with a tokenised revenue share</td><td>Xero → <code>revenue.period</code> (T2, management basis) → oracle → <code>revenuePeriod()</code></td><td>payout agent: <code>check(m, SCOPE_DISTRIBUTE, token, 0, amount)</code> → <code>distributeFromTreasury(holder_i, share_i, 0)</code>; <code>maxPerEpoch</code> = the quarterly pool. If the CFO has not confirmed the period, the channel does not publish and the agent stays silent</td></tr>
+      <tr><td class="v">Real-estate SPV</td><td>PMS → <code>occupancy</code>, <code>noi.ltm</code>; DSCR &lt; 1.2 → <code>covenant.status = breach</code></td><td>monitoring agent (<code>SCOPE_READ</code>) raises the alert; the treasury agent loses <code>SCOPE_SETTLE</code> through an opt-in rule on the channel</td></tr>
+      <tr><td class="v">Fund with a NAV token</td><td>the administrator signs NAV as attestor → <code>nav.perUnit</code></td><td>market-maker agent quotes within a band: <code>check(m, SCOPE_QUOTE, …)</code>; both sides <code>previewSettle</code>, then <code>settle(i, sigA, sigB)</code></td></tr>
+      <tr><td class="v">STBX on the Board</td><td><code>price.reference</code> = Eqvista RTV</td><td>company lot priced automatically; stale closes only the company lot; a buyer agent: <code>canTransfer(board, buyer)</code> → <code>buy(id, amount, maxCost)</code></td></tr>
+      <tr><td class="v">Credit instrument with an automatic coupon</td><td>Plaid → service-account balance → <code>corporate.action{code = COUPON, docHash}</code></td><td><code>SCOPE_DISTRIBUTE</code> pays the coupon in USDC through the Merkle payout; a miss flips <code>covenant.status</code>; <code>addLockup</code> only on its own distributions (<code>SCOPE_LOCKUP</code>)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============================================================ MCP -->
+<section aria-labelledby="mcp-h">
+  <div class="head">
+    <span class="kicker">6 · Machine access</span>
+    <h2 id="mcp-h">From a brochure with search to a surface for a deal</h2>
+    <p class="prose">Today the Stobox MCP has six tools – five read the knowledge graph, one starts a lead in the CRM – with a public tier (no auth, 20 per IP per day) and a partner tier (OAuth 2.1). Add three planes on the same strategy. Honest superiority, without "first": others answer what exists on chain; we answer what to do with your asset, with a tier and a document behind every fact, an eligibility simulation and an intent queue under a mandate.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Tool</th><th>Reads</th><th>Auth</th></tr></thead>
+    <tbody>
+      <tr><td class="v">record.read(entity, dp_codes[], period?)</td><td>elections with tier, source and as_of; refuses if the row does not exist</td><td>seat token; reach ≤ seat scope</td></tr>
+      <tr><td class="v">instrument.terms(token)</td><td><code>IIntelligenceFacet</code>, <code>rulesOf</code>, lockups, the passport's public set, the Terms root</td><td>public</td></tr>
+      <tr><td class="v">eligibility.check(token, wallet)</td><td><code>canReceive</code>, <code>whyBlocked</code></td><td>public</td></tr>
+      <tr><td class="v">board.quote(lotId) · oracle.latest(token, channel)</td><td>price, <code>observedAt</code>, <code>stale</code></td><td>public</td></tr>
+      <tr><td class="v">transfer.simulate(token, from, to, amount)</td><td><code>canTransfer</code> + <code>whyBlocked</code></td><td>public</td></tr>
+      <tr><td class="v">action.propose(intent)</td><td>queues a signed intent for human confirmation; <b>never executes</b></td><td>on-chain agent DID + mandate</td></tr>
+      <tr><td class="v">standing.verify(agentId)</td><td>the Attest attestation</td><td>public, free</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="prose">Two auth classes: API key or OAuth for seat access to a client's record; the agent's on-chain DID (a wallet signature bound to the subject) for actions. x402 for paid fact calls – $0.01–0.10 a call, ~$50 a day at 1,000 calls: a ticket, not a business.</p>
+</section>
+
+<!-- ============================================================ ENTERPRISE -->
+<section aria-labelledby="en-h">
+  <div class="head">
+    <span class="kicker">7 · Enterprise-grade, and the product frame</span>
+    <h2 id="en-h">What must be true, and where "Operate" sits</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Must be true</h3>
+      <ul>
+        <li><b>Data residency</b>: US region for the first cohort; an EU region chosen at signup; SCIM, residency and BYOK in Enterprise.</li>
+        <li><b>SOC 2 / ISO</b>: Vanta bought, security owned by Vlad, SOC 2 Type II without a public date (internal target Q1 2027), ISO 27001 after Type I; ISO 42001 paused. The Vanta card in the services register reads ARCHIVED with no payments found – reconcile with the goal.</li>
+        <li><b>Audit trail</b>: hash chain of record events with a nightly anchor; on chain, the auditor pack from <code>eth_getLogs</code> without an indexer.</li>
+        <li><b>SLAs</b>: freshness classes A / B / C plus the 24-hour price-correction window in the terms.</li>
+        <li><b>Keys</b>: all roles on Safe 2-of-3 with hardware signers; KMS for the relay and the DID writer; annual rotation; timelock on cuts.</li>
+        <li><b>Disclosure page per channel</b>, updated with each <code>schemaVersion</code>.</li>
+        <li><b>Data-licensing clauses</b> (MSA, DPA + SCCs, AI addendum): the client licenses Stobox to publish <i>proofs</i>, not data; the attested figure belongs to the client; the relay signature is ours – "attested by the Stobox relay from a client-supplied source, evidenceHash X" (liability question for Max); x402 data to third parties only under an explicit per-item grant; nothing trains a model.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Not a fourth product</h3>
+      <p>Canon: Organize (Intelligence) → Raise (Raisable, by Raisable Inc.) → Tokenize (Compass = Issue · Price · Board). Intelligence is always-on; the others are episodic. "Operate" as a fourth step collides with Enterprise C2 ("governed operating loop", withdrawn from the price list, 50/50 with Raisable) and with Copilot ("a capability of Intelligence, never an SKU").</p>
+      <p><b>Recommendation.</b> Operate = two capabilities inside existing products: mandates and oracle channels <b>inside Compass</b>, per instrument (channel = "published update" $99 / $890 a year / $2,990 a year capped per issuer – SKUs already exist); agent read and MCP over the record <b>inside Intelligence</b> (anchoring included, unmetered). Say "Organize → Raise → Tokenize, and let software operate it inside mandates" without a fourth column in the price list. No percentage of a raise, no bps of AUM (withdrawn 11.08). If a real "C2" request ever arrives, that becomes Operate – born from a request, not a slide.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ PLAN -->
+<section aria-labelledby="pl-h">
+  <div class="head">
+    <span class="kicker">8 · Roadmap and decisions</span>
+    <h2 id="pl-h">What ships with STV4, what follows</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>With STV4 (see the hub)</h3>
+      <ul>
+        <li>Phase 1: the Stobox Oracle with five channels, the relay, the Safe-confirm path, the Intelligence facet – the first Intelligence contracts in code.</li>
+        <li>Phase 2: the Board reads <code>price.reference</code>; <code>TransferRefused</code> logging.</li>
+        <li>Phase 3: external audit, STBX issuance.</li>
+      </ul>
+      <h3>After STV4</h3>
+      <ul>
+        <li>Phase 4: connectors (Eqvista as direct signer v2; Xero / QuickBooks → <code>revenue.period</code>; Plaid), instrument-specific channels (NAV, covenant, occupancy), the Merkle payout for dividends (own contract, own audit).</li>
+        <li>Phase 5: <code>AgentAuthority</code> with <code>principal = bytes32</code> DID subject, contracts that call <code>consume</code>, an agent SDK and a reference monitoring agent, the MCP "my deal" plane (<code>record.read</code>, <code>action.propose</code>), Attest phase 1 (KYA schema on EAS; deferred as K-129 today).</li>
+        <li>Phase 6: leash level 4 for agents, after a tamper-tested audit, as with Copilot.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Decisions for Gene</h3>
+      <ol class="dec">
+        <li><b><code>corporate.action</code></b>: hash only, or structured fields an agent can act on?</li>
+        <li><b>Who signs an attested figure</b>: the Stobox relay (then we attest – against "inform, never certify" in ADR-0023 §5), or the issuer or a third party with their own key through <code>AttestorRegistry</code>? For client instruments this is liability, not technique.</li>
+        <li><b>One registry on Base</b> – ruled 25.09; every mandate by subject depends on it.</li>
+        <li><b>Operate inside Compass and Intelligence</b>, not a fourth product – confirm, so that the site and decks do not birth "Stobox Operate" before a mandate runs in production.</li>
+        <li><b>Order C → B → A</b> from the agentic-economy note (our own agent with an x402 service → paid calls → Attest as a product) and STBU's role – after Max; today all three hang as K-129 / K-130 / A-61.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CHANGELOG -->
+<section aria-labelledby="cl-h">
+  <div class="head">
+    <span class="kicker">Changelog</span>
+    <h2 id="cl-h">Versions</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. BlackRock boxes mapped to Stobox components; the pipeline from client APIs to agent actions; intake tiers; ten oracle channels; agent identity, guardrails and five client cases; MCP planes; enterprise requirements; the product frame; roadmap and decisions.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <span class="meta">Sources · Gene-Second-Brain: wiki/пост-machine-native-economy-2026-09-24.md, wiki/агентная-экономика-2026-и-STBU.md, wiki/Stobox-Attest.md, wiki/MCP-мастер-стратегия.md, wiki/цели-2026.md, wiki/реестр-сервисов.md · stobox-2026-intelligence: PRODUCT.md, STOBOX-STACK-CANON-2026.md, ADR-0019…0026, SIO-INTAKE-01, SIO-COPILOT-01-SPEC.md, STOBOX-DATAPOINT-REGISTRY.md · uRWA-Factory: src/AgentAuthority.sol, src/AtomicDvP.sol, docs/11-passport.md, docs/22-agents-and-settlement.md, docs/28–30, docs/architecture/stv4.html · stobox-sig README · BlackRock, "The Machine-Native Economy" (Sep 2026) · x402, MCP, ERC-8004, EAS.</span>
+  <span class="meta">Uncertain · the Securitize MCP's tool count is not confirmed in the vault (only the launch is recorded), so no public comparison should cite it; Vanta's payment status conflicts between the services register and the goals page; the principal type mismatch between AgentAuthority.sol (address) and doc 22 (bytes32) is a code-versus-document divergence worth a verify.py check.</span>
+</footer>
+</main>

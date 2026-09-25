@@ -116,9 +116,9 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · v0.1 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · v1.0 · 25 Sep 2026</div>
   <h1>STV4</h1>
-  <p class="lede">The next Stobox security-token protocol: every STV3 facet rebuilt on the uRWA Factory on Base, an Intelligence facet fed by a signed Stobox Oracle, and Stobox DID under every record. The one gap that matters: the Factory's rules read claims by subject, and Stobox DID cannot answer by subject – so a Reg S preset on Stobox DID would refuse every transfer.</p>
+  <p class="lede">The next Stobox security-token protocol: every STV3 facet rebuilt on the uRWA Factory on Base, four layers on top – identity, terms, offering, intelligence – and agents acting within mandates. This page is the hub; each layer has its own page. The one gap that matters: the Factory's rules read claims by subject, and Stobox DID cannot answer by subject – so every preset on Stobox DID refuses every transfer.</p>
   <div class="legend" aria-label="Status legend">
     <span><i class="sw live"></i>Live on chain or in production</span>
     <span><i class="sw ready"></i>Code and tests ready, not deployed</span>
@@ -313,10 +313,25 @@ a{color:var(--accent)}
   </div>
 </section>
 
+<!-- ============================================================ LAYERS -->
+<section aria-labelledby="ly-h">
+  <div class="head">
+    <span class="kicker">4 · The four layers</span>
+    <h2 id="ly-h">One page per layer, statuses read from code</h2>
+    <p class="prose">The Factory is the engine. Four layers give it identity, rights, a regulatory route and data. Each has its own page in this folder, in the same form as this one, with its own map, gaps and decisions.</p>
+  </div>
+  <div class="four">
+    <div class="card"><h3><a href="identity.html">1 · Identity</a></h3><p>One subject-keyed registry of Stobox DIDs on Base with two read surfaces; salted hashes only; GDPR erasure by salt destruction; three levels for a client's own KYC; trust scoped per token.</p><p class="meta">Gap: rules cannot read claims from Stobox DID · Ruling 25.09: one registry</p></div>
+    <div class="card"><h3><a href="terms.html">2 · Terms</a></h3><p>38 clauses from the signed documents classed as enforced, executed, attested or disclosed; a typed Terms model anchored on the passport; seven clauses that make code the agreed performance.</p><p class="meta">Gap: the STBX holder is not a party to any signed document; passport, payout, consent and ROFR do not exist</p></div>
+    <div class="card"><h3><a href="offering.html">3 · Offering</a></h3><p>Regimes as first-class presets – Reg D, Reg S tranches, Reg CF, EU exemptions, UK, BVI – each bound to Factory parameters; the eight layers from issuer to reporting and the document on every arrow.</p><p class="meta">Gap: the <code>regime</code> field sets nothing; five verified defects in OfferingRegistry</p></div>
+    <div class="card"><h3><a href="intelligence.html">4 · Intelligence</a></h3><p>Client systems into the same intake as documents; figures per period into signed oracle channels; agents with DID identity acting within mandates; MCP as the machine surface; Operate inside Compass and Intelligence.</p><p class="meta">Gap: no contract calls <code>AgentAuthority.consume</code></p></div>
+  </div>
+</section>
+
 <!-- ============================================================ ANALYSIS -->
 <section aria-labelledby="an-h">
   <div class="head">
-    <span class="kicker">4 · Analysis</span>
+    <span class="kicker">5 · Analysis</span>
     <h2 id="an-h">What STV4 fixes, and the identity decision</h2>
   </div>
   <div class="tbl">
@@ -334,6 +349,37 @@ a{color:var(--accent)}
     </tbody>
   </table>
   </div>
+
+  <div class="head">
+    <span class="kicker">Gap register</span>
+    <h3>Everything found on 25.09.2026, read against the code</h3>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>#</th><th>Finding</th><th>Where</th><th>Severity</th><th>Closes in</th></tr></thead>
+    <tbody>
+      <tr><td>G1</td><td>Tier-2 identity cannot serve claims by subject; every shipped preset includes <code>HasValidIdentity</code>, so all three presets refuse all transfers on Stobox DID</td><td><code>src/identity/Adapters.sol:248-254</code>, <code>script/Deploy.s.sol:114-134</code></td><td class="v no">blocks issuance</td><td>Identity registry · Phase 1</td></tr>
+      <tr><td>G2</td><td><code>OfferingRegistry.createOffering</code> is permissionless and <code>distributeFromTreasury</code> trusts any call from the stored registry: treasury drain, reproduced by test</td><td><code>src/OfferingRegistry.sol:94</code>, <code>src/facets/MonetaryFacet.sol:81</code></td><td class="v no">critical</td><td>Phase 0</td></tr>
+      <tr><td>G3</td><td><code>forcedTransfer</code> exists only as an interface; <code>supportsInterface</code> still claims ERC-7943; STBX used forced operations 19 times</td><td><code>src/interfaces/IRestrictionFacets.sol:71-75</code>, <code>src/uRWAToken.sol:306-311</code></td><td class="v no">blocks issuance</td><td>Phase 0</td></tr>
+      <tr><td>G4</td><td>Subject re-bind leaves <code>subjectBalance</code> on the old subject; <code>MaxBalancePerHolder</code> bypassable</td><td><code>src/storage/Layout.sol:39-41</code>, handoff finding #1</td><td class="v meh">high</td><td>Phase 0 · <code>resyncSubject</code></td></tr>
+      <tr><td>G5</td><td><code>ISSUER_ADMIN</code> administers every role including <code>UPGRADE_ADMIN</code> – it is the root role, contrary to doc 05</td><td><code>src/facets/RolesFacet.sol:46-48</code></td><td class="v meh">high</td><td>Phase 0 · roles or doc</td></tr>
+      <tr><td>G6</td><td><code>setPolicySet</code> and <code>setIdentityRegistry</code> bypass the upgrade delay, contrary to doc 05:89</td><td><code>src/facets/ComplianceFacet.sol:294-306</code></td><td class="v meh">high</td><td>Phase 0</td></tr>
+      <tr><td>G7</td><td>Only selectors are immutable, not storage: any facet or <code>diamondCut</code> init can write balances by delegatecall; L4.8 overstates the guarantee</td><td><code>src/uRWAToken.sol</code>, <code>src/facets/DiamondCutFacet.sol:29-41</code></td><td class="v meh">high · by design</td><td>doc 26 + upgrade delay as the real control</td></tr>
+      <tr><td>G8</td><td>Per-investor limits count one transaction; <code>Purchase.subject</code> written as zero; <code>paidBySubject</code> unused – a split purchase bypasses <code>maxPerInvestor</code></td><td><code>src/OfferingRegistry.sol:74, 182, 211</code></td><td class="v meh">high</td><td>Phase 0</td></tr>
+      <tr><td>G9</td><td><code>removeRule</code> in any state; <code>settle</code> from <code>Active</code> by anyone; <code>forceStatus</code> to any state; <code>activate</code>/<code>unpause</code> from Settled or Refunding</td><td><code>src/OfferingRegistry.sol:104-125, 341, 481, 520</code></td><td class="v meh">high</td><td>Phase 0 · state machine</td></tr>
+      <tr><td>G10</td><td>Treasury <code>reserve</code>/<code>release</code> never called; multi-currency <code>unlockPayments</code> deducts one asset's total lock – underflow or release of others' funds (read from code, not reproduced)</td><td><code>src/Treasury.sol:97-111</code></td><td class="v meh">high</td><td>Phase 0</td></tr>
+      <tr><td>G11</td><td><code>AgentAuthority.consume</code> is called by nothing; a mandate limits nothing</td><td><code>src/AgentAuthority.sol:104-131</code></td><td class="v meh">medium</td><td>Payout · Board · DvP call it · Phase 5</td></tr>
+      <tr><td>G12</td><td><code>RuleFailed</code> never emitted; cuts at delay 0 emit nothing; PolicySet and adapter mutations emit nothing – the subject register cannot be rebuilt from logs</td><td><code>src/PolicySet.sol</code>, <code>src/identity/Adapters.sol</code>, <code>src/libraries/LibDiamond.sol</code></td><td class="v meh">medium</td><td>Phase 1 · events</td></tr>
+      <tr><td>G13</td><td>The <code>regime</code> field on an offering is a label; no preset is applied</td><td><code>src/OfferingRegistry.sol:94-101</code></td><td class="v meh">medium</td><td>Offering presets v2 · Phase 2</td></tr>
+      <tr><td>G14</td><td>Passport, AttestorRegistry, ATTESTOR and PASSPORT_ISSUER roles: interfaces and constants only, PA 0 of 7</td><td><code>src/interfaces/IAssetPassport.sol</code>, <code>docs/24-work-registry.md</code></td><td class="v meh">medium</td><td>Terms · Phase 4</td></tr>
+      <tr><td>G15</td><td>Payout, consent, ROFR, tag, drag, document registry: none exist</td><td>–</td><td class="v meh">medium</td><td>Terms · Phase 4–5</td></tr>
+      <tr><td>G16</td><td>Interfaces disagree with code: <code>createToken</code>, <code>createOffering</code>, <code>pause()</code>, <code>deposit</code>, <code>createTokenWithOffering</code>; L3.1/L3.2 compare docs to interfaces, so this is invisible to verify.py</td><td><code>src/interfaces/IuRWAFactory.sol:35-39</code> and peers</td><td class="v meh">low</td><td>Phase 0 · docs</td></tr>
+      <tr><td>G17</td><td>Factory ignores <code>lockCap</code> and <code>installEmergencyFacet</code>; fee is read but never charged; <code>PurchaseRecorded</code> fires twice</td><td><code>src/uRWAFactory.sol</code>, <code>src/OfferingRegistry.sol:228, 401</code></td><td class="v meh">low</td><td>Phase 0</td></tr>
+      <tr><td>G18</td><td>The STBX holder is not a party to any signed document; the STEL governance framework is absent; four conflicts in the paper (ROFR period, drag threshold, pre-emption, transfer cap)</td><td><code>raw/legal-2026-04</code></td><td class="v no">blocks Terms</td><td>Max · before Phase 4</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note warn">Rule for every row: a test that fails without the fix before the fix is accepted, and no change on a money path ships before the external audit. G2, G8, G9 and G10 are money paths.</p>
 
   <div class="tbl">
   <table>
@@ -385,7 +431,7 @@ a{color:var(--accent)}
 <!-- ============================================================ CRITERIA -->
 <section aria-labelledby="c-h">
   <div class="head">
-    <span class="kicker">5 · Criteria</span>
+    <span class="kicker">6 · Criteria</span>
     <h2 id="c-h">What "done" means, at four levels</h2>
     <p class="prose">Nothing moves to the next phase until every line of the level below is green. Acceptance is per module, delivery is per release, audit is per mainnet deployment, enterprise-grade is per year of operation.</p>
   </div>
@@ -445,13 +491,13 @@ a{color:var(--accent)}
 <!-- ============================================================ ORDER -->
 <section aria-labelledby="o-h">
   <div class="head">
-    <span class="kicker">6 · Build order</span>
+    <span class="kicker">7 · Build order</span>
     <h2 id="o-h">Foundation first, then identity and data, then the market</h2>
     <p class="prose">The order is set by dependencies, not by size: nothing on Base can be issued as a Reg S instrument until the registry serves claims by subject, and nothing holding money ships before the external audit. Estimates assume two Solidity engineers, one full-stack engineer and part-time DevOps.</p>
   </div>
   <div class="phases">
-    <div class="ph"><div class="when">Phase 0 · 2 weeks</div><div class="why">Foundation: nothing new until the known holes are closed</div>
-      <ul><li>Fix <code>OfferingRegistry</code>: operator role on the token, treasury = token treasury, state machine without back-transitions</li><li>Build <code>EmergencyFacet</code> to the four STV3 defects as tests</li><li>Fix subject re-bind accounting (<code>resyncSubject</code>)</li><li>Refresh handoff and CLAUDE.md, which still says "interfaces only"</li></ul></div>
+    <div class="ph"><div class="when">Phase 0 · 3 weeks</div><div class="why">Foundation: G2–G10, G16, G17 closed with failing-first tests</div>
+      <ul><li><code>OfferingRegistry</code>: operator role on the token, treasury = token treasury, aggregate limits by subject, no <code>removeRule</code> after activation, no <code>settle</code> from Active, bounded <code>forceStatus</code>, single <code>PurchaseRecorded</code></li><li><code>Treasury</code>: reserve on purchase, per-asset unlock</li><li><code>EmergencyFacet</code> to the four STV3 defects as tests</li><li><code>resyncSubject</code>; role admin split; setters under the upgrade delay</li><li>Interfaces reconciled with code; handoff and CLAUDE.md refreshed</li></ul></div>
     <div class="ph"><div class="when">Phase 1 · 4 weeks</div><div class="why">Identity and data: the two things STV3 never had</div>
       <ul><li><code>IdentityRegistry</code> on Base + DID service writing both chains with one KMS key; migrate 305 DID</li><li><code>StoboxOracle</code> with five channels; relay job; Safe confirm path</li><li><code>IntelligenceFacet</code> on the token</li><li>Base Sepolia deployment from CI; auditor pack v1</li></ul></div>
     <div class="ph"><div class="when">Phase 2 · 4 weeks</div><div class="why">Market and migration: the STBX instrument</div>
@@ -459,13 +505,13 @@ a{color:var(--accent)}
     <div class="ph"><div class="when">Phase 3 · 6–8 weeks</div><div class="why">Audit and launch</div>
       <ul><li>Code freeze, external audit, fixes, re-check</li><li>Pause STBX on Arbitrum, snapshot, publish hash</li><li>Issue 1,415,000 on Base, RegS preset, cap locked; recreate 6 lockups</li><li>Open claims, then the Board; company lot at the reference price</li></ul></div>
   </div>
-  <p class="note">Critical path: Phase 0 → IdentityRegistry → external audit → issuance. The oracle and the Board can slip a week without moving the launch; the registry cannot. Total to mainnet: 16–18 weeks from start, which lands in Q1 2027 – after the Reg D round closes on 10.12.2026.</p>
+  <p class="note">Critical path: Phase 0 → IdentityRegistry → external audit → issuance. The oracle and the Board can slip a week without moving the launch; the registry cannot. Total to mainnet: 17–19 weeks from start, Q1 2027 – after the Reg D round closes on 10.12.2026. Phases 4–6 (Terms facets, connectors, mandate-calling contracts, agents) follow on the layer pages.</p>
 </section>
 
 <!-- ============================================================ DECISIONS -->
 <section aria-labelledby="dec-h">
   <div class="head">
-    <span class="kicker">7 · Decisions</span>
+    <span class="kicker">8 · Decisions</span>
     <h2 id="dec-h">Settled and open</h2>
   </div>
   <div class="two">
@@ -504,6 +550,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v1.0</td><td>25 Sep 2026</td><td>Hub restructure: four layer pages added (identity, terms, offering, intelligence) and linked; gap register G1–G18 consolidated from the facet inventory, the offering review and the rights register, each read against the code; Phase 0 widened to three weeks; lede and totals updated.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. STV3 inventory from the nine verified facets on Arbitrum; Factory status from code and 220 passing tests; Intelligence facet and Stobox Oracle designed; identity gap named; four-level criteria; four-phase build order.</td></tr>
     </tbody>
   </table>

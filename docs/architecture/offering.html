@@ -1,0 +1,383 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STV4 Offering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#0D1424; --ink-2:#2B3447; --muted:#5A6477; --rule:#D8DEE8;
+  --region:#E9EDF4; --region-base:#E6EEFF; --accent:#0046E0;
+  --live:#12804F; --ready:#4B4BC8; --pending:#A86200; --gap:#C42D25; --option:#6B7489;
+  --display:"Unbounded",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+    --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+    --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+  --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+  --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+main{max-width:1180px;margin:0 auto;padding:56px 28px 96px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font:700 clamp(30px,4.6vw,48px)/1.08 var(--display);letter-spacing:-.01em}
+h2{font:700 22px/1.25 var(--display);letter-spacing:-.005em}
+h3{font:600 17px/1.35 var(--body)}
+p{margin:0}
+.prose{max-width:68ch;color:var(--ink-2)}
+.prose code{overflow-wrap:anywhere}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.meta{font:12.5px/1.5 var(--mono);color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+header{display:grid;gap:18px;margin-bottom:56px}
+header .lede{font-size:19px;line-height:1.5;max-width:62ch;color:var(--ink-2)}
+section{display:grid;gap:20px;padding-top:44px;margin-top:44px;border-top:1px solid var(--rule)}
+section > .head{display:grid;gap:10px}
+.kicker{font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:14px;border-radius:3px;border:1.6px solid;background:var(--surface)}
+.sw.live{border-color:var(--live)} .sw.ready{border-color:var(--ready)}
+.sw.pending{border-color:var(--pending);border-style:dashed} .sw.gap{border-color:var(--gap);border-style:dashed;background:color-mix(in srgb,var(--gap) 10%,var(--surface))}
+.sw.option{border-color:var(--option);border-style:dotted}
+figure{margin:0;display:grid;gap:12px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+.scroll svg{display:block;width:100%;height:auto;min-width:980px}
+figcaption{font-size:14px;color:var(--muted);max-width:80ch}
+.hint{display:none;font:12px var(--mono);color:var(--muted)}
+@media (max-width:980px){.hint{display:block}}
+.rg{fill:var(--region);stroke:var(--rule);stroke-width:1}
+.rg.base{fill:var(--region-base);stroke:var(--accent);stroke-opacity:.45;stroke-dasharray:6 5}
+.rl{font:600 10.5px var(--body);letter-spacing:.13em;fill:var(--muted)}
+.rl.base{fill:var(--accent)}
+.n rect{fill:var(--surface);stroke-width:1.6}
+.n.live rect{stroke:var(--live)}
+.n.ready rect{stroke:var(--ready)}
+.n.pending rect{stroke:var(--pending);stroke-dasharray:6 4}
+.n.gap rect{stroke:var(--gap);stroke-dasharray:6 4;fill:color-mix(in srgb,var(--gap) 8%,var(--surface))}
+.n.option rect{stroke:var(--option);stroke-dasharray:2 3}
+.n.plain rect{stroke:var(--rule)}
+.t{font:600 13px var(--body);fill:var(--ink)}
+.s{font:400 10.5px var(--mono);fill:var(--muted)}
+.st{font:700 9px var(--body);letter-spacing:.1em}
+.live .st{fill:var(--live)} .ready .st{fill:var(--ready)} .pending .st{fill:var(--pending)} .gap .st{fill:var(--gap)} .option .st{fill:var(--option)}
+.e{fill:none;stroke:var(--muted);stroke-width:1.4}
+.e.hot{stroke:var(--accent);stroke-width:1.8}
+.e.bad{stroke:var(--gap);stroke-dasharray:5 4}
+.e.dot{stroke-dasharray:2 3}
+.ah{fill:var(--muted)} .ah.hot{fill:var(--accent)} .ah.bad{fill:var(--gap)}
+.el{font:500 10.5px var(--mono);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.el.hot{fill:var(--accent)}
+.el.bad{fill:var(--gap)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card p,.card li{font-size:15px;color:var(--ink-2)}
+.card ul,.card ol{margin:0;padding-left:18px;display:grid;gap:6px}
+.note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--ink-2);max-width:78ch}
+.note.warn{border-color:var(--gap)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--region) 60%,var(--surface))}
+tr:last-child td{border-bottom:0}
+td.v{font-weight:600;white-space:nowrap}
+.yes{color:var(--live)} .no{color:var(--gap)} .meh{color:var(--pending)}
+ol.dec{margin:0;padding-left:22px;display:grid;gap:12px;max-width:80ch}
+ol.dec li{padding-left:6px;color:var(--ink-2)}
+ol.dec b{color:var(--ink)}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);display:grid;gap:6px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 3 · v0.1 · 25 Sep 2026</div>
+  <h1>STV4 Offering</h1>
+  <p class="lede">The regulatory route of an offering is chosen above the Factory – which entity issues, under which exemption, through which licensed intermediary – and the Factory executes the chosen regime as an immutable contract. The gap that matters: today the <code>regime</code> field sets nothing, and five defects in <code>OfferingRegistry</code> let a per-investor limit be split, a rule be removed mid-offering and an offering be settled early by anyone.</p>
+  <div class="legend" aria-label="Status legend">
+    <span><i class="sw live"></i>Live on chain or in production</span>
+    <span><i class="sw ready"></i>Code and tests ready, not deployed</span>
+    <span><i class="sw pending"></i>Planned, not built or created yet</span>
+    <span><i class="sw gap"></i>Gap: missing, blocks a feature</span>
+    <span><i class="sw option"></i>Optional</span>
+  </div>
+  <p class="meta">Hub: <a href="stv4.html">STV4</a> · siblings: <a href="identity.html">Identity</a> · <a href="terms.html">Terms</a> · <a href="intelligence.html">Intelligence</a> · Not a legal opinion; items marked "counsel" go to Max and outside counsel.</p>
+</header>
+
+<!-- ============================================================ LAYERS -->
+<section aria-labelledby="l-h">
+  <div class="head">
+    <span class="kicker">1 · The layers</span>
+    <h2 id="l-h">From issuer to reporting, and the document on every arrow</h2>
+    <p class="prose">Eight layers, top to bottom. Each arrow is bound by a document; three exist in the April 2026 pack, the rest are named. The two reds are the holder-facing terms (absent) and the regime switch in the Factory (no-op). Where Stobox sits: technology provider throughout, never the BD, never the venue.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1200 720" role="img" aria-label="Offering layers: issuer entities bound by the Tokenization Rights Agreement and the STBX Investor Agreement; terms including the absent holder terms; the Factory instrument with a regime preset that today sets nothing; the offering campaign or Board lot; distribution through a broker-dealer or the issuer; the investor with DID claims; the secondary market on the Board or a partner ATS; reporting to the transfer-agent register, Form D and EU notifications.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah bad" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <rect class="rg" x="20" y="44" width="1160" height="150" rx="10"/><text class="rl" x="34" y="66">LEGAL · ENTITIES AND PAPER</text>
+      <rect class="rg base" x="20" y="224" width="1160" height="220" rx="12"/><text class="rl base" x="36" y="246">BASE · FACTORY</text>
+      <rect class="rg" x="20" y="474" width="1160" height="220" rx="10"/><text class="rl" x="34" y="496">MARKET · PEOPLE AND PARTNERS</text>
+
+      <!-- row 1 -->
+      <g class="n live"><rect x="40" y="90" width="250" height="84" rx="8"/><text class="t" x="52" y="114">Issuer</text><text class="s" x="52" y="133">STEL (BVI) · Technologies (WY)</text><text class="s" x="52" y="152">client SPV</text><text class="st" x="280" y="106" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="330" y="90" width="250" height="84" rx="8"/><text class="t" x="342" y="114">Corporate papers</text><text class="s" x="342" y="133">TRA 1.9 · SPA 3.6 · POA 2.6</text><text class="s" x="342" y="152">Articles · Bylaws · SHA</text><text class="st" x="570" y="106" text-anchor="end">LIVE</text></g>
+      <g class="n gap"><rect x="620" y="90" width="250" height="84" rx="8"/><text class="t" x="632" y="114">Holder terms</text><text class="s" x="632" y="133">STBX Token Terms · STEL ↔ holders</text><text class="s" x="632" y="152">absent · PPM / subscription</text><text class="st" x="860" y="106" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="910" y="90" width="250" height="84" rx="8"/><text class="t" x="922" y="114">Partner agreements</text><text class="s" x="922" y="133">BD engagement · escrow · TA</text><text class="s" x="922" y="152">Eqvista · oracle data</text><text class="st" x="1150" y="106" text-anchor="end">PLANNED</text></g>
+      <!-- row 2 -->
+      <g class="n ready"><rect x="40" y="270" width="250" height="84" rx="8"/><text class="t" x="52" y="294">Instrument</text><text class="s" x="52" y="313">token · PolicySet preset · passport</text><text class="s" x="52" y="332">RegD506c · RegS · Open</text><text class="st" x="280" y="286" text-anchor="end">READY</text></g>
+      <g class="n gap"><rect x="330" y="270" width="250" height="84" rx="8"/><text class="t" x="342" y="294">Offering</text><text class="s" x="342" y="313">OfferingRegistry campaign</text><text class="s" x="342" y="332">regime = label only</text><text class="st" x="570" y="286" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="620" y="270" width="250" height="84" rx="8"/><text class="t" x="632" y="294">Board lot</text><text class="s" x="632" y="313">company lot · tranche · buyer lockup</text><text class="s" x="632" y="332">holder lots · any price</text><text class="st" x="860" y="286" text-anchor="end">PLANNED</text></g>
+      <g class="n ready"><rect x="910" y="270" width="250" height="84" rx="8"/><text class="t" x="922" y="294">Settlement</text><text class="s" x="922" y="313">AtomicDvP · Treasury</text><text class="s" x="922" y="332">refund push / pull</text><text class="st" x="1150" y="286" text-anchor="end">READY</text></g>
+      <g class="n pending"><rect x="40" y="374" width="250" height="58" rx="8"/><text class="t" x="52" y="398">Regime presets · v2</text><text class="s" x="52" y="417">rules · counters · evidence fields</text><text class="st" x="280" y="390" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="330" y="374" width="250" height="58" rx="8"/><text class="t" x="342" y="398">Country counters</text><text class="s" x="342" y="417">investors · amount · 12 months</text><text class="st" x="570" y="390" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="620" y="374" width="250" height="58" rx="8"/><text class="t" x="632" y="398">Tranche · DCP</text><text class="s" x="632" y="417">trancheId · closedAt · dcpEnd</text><text class="st" x="860" y="390" text-anchor="end">PLANNED</text></g>
+      <g class="n gap"><rect x="910" y="374" width="250" height="58" rx="8"/><text class="t" x="922" y="398">AttestorRegistry</text><text class="s" x="922" y="417">who may issue which claim</text><text class="st" x="1150" y="390" text-anchor="end">GAP</text></g>
+      <!-- row 3 -->
+      <g class="n live"><rect x="40" y="520" width="250" height="84" rx="8"/><text class="t" x="52" y="544">Distribution</text><text class="s" x="52" y="563">Silicon Prairie · tZERO · Texture</text><text class="s" x="52" y="582">issuer direct only without fee</text><text class="st" x="280" y="536" text-anchor="end">LIVE</text></g>
+      <g class="n pending"><rect x="330" y="520" width="250" height="84" rx="8"/><text class="t" x="342" y="544">Investor</text><text class="s" x="342" y="563">DID subject · claims · signed</text><text class="s" x="342" y="582">subscription under docsHash</text><text class="st" x="570" y="536" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="620" y="520" width="250" height="84" rx="8"/><text class="t" x="632" y="544">Secondary</text><text class="s" x="632" y="563">Board (BVI) · partner ATS (US)</text><text class="s" x="632" y="582">transfer with claims</text><text class="st" x="860" y="536" text-anchor="end">PLANNED</text></g>
+      <g class="n option"><rect x="910" y="520" width="250" height="84" rx="8"/><text class="t" x="922" y="544">Reporting</text><text class="s" x="922" y="563">TA register from logs · Form D</text><text class="s" x="922" y="582">EU notifications · STEL reports</text><text class="st" x="1150" y="536" text-anchor="end">OPTION</text></g>
+
+      <!-- edges -->
+      <path class="e" d="M290,132 H328" marker-end="url(#a)"/><text class="el" x="309" y="124" text-anchor="middle">① ②</text>
+      <path class="e bad" d="M580,132 H618" marker-end="url(#ab)"/><text class="el bad" x="599" y="124" text-anchor="middle">③</text>
+      <path class="e" d="M870,132 H908" marker-end="url(#a)"/><text class="el" x="889" y="124" text-anchor="middle">④ ⑤</text>
+      <path class="e hot" d="M165,174 V268" marker-end="url(#ah)"/><text class="el hot" x="175" y="208">④ MSA · flat fee</text>
+      <path class="e hot" d="M290,312 H328" marker-end="url(#ah)"/>
+      <path class="e hot" d="M580,312 H618" marker-end="url(#ah)"/>
+      <path class="e hot" d="M870,312 H908" marker-end="url(#ah)"/>
+      <path class="e bad" d="M165,354 V372" marker-end="url(#ab)"/>
+      <path class="e" d="M455,354 V372" marker-end="url(#a)"/>
+      <path class="e" d="M745,354 V372" marker-end="url(#a)"/>
+      <path class="e bad" d="M1035,354 V372" marker-end="url(#ab)"/>
+      <path class="e hot" d="M455,444 V518" marker-end="url(#ah)"/><text class="el hot" x="465" y="486">⑥ subscription</text>
+      <path class="e" d="M745,444 V518" marker-end="url(#a)"/><text class="el" x="755" y="486">⑦ Board terms</text>
+      <path class="e" d="M290,562 H328" marker-end="url(#a)"/><text class="el" x="309" y="554" text-anchor="middle">⑤</text>
+      <path class="e" d="M580,562 H618" marker-end="url(#a)"/>
+      <path class="e" d="M870,562 H908" marker-end="url(#a)"/><text class="el" x="889" y="554" text-anchor="middle">⑧</text>
+    </svg>
+    </div>
+    <span class="hint">Scroll sideways to see the full diagram.</span>
+    <figcaption>Numbered arrows are the binding documents: ① Tokenization Rights Agreement (Doc 1.9), Technologies → STEL; ② STBX Investor Agreement (Doc 3.6), Class C → STEL; ③ STBX Token Terms, STEL ↔ holders – <b>does not exist</b>; ④ MSA / Tokenization Services Agreement, Technologies ↔ issuer, flat fee; ⑤ BD engagement and escrow; ⑥ subscription agreement with representations, signed EIP-712 under <code>docsHash</code>; ⑦ Board terms of use (Innovations ↔ participants); ⑧ transfer-agent and oracle-data agreements. Agreements with Silicon Prairie, Eqvista (O-07) and a transfer agent are not in the vault.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ REGIMES -->
+<section aria-labelledby="r-h">
+  <div class="head">
+    <span class="kicker">2 · Regimes as first-class presets</span>
+    <h2 id="r-h">What each regime needs, and which Factory parameter encodes it</h2>
+    <p class="prose">Claims marked * do not exist yet. In STV4 a regime installs its rule set, counters and evidence fields at creation and cannot be weakened after <code>activate</code>. Today <code>createOffering</code> stores the parameters and emits an event; no preset is applied (<code>src/OfferingRegistry.sol:94-101</code>).</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Regime</th><th>Who buys</th><th>Where</th><th>How much</th><th>Lock-up · DCP</th><th>Resale</th><th>Disclosure</th><th>Who runs it</th><th>Factory parameters</th></tr></thead>
+    <tbody>
+      <tr><td class="v">US Reg D 506(b)</td><td>Accredited + up to 35 sophisticated non-accredited</td><td>US; state notice filings</td><td>unlimited</td><td>restricted securities</td><td>Rule 144: 1 year for a non-reporting issuer</td><td>502(b) package for non-accredited</td><td>issuer or BD; no general solicitation</td><td><code>us.regd.accredited</code> or <code>us.regd.sophisticated</code>*; non-accredited counter ≤35*; <code>MaxHolders</code></td></tr>
+      <tr><td class="v">US Reg D 506(c)</td><td>Accredited only, with reasonable verification (SEC staff letter of March 2025 on high minimums – counsel)</td><td>US</td><td>unlimited; Form D within 15 days</td><td>restricted</td><td>Rule 144</td><td>PPM, Form D</td><td>BD (Silicon Prairie)</td><td><code>RequiresClaim(us.regd.accredited, min)</code> via <code>bounds</code>; verification evidence hash*; <code>formDRef</code>*</td></tr>
+      <tr><td class="v">Reg S cat. 1 / 2 / 3</td><td>Non-US persons under 902(k), with purchaser certification</td><td>offshore; no directed selling efforts in the US</td><td>unlimited</td><td>cat. 3 (equity of a non-reporting US issuer): DCP 1 year; cat. 1–2: none or 40 days</td><td>during the DCP only under Reg S; equity of a US issuer stays restricted under Rule 905</td><td>certification, resale undertaking, legend, issuer stop-transfer</td><td>issuer or distributor</td><td><code>JurisdictionDeny(US)</code> + <code>us.regs.non_us_person</code>*; <code>trancheId</code>, <code>closedAt</code>, <code>dcpEnd</code>*</td></tr>
+      <tr><td class="v">Reg CF</td><td>everyone; non-accredited limited by income and net worth over 12 months</td><td>US</td><td>$5M per 12 months</td><td>resale restricted 1 year</td><td>to the issuer, accredited investors, family</td><td>Form C, annual report</td><td><b>only</b> a funding portal or BD; funds at a qualified third party</td><td>Factory is the issuance rail only: <code>intermediary</code>*, <code>escrowAgent</code>*, withdrawal until T−48h*</td></tr>
+      <tr><td class="v">Reg A+ Tier 2</td><td>everyone; non-accredited ≤10% of income or net worth</td><td>US</td><td>$75M</td><td>none</td><td>free, blue-sky caveats</td><td>Form 1-A, 1-K / 1-SA</td><td>BD; registered transfer agent required</td><td>TA-of-record field*</td></tr>
+      <tr><td class="v">EU Prospectus Regulation</td><td>Art 1(4)(a) qualified; (b) &lt;150 persons per member state; (c)(d) ≥€100k denomination or investment; small offers under national thresholds</td><td>EU member states by allow-list</td><td>per-country counters over 12 months*</td><td>per issuer terms</td><td>MiFID II: placement is an investment service</td><td>prospectus or exemption basis</td><td>MiFID-licensed placing firm</td><td><code>EUQualifiedExemption</code>; country counters*; <code>withdrawalWindow</code>*</td></tr>
+      <tr><td class="v">EU DLT Pilot</td><td>per DLT MTF / TSS rules</td><td>EU</td><td>issuer of shares with market cap &lt;€500M</td><td>–</td><td>on the DLT market infrastructure</td><td>–</td><td>licensed DLT MI operator (partner)</td><td>token as a DLT instrument; Stobox is not the operator</td></tr>
+      <tr><td class="v">UK</td><td>certified HNW (FPO art. 48), sophisticated (50 / 50A), professionals (19)</td><td>UK</td><td>POATRs exemptions for qualified, &lt;150 persons, small offers – counsel on thresholds</td><td>–</td><td>–</td><td>FPO statements</td><td>authorised person or exemption</td><td><code>uk.fpo.hnw</code>*, <code>uk.fpo.sophisticated</code>* with expiry</td></tr>
+      <tr><td class="v">BVI SIBA</td><td>professional investors / private placement – BVI counsel</td><td>BVI and offshore</td><td>–</td><td>–</td><td>–</td><td>–</td><td>SIBA licence or exemption for the Board</td><td><code>bvi.siba.professional</code>*</td></tr>
+      <tr><td class="v">UAE · Switzerland</td><td>DFSA investment tokens, ADGM digital securities, SCA onshore; FinSA professional, &lt;500 retail, ≥CHF 100k, &lt;CHF 8M per 12 months – counsel</td><td>–</td><td>–</td><td>–</td><td>CH: DLT rights (CO 973d), DLT trading facility</td><td>–</td><td>licensed partner</td><td>presets later</td></tr>
+      <tr><td class="v">Open</td><td>anyone after KYC</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td><code>identity AND sanctions</code>. Permitted <b>only</b> with a written opinion that the instrument is not a security: claim <code>legal.opinion.nonsecurity</code>* on the issuer subject, modelled on <code>MiCARule</code>. Never for a share or a debt; for STBU it is a question for counsel, not our conclusion</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============================================================ MAP -->
+<section aria-labelledby="m-h">
+  <div class="head">
+    <span class="kicker">3 · Contract to law</span>
+    <h2 id="m-h">What each Factory element does legally, and what is missing</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Factory element</th><th>Legal function</th><th>Regimes that require it</th></tr></thead>
+    <tbody>
+      <tr><td class="v">OfferingRegistry state machine</td><td>offering lifecycle, closing condition (soft cap), refund on failure</td><td>all primary; Reg CF requires all-or-nothing</td></tr>
+      <tr><td class="v">Tiers · price</td><td>one price for all investors, disclosed</td><td>Reg D / S: price must match the PPM</td></tr>
+      <tr><td class="v">paymentTokens</td><td>form of payment</td><td>all; MiCA stablecoins in the EU a separate question</td></tr>
+      <tr><td class="v">Refund push / pull</td><td>return guarantee on failure</td><td>Reg CF (with an escrow agent), EU</td></tr>
+      <tr><td class="v">PolicySet on the token</td><td>permanent resale restrictions and issuer stop-transfer</td><td>Reg S 903(b)(3), Rule 144, 12(g)</td></tr>
+      <tr><td class="v">Offering rules</td><td>who is admitted to the primary purchase</td><td>all</td></tr>
+      <tr><td class="v">Claim keys</td><td>investor status verification</td><td>506(c), FPO, PR Art 1(4)(a)</td></tr>
+      <tr><td class="v">Lockups</td><td>DCP, Rule 144 period, company lock-up</td><td>Reg S cat. 3, Reg D, Reg CF</td></tr>
+      <tr><td class="v">MaxHolders</td><td>12(g) threshold: 2,000 / 500 non-accredited</td><td>US</td></tr>
+      <tr><td class="v">TransferWindow</td><td>record dates, corporate actions</td><td>all</td></tr>
+      <tr><td class="v">Passport</td><td>evidence base for the asset (not investor disclosure)</td><td>due diligence, EU PR</td></tr>
+      <tr><td class="v">AttestorRegistry</td><td>who may issue which claim</td><td>506(c), FPO. <b>Not in <code>src/</code></b>; only the ATTESTOR role constant</td></tr>
+      <tr><td class="v">Board</td><td>secondary transactions between parties, escrowed lots</td><td>Reg S 904, SIBA. <b>Not in <code>src/</code></b></td></tr>
+      <tr><td class="v">AtomicDvP</td><td>simultaneous settlement of two legs</td><td>secondary through an ATS or partner</td></tr>
+      <tr><td class="v">AgentAuthority</td><td>bounded mandates for agents</td><td>BD or TA instructions</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Defects in today's code (verified 25.09.2026)</h3>
+      <ol>
+        <li><b>Per-investor limits count one transaction, not the total.</b> <code>_bounds</code> checks only the current purchase (<code>:182</code>); <code>Purchase.subject</code> is written as <code>bytes32(0)</code> (<code>:211</code>); <code>paidBySubject</code> is declared and unused (<code>:74</code>). Splitting a purchase bypasses <code>maxPerInvestor</code>. Blocks Reg CF, ECSP and EU thresholds.</li>
+        <li><b><code>removeRule</code> works in any state</b> (<code>:481</code>): an operator can remove the accreditation rule mid-Reg D. After <code>activate</code>, only additions may be allowed.</li>
+        <li><b><code>settle</code> from <code>Active</code>, by anyone</b> (<code>:341</code>): an offering can be closed early the moment the soft cap is met. Reg CF requires 21 days minimum and notice of early close.</li>
+        <li><b><code>forceStatus</code> moves to any state, including out of <code>Settled</code></b> (<code>:520</code>). Needs an explicit transition list.</li>
+        <li><b><code>PurchaseRecorded</code> fires on purchase and on delivery</b> (<code>:228</code>, <code>:401</code>): event-based reporting doubles the sales in Form D and EU notifications.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Missing elements</h3>
+      <ul>
+        <li>Per-country counters (investors and amount, rolling 12 months, per offering and per issuer) kept in the registry and passed through <code>RuleContext</code>, so rules stay pure.</li>
+        <li>Art 1(4)(b) counts <b>offerees</b>, not buyers – uncountable on chain; hence lots and prices visible only after KYC, and an issuer claim <code>offering.marketing.controls</code>* with the hash of the geo-gating policy.</li>
+        <li><code>trancheId</code>, <code>closedAt</code>, <code>dcpEnd = closedAt + DCP</code>; delivery lock-up = max(<code>lockupUntil</code>, <code>settledAt + dcp</code>).</li>
+        <li><code>intermediary</code> (BD or portal: CRD / LEI hash), <code>escrowAgent</code>, <code>docsHash</code> (PPM, subscription), <code>formDRef</code> / <code>formCRef</code> / <code>prospectusRef</code>; <code>settle</code> requires the intermediary's closing signature where the regime demands one.</li>
+        <li><b>Signed subscription</b>: <code>purchase()</code> takes the investor's EIP-712 signature over <code>docsHash</code> and representations; Reg S cat. 3 certification and 506(c) representations stored on the <code>Purchase</code>.</li>
+        <li>Withdrawal right: <code>withdrawPurchase</code> while <code>Active</code> (Reg CF until T−48h; EU PR Art 23 after a supplement; ECSP four-day reflection).</li>
+        <li>Reason codes: ERC-1404 codes today are pipeline stages (<code>src/facets/RolesFacet.sol:96</code>); one code covers DCP, Rule 144 and a freeze. Add <code>bytes32 basis</code> to <code>Lockup</code> (append-only) and codes by legal basis: 903/904, 144(d), 905, Reg CF 501, 12(g), FPO.</li>
+        <li><code>MaxHolders</code> does not separate accredited from non-accredited; 12(g) needs a 500 non-accredited counter.</li>
+        <li>AttestorRegistry bound to keys: a KYC vendor cannot issue <code>us.regd.accredited</code>.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ROLE -->
+<section aria-labelledby="ro-h">
+  <div class="head">
+    <span class="kicker">4 · Role boundary</span>
+    <h2 id="ro-h">Who Stobox is in each regime, and what may be said</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Regime</th><th>Technologies (US)</th><th>STEL (BVI)</th><th>Innovations (BVI)</th><th>Partner needed</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Reg D</td><td>technology provider, flat fee</td><td>–</td><td>–</td><td>BD (Silicon Prairie); TA where required</td></tr>
+      <tr><td class="v">Reg S (STBX)</td><td>technology</td><td>issuer</td><td>Board operator</td><td>for the company lot in the EU and UK: BD / placement agent</td></tr>
+      <tr><td class="v">Reg CF / A+</td><td>issuance rail only</td><td>–</td><td>–</td><td>portal or BD, escrow, registered TA</td></tr>
+      <tr><td class="v">EU / DLT Pilot</td><td>technology</td><td>–</td><td>–</td><td>MiFID firm, DLT MI operator</td></tr>
+      <tr><td class="v">Secondary</td><td>not a venue</td><td>–</td><td>Board: bulletin board – BVI counsel on SIBA</td><td>ATS (tZERO) for the US</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>The residual Board risk, stated plainly</h3>
+      <p>A lot is executed by an escrow contract and the operator holds <code>forceCancel</code>. That is a system that not only displays offers but executes them. The US Rule 3b-16(b) bulletin-board exclusion assumes no execution; under MiFID II this is closer to an MTF if EU residents are among the buyers; operator control over escrow raises a custody question. With US persons excluded the Exchange Act exposure is low but not zero: code, KMS and relay sit with Technologies. For the EU and UK the exposure is material. Counsel decides; the design does not.</p>
+    </div>
+    <div class="card">
+      <h3>Public wording (canon-aligned)</h3>
+      <ul>
+        <li>Not "exchange / marketplace / trading": "Compass Board – a bulletin board where admitted holders list their STBX at their own price. The parties transact; Stobox holds no funds, matches no orders and charges no fee."</li>
+        <li>Not "securities register": "the token's balance record on chain. The legal register is kept by [issuer / TA]."</li>
+        <li>Not "compliant with Reg S / Reg D": "the token's transfer rules exclude US persons and keep a 12-month lock-up on tokens bought from the company; the offering basis is stated in the offering documents."</li>
+        <li>Not "liquidity": "limited transferability between admitted holders; there is no public market."</li>
+        <li>Allowed: "issuance rail", "compliance layer", "technology provider".</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ STBX -->
+<section aria-labelledby="s-h">
+  <div class="head">
+    <span class="kicker">5 · STBX</span>
+    <h2 id="s-h">The regime stack for the Base issuance and the Board</h2>
+    <p class="prose">STBX is an economic participation in Class C of Stobox Technologies (WY) through STEL (Doc 3.6 §1.2), and STEL is wholly owned by a US company – almost certainly not a foreign private issuer, so the underlying is equity of a non-reporting US issuer: <b>Reg S category 3</b>, and Rule 905 keeps what is bought restricted after the DCP.</p>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Three facts that change the answer</h3>
+      <ol>
+        <li>If "the company" sells continuously in Board lots, under 902(f) the DCP starts only when the distribution completes – for the whole offering it may never start. Hence tranches.</li>
+        <li>STEL holds only the parent's shares: an Investment Company Act question (3(a)(1)(C)) that stays closed while there are no US holders – counsel.</li>
+        <li>If even one STBX reached a US person (the Reg D perks removed on 25.09.2026), Reg S cleanliness is broken. Verify that no perk was ever paid out.</li>
+      </ol>
+      <h3>Coexistence with Reg D via Silicon Prairie</h3>
+      <p>Rule 152(b)(2): Reg S offers and sales are not integrated with other offerings; the SEC's 2013 506(c) release says general solicitation in a parallel 506(c) is not a directed selling effort for Reg S – counsel to confirm the position applies. The instruments differ formally: Class C of Technologies directly versus STBX from STEL. Three residual risks: the PPM price $1.75 against a public reference price $1.99 (PPM amendment disclosing the parallel Reg S, the Board and the reference price); the STEL number in Offering Memorandum v3 is wrong (L-80); a Board page reachable from the US must carry no call to buy.</p>
+    </div>
+    <div class="card">
+      <h3>Recommended stack</h3>
+      <ul>
+        <li><b>Token:</b> <code>RegS</code> preset plus <code>us.regs.non_us_person</code>*, <code>SanctionsScreen(30d)</code>, <code>MaxHolders</code>, a country allow-list instead of a deny-list only; UK admitted through <code>uk.fpo.*</code>*; China and the FATF lists denied.</li>
+        <li><b>Migration of 107 holders is not a new offering</b> – a change of record form (MigrationClaim); lock-ups carry their dates. Conditions: no new consideration, no change of rights – counsel on 3(a)(9) / absence of a "sale".</li>
+        <li><b>Company lot in tranches, never continuous.</b> Each lot or period gets <code>trancheId</code> and <code>closedAt</code>; <code>buyerLockup</code> = 12 months from purchase, stricter than a DCP from closing; the purchaser certification is signed at <code>buy</code>.</li>
+        <li><b>EU:</b> qualified investors only (Art 1(4)(a)) plus ≤150 per state with country counters; lots visible only after KYC; placement in the EU through a MiFID partner. <b>UK:</b> certified HNW and sophisticated only.</li>
+        <li><b>BVI:</b> the regime of the Board and the company lot is for BVI counsel.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ DECISIONS -->
+<section aria-labelledby="dec-h">
+  <div class="head">
+    <span class="kicker">6 · Decisions</span>
+    <h2 id="dec-h">For Gene, and for outside counsel</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Gene</h3>
+      <ol class="dec">
+        <li><b>Company lot in tranches</b> or continuous? Recommended: tranches.</li>
+        <li><b>Admit the EU to the Board before a MiFID partner exists?</b> Recommended: no – non-EU, non-US and UK under FPO first.</li>
+        <li><b>Commission STBX Token Terms</b> (STEL ↔ holders) as the condition of the Base issuance.</li>
+        <li><b>Narrow TRA §2.1</b>: STEL issues only its own STBX; client projects run by Technologies as technology provider; consent to sublicense for the Board under Innovations.</li>
+        <li><b>Fix order in OfferingRegistry</b>: treasury drain and open <code>createOffering</code>, then aggregate limits by subject, no <code>removeRule</code> after activation, no <code>settle</code> from <code>Active</code>, bounded <code>forceStatus</code> – before the first Compass Issue client.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Outside counsel</h3>
+      <ol class="dec">
+        <li>Is STBX an "equity security of a domestic issuer" for Reg S and Rule 905; look-through to Technologies as co-issuer?</li>
+        <li>Is a company lot at a floating reference price a continuous offering under 902(f); are tranches with <code>closedAt</code> plus a 12-month buyer lock-up sufficient?</li>
+        <li>STEL's Investment Company Act status and the conditions under which it stays outside.</li>
+        <li>Is the Arbitrum → Base migration a "sale" or "offer"?</li>
+        <li>Board: does the 3b-16 bulletin-board exclusion survive escrow execution; MTF qualification in the EU and UK; the custody question raised by <code>forceCancel</code>.</li>
+        <li>EU PR after the Listing Act: exact thresholds, application date (05.06.2026 in the brief) and national options per target state; UK POATRs exemptions and the small-offer threshold.</li>
+        <li>Is a placement agent needed for the company lot in the EU and UK, or does "issuer sells itself" suffice?</li>
+        <li>May the minimum investment from <code>bounds</code> serve as "reasonable steps" under the March 2025 SEC staff letter in the Silicon Prairie round?</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CHANGELOG -->
+<section aria-labelledby="cl-h">
+  <div class="head">
+    <span class="kicker">Changelog</span>
+    <h2 id="cl-h">Versions</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Layer diagram with binding documents; regime typology as presets; contract-to-law map; five verified defects and the missing elements in OfferingRegistry; role boundary and public wording; the STBX regime stack; decisions and counsel questions.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <span class="meta">Sources · uRWA-Factory: src/OfferingRegistry.sol (74, 94, 182, 211, 228, 341, 401, 481, 520), src/rules/RuleLibrary.sol, src/facets/RolesFacet.sol:96, src/storage/Layout.sol:48, docs/10-rules.md, docs/12-offering.md, docs/11-passport.md · Vault: wiki/Compass-Board.md, wiki/STBX.md, wiki/Stobox-Tokenized-Equities.md, wiki/Stobox-Innovations.md, wiki/инвесторский-раунд-2026.md · raw/legal-2026-04/_текст: 1_9_Tokenization_Rights_Agreement, 2.5_Platform_Operator_Agreement_v2.6, out_3_6_STBX_Investor_Agreement.</span>
+  <span class="meta">Uncertain · US, EU, UK, BVI, UAE and Swiss norms (thresholds, dates, the 2025 SEC staff letter) are stated from memory, not from primary sources in the vault; agreements with Silicon Prairie, Eqvista and a transfer agent were not found; whether any Reg D perk in STBX was ever paid is unverified.</span>
+</footer>
+</main>
