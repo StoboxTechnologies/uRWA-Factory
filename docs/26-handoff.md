@@ -262,6 +262,9 @@ permissionless deliberately, and say so in their own comments.
 | 6 | **Claim freshness windows are not settled** per datapoint group. | `PA-03`. Cheap now, expensive after rules encode it. |
 | 7 | **The timelock default offered in the console is undecided.** Whatever ships becomes the de-facto standard. | `UI-01`. |
 | 8 | **MiCA claim key names are unconfirmed** against a real configuration. | `PO-08`. |
+| 9 | **Tier-2 identity cannot serve claims by subject** (session 11, 25.09.2026). `StoboxDIDAdapter.claim` and `hasValidClaim` return empty because StoboxDID is wallet-keyed, and no rule calls `claimForWallet`; a `RegS` preset on StoboxDID refuses every transfer. Rules were never reached on tier 2. | A subject-keyed identity registry on Base – `docs/architecture/stv4.html` §4, option A. |
+| 10 | **`OfferingRegistry.createOffering` is permissionless and the treasury trusts the registry blindly** (session 11): an allow-listed wallet can drain a token's treasury through a self-made offering. Reproduced by test in a scratch copy. | Operator role on the token, offering treasury = token treasury, no back-transitions in `_move`. Phase 0 of the STV4 build order. |
+| 11 | **`forcedTransfer` exists only in `IEmergencyFacet`** (session 11); STBX on Arbitrum used forced operations 19 times. | An `EmergencyFacet` built to the four STV3 defects as tests. Phase 0 of the STV4 build order. |
 
 ### Outside this repository
 

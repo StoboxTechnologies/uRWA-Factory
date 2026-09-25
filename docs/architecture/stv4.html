@@ -1,0 +1,517 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STV4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#0D1424; --ink-2:#2B3447; --muted:#5A6477; --rule:#D8DEE8;
+  --region:#E9EDF4; --region-base:#E6EEFF; --accent:#0046E0;
+  --live:#12804F; --ready:#4B4BC8; --pending:#A86200; --gap:#C42D25; --option:#6B7489;
+  --display:"Unbounded",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+    --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+    --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0E16; --surface:#121927; --ink:#E8EDF6; --ink-2:#C5CDDB; --muted:#95A0B5; --rule:#273146;
+  --region:#101624; --region-base:#0F1B36; --accent:#6D9BFF;
+  --live:#3CC486; --ready:#9696F2; --pending:#F0A53C; --gap:#F26A61; --option:#98A2B6;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+main{max-width:1180px;margin:0 auto;padding:56px 28px 96px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font:700 clamp(30px,4.6vw,48px)/1.08 var(--display);letter-spacing:-.01em}
+h2{font:700 22px/1.25 var(--display);letter-spacing:-.005em}
+h3{font:600 17px/1.35 var(--body)}
+p{margin:0}
+.prose{max-width:68ch;color:var(--ink-2)}
+.prose code{overflow-wrap:anywhere}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.meta{font:12.5px/1.5 var(--mono);color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+header{display:grid;gap:18px;margin-bottom:56px}
+header .lede{font-size:19px;line-height:1.5;max-width:62ch;color:var(--ink-2)}
+section{display:grid;gap:20px;padding-top:44px;margin-top:44px;border-top:1px solid var(--rule)}
+section > .head{display:grid;gap:10px}
+.kicker{font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:14px;border-radius:3px;border:1.6px solid;background:var(--surface)}
+.sw.live{border-color:var(--live)} .sw.ready{border-color:var(--ready)}
+.sw.pending{border-color:var(--pending);border-style:dashed} .sw.gap{border-color:var(--gap);border-style:dashed;background:color-mix(in srgb,var(--gap) 10%,var(--surface))}
+.sw.option{border-color:var(--option);border-style:dotted}
+figure{margin:0;display:grid;gap:12px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+.scroll svg{display:block;width:100%;height:auto;min-width:980px}
+figcaption{font-size:14px;color:var(--muted);max-width:80ch}
+.hint{display:none;font:12px var(--mono);color:var(--muted)}
+@media (max-width:980px){.hint{display:block}}
+.rg{fill:var(--region);stroke:var(--rule);stroke-width:1}
+.rg.base{fill:var(--region-base);stroke:var(--accent);stroke-opacity:.45;stroke-dasharray:6 5}
+.rl{font:600 10.5px var(--body);letter-spacing:.13em;fill:var(--muted)}
+.rl.base{fill:var(--accent)}
+.n rect{fill:var(--surface);stroke-width:1.6}
+.n.live rect{stroke:var(--live)}
+.n.ready rect{stroke:var(--ready)}
+.n.pending rect{stroke:var(--pending);stroke-dasharray:6 4}
+.n.gap rect{stroke:var(--gap);stroke-dasharray:6 4;fill:color-mix(in srgb,var(--gap) 8%,var(--surface))}
+.n.option rect{stroke:var(--option);stroke-dasharray:2 3}
+.n.plain rect{stroke:var(--rule)}
+.t{font:600 13px var(--body);fill:var(--ink)}
+.s{font:400 10.5px var(--mono);fill:var(--muted)}
+.st{font:700 9px var(--body);letter-spacing:.1em}
+.live .st{fill:var(--live)} .ready .st{fill:var(--ready)} .pending .st{fill:var(--pending)} .gap .st{fill:var(--gap)} .option .st{fill:var(--option)}
+.e{fill:none;stroke:var(--muted);stroke-width:1.4}
+.e.hot{stroke:var(--accent);stroke-width:1.8}
+.e.bad{stroke:var(--gap);stroke-dasharray:5 4}
+.e.dot{stroke-dasharray:2 3}
+.e.ret{stroke-dasharray:5 4}
+.ah{fill:var(--muted)} .ah.hot{fill:var(--accent)} .ah.bad{fill:var(--gap)}
+.el{font:500 10.5px var(--mono);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.el.hot{fill:var(--accent)}
+.el.bad{fill:var(--gap)}
+.life{stroke:var(--rule);stroke-width:1.2;stroke-dasharray:3 4}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.four{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card p,.card li{font-size:15px;color:var(--ink-2)}
+.card ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--ink-2);max-width:78ch}
+.note.warn{border-color:var(--gap)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--region) 60%,var(--surface))}
+tr:last-child td{border-bottom:0}
+td.v{font-weight:600;white-space:nowrap}
+.yes{color:var(--live)} .no{color:var(--gap)} .meh{color:var(--pending)}
+.tag{display:inline-block;font:700 9.5px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1.4px solid;white-space:nowrap}
+.tag.live{color:var(--live);border-color:var(--live)} .tag.ready{color:var(--ready);border-color:var(--ready)}
+.tag.pending{color:var(--pending);border-color:var(--pending);border-style:dashed} .tag.gap{color:var(--gap);border-color:var(--gap);border-style:dashed}
+.tag.option{color:var(--option);border-color:var(--option);border-style:dotted}
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.phases{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.phases{grid-template-columns:1fr}}
+.ph{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;gap:10px;align-content:start}
+.ph .when{font:700 16px var(--display)}
+.ph .why{font-size:13.5px;color:var(--muted)}
+.ph ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2)}
+ol.dec{margin:0;padding-left:22px;display:grid;gap:12px;max-width:80ch}
+ol.dec li{padding-left:6px;color:var(--ink-2)}
+ol.dec b{color:var(--ink)}
+pre{margin:0;background:color-mix(in srgb,var(--region) 60%,var(--surface));border:1px solid var(--rule);border-radius:10px;padding:16px 18px;overflow-x:auto;font:13px/1.55 var(--mono);color:var(--ink-2)}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);display:grid;gap:6px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Stobox · internal architecture · v0.1 · 25 Sep 2026</div>
+  <h1>STV4</h1>
+  <p class="lede">The next Stobox security-token protocol: every STV3 facet rebuilt on the uRWA Factory on Base, an Intelligence facet fed by a signed Stobox Oracle, and Stobox DID under every record. The one gap that matters: the Factory's rules read claims by subject, and Stobox DID cannot answer by subject – so a Reg S preset on Stobox DID would refuse every transfer.</p>
+  <div class="legend" aria-label="Status legend">
+    <span><i class="sw live"></i>Live on chain or in production</span>
+    <span><i class="sw ready"></i>Code and tests ready, not deployed</span>
+    <span><i class="sw pending"></i>Planned, not built or created yet</span>
+    <span><i class="sw gap"></i>Gap: missing, blocks a feature</span>
+    <span><i class="sw option"></i>Optional</span>
+  </div>
+</header>
+
+<!-- ============================================================ MAP -->
+<section aria-labelledby="map-h">
+  <div class="head">
+    <span class="kicker">1 · The whole system</span>
+    <h2 id="map-h">Everything STV4 depends on</h2>
+    <p class="prose">Arrows point from what feeds to what uses it. The blue path is the one a transfer takes: identity claims written by the DID service, read by the token's compliance pipeline; signed records written by the oracle relay, read by the Intelligence facet and the Board. Arbitrum on the left is what exists today and gets snapshotted; nothing on Base is deployed yet except Stobox DID and EAS.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1200 850" role="img" aria-label="System map: STBX on Arbitrum is snapshotted into MigrationClaim on Base; the DID service writes a subject-keyed Identity Registry that the STV4 token reads; the oracle relay signs Eqvista and cap-table records into the Stobox Oracle, which the token's Intelligence facet and the Compass Board read; the Identity Registry, the EmergencyFacet and the OfferingRegistry fix are the gaps.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah bad" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+
+      <!-- regions -->
+      <rect class="rg" x="20" y="44" width="240" height="310" rx="10"/><text class="rl" x="34" y="66">ARBITRUM ONE · TODAY</text>
+      <rect class="rg" x="20" y="384" width="240" height="440" rx="10"/><text class="rl" x="34" y="406">STOBOX BACKEND</text>
+      <rect class="rg base" x="300" y="44" width="655" height="780" rx="12"/><text class="rl base" x="316" y="66">BASE · CHAIN 8453</text>
+      <rect class="rg" x="985" y="44" width="195" height="360" rx="10"/><text class="rl" x="999" y="66">OFF-CHAIN DATA</text>
+      <rect class="rg" x="985" y="434" width="195" height="390" rx="10"/><text class="rl" x="999" y="456">STOBOX PRODUCTS</text>
+
+      <!-- edges -->
+      <path class="e" d="M245,113 H310" marker-end="url(#a)"/><text class="el" x="277" y="105" text-anchor="middle">snapshot</text>
+      <path class="e" d="M140,194 V170" marker-end="url(#a)"/><text class="el" x="150" y="186">deployer · EOA</text>
+      <path class="e" d="M200,334 V422" marker-end="url(#a)"/><text class="el" x="210" y="385">305 DID</text>
+      <path class="e" d="M140,516 V484" marker-end="url(#a)"/><text class="el" x="150" y="505">verified</text>
+      <path class="e hot" d="M245,453 H280 V223 H310" marker-end="url(#ah)"/><text class="el hot" x="286" y="290">claims</text>
+      <path class="e dot" d="M407,252 V302" marker-end="url(#a)"/><text class="el" x="401" y="282" text-anchor="end">attest</text>
+      <path class="e dot" d="M312,240 H296 V443 H310" marker-end="url(#a)"/><text class="el" x="302" y="400">uDID</text>
+      <path class="e hot" d="M492,223 H510 V330 H518" marker-end="url(#ah)"/><text class="el hot" x="504" y="290" text-anchor="end">identity</text>
+      <path class="e bad" d="M492,553 H505 V370 H518" marker-end="url(#ab)"/><text class="el bad" x="499" y="500" text-anchor="end">forcedTransfer</text>
+      <path class="e" d="M700,128 H715 V330 H702" marker-end="url(#a)"/><text class="el" x="709" y="180" text-anchor="end">create</text>
+      <path class="e bad" d="M610,194 V144" marker-end="url(#ab)"/><text class="el bad" x="604" y="174" text-anchor="end">any caller</text>
+      <path class="e" d="M610,414 V390" marker-end="url(#a)"/><text class="el" x="620" y="406">rules</text>
+      <path class="e hot" d="M760,113 H730 V350 H702" marker-end="url(#ah)"/><text class="el hot" x="756" y="105" text-anchor="end">reads</text>
+      <path class="e hot" d="M850,142 V192" marker-end="url(#ah)"/><text class="el hot" x="860" y="172">price</text>
+      <path class="e" d="M700,370 H745 V223 H758" marker-end="url(#a)"/><text class="el" x="739" y="402" text-anchor="end">canTransfer</text>
+      <path class="e hot" d="M995,113 H942" marker-end="url(#ah)"/><text class="el hot" x="968" y="105" text-anchor="middle">signed</text>
+      <path class="e" d="M1082,194 V144" marker-end="url(#a)"/><text class="el" x="1092" y="174">RTV</text>
+      <path class="e" d="M995,346 H978 V128 H993" marker-end="url(#a)"/>
+
+      <!-- arbitrum -->
+      <g class="n live"><rect x="35" y="84" width="210" height="84" rx="8"/><text class="t" x="47" y="108">STBX · STV3 diamond</text><text class="s" x="47" y="127">0x998a…1a46 · 1,415,000</text><text class="s" x="47" y="146">107 holders · 9 facets</text><text class="st" x="235" y="100" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="35" y="194" width="210" height="58" rx="8"/><text class="t" x="47" y="218">RWA Vault Factory</text><text class="s" x="47" y="237">0x096D…23b4 · all keys EOA</text><text class="st" x="235" y="210" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="35" y="276" width="210" height="58" rx="8"/><text class="t" x="47" y="300">Stobox DID · Arbitrum</text><text class="s" x="47" y="319">0x25e6…ba84 · HasDIDRule</text><text class="st" x="235" y="292" text-anchor="end">LIVE</text></g>
+      <!-- backend -->
+      <g class="n pending"><rect x="35" y="424" width="210" height="58" rx="8"/><text class="t" x="47" y="448">DID service · KMS</text><text class="s" x="47" y="467">writes both chains</text><text class="st" x="235" y="440" text-anchor="end">PLANNED</text></g>
+      <g class="n live"><rect x="35" y="516" width="210" height="58" rx="8"/><text class="t" x="47" y="540">Stripe Identity · KYC</text><text class="s" x="47" y="559">country · residence</text><text class="st" x="235" y="532" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="35" y="608" width="210" height="58" rx="8"/><text class="t" x="47" y="632">Technical Safe</text><text class="s" x="47" y="651">0xcAFA…E8b6 · holds roles</text><text class="st" x="235" y="624" text-anchor="end">LIVE</text></g>
+      <g class="n option"><rect x="35" y="700" width="210" height="58" rx="8"/><text class="t" x="47" y="724">Indexer · auditor pack</text><text class="s" x="47" y="743">logs → register · never a dep</text><text class="st" x="235" y="716" text-anchor="end">OPTION</text></g>
+      <!-- base col A -->
+      <g class="n pending"><rect x="312" y="84" width="180" height="58" rx="8"/><text class="t" x="324" y="108">MigrationClaim</text><text class="s" x="324" y="127">Merkle snapshot · KYC</text><text class="st" x="482" y="100" text-anchor="end">PLANNED</text></g>
+      <g class="n gap"><rect x="312" y="194" width="180" height="58" rx="8"/><text class="t" x="324" y="218">Identity Registry</text><text class="s" x="324" y="237">subject-keyed · claims</text><text class="st" x="482" y="210" text-anchor="end">GAP</text></g>
+      <g class="n live"><rect x="312" y="304" width="180" height="58" rx="8"/><text class="t" x="324" y="328">EAS · Base</text><text class="s" x="324" y="347">0x4200…0021 · public</text><text class="st" x="482" y="320" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="312" y="414" width="180" height="58" rx="8"/><text class="t" x="324" y="438">Stobox DID · Base</text><text class="s" x="324" y="457">0x4e13…a89b · 0 DID</text><text class="st" x="482" y="430" text-anchor="end">LIVE</text></g>
+      <g class="n gap"><rect x="312" y="524" width="180" height="58" rx="8"/><text class="t" x="324" y="548">EmergencyFacet</text><text class="s" x="324" y="567">interface only · no code</text><text class="st" x="482" y="540" text-anchor="end">GAP</text></g>
+      <!-- base col B -->
+      <g class="n ready"><rect x="520" y="84" width="180" height="58" rx="8"/><text class="t" x="532" y="108">uRWA Factory</text><text class="s" x="532" y="127">220 tests · not deployed</text><text class="st" x="690" y="100" text-anchor="end">READY</text></g>
+      <g class="n gap"><rect x="520" y="194" width="180" height="58" rx="8"/><text class="t" x="532" y="218">OfferingRegistry</text><text class="s" x="532" y="237">treasury drain · fix first</text><text class="st" x="690" y="210" text-anchor="end">GAP</text></g>
+      <g class="n pending"><rect x="520" y="304" width="180" height="84" rx="8"/><text class="t" x="532" y="328">STBX · STV4 token</text><text class="s" x="532" y="347">RegS preset · 1,415,000</text><text class="s" x="532" y="366">+ Intelligence facet</text><text class="st" x="690" y="320" text-anchor="end">PLANNED</text></g>
+      <g class="n ready"><rect x="520" y="414" width="180" height="58" rx="8"/><text class="t" x="532" y="438">PolicySet · rules</text><text class="s" x="532" y="457">8 rules · gas-capped</text><text class="st" x="690" y="430" text-anchor="end">READY</text></g>
+      <g class="n ready"><rect x="520" y="524" width="180" height="58" rx="8"/><text class="t" x="532" y="548">Treasury · AtomicDvP</text><text class="s" x="532" y="567">clone · two-leg settle</text><text class="st" x="690" y="540" text-anchor="end">READY</text></g>
+      <!-- base col C -->
+      <g class="n pending"><rect x="760" y="84" width="180" height="58" rx="8"/><text class="t" x="772" y="108">Stobox Oracle</text><text class="s" x="772" y="127">EIP-712 · channels · stale</text><text class="st" x="930" y="100" text-anchor="end">PLANNED</text></g>
+      <g class="n pending"><rect x="760" y="194" width="180" height="58" rx="8"/><text class="t" x="772" y="218">Compass Board</text><text class="s" x="772" y="237">escrow lots · no fees</text><text class="st" x="930" y="210" text-anchor="end">PLANNED</text></g>
+      <!-- off-chain -->
+      <g class="n pending"><rect x="995" y="84" width="175" height="58" rx="8"/><text class="t" x="1007" y="108">Oracle relay · KMS</text><text class="s" x="1007" y="127">signs records</text><text class="st" x="1160" y="100" text-anchor="end">PLANNED</text></g>
+      <g class="n live"><rect x="995" y="194" width="175" height="58" rx="8"/><text class="t" x="1007" y="218">Eqvista RTV</text><text class="s" x="1007" y="237">$1.99 · no public API</text><text class="st" x="1160" y="210" text-anchor="end">LIVE</text></g>
+      <g class="n live"><rect x="995" y="304" width="175" height="84" rx="8"/><text class="t" x="1007" y="328">Cap table · actions</text><text class="s" x="1007" y="347">Eqvista · minute book</text><text class="s" x="1007" y="366">roots and hashes only</text><text class="st" x="1160" y="320" text-anchor="end">LIVE</text></g>
+      <!-- products -->
+      <g class="n pending"><rect x="995" y="474" width="175" height="58" rx="8"/><text class="t" x="1007" y="498">Compass</text><text class="s" x="1007" y="517">Issue · Price · Board</text><text class="st" x="1160" y="490" text-anchor="end">PLANNED</text></g>
+      <g class="n ready"><rect x="995" y="566" width="175" height="58" rx="8"/><text class="t" x="1007" y="590">STBU tiers</text><text class="s" x="1007" y="609">same uDID · Base</text><text class="st" x="1160" y="582" text-anchor="end">READY</text></g>
+      <g class="n pending"><rect x="995" y="658" width="175" height="58" rx="8"/><text class="t" x="1007" y="682">External auditor</text><text class="s" x="1007" y="701">reads logs, not our DB</text><text class="st" x="1160" y="674" text-anchor="end">PLANNED</text></g>
+    </svg>
+    </div>
+    <span class="hint">Scroll sideways to see the full map.</span>
+    <figcaption>Red marks what blocks the first issuance. The Identity Registry is the critical one: today only "has a DID / has none" can be checked on tier 2, so jurisdiction, accreditation and sanctions rules cannot run. The EmergencyFacet exists only as an interface; STBX on Arbitrum used forced operations 19 times. The OfferingRegistry lets any allow-listed wallet drain a token's treasury – the Board does not use it, but Compass Issue clients would. The Technical Safe holds every role; the cap-table edge carries only hashes.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ FLOW -->
+<section aria-labelledby="flow-h">
+  <div class="head">
+    <span class="kicker">2 · One flow</span>
+    <h2 id="flow-h">A buy on the Board, from price to settlement</h2>
+    <p class="prose">The Board never decides anything itself. It asks the oracle whether the reference price is fresh, asks the token whether the buyer may hold, then moves USDC and tokens in one transaction. The token's answer comes from the compliance pipeline: pause, trust, identity, frozen balance, rules – in that order.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1100 560" role="img" aria-label="Sequence: buyer calls buy on the Compass Board; the Board reads the Stobox Oracle for the reference price and its staleness, asks the STV4 token canTransfer, the token asks the Identity Registry isActive and claims and runs the PolicySet rules, returns true; the Board moves USDC from buyer to seller and tokens from escrow to buyer, adds a lockup for a company lot and emits Filled.">
+      <defs>
+        <marker id="sa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="sh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <g class="n plain"><rect x="15" y="20" width="120" height="40" rx="8"/><text class="t" x="75" y="45" text-anchor="middle">Buyer</text></g>
+      <g class="n pending"><rect x="165" y="20" width="140" height="40" rx="8"/><text class="t" x="235" y="45" text-anchor="middle">Compass Board</text></g>
+      <g class="n pending"><rect x="335" y="20" width="140" height="40" rx="8"/><text class="t" x="405" y="45" text-anchor="middle">Stobox Oracle</text></g>
+      <g class="n pending"><rect x="505" y="20" width="140" height="40" rx="8"/><text class="t" x="575" y="45" text-anchor="middle">STV4 token</text></g>
+      <g class="n gap"><rect x="675" y="20" width="140" height="40" rx="8"/><text class="t" x="745" y="45" text-anchor="middle">Identity Registry</text></g>
+      <g class="n ready"><rect x="845" y="20" width="120" height="40" rx="8"/><text class="t" x="905" y="45" text-anchor="middle">PolicySet</text></g>
+      <g class="n plain"><rect x="985" y="20" width="100" height="40" rx="8"/><text class="t" x="1035" y="45" text-anchor="middle">Seller</text></g>
+      <path class="life" d="M75,60 V540 M235,60 V540 M405,60 V540 M575,60 V540 M745,60 V540 M905,60 V540 M1035,60 V540"/>
+      <path class="e" d="M75,100 H233" marker-end="url(#sa)"/><text class="el" x="154" y="93" text-anchor="middle">buy(id, amount, maxCost)</text>
+      <path class="e hot" d="M235,144 H403" marker-end="url(#sh)"/><text class="el hot" x="320" y="137" text-anchor="middle">latest(STBX, price.reference)</text>
+      <path class="e ret hot" d="M405,188 H237" marker-end="url(#sh)"/><text class="el hot" x="320" y="181" text-anchor="middle">numeric · observedAt · stale</text>
+      <path class="e hot" d="M235,232 H573" marker-end="url(#sh)"/><text class="el hot" x="404" y="225" text-anchor="middle">canTransfer(board → buyer)</text>
+      <path class="e hot" d="M575,276 H743" marker-end="url(#sh)"/><text class="el hot" x="660" y="269" text-anchor="middle">isActive(buyer)</text>
+      <path class="e hot" d="M575,320 H743" marker-end="url(#sh)"/><text class="el hot" x="660" y="313" text-anchor="middle">hasValidClaim(subject, country)</text>
+      <path class="e hot" d="M575,364 H903" marker-end="url(#sh)"/><text class="el hot" x="740" y="357" text-anchor="middle">evaluate(from, to, amount)</text>
+      <path class="e ret hot" d="M575,408 H237" marker-end="url(#sh)"/><text class="el hot" x="404" y="401" text-anchor="middle">true</text>
+      <path class="e" d="M235,452 H1033" marker-end="url(#sa)"/><text class="el" x="634" y="445" text-anchor="middle">USDC transferFrom(buyer → seller)</text>
+      <path class="e" d="M235,496 H573" marker-end="url(#sa)"/><text class="el" x="404" y="489" text-anchor="middle">transfer(escrow → buyer) · addLockup if company lot</text>
+      <path class="e ret" d="M235,530 H77" marker-end="url(#sa)"/><text class="el" x="154" y="523" text-anchor="middle">Filled</text>
+    </svg>
+    </div>
+    <figcaption>Failure behaviour: a stale reference price refuses only the company lot, holder lots keep working; a compliance refusal reverts the whole buy and the Board emits <code>TransferRefused(stage, rule, reason)</code> from <code>whyBlocked</code>, so the refusal is in the logs even though nothing moved; a price above <code>maxCost</code> reverts before any transfer. No partial state is possible: both legs are in one transaction.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ FACETS -->
+<section aria-labelledby="f-h">
+  <div class="head">
+    <span class="kicker">3 · Facet by facet</span>
+    <h2 id="f-h">STV3 into STV4</h2>
+    <p class="prose">Read from the verified sources of the nine facets on <code>0x998a…1a46</code> (all 72 selectors matched) and from <code>uRWA-Factory/src</code>. The reference copy in <code>_internal/reference</code> is an early STBU v3 repo, not what STBX runs; its <code>CCTFacet</code> is not installed on STBX.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>STV3 facet · what it does</th><th>STV4 module</th><th>Status</th><th>What changes</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Core · ERC-20, owner, deployer</td><td><code>uRWAToken</code> diamond core, immutable ledger</td><td><span class="tag ready">Ready</span></td><td>Owner and deployer with an implicit, irrevocable admin are dropped. Four separate roles, all held by the Technical Safe. ERC-2612 permit added.</td></tr>
+      <tr><td class="v">DiamondCut · Loupe</td><td><code>DiamondCutFacet</code> with upgrade delay, loupe in the core</td><td><span class="tag ready">Ready</span></td><td>Timelock on every cut; the ledger facet is not replaceable. STBX went through 20 cuts with no delay.</td></tr>
+      <tr><td class="v">RolesFacet · FinOps, RecOps</td><td><code>RolesFacet</code> · SUPPLY_OPERATOR, COMPLIANCE_OFFICER, ISSUER_ADMIN, UPGRADE_ADMIN</td><td><span class="tag ready">Ready</span></td><td>FinOps → SUPPLY_OPERATOR, RecOps → COMPLIANCE_OFFICER. No role can be granted by an EOA.</td></tr>
+      <tr><td class="v">MonetaryFacet · issue, redeem, treasury transfer with lockup</td><td><code>MonetaryFacet</code> · <code>distributeFromTreasury(to, amount, unlockAt)</code>, <code>lockCap</code></td><td><span class="tag ready">Ready</span></td><td>One cap instead of <code>maxSupply</code> + <code>maxIssuance</code>, locked irreversibly at 1,415,000 before any issuance. In STV3 both were mutable by the deployer; today <code>totalIssued</code> is stuck at 2,000,000 after the forced burn.</td></tr>
+      <tr><td class="v">LockupFacet · per-address list</td><td><code>LockupFacet</code> · <code>addLockup</code>, <code>releaseExpired</code>, 32 max</td><td><span class="tag ready">Ready</span></td><td>Same model; 6 live lockups (5,239 STBX, expiring 31.12.2026 – 15.03.2027) are recreated at migration with their dates and notes.</td></tr>
+      <tr><td class="v">ValidationFacet · pause, trust list, one rule</td><td><code>ComplianceFacet</code> + <code>PolicySet</code> + <code>RuleLibrary</code></td><td><span class="tag ready">Ready</span></td><td>Pipeline: pause → trust → sender → recipient → frozen → rules. Per-address pause and freeze added. Global <code>skipValidation</code> flag dropped. Rules are gas-capped and grouped AND-of-OR.</td></tr>
+      <tr><td class="v">HasDIDRule · external contract</td><td><code>Identity Registry</code> (subject-keyed) + <code>StoboxDIDAdapter</code></td><td><span class="tag gap">Gap</span></td><td>STV3 checks one thing: a live, unblocked DID. The Factory's rules also need country, accreditation, sanctions, read by subject – which Stobox DID cannot serve. See §4.</td></tr>
+      <tr><td class="v">EmergencyFacet · forcedTransfer, forcedMint, forcedBurn, pause</td><td><code>EmergencyFacet</code> on the Factory</td><td><span class="tag gap">Gap</span></td><td>Only the interface exists. STV3's version is compiled against an old library: <code>forcedMint</code> ignores <code>maxIssuance</code>, <code>forcedBurn</code> does not decrement <code>totalIssued</code>, and forced operations revert while paused. All four defects are the STV4 acceptance tests.</td></tr>
+      <tr><td class="v">PurchaseFacet · purchase, refund, fiat record</td><td><code>PurchaseFacet</code> + <code>OfferingRegistry</code></td><td><span class="tag gap">Gap</span></td><td>Not needed for STBX (the Board replaces primary sale), but <code>createOffering</code> is open to any caller and the treasury trusts the registry blindly. Fixed before any Compass Issue client. Fiat records dropped (never used).</td></tr>
+      <tr><td class="v">RWA Vault Factory · deployer-only management</td><td><code>uRWAFactory</code> · create, packages, presets, registry</td><td><span class="tag ready">Ready</span></td><td>The factory holds no admin role on tokens after creation. Presets RegD506c, RegS, Open applied at creation.</td></tr>
+      <tr><td class="v">– (none in STV3)</td><td><code>IntelligenceFacet</code> + <code>Stobox Oracle</code></td><td><span class="tag pending">Planned</span></td><td>New. The facet exposes attested facts about the instrument on the token itself: reference price, valuation, shares outstanding, cap-table root, last corporate action. Data is written by the oracle, never by the facet.</td></tr>
+      <tr><td class="v">– (none in STV3)</td><td><code>Compass Board</code> · <code>MigrationClaim</code></td><td><span class="tag pending">Planned</span></td><td>New. Escrow bulletin board and the Merkle claim that moves 107 holders from Arbitrum after KYC on Base.</td></tr>
+      <tr><td class="v">CCT · ERC-677 · CCIP (reference repo only)</td><td>–</td><td><span class="tag option">Dropped</span></td><td>Never installed on STBX. A security token with two live copies breaks the single register.</td></tr>
+      <tr><td class="v">Dividends · record-date snapshots</td><td>Off-chain snapshot from <code>Transfer</code> logs + Merkle payout contract</td><td><span class="tag option">Later</span></td><td>Neither STV3 nor the Factory has it, though the right is stated in the STBX terms. Separate contract, separate audit.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h3>Intelligence facet · what it reads</h3>
+      <p>One function per channel, all views, all served from the Stobox Oracle's latest confirmed record for this instrument. The token never stores the value; it stores which oracle it trusts.</p>
+      <pre>interface IIntelligenceFacet {
+  function oracle() external view returns (address);
+  function referencePrice() external view
+      returns (uint256 usdc6, uint64 observedAt, bool stale);
+  function valuation() external view
+      returns (uint256 usd, uint64 observedAt, bool stale);
+  function sharesOutstanding() external view
+      returns (uint256 shares, uint64 observedAt);
+  function capTableRoot() external view
+      returns (bytes32 root, uint64 observedAt);
+  function lastCorporateAction() external view
+      returns (bytes32 docHash, uint16 code, uint64 observedAt);
+}</pre>
+    </div>
+    <div class="card">
+      <h3>Stobox Oracle · channels and guards</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Channel</th><th>Value</th><th>maxAge</th><th>Deviation guard</th></tr></thead>
+        <tbody>
+          <tr><td class="v">price.reference</td><td>USDC × 1e6 per share</td><td>36 h</td><td>&gt; 15% step waits for Safe confirm</td></tr>
+          <tr><td class="v">valuation.enterprise</td><td>USD</td><td>36 h</td><td>&gt; 15% step waits</td></tr>
+          <tr><td class="v">shares.outstanding</td><td>integer</td><td>none</td><td>any change waits for Safe confirm</td></tr>
+          <tr><td class="v">captable.root</td><td>Merkle root</td><td>none</td><td>none · append-only sequence</td></tr>
+          <tr><td class="v">corporate.action</td><td>doc hash + code</td><td>none</td><td>none · append-only sequence</td></tr>
+        </tbody>
+      </table></div>
+      <p>Every record is EIP-712 signed by the relay key, carries a strictly increasing <code>sequence</code>, a <code>schemaVersion</code> and an <code>evidenceHash</code> of the raw source (the Eqvista API response, the signed resolution). Per-channel pause. Nothing personal and no cap-table names ever go on chain – only roots and hashes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ANALYSIS -->
+<section aria-labelledby="an-h">
+  <div class="head">
+    <span class="kicker">4 · Analysis</span>
+    <h2 id="an-h">What STV4 fixes, and the identity decision</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Property</th><th>STV3 · STBX today</th><th>STV4</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Privileged keys</td><td>Every role on EOAs; owner and deployer hold an admin that cannot be revoked</td><td>All roles on the Technical Safe; KMS keys for the DID service and the oracle relay; upgrade delay</td></tr>
+      <tr><td class="v">Supply cap</td><td><code>maxSupply</code> 3,000,000 and <code>maxIssuance</code> 2,000,000, both mutable by the deployer; <code>forcedMint</code> ignores the issuance cap</td><td>One cap, 1,415,000, locked irreversibly before issuance; equals certificate STBT-C-002</td></tr>
+      <tr><td class="v">Transfer rule</td><td>One external rule: live DID</td><td>Pipeline with jurisdiction, accreditation, sanctions freshness, holder counts by person, transfer windows</td></tr>
+      <tr><td class="v">Forced operations</td><td>Revert while paused; cap accounting drifts; 19 forced events so far</td><td>Work while paused by design, respect <code>canReceive</code>, carry lockups, mandatory reason, distinct event</td></tr>
+      <tr><td class="v">Why a transfer failed</td><td>Revert only, no record</td><td><code>whyBlocked</code> view; Board and DvP log <code>TransferRefused</code></td></tr>
+      <tr><td class="v">Instrument data</td><td>Off chain, on websites, five different prices in circulation</td><td>One signed feed, one facet, staleness visible to every reader</td></tr>
+      <tr><td class="v">Holder register</td><td>Reconstructed by hand from 241 Transfer events</td><td>Standard auditor pack: logs from the deploy block → register → invariant check</td></tr>
+      <tr><td class="v">Audit</td><td>None found; no audit tag on the explorer</td><td>Internal multi-agent audit exists (18 findings, 17 fixed); external audit before mainnet</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Identity option</th><th>How</th><th>For</th><th>Against</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td class="v">A · Subject-keyed registry + EAS</td><td>New <code>IdentityRegistry</code> on Base: wallet → subject (<code>keccak256(uDID)</code>), subject → validity, subject × key → EAS attestation UID. The existing <code>EASAdapter</code> code plus a linker</td><td>Every rule works; one person across wallets, instruments and the Board; STBU tiers share the same uDID; auditor reads attestations on EASScan</td><td>Second writer beside Stobox DID until DID itself moves; the subject-rebind bug must be fixed in the same step</td><td class="v yes">Recommended</td></tr>
+      <tr><td class="v">B · Patch StoboxDIDAdapter</td><td>Route rules through <code>claimForWallet</code></td><td>No new contract</td><td>Rules would read by wallet, so holder counts and caps are per wallet again; three wallets = three holders</td><td class="v no">No</td></tr>
+      <tr><td class="v">C · EAS only</td><td>Attestations without a subject registry</td><td>Standard format</td><td>EAS does not know that three wallets are one person</td><td class="v meh">Add-on, not the base</td></tr>
+      <tr><td class="v">D · HasDIDRule only</td><td>Issue STBX on Base with a single live-DID rule</td><td>Fastest</td><td>Repeats STV3; Reg S geography lives on a promise, not in code</td><td class="v no">Not now</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Oracle signer</th><th>How</th><th>For</th><th>Against</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Stobox relay · KMS</td><td>Relay pulls Eqvista, signs, posts; <code>evidenceHash</code> of the raw response kept off chain</td><td>Works today; same pattern as the tier oracle; Safe can override</td><td>The figure is attested by us, not by Eqvista</td><td class="v yes">Recommended for v1</td></tr>
+      <tr><td class="v">Eqvista signs directly</td><td>Eqvista holds a signer key in <code>AttestorRegistry</code></td><td>Strongest provenance; the product story for clients</td><td>No API, no agreement yet (O-07 / Q248)</td><td class="v meh">Target for v2</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h3>Safety rules</h3>
+      <ul>
+        <li>Fail closed on identity: no registry answer means no transfer. Fail soft on price: a stale record pauses only the company lot.</li>
+        <li>The relay key can post; only the Safe can confirm a deviation, pause a channel or rotate the key.</li>
+        <li>No EOA holds a token role after creation; the factory holds none either.</li>
+        <li>On chain: hashes, roots, validity, amounts. Never names, documents, 409A figures or PII.</li>
+        <li>Reference price is labelled as such in every event and NatSpec – it is not an offer price and not a market price.</li>
+        <li>Pause on Arbitrum before the snapshot; issue on Base only when Σ balances = totalSupply on both sides.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Questions before building</h3>
+      <ul>
+        <li><b>Gene:</b> one registry or two – keep Stobox DID on Base for STBU tiers and add the subject-keyed registry for securities, or migrate everything into the new one?</li>
+        <li><b>Gene:</b> does the oracle's <code>corporate.action</code> channel carry only a document hash, or structured fields (split, dividend, buyback) the token could act on?</li>
+        <li><b>Max:</b> who attests <code>us.regd.accredited</code> on Base and for how long; is the 24-month lockup to 01.04.2028 enforced in code at issuance?</li>
+        <li><b>Vlad:</b> is <code>0x5c3d…D70a</code> (969 STBX, trusted, no DID) a company wallet; which Stobox 4 wallets are smart accounts that cannot claim on Base?</li>
+        <li><b>Max:</b> the "deactivated" linker: STV3 lets it transfer, the adapter refuses it – which one is right?</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CRITERIA -->
+<section aria-labelledby="c-h">
+  <div class="head">
+    <span class="kicker">5 · Criteria</span>
+    <h2 id="c-h">What "done" means, at four levels</h2>
+    <p class="prose">Nothing moves to the next phase until every line of the level below is green. Acceptance is per module, delivery is per release, audit is per mainnet deployment, enterprise-grade is per year of operation.</p>
+  </div>
+  <div class="four">
+    <div class="card">
+      <h3>Acceptance · per module</h3>
+      <ul>
+        <li><code>forge test</code> green, <code>forge fmt --check</code> clean, branch coverage ≥ 80% on the module.</li>
+        <li>Every fix has a test that fails when the fix is reverted (repo rule, doc 34).</li>
+        <li>ERC-7943 conformance kit passes on the token with the facet installed.</li>
+        <li>Invariants hold under fuzzing: Σ balances = Σ subjectBalance = totalSupply; frozen ≤ balance; no forced op changes a cap.</li>
+        <li>Identity: a Reg S preset refuses a US subject and admits a non-US subject with three linked wallets counted as one holder.</li>
+        <li>Oracle: a record past <code>maxAge</code> reads <code>stale</code>; a &gt; 15% step is not readable until confirmed; sequence never repeats.</li>
+        <li>Emergency: forced transfer works while paused, refuses an ineligible recipient, moves lockups, emits <code>ForcedTransfer</code> not <code>Transfer</code>.</li>
+        <li><code>python3 verify.py</code> and <code>--self-test</code> green; docs 07 and 14 updated in the same commit.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Delivery · per release</h3>
+      <ul>
+        <li>Deploy script in <code>script/</code> runs on Base Sepolia from CI with no manual step; addresses written to <code>docs/deployments/</code>.</li>
+        <li>Every contract verified on Basescan and Sourcify; bytecode matches the tagged commit.</li>
+        <li>All roles read back from chain and match the roles table: Safe holds them, no EOA does.</li>
+        <li>Build-log entry (doc 34) and handoff (doc 26) refreshed; work registry (doc 24) statuses match the code.</li>
+        <li>Runbooks exist for: price update, deviation confirm, key rotation, pause, forced transfer, migration claim support.</li>
+        <li>Auditor pack produced from the deploy block and checked against the chain: register, lockups, roles, oracle history.</li>
+        <li>For STBX: holder letter sent T−30, migration page live, support FAQ "STBX is not STBU" published.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Audit · per mainnet deployment</h3>
+      <ul>
+        <li>Internal adversarial audit (finders by subsystem, skeptics per finding) with every finding resolved or explicitly deferred with reason.</li>
+        <li>External audit of the whole scope: core + facets (≈ 4.8k lines) plus new modules (≈ 1–1.5k lines): IdentityRegistry, Oracle, IntelligenceFacet, EmergencyFacet, Board, MigrationClaim. Estimate $60–150k, 3–4 weeks plus re-check.</li>
+        <li>Code frozen at a tagged commit for the audit; any change after the freeze goes back to the auditor.</li>
+        <li>All high and critical findings fixed and re-tested; mediums fixed or accepted in writing by Gene.</li>
+        <li>Report published in the repo with the tag it covers; the explorer audit tag set.</li>
+        <li>Public audit contest (OP-05) optional after the external report, never instead of it.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Enterprise-grade · per year</h3>
+      <ul>
+        <li>Keys: all roles on Safe 2-of-3 or better with hardware signers; KMS for the relay and the DID writer; documented rotation, tested once a year.</li>
+        <li>Timelock on upgrades; every cut announced with a diff before it executes.</li>
+        <li>Monitoring: alerts on stale oracle, failed relay run, role change, pause, forced operation, registry drift between chains (reconciler).</li>
+        <li>Incident runbook with owners and a 24-hour price-correction window written into the terms.</li>
+        <li>Reconciliation: on-chain register ↔ SPV register ↔ cap table, monthly, signed by the CFO.</li>
+        <li>Availability: the token never depends on the indexer; the auditor pack rebuilds from <code>eth_getLogs</code> alone.</li>
+        <li>Insider policy: blackout windows and pre-clearance for company, founder and ≥ 5% wallets listing on the Board.</li>
+        <li>Disclosure page for the methodology of every oracle channel, updated with each schema version.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ORDER -->
+<section aria-labelledby="o-h">
+  <div class="head">
+    <span class="kicker">6 · Build order</span>
+    <h2 id="o-h">Foundation first, then identity and data, then the market</h2>
+    <p class="prose">The order is set by dependencies, not by size: nothing on Base can be issued as a Reg S instrument until the registry serves claims by subject, and nothing holding money ships before the external audit. Estimates assume two Solidity engineers, one full-stack engineer and part-time DevOps.</p>
+  </div>
+  <div class="phases">
+    <div class="ph"><div class="when">Phase 0 · 2 weeks</div><div class="why">Foundation: nothing new until the known holes are closed</div>
+      <ul><li>Fix <code>OfferingRegistry</code>: operator role on the token, treasury = token treasury, state machine without back-transitions</li><li>Build <code>EmergencyFacet</code> to the four STV3 defects as tests</li><li>Fix subject re-bind accounting (<code>resyncSubject</code>)</li><li>Refresh handoff and CLAUDE.md, which still says "interfaces only"</li></ul></div>
+    <div class="ph"><div class="when">Phase 1 · 4 weeks</div><div class="why">Identity and data: the two things STV3 never had</div>
+      <ul><li><code>IdentityRegistry</code> on Base + DID service writing both chains with one KMS key; migrate 305 DID</li><li><code>StoboxOracle</code> with five channels; relay job; Safe confirm path</li><li><code>IntelligenceFacet</code> on the token</li><li>Base Sepolia deployment from CI; auditor pack v1</li></ul></div>
+    <div class="ph"><div class="when">Phase 2 · 4 weeks</div><div class="why">Market and migration: the STBX instrument</div>
+      <ul><li><code>MigrationClaim</code> (Merkle snapshot; STBU voucher pattern for signing)</li><li><code>CompassBoard</code> with <code>TransferRefused</code> logging, ERC-1271, partial fills</li><li>Board page and indexer; migration page; holder letter draft</li><li>Internal adversarial audit of the whole scope</li></ul></div>
+    <div class="ph"><div class="when">Phase 3 · 6–8 weeks</div><div class="why">Audit and launch</div>
+      <ul><li>Code freeze, external audit, fixes, re-check</li><li>Pause STBX on Arbitrum, snapshot, publish hash</li><li>Issue 1,415,000 on Base, RegS preset, cap locked; recreate 6 lockups</li><li>Open claims, then the Board; company lot at the reference price</li></ul></div>
+  </div>
+  <p class="note">Critical path: Phase 0 → IdentityRegistry → external audit → issuance. The oracle and the Board can slip a week without moving the launch; the registry cannot. Total to mainnet: 16–18 weeks from start, which lands in Q1 2027 – after the Reg D round closes on 10.12.2026.</p>
+</section>
+
+<!-- ============================================================ DECISIONS -->
+<section aria-labelledby="dec-h">
+  <div class="head">
+    <span class="kicker">7 · Decisions</span>
+    <h2 id="dec-h">Settled and open</h2>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Settled (Gene, 25.09.2026 unless noted)</h3>
+      <ol class="dec">
+        <li><b>STV4 is the uRWA Factory</b>, not a fork of STV3: STV3 facets are rebuilt, not copied.</li>
+        <li><b>STBX</b>: 1,415,000, 1 token = 1 Class C share via Stobox Tokenized Equities Ltd (BVI); moves to Base; reference price = Eqvista RTV; no US persons; Reg D perk removed.</li>
+        <li><b>Compass Board</b> in BVI, manual escrow lots, no fees, no treasury, operated by Stobox Innovations Ltd; a Compass function.</li>
+        <li><b>KYC → DID → every Stobox product</b> (10.09.2026); Stobox DID on Base deployed the same day.</li>
+        <li><b>Attestations and anchoring come later</b> (wave 4, 08.08.2026); Stobox Attest is a separate sub-project (R-168).</li>
+        <li><b>Voucher pattern</b>: EIP-712, KMS-signed, nonce-inherited – accepted in ADR 0002/0003/0005 for STBU and reused here.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Open</h3>
+      <ol class="dec">
+        <li><b>One registry or two</b> on Base (§4, option A assumes two for now).</li>
+        <li><b>Who signs the oracle</b>: relay now, Eqvista when there is an agreement and an API.</li>
+        <li><b>Merkle claim or voucher</b> for the STBX migration; both patterns exist, the spec says Merkle.</li>
+        <li><b>The 24-month legal lockup</b> to 01.04.2028: in code at issuance or on paper only – Max.</li>
+        <li><b>Deactivated linker</b> semantics before migration – Max and Vlad.</li>
+        <li><b>Dividends</b>: snapshot-and-Merkle contract, when and in which audit.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CHANGELOG -->
+<section aria-labelledby="cl-h">
+  <div class="head">
+    <span class="kicker">Changelog</span>
+    <h2 id="cl-h">Versions</h2>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. STV3 inventory from the nine verified facets on Arbitrum; Factory status from code and 220 passing tests; Intelligence facet and Stobox Oracle designed; identity gap named; four-level criteria; four-phase build order.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <span class="meta">Sources · uRWA-Factory: src/facets/ComplianceFacet.sol, src/identity/Adapters.sol, src/rules/RuleLibrary.sol, src/OfferingRegistry.sol, src/facets/MonetaryFacet.sol, src/interfaces/IRestrictionFacets.sol, docs/09-identity-did.md, docs/24-work-registry.md, docs/26-handoff.md, docs/34-build-log.md · STBX on Arbitrum One: 0x998a0BEaf37cA4Ba61B5cfAc59fdee0da2211A46 (facets read via DiamondLoupe, sources from Sourcify; 241 Transfer events; totalSupply 1,415,000 at block ~508.7M) · Stobox DID: Arbitrum 0x25e6036178656b1329ee51696407b367d8c6ba84, Base 0x4e13…a89b (Gene-Second-Brain/wiki/Stobox-DID.md) · EAS Base 0x4200000000000000000000000000000000000021 · STBU voucher pattern: stbu-portal-v2/contracts/src/MigrationClaim.sol, TierRegistry.sol · Compass Board spec: Gene-Second-Brain/wiki/Compass-Board.md</span>
+  <span class="meta">Uncertain · the Base DID address is taken from the vault, not read by this page; the "UI multiplier" mentioned in the vault was not found in any facet; whether the Vault Factory can call setDeployer and transferOwnership on STBX was not read; the deactivated-linker semantics differ between STV3 and the adapter; audit cost and phase durations are estimates, not quotes.</span>
+</footer>
+</main>

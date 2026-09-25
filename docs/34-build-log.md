@@ -17,6 +17,43 @@ An entry is written even when a session finds nothing — "audited, clean" is a 
 
 ---
 
+## 2026-09-25 · Session 11 — STV4: the architecture page, and the gap it names
+
+**Shipped.** `docs/architecture/stv4.html` v0.1 and its index `docs/architecture/README.md`: the
+first Stobox visual-documentation page for this repository. It maps every STV3 facet on the live
+STBX diamond (Arbitrum `0x998a…1a46`, nine facets read through the loupe, all 72 selectors matched
+against verified sources) onto its STV4 module here, designs the Intelligence facet and the Stobox
+Oracle (five signed channels with staleness and deviation guards), states acceptance, delivery,
+audit and enterprise-grade criteria, and sets a four-phase build order. Documentation only; no
+Solidity changed. `verify.py` does not scan `docs/architecture/`, and the page keeps the
+visual-documentation tokens rather than `theme.css` by that ruling (10.09.2026).
+
+**Audited.** Three independent agents (STV3 inventory, protocol architecture, ecosystem survey),
+each read against the code before a claim went on the page. `forge test`: 220 passed, unchanged.
+Both themes rendered; the SVG overflow check ran clean after two sub-lines were shortened.
+
+**Found.**
+1. **Tier-2 identity cannot serve claims by subject.** `StoboxDIDAdapter.claim` and
+   `hasValidClaim` return empty (`src/identity/Adapters.sol:248-254`) because StoboxDID is
+   wallet-keyed, and no rule calls `claimForWallet`. A `RegS` preset on StoboxDID therefore refuses
+   every transfer, not only US ones. Session 4 moved the base gate to `isActive`; the rules were
+   never reached. Named `GAP` on the page; a subject-keyed registry is the recommended fix.
+2. **`OfferingRegistry.createOffering` is permissionless** (`src/OfferingRegistry.sol:94`) and
+   `distributeFromTreasury` trusts any call from the stored registry (`src/facets/MonetaryFacet.sol:81`):
+   an allow-listed wallet can drain a token's treasury through a self-made offering. Reproduced by
+   test in a scratch copy on 25.09. **Open** – carried as Phase 0 of the page's build order.
+3. **`forcedTransfer` exists only in `IEmergencyFacet`**; no facet implements it. STBX on Arbitrum
+   used forced operations 19 times, and its facet has four defects (cap accounting, revert while
+   paused) that become STV4's acceptance tests. **Open.**
+4. The reference copy in `_internal/reference` is an early STBU v3 repository, not the code STBX
+   runs; its `CCTFacet` is not installed on STBX. The handoff's cross-chain note should say so.
+
+**Open.** Items 1–3 above; the "deactivated linker" semantics differ between STV3's `HasDIDRule`
+and the adapter; `CLAUDE.md` still says `src/` is interfaces only; the handoff's test count
+(141 in Part 0) is stale against 220.
+
+---
+
 ## 2026-08-16 · Session 10 — the conformance kit, and its first stranger is us
 
 **Shipped.** `TO-01`. `test/conformance/ERC7943Conformance.sol` is the liftable kit: it imports
