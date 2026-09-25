@@ -106,7 +106,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · STV4 layer 2 · v0.1 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 2 · v0.2 · 25 Sep 2026</div>
   <h1>STV4 Terms</h1>
   <p class="lede">Every right in the paper agreement represented as a typed, signed, hash-anchored term that the token enforces, executes, attests or discloses – so that an agent reads the substance, executes within a mandate, and an auditor rebuilds performance from logs. The gap that matters: the STBX holder is not a party to any signed document in the vault, so today there is nothing to anchor.</p>
   <div class="legend" aria-label="Term class legend">
@@ -397,13 +397,13 @@ TermsFacet.termsRoot() view; TermsFacet.enforce(termId, params, proof) // a rule
   </div>
   <div class="two">
     <div class="card">
-      <h3>Gene</h3>
+      <h3>Gene · ruled 25.09.2026 (evening)</h3>
       <ol class="dec">
-        <li><b>Level of the token.</b> Stay "economic interest through STEL" (Terms anchor STEL ↔ holder), or lift STBX to a Class C certificate token under W.S. 17-16-625 (the holder becomes a shareholder, and "exactly the rights in the SPA" becomes literal). Larger, but the only route without an intermediary.</li>
-        <li><b>Default precedence</b> for every Factory instrument: <code>term-by-term</code> (recommended) or <code>code</code>.</li>
-        <li><b>Oracles</b> for VWAP and FMV: whose attestor counts – Stobox, an independent, or both.</li>
-        <li><b>Order</b>: PayoutFacet before ROFR (money visible first), or ROFR first because the lock-up to 2028 makes it moot until then.</li>
-        <li><b>Publicity of Terms</b>: full JSON open, or as the passport does – roots on chain, values by tiered access.</li>
+        <li><b>Level of the token: economic interest through STEL stays.</b> The Terms anchor STEL ↔ holder; the certificate-token route under W.S. 17-16-625 is recorded as a later option, not a plan.</li>
+        <li><b>Default precedence: <code>term-by-term</code></b> – signed Terms prevail for ENFORCED and EXECUTED parameters, the text for everything else.</li>
+        <li><b>Oracle values (VWAP, FMV) follow the attestation model ruled on the Intelligence page:</b> the client signs, Stobox signs, and named third parties may be given signer roles per channel. Flexible by design.</li>
+        <li><b>Order</b>: PayoutFacet before ROFR – money visible first; the lock-up to 2028 makes ROFR moot until then.</li>
+        <li><b>Publicity of Terms</b>: as the passport does – roots on chain, the JSON by tiered access, with a public subset (the DISCLOSED class and every parameter a rule enforces).</li>
       </ol>
     </div>
     <div class="card">
@@ -430,6 +430,7 @@ TermsFacet.termsRoot() view; TermsFacet.enforce(termId, params, proof) // a rule
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Gene's evening rulings recorded: economic interest through STEL stays; precedence term-by-term; oracle values under the multi-signer attestation model; payout before ROFR; Terms published as roots plus a public subset.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Rights register of 38 clauses from the April 2026 documents with enforceability classes; Terms model and anchoring; Factory bindings; agent reading and execution; seven clauses for the paper; events; gaps and order; decisions.</td></tr>
     </tbody>
   </table>

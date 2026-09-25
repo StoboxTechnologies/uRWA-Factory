@@ -102,7 +102,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · STV4 layer 1 · v0.1 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 1 · v0.2 · 25 Sep 2026</div>
   <h1>STV4 Identity</h1>
   <p class="lede">One registry of Stobox DIDs on Base, keyed by person rather than by wallet, feeding every Compass token, the Board and STBU tiers through two read surfaces. KYC stays with Stripe and the DID service; the chain carries salted hashes, validity and claims. The gap: today's Stobox DID cannot answer a rule's question by subject, so every preset refuses every transfer on it.</p>
   <div class="legend" aria-label="Status legend">
@@ -389,7 +389,7 @@ function deactivateWallet()                                                     
       <ol class="dec">
         <li><b>Drop the uDID string on chain</b> – <code>bytes32</code> only; 4XR and STBU move to the new getter. Yes or no?</li>
         <li><b>Controller of KYC</b>: Innovations as operator, or the issuer per product? Decides who signs the DPIA and answers erasure requests.</li>
-        <li><b>Trust scoping in the base gate</b> (issuer-aware <code>isActive</code>) or only in rules? The first ends "portal KYC = entry everywhere" from the 10.09 ruling – choose explicitly.</li>
+        <li><b>Trust scoping – ruled 25.09 by principle</b> ("everything as securities law requires"): the base gate <code>isActive</code> stays universal, so one KYC admits a person to Stobox as such; every <i>securities</i> preset requires issuer-scoped claims in its rules, so admission to an instrument is decided by the issuers that instrument trusts. Portal KYC therefore opens STBU tiers and the Board's read side, never a security by itself.</li>
         <li><b>Re-bind with a balance</b>: refuse until resync, or allow with a mandatory resync in the same transaction?</li>
         <li><b>EAS mirror</b> from day one or after launch?</li>
         <li><b>ZK pilot budget</b> in 2027, or wait for a regulated issuer?</li>
@@ -419,6 +419,7 @@ function deactivateWallet()                                                     
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Trust scoping settled by principle: universal base gate, issuer-scoped claims in every securities preset.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Gene's ruling of 25.09: one unified registry. Data map, GDPR roles, registry design with two surfaces, three plug-in levels, trust scoping, privacy-technology verdicts, regulatory table, comparison, decisions.</td></tr>
     </tbody>
   </table>

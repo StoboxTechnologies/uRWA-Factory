@@ -101,7 +101,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · STV4 layer 3 · v0.1 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 3 · v0.2 · 25 Sep 2026</div>
   <h1>STV4 Offering</h1>
   <p class="lede">The regulatory route of an offering is chosen above the Factory – which entity issues, under which exemption, through which licensed intermediary – and the Factory executes the chosen regime as an immutable contract. The gap that matters: today the <code>regime</code> field sets nothing, and five defects in <code>OfferingRegistry</code> let a per-investor limit be split, a rule be removed mid-offering and an offering be settled early by anyone.</p>
   <div class="legend" aria-label="Status legend">
@@ -225,7 +225,7 @@ a{color:var(--accent)}
       <tr><td class="v">MaxHolders</td><td>12(g) threshold: 2,000 / 500 non-accredited</td><td>US</td></tr>
       <tr><td class="v">TransferWindow</td><td>record dates, corporate actions</td><td>all</td></tr>
       <tr><td class="v">Passport</td><td>evidence base for the asset (not investor disclosure)</td><td>due diligence, EU PR</td></tr>
-      <tr><td class="v">AttestorRegistry</td><td>who may issue which claim</td><td>506(c), FPO. <b>Not in <code>src/</code></b>; only the ATTESTOR role constant</td></tr>
+      <tr><td class="v">AttestorRegistry</td><td>who may issue which claim, and who may sign which oracle channel (ruled 25.09: client + Stobox + named third parties per channel)</td><td>506(c), FPO; every regime that needs a REGULATED signer on <code>shares.outstanding</code>. <b>Not in <code>src/</code></b>; only the ATTESTOR role constant. Moves to Phase 1</td></tr>
       <tr><td class="v">Board</td><td>secondary transactions between parties, escrowed lots</td><td>Reg S 904, SIBA. <b>Not in <code>src/</code></b></td></tr>
       <tr><td class="v">AtomicDvP</td><td>simultaneous settlement of two legs</td><td>secondary through an ATS or partner</td></tr>
       <tr><td class="v">AgentAuthority</td><td>bounded mandates for agents</td><td>BD or TA instructions</td></tr>
@@ -370,6 +370,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>AttestorRegistry row extended with the multi-signer channel model ruled on 25.09; moved to Phase 1.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Layer diagram with binding documents; regime typology as presets; contract-to-law map; five verified defects and the missing elements in OfferingRegistry; role boundary and public wording; the STBX regime stack; decisions and counsel questions.</td></tr>
     </tbody>
   </table>

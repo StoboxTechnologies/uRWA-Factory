@@ -102,7 +102,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · STV4 layer 4 · v0.1 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 4 · v0.2 · 25 Sep 2026</div>
   <h1>STV4 Intelligence</h1>
   <p class="lede">The record is the source; the oracle attests facts from the record to the chain; the token carries eligibility and terms; agents act within mandates. Any client system plugs into the same intake as documents do, and every figure arrives with its source, tier and expiry. The gap that matters: <code>AgentAuthority.consume</code> is called by nothing in <code>src/</code>, so a mandate today is a promise, not a limit.</p>
   <div class="legend" aria-label="Status legend">
@@ -267,8 +267,66 @@ a{color:var(--accent)}
       </ul>
     </div>
     <div class="card">
-      <h3>The one decision that makes assets autonomous</h3>
-      <p>If <code>corporate.action</code> carries only a document hash, an agent can notice a dividend was declared but cannot pay it. If it carries structured fields – split, dividend with amount and record date, coupon, buyback – the payout facet can execute from the record under a mandate, and "autonomous asset" stops being a slogan. Open question for Gene, already on the hub.</p>
+      <h3>Ruled 25.09.2026: <code>corporate.action</code> is structured</h3>
+      <p>Gene: "we need autonomous assets for real". So the channel carries structured fields, not only a hash, and the payout, consent and lockup facets execute from it under a mandate. The hash stays as the evidence of the resolution behind the record.</p>
+      <pre>struct CorporateAction {
+  uint16  code;         // DIVIDEND · COUPON · SPLIT · BUYBACK · RECORD_DATE · CONSENT · LOCKUP · RECOVERY
+  bytes32 docHash;      // the signed resolution or notice
+  uint64  recordDate;   // snapshot block time for pro-rata
+  uint64  dueBy;        // e.g. declaration + 15 business days (SPA 4.2)
+  address asset;        // USDC, or the token itself for an in-kind election
+  uint256 amount;       // total, or per unit when perUnit is true
+  bool    perUnit;
+  bytes32 ref;          // termId the action performs, so TermExecuted can cite it
+}</pre>
+      <p>Execution rule: an action is executable only if its <code>ref</code> is a term in the signed <code>termsRoot</code> and the record is signed under the channel's attestation model (§4b). Everything else is read-only.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ATTEST -->
+<section aria-labelledby="at-h">
+  <div class="head">
+    <span class="kicker">4b · Who signs an attested figure</span>
+    <h2 id="at-h">Ruled 25.09.2026: the client signs, Stobox signs, and roles can be given to others</h2>
+    <p class="prose">Gene's ruling replaces the either-or of "relay or Eqvista": every oracle channel carries a signer set and a threshold, set per instrument at creation and changed only by the issuer admin under the upgrade delay. The record is published only when the threshold of signatures over the same EIP-712 payload is met. This keeps "inform, never certify" for Stobox – our signature says the relay carried the client's figure faithfully, the client's signature says the figure is theirs, a third party's signature says they verified it.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Signer role</th><th>Who holds the key</th><th>What the signature asserts</th><th>Default</th></tr></thead>
+    <tbody>
+      <tr><td class="v">ISSUER</td><td>the client's KMS or Safe (for STBX: STEL)</td><td>"this figure is ours, from source X, as of T"</td><td>required on every channel</td></tr>
+      <tr><td class="v">RELAY</td><td>the Stobox relay key</td><td>"carried unchanged from the record; evidenceHash Y matches the raw source"</td><td>required on every channel</td></tr>
+      <tr><td class="v">ATTESTOR</td><td>a named third party: auditor, valuer, fund administrator, custodian, Eqvista</td><td>"we verified this figure under our engagement"</td><td>optional; required by the preset for <code>nav.perUnit</code>, <code>reserve.attested</code>, FMV and VWAP used by a term</td></tr>
+      <tr><td class="v">REGULATED</td><td>a BD, transfer agent or licensed administrator</td><td>"recorded in the regulated register"</td><td>optional; required where a regime demands it (Reg A+ TA, EU DLT MI)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>Contract shape</h3>
+      <pre>struct ChannelPolicy {
+  bytes32   channel;
+  address[] signers;      // per role, resolved through AttestorRegistry
+  uint8     threshold;    // e.g. 2 of {ISSUER, RELAY}; 3 when an ATTESTOR is required
+  uint32    maxAge;
+  uint16    maxDeviationBps;
+}
+function publish(Record r, bytes[] sigs) // valid only when threshold distinct signer roles signed keccak(r)</pre>
+      <ul>
+        <li><code>AttestorRegistry</code> (interface exists, code does not) holds each signer's keys with validity windows, so a signature is checked against the key that was valid at <code>observedAt</code>.</li>
+        <li>A signer can be a client's own oracle service: the same L1 model as identity – their key, their liability, our rail.</li>
+        <li>Events name every signer: <code>RecordPublished(channel, sequence, valueHash, signers[])</code>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>What it changes on the other pages</h3>
+      <ul>
+        <li><b>Terms:</b> VWAP and FMV used by a term are valid only under a channel policy that requires an ATTESTOR – no dispute path is needed for a figure nobody outside the parties signed, because such a figure cannot exist.</li>
+        <li><b>Offering:</b> a regime preset may require the REGULATED role on <code>shares.outstanding</code> and <code>captable.root</code>.</li>
+        <li><b>Hub gap register:</b> G14 (AttestorRegistry) moves from "Terms · Phase 4" to Phase 1, because the oracle cannot ship without it.</li>
+        <li><b>Liability wording for the MSA:</b> "attested by [ISSUER] and carried by the Stobox relay; verified by [ATTESTOR] where shown" – for Max.</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -400,8 +458,8 @@ a{color:var(--accent)}
     <div class="card">
       <h3>Decisions for Gene</h3>
       <ol class="dec">
-        <li><b><code>corporate.action</code></b>: hash only, or structured fields an agent can act on?</li>
-        <li><b>Who signs an attested figure</b>: the Stobox relay (then we attest – against "inform, never certify" in ADR-0023 §5), or the issuer or a third party with their own key through <code>AttestorRegistry</code>? For client instruments this is liability, not technique.</li>
+        <li><b><code>corporate.action</code> – ruled 25.09:</b> structured fields an agent can act on (§4).</li>
+        <li><b>Who signs an attested figure – ruled 25.09:</b> the client signs, Stobox signs, and named third parties can be given signer roles per channel (§4b). Flexible by design.</li>
         <li><b>One registry on Base</b> – ruled 25.09; every mandate by subject depends on it.</li>
         <li><b>Operate inside Compass and Intelligence</b>, not a fourth product – confirm, so that the site and decks do not birth "Stobox Operate" before a mandate runs in production.</li>
         <li><b>Order C → B → A</b> from the agentic-economy note (our own agent with an x402 service → paid calls → Attest as a product) and STBU's role – after Max; today all three hang as K-129 / K-130 / A-61.</li>
@@ -420,6 +478,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Gene's evening rulings: <code>corporate.action</code> carries structured, executable fields; attested figures are signed by the client and by Stobox, with signer roles for third parties per channel (new §4b, channel policy and AttestorRegistry moved to Phase 1).</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. BlackRock boxes mapped to Stobox components; the pipeline from client APIs to agent actions; intake tiers; ten oracle channels; agent identity, guardrails and five client cases; MCP planes; enterprise requirements; the product frame; roadmap and decisions.</td></tr>
     </tbody>
   </table>

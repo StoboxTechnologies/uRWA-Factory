@@ -116,7 +116,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · v1.0 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · v1.1 · 25 Sep 2026</div>
   <h1>STV4</h1>
   <p class="lede">The next Stobox security-token protocol: every STV3 facet rebuilt on the uRWA Factory on Base, four layers on top – identity, terms, offering, intelligence – and agents acting within mandates. This page is the hub; each layer has its own page. The one gap that matters: the Factory's rules read claims by subject, and Stobox DID cannot answer by subject – so every preset on Stobox DID refuses every transfer.</p>
   <div class="legend" aria-label="Status legend">
@@ -371,7 +371,7 @@ a{color:var(--accent)}
       <tr><td>G11</td><td><code>AgentAuthority.consume</code> is called by nothing; a mandate limits nothing</td><td><code>src/AgentAuthority.sol:104-131</code></td><td class="v meh">medium</td><td>Payout · Board · DvP call it · Phase 5</td></tr>
       <tr><td>G12</td><td><code>RuleFailed</code> never emitted; cuts at delay 0 emit nothing; PolicySet and adapter mutations emit nothing – the subject register cannot be rebuilt from logs</td><td><code>src/PolicySet.sol</code>, <code>src/identity/Adapters.sol</code>, <code>src/libraries/LibDiamond.sol</code></td><td class="v meh">medium</td><td>Phase 1 · events</td></tr>
       <tr><td>G13</td><td>The <code>regime</code> field on an offering is a label; no preset is applied</td><td><code>src/OfferingRegistry.sol:94-101</code></td><td class="v meh">medium</td><td>Offering presets v2 · Phase 2</td></tr>
-      <tr><td>G14</td><td>Passport, AttestorRegistry, ATTESTOR and PASSPORT_ISSUER roles: interfaces and constants only, PA 0 of 7</td><td><code>src/interfaces/IAssetPassport.sol</code>, <code>docs/24-work-registry.md</code></td><td class="v meh">medium</td><td>Terms · Phase 4</td></tr>
+      <tr><td>G14</td><td>Passport, AttestorRegistry, ATTESTOR and PASSPORT_ISSUER roles: interfaces and constants only, PA 0 of 7</td><td><code>src/interfaces/IAssetPassport.sol</code>, <code>docs/24-work-registry.md</code></td><td class="v meh">medium → high</td><td>AttestorRegistry in Phase 1 (the oracle's signer sets need it, ruled 25.09); passport in Phase 4</td></tr>
       <tr><td>G15</td><td>Payout, consent, ROFR, tag, drag, document registry: none exist</td><td>–</td><td class="v meh">medium</td><td>Terms · Phase 4–5</td></tr>
       <tr><td>G16</td><td>Interfaces disagree with code: <code>createToken</code>, <code>createOffering</code>, <code>pause()</code>, <code>deposit</code>, <code>createTokenWithOffering</code>; L3.1/L3.2 compare docs to interfaces, so this is invisible to verify.py</td><td><code>src/interfaces/IuRWAFactory.sol:35-39</code> and peers</td><td class="v meh">low</td><td>Phase 0 · docs</td></tr>
       <tr><td>G17</td><td>Factory ignores <code>lockCap</code> and <code>installEmergencyFacet</code>; fee is read but never charged; <code>PurchaseRecorded</code> fires twice</td><td><code>src/uRWAFactory.sol</code>, <code>src/OfferingRegistry.sol:228, 401</code></td><td class="v meh">low</td><td>Phase 0</td></tr>
@@ -524,13 +524,14 @@ a{color:var(--accent)}
         <li><b>KYC → DID → every Stobox product</b> (10.09.2026); Stobox DID on Base deployed the same day.</li>
         <li><b>Attestations and anchoring come later</b> (wave 4, 08.08.2026); Stobox Attest is a separate sub-project (R-168).</li>
         <li><b>Voucher pattern</b>: EIP-712, KMS-signed, nonce-inherited – accepted in ADR 0002/0003/0005 for STBU and reused here.</li>
+        <li><b>Evening rulings, 25.09.2026:</b> STBX stays an economic interest through STEL; Terms precedence is term-by-term; <code>corporate.action</code> is structured and executable ("autonomous assets for real"); an attested figure is signed by the client and by Stobox, with signer roles for named third parties per channel; trust scoping by securities law – universal base gate, issuer-scoped claims in every securities preset; the Factory work proceeds.</li>
       </ol>
     </div>
     <div class="card">
       <h3>Open</h3>
       <ol class="dec">
-        <li><b>One registry or two</b> on Base (§4, option A assumes two for now).</li>
-        <li><b>Who signs the oracle</b>: relay now, Eqvista when there is an agreement and an API.</li>
+        <li><b>The name.</b> Gene asks for one name over the whole Web3 product – the open-source factory a client can deploy, our hosted Factory, Intelligence, the oracle and the agents – "cosmic, like BlackRock's". Candidates free in the vault and on the site: <b>Stobox Orbit</b> (recommended: the record at the centre, instruments, agents and clients in orbit around it; pairs with Compass as one navigation family), Stobox Helix, Stobox Kepler, Stobox Lattice. Aster, Vector, Nexus and Meridian are already in use. Product names inside stay canon: Intelligence, Compass (Issue · Price · Board), Raisable; the open-source factory keeps "uRWA Factory". Trademark and domain checks before any public use.</li>
+        <li><b>One registry or two</b> on Base – ruled: one (identity page, §3).</li>
         <li><b>Merkle claim or voucher</b> for the STBX migration; both patterns exist, the spec says Merkle.</li>
         <li><b>The 24-month legal lockup</b> to 01.04.2028: in code at issuance or on paper only – Max.</li>
         <li><b>Deactivated linker</b> semantics before migration – Max and Vlad.</li>
@@ -550,6 +551,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v1.1</td><td>25 Sep 2026</td><td>Evening rulings recorded on the hub and the layer pages; AttestorRegistry moved to Phase 1; the umbrella-name decision opened with candidates checked against the vault.</td></tr>
       <tr><td class="v">v1.0</td><td>25 Sep 2026</td><td>Hub restructure: four layer pages added (identity, terms, offering, intelligence) and linked; gap register G1–G18 consolidated from the facet inventory, the offering review and the rights register, each read against the code; Phase 0 widened to three weeks; lede and totals updated.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. STV3 inventory from the nine verified facets on Arbitrum; Factory status from code and 220 passing tests; Intelligence facet and Stobox Oracle designed; identity gap named; four-level criteria; four-phase build order.</td></tr>
     </tbody>
