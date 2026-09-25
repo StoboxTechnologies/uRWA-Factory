@@ -116,7 +116,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · v0.3 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · v0.4 · 25 Sep 2026</div>
   <h1>Stobox Orbit</h1>
   <p class="lede">The whole Web3 product under one name – the open-source uRWA Factory a client can deploy, our hosted Factory, Intelligence, the signed oracle and the agents – reviewed from six institutional seats: custodian, auditor, compliance officer, enterprise buyer, infrastructure architect, asset-class specialist. Gene's frame: one factory whose tokens meet every institutional requirement <b>by design</b>, so that when a custodian, a bank network or a commodity issuer arrives, nothing is rebuilt – only partners and attestations are added. The first client is Stobox itself, with STBX, operated by one person today.</p>
   <div class="legend" aria-label="Status legend">
@@ -299,7 +299,7 @@ a{color:var(--accent)}
     <thead><tr><th>#</th><th>Requirement</th><th>Source</th><th>Orbit today</th><th>Fix</th><th>Phase</th></tr></thead>
     <tbody>
       <tr><td>O1</td><td>Every privileged role on a hardware-backed multisig with separated duties; no hot key, no single owner</td><td>infra · auditor · CCO</td><td><span class="tag option">deferred</span> Technical Safe is 1-of-1 today (read from Base); Gene, 25.09: a separate technical Safe comes later, ignore now</td><td>Role-handover mechanics in Phase 0 (§3b) so the later move is one transaction per role; Safe topology when Gene sets it up</td><td class="v">later · ruled</td></tr>
-      <tr><td>O2</td><td>External audit with a public report and the explorer tag</td><td>custodian · CCO · RFP</td><td><span class="tag gap">gap</span> none; internal only</td><td>Book the firm in October (queues 4–12 weeks); ChainSecurity, Trail of Bits or Spearbit; $60–150k</td><td class="v">3</td></tr>
+      <tr><td>O2</td><td>External audit with a public report and the explorer tag</td><td>custodian · CCO · RFP</td><td><span class="tag gap">gap</span> none; internal only</td><td>On demand (ruling 25.09): the internal audit of the frozen scope is the gate; a firm (ChainSecurity, Trail of Bits, Spearbit) engaged when a client or a regulator asks</td><td class="v">on demand</td></tr>
       <tr><td>O3</td><td>Holder register, lockups, roles and oracle history reconstructible from <code>eth_getLogs</code> by the custodian itself</td><td>custodian · auditor</td><td><span class="tag pending">partial</span> principle stated; G12: <code>RuleFailed</code> never emitted, PolicySet and adapter mutations silent, cuts at delay 0 silent</td><td>Events on every mutation; <code>ComplianceDecision</code> off-chain log with nightly anchor; verify.py check "every declared event is emitted"</td><td class="v">1</td></tr>
       <tr><td>O4</td><td>Custodian as a first-class holder: omnibus wallet with beneficiary attribution, sub-accounts, holder counts by beneficiary</td><td>custodian · asset</td><td><span class="tag gap">gap</span> no concept</td><td>Claim <code>custodian.omnibus</code>; custodian signs a beneficiary-attribution channel as ATTESTOR; rules read attribution for caps</td><td class="v">2 design · 5 build</td></tr>
       <tr><td>O5</td><td>Corporate actions mapped to ISO 20022 (seev.031 notification, seev.036 confirmation) and MT564/566</td><td>custodian · asset · RFP</td><td><span class="tag gap">gap</span> "ISO 20022" appears nowhere in docs or src</td><td>CAEV-aligned codes in <code>CorporateAction</code>; off-chain export adapter (seev, sese.023/025, camt.054); import seev.033 into <code>action.propose</code></td><td class="v">2 design · 4 build</td></tr>
@@ -324,7 +324,7 @@ a{color:var(--accent)}
       <tr><td>O24</td><td>Privacy for institutions on a public chain: balances are public even with hashed identity</td><td>infra · custodian</td><td><span class="tag pending">partial</span> hashes and roots only</td><td>Omnibus via custodian (O4) now; ZK admission pilot 2027; FHE (ERC-7984) pilot on one instrument after the core audit; Canton only on client request, as a separate issuance</td><td class="v">4 · 2027</td></tr>
       <tr><td>O25</td><td>Basel SCO60: a permissionless chain is Group 2 for a bank's balance sheet</td><td>custodian</td><td><span class="tag gap">gap</span> no position</td><td>One-page position; option to deploy the open-source Factory on a client's permissioned chain</td><td class="v">1 · doc</td></tr>
       <tr><td>O26</td><td>Insurance (E&amp;O, cyber, crime), verified source-code escrow for the closed services, SLA 99.9% with credits, audit rights, client sandbox, issuer SDK, tax reporting (1099 / FATCA / CRS)</td><td>RFP</td><td><span class="tag gap">gap</span> none of these appear anywhere</td><td>Enterprise contract package with Max; sandbox tenant on Base Sepolia with mock KYC; SDK after Phase 3; tax reporting through the TA partner</td><td class="v">3</td></tr>
-      <tr><td>O27</td><td>Price list carries "tokenized-AUM 5–15 bps/yr" though canon withdrew it on 11.08.2026</td><td>RFP</td><td><span class="tag gap">gap</span> internal contradiction a buyer will see</td><td>Remove the row; one "Orbit Enterprise · annual" line with volume tiers by instrument count, never by AUM</td><td class="v">now</td></tr>
+      <tr><td>O27</td><td>Price list carries "tokenized-AUM 5–15 bps/yr" though canon withdrew it on 11.08.2026</td><td>RFP</td><td><span class="tag gap">gap</span> internal contradiction a buyer will see</td><td>Remove the row; one "Orbit Enterprise · annual" line with volume tiers by instrument count, never by AUM. The Factory itself keeps a configurable fee policy (0 for Stobox) so a client may charge – ruling 25.09</td><td class="v">now</td></tr>
       <tr><td>O28</td><td>Holder-facing terms for STBX and the four conflicts in the paper</td><td>terms · CCO</td><td><span class="tag gap">gap</span> G18</td><td>Max: STBX Token Terms, conflicts resolved, PPM amendment disclosing Reg S, the Board and the reference price</td><td class="v">before 3 · counsel</td></tr>
     </tbody>
   </table>
@@ -444,7 +444,7 @@ a{color:var(--accent)}
     <div class="card">
       <h3>Custodian says "we want this" when</h3>
       <ol>
-        <li>G1–G3 closed and an external audit published with the explorer tag.</li>
+        <li>G1–G3 closed and the internal audit of the frozen scope published; an external audit when a client asks.</li>
         <li>The auditor pack rebuilds from <code>eth_getLogs</code> in their hands, G12 closed.</li>
         <li>Custodian omnibus is a first-class holder with attributed beneficiaries.</li>
         <li>ISO 20022 seev export exists; seev.033 instructions import.</li>
@@ -501,7 +501,7 @@ a{color:var(--accent)}
     <div class="ph"><div class="when">Phase 2 · 5 weeks</div><div class="why">Market, migration, standards</div>
       <ul><li>MigrationClaim; Compass Board with <code>TransferRefused</code>, self-trade by subject, blackout claim</li><li>Custodian omnibus claim and attribution channel</li><li>Corporate-action struct v2 (CAEV, options, legs, withholding, SUSP); ISO 20022 seev export</li><li>DvP with any ERC-20 cash asset; <code>PaymentAttested</code> leg</li><li>Regime presets that bind; Board perimeter opinion in hand</li><li>Internal adversarial audit of the whole scope</li></ul></div>
     <div class="ph"><div class="when">Phase 3 · 6–8 weeks</div><div class="why">Assurance and launch</div>
-      <ul><li>Code freeze; external audit (booked in October); fixes; re-check; public report and explorer tag</li><li>Enterprise contract package: SLA, insurance, escrow, audit rights, DORA addendum, sandbox tenant</li><li>Pause STBX on Arbitrum; snapshot; issue 1,415,000 on Base; claims; Board</li><li>SOC 2 Type I complete; Type II observation period starts; SOC 1 scoped for funds</li></ul></div>
+      <ul><li>Code freeze; internal adversarial audit and formal verification; fixes; re-check; public report; external audit on demand</li><li>Enterprise contract package: SLA, insurance, escrow, audit rights, DORA addendum, sandbox tenant</li><li>Pause STBX on Arbitrum; snapshot; issue 1,415,000 on Base; claims; Board</li><li>SOC 2 Type I complete; Type II observation period starts; SOC 1 scoped for funds</li></ul></div>
   </div>
   <div class="two">
     <div class="card">
@@ -515,7 +515,7 @@ a{color:var(--accent)}
     <div class="card">
       <h3>Operations track · owned by people</h3>
       <ul>
-        <li><b>Now:</b> conflicts register (Eqvista, STBX); audit firm booked; Vanta owner named. AML programme and MLRO before the first third-party issuer; partner conversations when a client brings them.</li>
+        <li><b>Now:</b> conflicts register (Eqvista, STBX); no paid assurance until a client asks (ruling 25.09). AML programme and MLRO before the first third-party issuer; partner conversations when a client brings them.</li>
         <li><b>Phase 1:</b> DPIA; DORA addendum; incident and breach procedures; key ceremony documented; complaints process.</li>
         <li><b>Phase 2:</b> insider and blackout policy live; marketing approval workflow; Board terms of use; regulatory obligations register with quarterly review (TA rule comments due 03.11.2026; FCA gateway window 30.09.2026 – 28.02.2027).</li>
         <li><b>Phase 3:</b> insurance bound; escrow agreement; SLA document; investor letter; support FAQ.</li>
@@ -548,7 +548,7 @@ a{color:var(--accent)}
         <li><b>First custodian partner</b> to approach (Fireblocks, Anchorage, Copper, Zodia) and a first transfer agent or administrator – none exists today; Silicon Prairie is the BD of our own round.</li>
         <li><b>Cash leg:</b> pursue a deposit-token partner on Base (JPMD-class) in 2027, or USDC plus fiat-attested only for the first year?</li>
         <li><b>Permissioned option:</b> offer the open-source Factory on a client's permissioned chain as the SCO60 answer, or stay Base-only?</li>
-        <li><b>Assurance owner and budget:</b> who owns Vanta and SOC; audit firm and contest budget ($60–150k + $40–100k); insurance limit.</li>
+        <li><b>Assurance:</b> ruled 25.09 – on demand, no spending now; when a client asks: audit firm, contest and insurance sized then.</li>
         <li><b>Price list:</b> confirm removal of the bps row and the single "Orbit Enterprise · annual" line with instrument-count tiers.</li>
       </ol>
     </div>
@@ -565,6 +565,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.4</td><td>25 Sep 2026</td><td>Assurance on demand and the fee capability, per Gene's night rulings.</td></tr>
       <tr><td class="v">v0.3</td><td>25 Sep 2026</td><td>Sign-off reviews applied: partner statuses corrected (no TA today, Silicon Prairie is the BD of our own round), hooks design-only in Phase 2 by A-05, sanctions ≤ 24 h everywhere, counsel package before Phase 3, Board opinion scope and fallback, RFP threshold made reachable, SCO60 criterion made testable, ERC-7943 stated as the standard's status.</td></tr>
       <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Gene's ruling: the Safe topology is deferred and off the critical path; the page reframed around readiness by design – a hook per tomorrow's party (§3), role handover mechanics (§3b), partners and assurance following the first institutional client; sequence concept → Factory → tokens, STBX first.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Six institutional reviews consolidated into the requirements register O1–O28; the Technical Safe read from Base; BUIDL element mapping; ten instrument presets; institutional-grade criteria; the build order revised with keys on day one and an operations track.</td></tr>

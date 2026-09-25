@@ -68,7 +68,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · v0.2 · 25 Sep 2026 · part of Stobox Orbit</div>
+  <div class="eyebrow">Stobox · internal architecture · v0.3 · 25 Sep 2026 · part of Stobox Orbit</div>
   <h1>Orbit Functions</h1>
   <p class="lede">Every principal function of Stobox Orbit, module by module: what exists in <code>src/</code> today, what changes, what is new. Read from the code on 25.09.2026 – 145 public functions across 13 contracts – and from the five design pages. The status is the function's, not the module's: a module can be "ready" and still carry one function that must change.</p>
   <div class="legend" aria-label="Status legend">
@@ -341,7 +341,7 @@ a{color:var(--accent)}
     <tbody>
       <tr><td><code>createToken(params, packageId, offeringRegistry)</code></td><td>anyone (the issuer)</td><td><code>TokenCreated</code></td><td><span class="tag pending">change</span> honours <code>lockCap</code> and <code>installEmergencyFacet</code>; refuses delay below the floor and EOA admins; interface reconciled (G16, G17); the factory keeps no role after creation</td></tr>
       <tr><td><code>registerPackage · registerPreset · packages · presets</code></td><td>factory admin</td><td><code>PackageRegistered</code> · <code>PresetRegistered</code></td><td><span class="tag pending">change</span> admin transferable (two-step); presets: RegD506b, RegD506c, RegS-Cat3, RegCF-rail, EU-PR, UK-FPO, BVI-SIBA, Open-with-opinion, plus the ten instrument presets on the Orbit page</td></tr>
-      <tr><td><code>setFee · setFeeToken · fee · feeToken</code></td><td>factory admin</td><td><code>FeeChanged</code></td><td><span class="tag option">drop</span> read but never charged; flat fees are billed off chain by canon</td></tr>
+      <tr><td><code>setFeePolicy(token, FeePolicy{kind, amount, recipient})</code> · <code>feePolicyOf</code></td><td>factory admin at creation; ISSUER_ADMIN under the delay after</td><td><code>FeePolicyChanged</code></td><td><span class="tag pending">change</span> replaces <code>setFee · setFeeToken</code>, which were read but never charged; <code>kind ∈ {NONE, FLAT, BPS}</code>; default NONE; charged in <code>purchase</code> and in Board <code>buy</code> to the recipient, never to the Factory by default. Stobox charges nothing today; the capability exists for clients and for a future regulation (ruling 25.09)</td></tr>
       <tr><td><code>isFactoryIssued(token)</code></td><td>view</td><td>–</td><td><span class="tag ready">exists</span> used to notify every issuer of a facet fix</td></tr>
       <tr><td><code>script/Deploy.s.sol</code></td><td>CI</td><td>–</td><td><span class="tag pending">change</span> no defaults; CREATE2 facets; pinned forge-std; signed tags; Sourcify full match (O23)</td></tr>
     </tbody>
@@ -371,7 +371,8 @@ a{color:var(--accent)}
   <div class="head"><span class="kicker">Changelog</span><h2 id="cl-h">Versions</h2></div>
   <div class="tbl"><table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
-    <tbody><tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Technical sign-off applied: delay floor placed in createToken and setUpgradeDelay; EmergencyFacet selectors, events, recipient rule, totalIssued and lockup carry-over specified; accountedSubject and resyncSubject rule; pendingSuccessor storage, PAUSER role and cancel; permit overload; AccountingDrift from the core; trust and rule removal under the delay; paidBySubject type; tranche parameters on listAtReference; consume callers ordered; isFactoryIssued marked exists.</td></tr>
+    <tbody><tr><td class="v">v0.3</td><td>25 Sep 2026</td><td>Fee policy made configurable instead of dropped (Gene, 25.09 night).</td></tr>
+      <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Technical sign-off applied: delay floor placed in createToken and setUpgradeDelay; EmergencyFacet selectors, events, recipient rule, totalIssued and lockup carry-over specified; accountedSubject and resyncSubject rule; pendingSuccessor storage, PAUSER role and cancel; permit overload; AccountingDrift from the core; trust and rule removal under the delay; paidBySubject type; tranche parameters on listAtReference; consume callers ordered; isFactoryIssued marked exists.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First catalogue: 145 existing public functions read from src/, the changes each needs, and the new functions of nine new contracts and the off-chain services, each tied to a gap or requirement.</td></tr></tbody>
   </table></div>
 </section>
