@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>32 — Frequently asked questions — uRWA Factory</title>
+<title>35 — The auditor pack — uRWA Factory</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -397,10 +397,10 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="29-data-model.html"><span class="n">29</span>Data model</a>
 <a href="30-interaction-model.html"><span class="n">30</span>Interaction and API model</a>
 <a href="31-verification.html"><span class="n">31</span>Verification framework</a>
-<a href="32-faq.html" aria-current="page"><span class="n">32</span>Frequently asked questions</a>
+<a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
 <a href="33-test-results.html"><span class="n">33</span>Test results</a>
 <a href="34-build-log.html"><span class="n">34</span>Build log</a>
-<a href="35-auditor-pack.html"><span class="n">35</span>The auditor pack</a>
+<a href="35-auditor-pack.html" aria-current="page"><span class="n">35</span>The auditor pack</a>
 <a href="author.html"><span class="n">—</span>The author</a>
 <p class="t s">Surfaces</p>
 <a href="../prototypes/"><span class="n">—</span>All prototypes</a>
@@ -413,137 +413,58 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="../LICENSE"><span class="n">—</span>Licence — MIT</a>
 </nav>
 <article>
-<header class="slim"><a href="../index.html">uRWA Factory documentation</a><span>Frequently asked questions</span></header>
-<section class="doc" id="doc-32"><h2 id="sec-32">32 — Frequently asked questions</h2>
-<p>57 questions, answered from the specification rather than from marketing. Every answer links to the document that carries the detail. Nothing here is legal, financial or investment advice.</p>
-<h3 id="32-what-this-is">What this is</h3>
-<details class="faq" id="32-what-is-urwa-factory-in-one-sentence"><summary>What is uRWA Factory, in one sentence?</summary>
-<p>An open-source factory that deploys real-world-asset security tokens which enforce their own transfer rules on chain, built on ERC-7943 and released under MIT. See <a href="01-overview.html">01 — Overview</a>.</p>
-</details><details class="faq" id="32-what-problem-does-it-actually-solve"><summary>What problem does it actually solve?</summary>
-<p>A security token has to answer one question correctly on every transfer, forever: may this specific person hold this specific asset, right now, in this amount? An ordinary ERC-20 cannot answer it at all. See <a href="00-why-this-exists.html">00 — Why this exists</a>.</p>
-</details><details class="faq" id="32-why-is-it-free"><summary>Why is it free?</summary>
-<p>ERC-7943 is Final but has no reference issuance stack. A standard with one implementer is not a standard, so the tooling is given away rather than sold. The commercial product is the attestation service that sits on top, not the contracts. See <a href="19-open-boundary.html">19 — The open boundary</a>.</p>
-</details><details class="faq" id="32-do-i-need-stobox-to-use-it"><summary>Do I need Stobox to use it?</summary>
-<p>No. A fork deploys the whole stack with no Stobox contract in the graph, and a CI job proves it on a fresh chain on every commit. See <a href="19-open-boundary.html">19 — The open boundary</a>.</p>
-</details><details class="faq" id="32-what-does-it-cost-to-deploy-a-token"><summary>What does it cost to deploy a token?</summary>
-<p>The open distribution charges no factory fee — an invariant test asserts it is zero. Chain gas is a diamond constructor plus a treasury clone, targeted at under one dollar on Base. See <a href="16-deployment.html">16 — Deployment</a>.</p>
-</details><details class="faq" id="32-who-is-this-for"><summary>Who is this for?</summary>
-<p>Issuers deploying an asset, investors who need to know the rules before buying, and integrators who want one interface that works across every conformant token. See <a href="01-overview.html">01 — Overview</a>.</p>
-</details><details class="faq" id="32-is-there-any-code-yet"><summary>Is there any code yet?</summary>
-<p>No. The project is at specification stage: the design, the interfaces, the models and the prototypes are complete and reviewable; the Solidity is not written. See <a href="20-development-plan.html">20 — Development plan</a>.</p>
-</details><details class="faq" id="32-who-wrote-it-and-what-is-their-interest"><summary>Who wrote it and what is their interest?</summary>
-<p>Gene Deyev, founder and CEO of Stobox Technologies, released in a personal capacity. The commercial interest is stated openly: Stobox sells the attestation service that sits on top of this, which is why the boundary is written down and enforced in CI. See <a href="AUTHOR.md">The author</a>.</p>
-</details><h3 id="32-architecture-and-safety">Architecture and safety</h3>
-<details class="faq" id="32-what-is-the-three-plane-architecture"><summary>What is the three-plane architecture?</summary>
-<p>A ledger plane that can never change, a policy plane that can change freely in one transaction, and a claims plane anyone can extend. See <a href="02-architecture.html">02 — Architecture</a>.</p>
-</details><details class="faq" id="32-what-is-the-single-most-important-guarantee"><summary>What is the single most important guarantee?</summary>
-<p>No key in the system can change a balance or the total supply outside the normal issue and redeem path. A compliance failure stops trading; it never corrupts supply. See <a href="17-security.html">17 — Security</a>.</p>
-</details><details class="faq" id="32-how-is-that-enforced-rather-than-promised"><summary>How is that enforced, rather than promised?</summary>
-<p>ERC-20 core selectors are registered against the diamond itself, and <code>LibDiamond</code> reverts <code>CannotReplaceImmutableFunction</code> and <code>CannotRemoveImmutableFunction</code> for any such selector. It is code, not governance policy. See <a href="02-architecture.html">02 — Architecture</a>.</p>
-</details><details class="faq" id="32-what-happens-if-the-compliance-layer-has-a-bug"><summary>What happens if the compliance layer has a bug?</summary>
-<p>Transfers stop. Every ambiguous failure resolves toward stopping, and every blocked state has a one-transaction exit that needs no migration. See <a href="17-security.html">17 — Security</a>.</p>
-</details><details class="faq" id="32-why-a-diamond-instead-of-a-plain-proxy"><summary>Why a diamond instead of a plain proxy?</summary>
-<p>Modularity with a hard boundary: facets can be swapped independently while the ledger selectors stay immutable inside the diamond. See <a href="03-contracts.html">03 — Contracts</a>.</p>
-</details><details class="faq" id="32-what-can-a-compromised-upgrade-admin-do"><summary>What can a compromised upgrade admin do?</summary>
-<p>Swap facets, the policy set and the identity registry — which stops transfers. It cannot touch balances, supply or any immutable ledger selector. See <a href="17-security.html">17 — Security</a>.</p>
-</details><details class="faq" id="32-what-can-a-compromised-supply-operator-do"><summary>What can a compromised supply operator do?</summary>
-<p>Mint up to <code>maxSupply</code> and move treasury payments. <code>capLocked</code> bounds the damage absolutely, because a locked cap never unlocks. See <a href="17-security.html">17 — Security</a>.</p>
-</details><details class="faq" id="32-can-an-issuer-seize-or-force-move-tokens"><summary>Can an issuer seize or force-move tokens?</summary>
-<p>Only where the <code>EmergencyFacet</code> is installed, which is opt-in and visible on chain, and only by the compliance officer, with a reason string and an event. See <a href="07-functions.html">07 — Function reference</a>.</p>
-</details><details class="faq" id="32-is-the-system-upgradeable-against-the-holder-s-interest"><summary>Is the system upgradeable against the holder&#x27;s interest?</summary>
-<p>The upgrade right is real and it is bounded: it can stop the token, never rewrite the ledger. The configuration that governs it is public and readable at any time. See <a href="05-roles.html">05 — Roles</a>.</p>
-</details><h3 id="32-compliance-and-rules">Compliance and rules</h3>
-<details class="faq" id="32-what-exactly-happens-on-a-transfer"><summary>What exactly happens on a transfer?</summary>
-<p>One pipeline, in order: paused, both parties trusted, <code>canSend</code>, <code>canReceive</code>, enough unfrozen balance, rules pass, execute. See <a href="08-compliance-pipeline.html">08 — Compliance pipeline</a>.</p>
-</details><details class="faq" id="32-why-that-order"><summary>Why that order?</summary>
-<p>The cheapest and most absolute checks run first, so a blocked transfer costs as little gas as possible and the reason returned is the first real one. See <a href="08-compliance-pipeline.html">08 — Compliance pipeline</a>.</p>
-</details><details class="faq" id="32-how-do-i-find-out-why-a-transfer-would-fail-before-signing"><summary>How do I find out why a transfer would fail, before signing?</summary>
-<p>Call <code>whyBlocked</code>. It is a free read that returns the first rule that would refuse, and it is guaranteed never to revert. See <a href="07-functions.html">07 — Function reference</a>.</p>
-</details><details class="faq" id="32-what-is-a-rule"><summary>What is a rule?</summary>
-<p>A stateless external contract implementing <code>IRule</code>, deployed once per chain and shared by every token that installs it. See <a href="10-rules.html">10 — Rules</a>.</p>
-</details><details class="faq" id="32-what-rules-ship-with-the-system"><summary>What rules ship with the system?</summary>
-<p>A library of twelve, including valid identity, jurisdiction allow and deny, US accredited only, holder caps and lockups. Presets bundle them per regime. See <a href="10-rules.html">10 — Rules</a>.</p>
-</details><details class="faq" id="32-can-i-write-my-own-rule"><summary>Can I write my own rule?</summary>
-<p>Yes, without asking anyone. <code>IRule</code> is open and third-party rules attach to a policy set like any other. See <a href="10-rules.html">10 — Rules</a>.</p>
-</details><details class="faq" id="32-what-stops-a-bad-rule-from-bricking-a-token"><summary>What stops a bad rule from bricking a token?</summary>
-<p>Every rule call is wrapped in <code>try/catch</code> with a per-rule gas ceiling, a rule that reverts or runs long counts as a reject and emits <code>RuleFailed</code>, and the rule count is hard-capped. See <a href="17-security.html">17 — Security</a>.</p>
-</details><details class="faq" id="32-what-does-the-trusted-list-actually-bypass"><summary>What does the trusted list actually bypass?</summary>
-<p>Rules only. It never bypasses the pause check or the frozen-balance check. See <a href="08-compliance-pipeline.html">08 — Compliance pipeline</a>.</p>
-</details><h3 id="32-identity">Identity</h3>
-<details class="faq" id="32-how-does-the-token-know-who-someone-is"><summary>How does the token know who someone is?</summary>
-<p>Through an identity registry adapter behind one interface, with three implementations: a plain allowlist, an EAS adapter and a StoboxDID adapter. See <a href="09-identity-did.html">09 — Identity and DID</a>.</p>
-</details><details class="faq" id="32-why-an-adapter-instead-of-a-whitelist"><summary>Why an adapter instead of a whitelist?</summary>
-<p>A whitelist answers only whether an address is allowed. Rules need claims — jurisdiction, accreditation, investor class — and the adapter exposes them under namespaced keys. See <a href="09-identity-did.html">09 — Identity and DID</a>.</p>
-</details><details class="faq" id="32-does-personal-data-go-on-chain"><summary>Does personal data go on chain?</summary>
-<p>No. Claims are namespaced keys and hashed values; country codes are compared as hashes so no plaintext code appears in calldata. See <a href="09-identity-did.html">09 — Identity and DID</a> and <a href="11-passport.html">11 — Asset Passport</a>.</p>
-</details><details class="faq" id="32-what-happens-when-a-claim-is-revoked"><summary>What happens when a claim is revoked?</summary>
-<p>It takes effect on the next transfer. There is no cache to go stale. See <a href="17-security.html">17 — Security</a>.</p>
-</details><details class="faq" id="32-can-one-person-hold-tokens-in-several-wallets"><summary>Can one person hold tokens in several wallets?</summary>
-<p>Yes, and caps still hold: holder caps count subjects, not addresses, so splitting across wallets does not evade them. See <a href="17-security.html">17 — Security</a>.</p>
-</details><h3 id="32-issuance-treasury-and-offerings">Issuance, treasury and offerings</h3>
-<details class="faq" id="32-what-does-one-deployment-produce"><summary>What does one deployment produce?</summary>
-<p>One transaction produces the token, its treasury and its rule set — after which the factory holds no role, no key and no upgrade right over what it created. See <a href="16-deployment.html">16 — Deployment</a>.</p>
-</details><details class="faq" id="32-why-one-treasury-per-token"><summary>Why one treasury per token?</summary>
-<p>So that reservation accounting, payment locking, distribution and refunds are scoped to a single asset and cannot be entangled across issuances. See <a href="13-treasury.html">13 — Treasury</a>.</p>
-</details><details class="faq" id="32-how-are-tokens-sold"><summary>How are tokens sold?</summary>
-<p>Through the optional offering registry: an offering carries its own parameters, supply path, hold periods and regime, and can add rules on top of the token-level ones. See <a href="12-offering.html">12 — Offerings</a>.</p>
-</details><details class="faq" id="32-can-a-purchase-be-refunded"><summary>Can a purchase be refunded?</summary>
-<p>Yes, by two paths, and an invariant asserts a purchase can never be refunded twice. See <a href="12-offering.html">12 — Offerings</a> and <a href="23-testing-plan.html">23 — Testing plan</a>.</p>
-</details><details class="faq" id="32-what-is-a-lockup"><summary>What is a lockup?</summary>
-<p>A time-bounded restriction on part of a balance, held in its own storage and composed with freezes into a single frozen total. It releases itself; no transaction and no approval is needed. See <a href="07-functions.html">07 — Function reference</a>.</p>
-</details><details class="faq" id="32-can-the-supply-cap-be-raised-later"><summary>Can the supply cap be raised later?</summary>
-<p>Only while the cap is unlocked, and only by the issuer admin. Once locked it never unlocks — that is an invariant, not a policy. See <a href="05-roles.html">05 — Roles</a>.</p>
-</details><h3 id="32-the-asset-passport-and-the-stobox-boundary">The Asset Passport and the Stobox boundary</h3>
-<details class="faq" id="32-what-is-the-asset-passport"><summary>What is the Asset Passport?</summary>
-<p>A record of what an asset actually is — attested by independent attestors, anchored on chain as a snapshot root, and linked to a token by a bidirectional handshake. See <a href="11-passport.html">11 — Asset Passport</a>.</p>
-</details><details class="faq" id="32-can-a-passport-block-my-transfers"><summary>Can a passport block my transfers?</summary>
-<p>Not unless you choose it. The passport is descriptive, never dispositive; gating transfers on passport state requires installing the optional <code>PassportValidRule</code>. See <a href="11-passport.html">11 — Asset Passport</a>.</p>
-</details><details class="faq" id="32-what-happens-if-stobox-refuses-or-revokes-a-confirmation"><summary>What happens if Stobox refuses or revokes a confirmation?</summary>
-<p>The token loses its provenance record and keeps functioning. A token without a passport is fully functional. See <a href="16-deployment.html">16 — Deployment</a>.</p>
-</details><details class="faq" id="32-what-is-open-and-what-is-kept"><summary>What is open and what is kept?</summary>
-<p>Publish the socket, keep the plug. Everything needed to issue, govern and verify a compliant token is open; knowledge about a specific asset — the data, the scoring, the attestor relationships — is not. See <a href="19-open-boundary.html">19 — The open boundary</a>.</p>
-</details><details class="faq" id="32-what-exactly-is-kept-closed"><summary>What exactly is kept closed?</summary>
-<p>The Stobox passport implementation, the data-point schemas and registry contents, the scoring and weighting, the attestor network and curation rules, the ingestion pipelines, the Compass console, and the configuration of the Stobox factory instance. See <a href="19-open-boundary.html">19 — The open boundary</a>.</p>
-</details><details class="faq" id="32-is-the-reference-passport-crippled-on-purpose"><summary>Is the reference passport crippled on purpose?</summary>
-<p>No. It is complete in mechanism and empty of knowledge: minting, anchoring, the handshake, access grants, attestation records and proof verification all work. See <a href="19-open-boundary.html">19 — The open boundary</a>.</p>
-</details><details class="faq" id="32-how-is-the-boundary-stopped-from-drifting"><summary>How is the boundary stopped from drifting?</summary>
-<p>CI enforces it. The build fails on a known Stobox contract address or an STBU reference in contract source, and an invariant scans source and bytecode. See <a href="19-open-boundary.html">19 — The open boundary</a>.</p>
-</details><h3 id="32-standards-deployment-and-verification">Standards, deployment and verification</h3>
-<details class="faq" id="32-which-standards-does-it-implement"><summary>Which standards does it implement?</summary>
-<p>ERC-7943 as the primary compliance interface, plus ERC-20, EIP-2535, ERC-165, ERC-173, ERC-1404, ERC-2612 and EIP-712. See <a href="15-standards.html">15 — Standards</a>.</p>
-</details><details class="faq" id="32-what-is-the-erc-7943-interface-id"><summary>What is the ERC-7943 interface id?</summary>
-<p><code>0x3edbb4c4</code>. <code>supportsInterface</code> returning true for it is an exit criterion for Phase 1. See <a href="15-standards.html">15 — Standards</a>.</p>
-</details><details class="faq" id="32-why-is-erc-1404-still-there"><summary>Why is ERC-1404 still there?</summary>
-<p>For integrator compatibility: existing tooling reads restriction codes, and supporting it costs nothing. See <a href="15-standards.html">15 — Standards</a>.</p>
-</details><details class="faq" id="32-which-chain-does-it-target"><summary>Which chain does it target?</summary>
-<p>Base is primary, Base Sepolia is the testnet, Arbitrum One is secondary for continuity with existing STV3 and StoboxDID deployments. See <a href="16-deployment.html">16 — Deployment</a>.</p>
-</details><details class="faq" id="32-why-base"><summary>Why Base?</summary>
-<p>The settlement currency, the fee token and the identity attestation infrastructure all live there. See <a href="16-deployment.html">16 — Deployment</a>.</p>
-</details><details class="faq" id="32-is-cross-chain-supported"><summary>Is cross-chain supported?</summary>
-<p>The seam is retained and CCT-compatible, but it is not wired in v1. See <a href="16-deployment.html">16 — Deployment</a>.</p>
-</details><details class="faq" id="32-has-it-been-audited"><summary>Has it been audited?</summary>
-<p>No. There is no mainnet issuance until an audit clears. See <a href="00-why-this-exists.html">00 — Why this exists</a> and <code>SECURITY.md</code>.</p>
-</details><details class="faq" id="32-how-will-it-be-tested"><summary>How will it be tested?</summary>
-<p>Eight layers — unit, fuzz, invariant, integration, fork, fresh-chain, conformance and gas — with 100% branch coverage required on the pipeline and the rules, because every branch there is a compliance decision. See <a href="23-testing-plan.html">23 — Testing plan</a>.</p>
-</details><details class="faq" id="32-what-is-the-conformance-kit"><summary>What is the conformance kit?</summary>
-<p>An ERC-7943 conformance suite in a separate repository that anyone can run against any token claiming the standard. See <a href="15-standards.html">15 — Standards</a>.</p>
-</details><details class="faq" id="32-how-do-i-check-that-this-documentation-is-not-lying"><summary>How do I check that this documentation is not lying?</summary>
-<p>Run <code>python3 verify.py</code>. It checks structure, document consistency and cross-model consistency, and <code>--self-test</code> proves each check fails on its own fixture. See <a href="31-verification.html">31 — Verification framework</a>.</p>
-</details><details class="faq" id="32-how-many-phases-are-there-before-release"><summary>How many phases are there before release?</summary>
-<p>Six, each ending in something releasable and independently useful, starting with an interface package that a compiler checks rather than a reader. See <a href="20-development-plan.html">20 — Development plan</a>.</p>
-</details><details class="faq" id="32-what-licence-is-it-under-and-who-holds-the-copyright"><summary>What licence is it under, and who holds the copyright?</summary>
-<p>MIT. Copyright is held personally by the author; the repository is hosted under the Stobox organisation for continuity, not ownership. See <a href="AUTHOR.md">The author</a>.</p>
-</details><details class="faq" id="32-does-this-make-my-asset-compliant"><summary>Does this make my asset compliant?</summary>
-<p>No. It enforces the rules it is configured with. Whether those are the right rules for a given asset is the issuer&#x27;s determination with their counsel. See <a href="00-why-this-exists.html">00 — Why this exists</a>.</p>
-</details><details class="faq" id="32-does-this-make-my-asset-liquid"><summary>Does this make my asset liquid?</summary>
-<p>No. Compliant transferability is a precondition for a market, not a market. See <a href="00-why-this-exists.html">00 — Why this exists</a>.</p>
-</details><h3 id="32-related-documents">Related documents</h3>
+<header class="slim"><a href="../index.html">uRWA Factory documentation</a><span>The auditor pack</span></header>
+<section class="doc" id="doc-35"><h2 id="sec-35">35 — The auditor pack</h2>
+<p>What an external auditor, a transfer agent or a custodian receives when they ask &quot;show me the register at a date, and prove it&quot;. This document is the specification the pack is built to; the pack itself is generated, never hand-written. First delivered in Phase 1a against Base Sepolia, checked against the SPV register at the first mainnet close (Phase 3).</p>
+<h3 id="35-what-it-contains">What it contains</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Section</th><th style="text-align:left">Content</th><th style="text-align:left">Source</th></tr></thead><tbody><tr><td style="text-align:left">Register</td><td style="text-align:left">Every holder (by subject, then by wallet) with balance, locked amount and lockup schedule at block <code>N</code></td><td style="text-align:left"><code>Transfer</code>, <code>LockupAdded</code>, <code>LockupCleared</code>, <code>ForcedTransfer</code>, <code>SubjectResynced</code></td></tr><tr><td style="text-align:left">Supply</td><td style="text-align:left"><code>totalSupply</code>, <code>totalIssued</code>, <code>maxSupply</code>, <code>capLocked</code> at <code>N</code>, and the issue and redeem history</td><td style="text-align:left"><code>Issued</code>, <code>Redeemed</code>, <code>CapLocked</code>, <code>ForcedOperation</code></td></tr><tr><td style="text-align:left">Controls</td><td style="text-align:left">Every role grant and revoke, every scheduled and executed cut, every setter change, with timestamps and the delay they waited</td><td style="text-align:left"><code>RoleGranted</code>, <code>RoleRevoked</code>, <code>UpgradeScheduled</code>, <code>UpgradeExecuted</code>, <code>DiamondCut</code>, <code>RoleTransferred</code></td></tr><tr><td style="text-align:left">Compliance</td><td style="text-align:left">Every refused transfer with its stage and rule, every rule and group change, every trust and distrust</td><td style="text-align:left"><code>TransferRefused</code>, <code>RuleFailed</code>, <code>RuleAdded</code>, <code>RuleRemoved</code>, <code>Trusted</code>, <code>Distrusted</code></td></tr><tr><td style="text-align:left">Identity</td><td style="text-align:left">For each subject: wallets bound, claims in force at <code>N</code> and their issuers, without personal data</td><td style="text-align:left"><code>WalletBound</code>, <code>WalletUnbound</code>, <code>SubjectChanged</code>, <code>ClaimSet</code></td></tr><tr><td style="text-align:left">Figures</td><td style="text-align:left">Every oracle record consumed by the token in the period, with signer set and confirmation</td><td style="text-align:left"><code>FigureRecorded</code>, <code>FigureConfirmed</code></td></tr><tr><td style="text-align:left">Reconciliation</td><td style="text-align:left">The register above against the SPV&#x27;s own share register: matched, unmatched, drift</td><td style="text-align:left"><code>AccountingDrift</code>, the SPV register export</td></tr></tbody></table></div>
+<h3 id="35-how-it-is-built">How it is built</h3>
+<ol>
+<li>Read every event of the token, its registry, its policy set and its oracle from <code>eth_getLogs</code></li>
+</ol>
+<p>   between the creation block and <code>N</code>, from a clean environment with no database and no cache.</p>
+<ol>
+<li>Replay them into the tables above. Nothing in the pack comes from a <code>view</code> call; every view</li>
+</ol>
+<p>   result is included only as a cross-check column.</p>
+<ol>
+<li>Reconcile: <code>Σ balances == totalSupply</code>, <code>Σ locked ≤ Σ balances</code>, every holder with a balance has</li>
+</ol>
+<p>   an accounted subject, every subject with a balance has a valid base claim at <code>N</code> or is trusted.</p>
+<ol>
+<li>Sign the pack (SHA-256 of the archive, signed by the RELAY key) and anchor the hash in the</li>
+</ol>
+<p>   decision log.</p>
+<h3 id="35-what-it-never-contains">What it never contains</h3>
 <ul>
-<li><a href="00-why-this-exists.html">00 — Why this exists</a></li>
-<li><a href="01-overview.html">01 — Overview</a></li>
-<li><a href="18-glossary.html">18 — Glossary</a></li>
-<li><a href="31-verification.html">31 — Verification framework</a></li>
-</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="31-verification.html">← Verification framework</a><a class="pn n" href="33-test-results.html">Test results →</a></nav></section>
+<li>Names, documents, addresses or any personal data. Subjects are <code>keccak256(uDID)</code>; the key file</li>
+</ul>
+<p>  that maps a subject to a person is released only under NDA, only for the subjects the requester   is entitled to, and its release is itself logged.</p>
+<ul>
+<li>Any figure that was not signed on chain.</li>
+<li>Any claim the pack cannot rebuild from logs.</li>
+</ul>
+<h3 id="35-acceptance">Acceptance</h3>
+<ul>
+<li>An outside engineer with the archive, a Base RPC and this document rebuilds the register and</li>
+</ul>
+<p>  matches the pack&#x27;s own tables byte for byte.</p>
+<ul>
+<li>The controls matrix (<code>docs/35-auditor-pack.md</code> appendix, one row per assertion: existence,</li>
+</ul>
+<p>  completeness, rights, valuation, cut-off) names the event and the check that evidences each row.</p>
+<ul>
+<li>The first mainnet pack reconciles to the SPV register with zero unexplained drift.</li>
+</ul>
+<h3 id="35-appendix-controls-matrix">Appendix — controls matrix</h3>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Assertion</th><th style="text-align:left">Evidence</th><th style="text-align:left">Check</th></tr></thead><tbody><tr><td style="text-align:left">Existence</td><td style="text-align:left"><code>Issued</code> before any balance</td><td style="text-align:left">no balance without an issue path</td></tr><tr><td style="text-align:left">Completeness</td><td style="text-align:left"><code>Transfer</code> set is closed under replay</td><td style="text-align:left">replay balance equals ledger balance</td></tr><tr><td style="text-align:left">Rights and obligations</td><td style="text-align:left">claims and lockups at <code>N</code></td><td style="text-align:left">every holder admitted; every lockup has a basis</td></tr><tr><td style="text-align:left">Valuation</td><td style="text-align:left"><code>FigureRecorded</code> for <code>price.reference</code> at <code>N</code></td><td style="text-align:left">signer set and confirmation match the channel policy</td></tr><tr><td style="text-align:left">Cut-off</td><td style="text-align:left">block <code>N</code> and its timestamp</td><td style="text-align:left">no event after <code>N</code> in the pack</td></tr></tbody></table></div>
+<hr class="soft">
+<h3 id="35-related">Related</h3>
+<ul>
+<li><a href="14-events-errors.html">14 — Events and errors</a> — every event the pack replays</li>
+<li><a href="17-security.html">17 — Security</a> — the invariants the reconciliation checks</li>
+<li><a href="26-handoff.html">26 — Handoff</a> — where the pack sits in the build</li>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="34-build-log.html">← Build log</a><a class="pn n" href="author.html">The author →</a></nav></section>
 <footer>
 <p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
 Edit the Markdown, not this file.</p>
@@ -552,7 +473,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 <aside class="rail" aria-label="Section reference">
-<div class="railsec" data-sec="sec-32"><p class="railt">On this page</p><a href="#32-what-this-is">What this is</a><a href="#32-architecture-and-safety">Architecture and safety</a><a href="#32-compliance-and-rules">Compliance and rules</a><a href="#32-identity">Identity</a><a href="#32-issuance-treasury-and-offerings">Issuance, treasury and offerings</a><a href="#32-the-asset-passport-and-the-stobox-boundary">The Asset Passport and the Stobox boundary</a><a href="#32-standards-deployment-and-verification">Standards, deployment and verification</a><p class="railt s">Related</p><a href="00-why-this-exists.html">00 — Why this exists</a><a href="01-overview.html">01 — Overview</a><a href="18-glossary.html">18 — Glossary</a><a href="31-verification.html">31 — Verification framework</a></div>
+<div class="railsec" data-sec="sec-35"><p class="railt">On this page</p><a href="#35-what-it-contains">What it contains</a><a href="#35-how-it-is-built">How it is built</a><a href="#35-what-it-never-contains">What it never contains</a><a href="#35-acceptance">Acceptance</a><a href="#35-appendix-controls-matrix">Appendix — controls matrix</a><p class="railt s">Related</p><a href="14-events-errors.html">14 — Events and errors</a><a href="17-security.html">17 — Security</a><a href="26-handoff.html">26 — Handoff</a></div>
 <div class="railfix">
 <p class="railt s">Reference</p>
 <a href="../prototypes/">Prototypes</a>

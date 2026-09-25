@@ -102,7 +102,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · STV4 layer 1 · v0.2 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 1 · v0.3 · 25 Sep 2026</div>
   <h1>STV4 Identity</h1>
   <p class="lede">One registry of Stobox DIDs on Base, keyed by person rather than by wallet, feeding every Compass token, the Board and STBU tiers through two read surfaces. KYC stays with Stripe and the DID service; the chain carries salted hashes, validity and claims. The gap: today's Stobox DID cannot answer a rule's question by subject, so every preset refuses every transfer on it.</p>
   <div class="legend" aria-label="Status legend">
@@ -204,7 +204,7 @@ a{color:var(--accent)}
     <div class="card">
       <h3>Roles under GDPR (counsel to confirm)</h3>
       <ul>
-        <li><b>Controller</b> per product: the issuer for its instrument (Stobox Tokenized Equities Ltd for STBX; a client issuer for its token); Stobox Innovations Ltd for STBU tiers and the portal. Where the DID service is shared infrastructure, Innovations is processor for each issuer, or joint controller under Art. 26.</li>
+        <li><b>Controller</b> per product (a proposal until counsel answers §8): the issuer for its instrument (Stobox Tokenized Equities Ltd for STBX; a client issuer for its token); Stobox Innovations Ltd for STBU tiers and the portal. Where the DID service is shared infrastructure, Innovations is processor for each issuer, or joint controller under Art. 26.</li>
         <li><b>Processors</b>: Stripe (standard DPA), database hosting, KMS.</li>
         <li><b>Legal basis</b>: Art. 6(1)(c) legal obligation for KYC and sanctions; 6(1)(f) legitimate interest for the on-chain hash, justified in a DPIA – the EDPB says a public chain should be used only where essential, and the argument is verification at the moment of transfer, independent readability by an auditor, no single trusted party.</li>
         <li><b>DPIA</b>: required – new technology, financial data, public ledger.</li>
@@ -262,7 +262,7 @@ function deactivateWallet()                                                     
       <ul>
         <li><b><code>Claim.issuer</code> is the real writer</b>, never a proxy, so a token can scope trust by issuer (§4).</li>
         <li><b>Three distinguishable states</b> – absent, expired, revoked – as the interface requires; <code>revokeClaim</code> by issuer or admin, <code>block</code> by the writer acts on every wallet of the subject.</li>
-        <li><b>Re-bind fixes handoff finding #1.</b> <code>bindWallet</code> and <code>unbindWallet</code> emit <code>SubjectChanged(wallet, old, new)</code>; every token exposes <code>resyncSubject(wallet)</code> that moves <code>subjectBalance</code> and the holder flag. A bind of a wallet with a non-zero balance on any Factory token is refused unless the resync runs in the same transaction – otherwise <code>MaxBalancePerHolder</code> is bypassed. Needs one appended field in <code>ComplianceStorage</code> (frozen layout: append only).</li>
+        <li><b>Re-bind fixes handoff finding #1.</b> <code>bindWallet</code> and <code>unbindWallet</code> emit <code>SubjectChanged(wallet, old, new)</code>. The registry cannot know which tokens a wallet holds, so it does not block the bind; instead every token keeps <code>accountedSubject[wallet]</code> (one appended field in <code>ComplianceStorage</code>) and refuses transfers by a wallet whose accounted subject differs from the registry until anyone calls <code>resyncSubject(wallet)</code>, which moves <code>subjectBalance</code> and the holder flag. <code>MaxBalancePerHolder</code> therefore cannot be bypassed by a re-bind.</li>
         <li><b>Cross-chain</b>: the same contract on Arbitrum (for STV3 through the adapter) and Base; the DID service writes both; a reconciler compares.</li>
         <li><b>EAS is a mirror, not a second registry.</b> On <code>setClaim</code> the DID service may issue an EAS attestation with the same <code>valueHash</code> and <code>expiresAt</code> for public verification on EASScan and for Base apps that speak only EAS. The registry is the source of truth.</li>
       </ul>
@@ -347,7 +347,7 @@ function deactivateWallet()                                                     
       <tr><td class="v">EU GDPR · EDPB 02/2025</td><td>PII off chain; salted hashes only; DPIA justifying a public chain; erasure = revoke + destroy salt and link; a named controller per product; Art. 28 DPA with Stripe; records of processing</td></tr>
       <tr><td class="v">UK GDPR · DPA 2018</td><td>Same; no ICO blockchain guidance yet, follow the EDPB; transfer basis to BVI (IDTA or adequacy – counsel)</td></tr>
       <tr><td class="v">US state privacy (CPRA and peers)</td><td>GLBA exemption covers much financial data; the right to delete is met by the same erasure path</td></tr>
-      <tr><td class="v">SEC 17a-4 · 17Ad-6/7</td><td>The BD or transfer-agent partner keeps the books, and will ask us for an exportable immutable register: the auditor pack built from events. The SEC proposed modernising 17Ad-6/7 for digital-asset transfer agents on 04.09.2026 (comments to 03.11.2026) – track it</td></tr>
+      <tr><td class="v">SEC 17a-4 · 17Ad-6/7</td><td>The BD or transfer-agent partner keeps the books, and will ask us for a register reconstructible from events: the auditor pack. The SEC proposed modernising 17Ad-6/7 for digital-asset transfer agents on 04.09.2026 (comments to 03.11.2026) – track it</td></tr>
       <tr><td class="v">BVI DPA 2021</td><td>Seven principles; liability for processors; transfer out of BVI only on adequacy or consent – Stripe (US) and an EU database need a basis; controller is Innovations or STE Ltd</td></tr>
       <tr><td class="v">MiCA · TFR travel rule · FATF R.16</td><td>Not applicable to MiFID instruments; applies to STBU transfers with a CASP counterparty (zero threshold). The registry can confirm "wallet verified by Stobox" to a CASP, but originator and beneficiary data travel off chain (TRISA / IVMS101), never through the ledger</td></tr>
       <tr><td class="v">eIDAS 2.0</td><td>Wallets mandatory in member states by 24.12.2026; acceptance by regulated sectors from 24.12.2027; reserve an issuer slot, build later</td></tr>
@@ -390,7 +390,7 @@ function deactivateWallet()                                                     
         <li><b>Drop the uDID string on chain</b> – <code>bytes32</code> only; 4XR and STBU move to the new getter. Yes or no?</li>
         <li><b>Controller of KYC</b>: Innovations as operator, or the issuer per product? Decides who signs the DPIA and answers erasure requests.</li>
         <li><b>Trust scoping – ruled 25.09 by principle</b> ("everything as securities law requires"): the base gate <code>isActive</code> stays universal, so one KYC admits a person to Stobox as such; every <i>securities</i> preset requires issuer-scoped claims in its rules, so admission to an instrument is decided by the issuers that instrument trusts. Portal KYC therefore opens STBU tiers and the Board's read side, never a security by itself.</li>
-        <li><b>Re-bind with a balance</b>: refuse until resync, or allow with a mandatory resync in the same transaction?</li>
+        <li><b>Re-bind with a balance</b> – settled by the technical review: the token records <code>accountedSubject</code> per wallet and refuses any transfer by a wallet whose accounted subject differs from the registry until <code>resyncSubject</code> runs; the registry itself does not block the bind.</li>
         <li><b>EAS mirror</b> from day one or after launch?</li>
         <li><b>ZK pilot budget</b> in 2027, or wait for a regulated issuer?</li>
       </ol>
@@ -419,6 +419,7 @@ function deactivateWallet()                                                     
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.3</td><td>25 Sep 2026</td><td>Sign-off applied: re-bind mechanics settled through accountedSubject on the token; controller marked as a proposal; "immutable register" wording removed.</td></tr>
       <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Trust scoping settled by principle: universal base gate, issuer-scoped claims in every securities preset.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Gene's ruling of 25.09: one unified registry. Data map, GDPR roles, registry design with two surfaces, three plug-in levels, trust scoping, privacy-technology verdicts, regulatory table, comparison, decisions.</td></tr>
     </tbody>

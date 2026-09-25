@@ -115,6 +115,7 @@ document, with previous and next.
 | 32 | [FAQ](docs/32-faq.md) |
 | 33 | [Test results](docs/33-test-results.md) |
 | 34 | [Build log](docs/34-build-log.md) |
+| 35 | [The auditor pack](docs/35-auditor-pack.md) |
 
 </td></tr>
 </table>

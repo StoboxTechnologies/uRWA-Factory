@@ -400,6 +400,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <a href="32-faq.html"><span class="n">32</span>Frequently asked questions</a>
 <a href="33-test-results.html"><span class="n">33</span>Test results</a>
 <a href="34-build-log.html" aria-current="page"><span class="n">34</span>Build log</a>
+<a href="35-auditor-pack.html"><span class="n">35</span>The auditor pack</a>
 <a href="author.html"><span class="n">—</span>The author</a>
 <p class="t s">Surfaces</p>
 <a href="../prototypes/"><span class="n">—</span>All prototypes</a>
@@ -427,6 +428,32 @@ footer p{max-width:76ch;margin:0 0 8px}
 <li><strong>Refresh</strong> the handoff.</li>
 </ol>
 <p>An entry is written even when a session finds nothing — &quot;audited, clean&quot; is a result worth recording.</p>
+<hr class="soft">
+<h3 id="34-2026-09-25-session-12-orbit-the-functions-catalogue-the-master-plan-and-four-sign-off-reviews">2026-09-25 · Session 12 — Orbit: the functions catalogue, the master plan, and four sign-off reviews</h3>
+<p><strong>Shipped.</strong> <code>docs/architecture/functions.html</code> v0.2, the complete function catalogue of Stobox Orbit (15 sections, every function tagged exists / change / new / drop, read from <code>src/</code> and STV3); <code>stv4.html</code> v2.1 with the master plan (§7, eight phases, each with builds / accepted when / delivered) and the gap register G1–G23; <code>orbit.html</code> v0.3, <code>identity.html</code>, <code>terms.html</code>, <code>offering.html</code>, <code>intelligence.html</code> v0.3; <code>docs/35-auditor-pack.md</code> (the specification the auditor pack is built to). Handoff row 13 corrected: the Safe topology is deferred by ruling, not a Phase 0 gate. Commits <code>7c3403f</code>, <code>c100968</code> and this one. Documentation only; no Solidity changed.</p>
+<p><strong>Audited.</strong> Four independent sign-off reviewers (technical, regulatory, QA and criteria, plan), each told to refuse signature unless the set was implementable, lawful, testable and schedulable. All four refused the first pass: 22 blockers and about 40 remarks. Impeccable <code>audit</code> + <code>polish</code> on all seven pages: the detector&#x27;s side-tab border and font findings are deliberate house-style exceptions; the one real defect, a phone-width grid overflow on <code>functions.html</code>, is fixed on all pages (<code>minmax(min(Npx, 100%), 1fr)</code>, scroll width equals viewport at 420 px). Both themes rendered, SVG overflow check clean, no em dash in the seven pages. <code>verify.py</code> and <code>--self-test</code> green; <code>forge test</code> unchanged.</p>
+<p><strong>Found and resolved.</strong></p>
+<ol>
+<li><strong>Counsel package sat after launch.</strong> Holder Token Terms, the four paper conflicts, the PPM</li>
+</ol>
+<p>   amendment and the opinions (Reg S cat. 3, Rule 905, 902(f), tranches, 3(a)(9), Investment    Company Act, Board perimeter, SPA 5.1 scope) were Phase 4 deliverables. Moved to Phase 2,    before Phase 3. No company lot until counsel answers whether SPA 5.1 reaches STBX.</p>
+<ol>
+<li><strong>Phase 0 was not implementable as written.</strong> EmergencyFacet now specifies both <code>forcedTransfer</code></li>
+</ol>
+<p>   selectors, the <code>supportsInterface</code> rule, the event order, the recipient rule, lockup carry-over    and the cap, <code>forcedBurn</code> against <code>totalSupply</code>; the delay floor lives in <code>createToken</code> and    <code>setUpgradeDelay</code> with the constructor at 0 and the delay set last; delayed setters keyed by    <code>keccak256(abi.encode(selector, args))</code>; <code>accountedSubject</code> and the refusal stage settle the    re-bind question; <code>pendingSuccessor</code> storage, <code>PAUSER</code>, cancel and the admin set for the two-step    handover; a <code>permit(bytes)</code> overload in the immutable core. <code>recover</code> moved to Phase 4.</p>
+<ol>
+<li><strong>Phase 1 was two phases.</strong> Split into 1a (identity and evidence, critical) and 1b (data and</li>
+</ol>
+<p>   operations, parallel). Institutional hooks are design-only in Phase 2 under A-05 and built in    Phase 4–5, which keeps the audited code at about 6k lines.</p>
+<ol>
+<li><strong>Team and calendar were implicit.</strong> Both scenarios stated: the assumed team gives Q1 2027, one</li>
+</ol>
+<p>   engineer gives Q2–Q3 2027. The Reg D date corrected to the PPM termination of 30.06.2027 with the    Rule 152(b)(2) question for counsel. Audit booking made a task with owner, deadline and budget.</p>
+<ol>
+<li><strong>Statuses and claims.</strong> Silicon Prairie is the BD of the 506(c) round, not a TA; no TA exists</li>
+</ol>
+<p>   today; attestors &quot;reports exist, signers planned&quot;; &quot;immutable ledger / contract&quot; wording removed;    coverage per doc 23 rather than a flat 80%; RFP threshold made reachable; sanctions claim    no older than 24 hours checked at bind and at buy.</p>
+<p><strong>Open.</strong> Decisions only Gene can take before Phase 0 starts (listed in the handoff): the team and the start date; the A-05 exception for institutional hooks; the Board model if the perimeter opinion is late; the assurance owner, budget and booking; Merkle claim vs voucher for the migration; the lock-up in code pending counsel&#x27;s SPA 5.1 answer; the operations owner. The seven pages are published as artifacts; <code>functions.html</code> on first publish.</p>
 <hr class="soft">
 <h3 id="34-2026-09-25-session-11-stv4-the-architecture-page-and-the-gap-it-names">2026-09-25 · Session 11 — STV4: the architecture page, and the gap it names</h3>
 <p><strong>Shipped.</strong> <code>docs/architecture/stv4.html</code> v0.1 and its index <code>docs/architecture/README.md</code>: the first Stobox visual-documentation page for this repository. It maps every STV3 facet on the live STBX diamond (Arbitrum <code>0x998a…1a46</code>, nine facets read through the loupe, all 72 selectors matched against verified sources) onto its STV4 module here, designs the Intelligence facet and the Stobox Oracle (five signed channels with staleness and deviation guards), states acceptance, delivery, audit and enterprise-grade criteria, and sets a four-phase build order. Documentation only; no Solidity changed. <code>verify.py</code> does not scan <code>docs/architecture/</code>, and the page keeps the visual-documentation tokens rather than <code>theme.css</code> by that ruling (10.09.2026).</p>
@@ -605,7 +632,7 @@ footer p{max-width:76ch;margin:0 0 8px}
 <li><a href="26-handoff.html">26 — Handoff</a> — the current end state and what to do next</li>
 <li><a href="33-test-results.html">33 — Test results</a> — the latest recorded run</li>
 <li><a href="31-verification.html">31 — Verification framework</a> — what each check means</li>
-</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="33-test-results.html">← Test results</a><a class="pn n" href="author.html">The author →</a></nav></section>
+</ul><nav class="pnav" aria-label="Adjacent documents"><a class="pn p" href="33-test-results.html">← Test results</a><a class="pn n" href="35-auditor-pack.html">The auditor pack →</a></nav></section>
 <footer>
 <p>Generated by <code>build-docs.py</code> from <code>README.md</code> and <code>docs/*.md</code>.
 Edit the Markdown, not this file.</p>
@@ -614,7 +641,7 @@ architecture and is not legal, financial or investment advice.</p>
 </footer>
 </article>
 <aside class="rail" aria-label="Section reference">
-<div class="railsec" data-sec="sec-34"><p class="railt">On this page</p><a href="#34-2026-09-25-session-11-stv4-the-architecture-page-and-the-gap-it-names">2026-09-25 · Session 11 — STV4: the architecture page, and the gap it names</a><a href="#34-2026-08-16-session-10-the-conformance-kit-and-its-first-stranger-is-us">2026-08-16 · Session 10 — the conformance kit, and its first stranger is us</a><a href="#34-2026-08-16-session-9-the-second-refusal-pass-and-the-operator-s-onboarding">2026-08-16 · Session 9 — the second refusal pass, and the operator&amp;#x27;s onboarding</a><a href="#34-2026-08-16-session-8-the-refusal-branches-each-walked-once">2026-08-16 · Session 8 — the refusal branches, each walked once</a><a href="#34-2026-08-16-session-7-the-stack-becomes-a-script-an-operator-can-run">2026-08-16 · Session 7 — the stack becomes a script an operator can run</a><a href="#34-2026-08-16-session-6-offering-rules-enforced-and-the-token-side-door">2026-08-16 · Session 6 — offering rules enforced, and the token-side door</a><a href="#34-2026-08-16-session-5-presets-applied-tiered-and-multi-currency-pricing">2026-08-16 · Session 5 — presets applied, tiered and multi-currency pricing</a><a href="#34-2026-08-16-session-4-full-multi-agent-audit-and-its-remediation">2026-08-16 · Session 4 — full multi-agent audit, and its remediation</a><a href="#34-2026-08-16-session-3-the-caller-check-and-the-loupe-made-honest">2026-08-16 · Session 3 — the caller check, and the loupe made honest</a><a href="#34-2026-08-16-session-2-phases-1-3-built-out">2026-08-16 · Session 2 — Phases 1–3 built out</a><a href="#34-2026-08-15-session-1-specification-and-the-ledger-core">2026-08-15 · Session 1 — specification and the ledger core</a><p class="railt s">Related</p><a href="26-handoff.html">26 — Handoff</a><a href="33-test-results.html">33 — Test results</a><a href="31-verification.html">31 — Verification framework</a></div>
+<div class="railsec" data-sec="sec-34"><p class="railt">On this page</p><a href="#34-2026-09-25-session-12-orbit-the-functions-catalogue-the-master-plan-and-four-sign-off-reviews">2026-09-25 · Session 12 — Orbit: the functions catalogue, the master plan, and four sign-off reviews</a><a href="#34-2026-09-25-session-11-stv4-the-architecture-page-and-the-gap-it-names">2026-09-25 · Session 11 — STV4: the architecture page, and the gap it names</a><a href="#34-2026-08-16-session-10-the-conformance-kit-and-its-first-stranger-is-us">2026-08-16 · Session 10 — the conformance kit, and its first stranger is us</a><a href="#34-2026-08-16-session-9-the-second-refusal-pass-and-the-operator-s-onboarding">2026-08-16 · Session 9 — the second refusal pass, and the operator&amp;#x27;s onboarding</a><a href="#34-2026-08-16-session-8-the-refusal-branches-each-walked-once">2026-08-16 · Session 8 — the refusal branches, each walked once</a><a href="#34-2026-08-16-session-7-the-stack-becomes-a-script-an-operator-can-run">2026-08-16 · Session 7 — the stack becomes a script an operator can run</a><a href="#34-2026-08-16-session-6-offering-rules-enforced-and-the-token-side-door">2026-08-16 · Session 6 — offering rules enforced, and the token-side door</a><a href="#34-2026-08-16-session-5-presets-applied-tiered-and-multi-currency-pricing">2026-08-16 · Session 5 — presets applied, tiered and multi-currency pricing</a><a href="#34-2026-08-16-session-4-full-multi-agent-audit-and-its-remediation">2026-08-16 · Session 4 — full multi-agent audit, and its remediation</a><a href="#34-2026-08-16-session-3-the-caller-check-and-the-loupe-made-honest">2026-08-16 · Session 3 — the caller check, and the loupe made honest</a><a href="#34-2026-08-16-session-2-phases-1-3-built-out">2026-08-16 · Session 2 — Phases 1–3 built out</a><a href="#34-2026-08-15-session-1-specification-and-the-ledger-core">2026-08-15 · Session 1 — specification and the ledger core</a><p class="railt s">Related</p><a href="26-handoff.html">26 — Handoff</a><a href="33-test-results.html">33 — Test results</a><a href="31-verification.html">31 — Verification framework</a></div>
 <div class="railfix">
 <p class="railt s">Reference</p>
 <a href="../prototypes/">Prototypes</a>
@@ -682,4 +709,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: 83013622acbfd1ffb356ec46c9fd6135b2ed576c44770beb99742bf4e55f3347 -->
+<!-- source-digest: e36dc8c7da8d54ab23d102f891855c52301b87e8da00c1caa6ef4582f546d4a8 -->

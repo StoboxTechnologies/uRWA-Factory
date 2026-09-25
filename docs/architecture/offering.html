@@ -101,9 +101,9 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · STV4 layer 3 · v0.2 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 3 · v0.3 · 25 Sep 2026</div>
   <h1>STV4 Offering</h1>
-  <p class="lede">The regulatory route of an offering is chosen above the Factory – which entity issues, under which exemption, through which licensed intermediary – and the Factory executes the chosen regime as an immutable contract. The gap that matters: today the <code>regime</code> field sets nothing, and five defects in <code>OfferingRegistry</code> let a per-investor limit be split, a rule be removed mid-offering and an offering be settled early by anyone.</p>
+  <p class="lede">The regulatory route of an offering is chosen above the Factory – which entity issues, under which exemption, through which licensed intermediary – and the Factory installs the regime's rules at creation; they cannot be weakened after <code>activate</code>. The gap that matters: today the <code>regime</code> field sets nothing, and five defects in <code>OfferingRegistry</code> let a per-investor limit be split, a rule be removed mid-offering and an offering be settled early by anyone.</p>
   <div class="legend" aria-label="Status legend">
     <span><i class="sw live"></i>Live on chain or in production</span>
     <span><i class="sw ready"></i>Code and tests ready, not deployed</span>
@@ -148,7 +148,7 @@ a{color:var(--accent)}
       <g class="n pending"><rect x="620" y="374" width="250" height="58" rx="8"/><text class="t" x="632" y="398">Tranche · DCP</text><text class="s" x="632" y="417">trancheId · closedAt · dcpEnd</text><text class="st" x="860" y="390" text-anchor="end">PLANNED</text></g>
       <g class="n gap"><rect x="910" y="374" width="250" height="58" rx="8"/><text class="t" x="922" y="398">AttestorRegistry</text><text class="s" x="922" y="417">who may issue which claim</text><text class="st" x="1150" y="390" text-anchor="end">GAP</text></g>
       <!-- row 3 -->
-      <g class="n live"><rect x="40" y="520" width="250" height="84" rx="8"/><text class="t" x="52" y="544">Distribution</text><text class="s" x="52" y="563">Silicon Prairie · tZERO · Texture</text><text class="s" x="52" y="582">issuer direct only without fee</text><text class="st" x="280" y="536" text-anchor="end">LIVE</text></g>
+      <g class="n pending"><rect x="40" y="520" width="250" height="84" rx="8"/><text class="t" x="52" y="544">Distribution</text><text class="s" x="52" y="563">Silicon Prairie · BD of own round</text><text class="s" x="52" y="582">tZERO · Texture · no agreement</text><text class="st" x="280" y="536" text-anchor="end">PLANNED</text></g>
       <g class="n pending"><rect x="330" y="520" width="250" height="84" rx="8"/><text class="t" x="342" y="544">Investor</text><text class="s" x="342" y="563">DID subject · claims · signed</text><text class="s" x="342" y="582">subscription under docsHash</text><text class="st" x="570" y="536" text-anchor="end">PLANNED</text></g>
       <g class="n pending"><rect x="620" y="520" width="250" height="84" rx="8"/><text class="t" x="632" y="544">Secondary</text><text class="s" x="632" y="563">Board (BVI) · partner ATS (US)</text><text class="s" x="632" y="582">transfer with claims</text><text class="st" x="860" y="536" text-anchor="end">PLANNED</text></g>
       <g class="n option"><rect x="910" y="520" width="250" height="84" rx="8"/><text class="t" x="922" y="544">Reporting</text><text class="s" x="922" y="563">TA register from logs · Form D</text><text class="s" x="922" y="582">EU notifications · STEL reports</text><text class="st" x="1150" y="536" text-anchor="end">OPTION</text></g>
@@ -317,7 +317,7 @@ a{color:var(--accent)}
     <div class="card">
       <h3>Recommended stack</h3>
       <ul>
-        <li><b>Token:</b> <code>RegS</code> preset plus <code>us.regs.non_us_person</code>*, <code>SanctionsScreen(30d)</code>, <code>MaxHolders</code>, a country allow-list instead of a deny-list only; UK admitted through <code>uk.fpo.*</code>*; China and the FATF lists denied.</li>
+        <li><b>Token:</b> <code>RegS-Cat3</code> preset plus <code>us.regs.non_us_person</code>*, a sanctions claim no older than 24 hours checked at <code>bindWallet</code> and at <code>buy</code>, <code>MaxHolders</code>, a country allow-list instead of a deny-list only; UK admitted through <code>uk.fpo.*</code>* only if the perimeter opinion covers the UK; China and the FATF lists denied.</li>
         <li><b>Migration of 107 holders is not a new offering</b> – a change of record form (MigrationClaim); lock-ups carry their dates. Conditions: no new consideration, no change of rights – counsel on 3(a)(9) / absence of a "sale".</li>
         <li><b>Company lot in tranches, never continuous.</b> Each lot or period gets <code>trancheId</code> and <code>closedAt</code>; <code>buyerLockup</code> = 12 months from purchase, stricter than a DCP from closing; the purchaser certification is signed at <code>buy</code>.</li>
         <li><b>EU:</b> qualified investors only (Art 1(4)(a)) plus ≤150 per state with country counters; lots visible only after KYC; placement in the EU through a MiFID partner. <b>UK:</b> certified HNW and sophisticated only.</li>
@@ -370,6 +370,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.3</td><td>25 Sep 2026</td><td>Sign-off applied: "immutable contract" wording corrected; distribution node shows Silicon Prairie as the BD of our own round and no other agreements; sanctions ≤ 24 h; UK conditional on the opinion.</td></tr>
       <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>AttestorRegistry row extended with the multi-signer channel model ruled on 25.09; moved to Phase 1.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Layer diagram with binding documents; regime typology as presets; contract-to-law map; five verified defects and the missing elements in OfferingRegistry; role boundary and public wording; the STBX regime stack; decisions and counsel questions.</td></tr>
     </tbody>

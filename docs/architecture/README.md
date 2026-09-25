@@ -9,10 +9,10 @@ the vault first.
 
 | Page | Version | Date | Scope | Live view |
 |---|---|---|---|---|
-| [Stobox Orbit](orbit.html) | v0.2 | 25 Sep 2026 | Institutional review from six seats: requirements register O1–O28, BUIDL element mapping, ten instrument presets, institutional-grade criteria, revised build order with keys on day one | https://claude.ai/artifact/Tvg5h9mYyZRR6R6MaJv5ME |
-| [Orbit Functions](functions.html) | v0.1 | 25 Sep 2026 | Every principal function, module by module: exists, changes, new; on-chain and off-chain services | (recorded on first publish) |
-| [STV4](stv4.html) | v2.0 | 25 Sep 2026 | Hub: STV3 facets rebuilt on the uRWA Factory on Base, Intelligence facet + Stobox Oracle, the four layers, gap register G1–G18, criteria at four levels, build order | https://claude.ai/artifact/HGt7iTSE1dthwSGbhYZ2Tk |
-| [STV4 Identity](identity.html) | v0.2 | 25 Sep 2026 | One subject-keyed DID registry on Base; data map and GDPR; plug-in levels; trust scoping; privacy tech; regulatory table | https://claude.ai/artifact/KLne6f52aejwNPkNJNnoGz |
-| [STV4 Terms](terms.html) | v0.2 | 25 Sep 2026 | Rights register of 38 clauses; Terms model and anchoring; Factory bindings; clauses for the paper; events; gaps | https://claude.ai/artifact/1m7zrcLyeuH4mP23VGHQfn |
-| [STV4 Offering](offering.html) | v0.2 | 25 Sep 2026 | Regimes as presets; contract-to-law map; OfferingRegistry defects; role boundary; the STBX stack | https://claude.ai/artifact/TRMXB6NikN3naCAZuzhZpp |
-| [STV4 Intelligence](intelligence.html) | v0.2 | 25 Sep 2026 | Client intake into the record; oracle channels; agents and mandates; MCP planes; enterprise requirements; product frame | https://claude.ai/artifact/K8Eae3FwfSHXPrBGEHFD63 |
+| [Stobox Orbit](orbit.html) | v0.3 | 25 Sep 2026 | Institutional review from six seats: requirements register O1–O28, BUIDL element mapping, ten instrument presets, institutional-grade criteria, revised build order with keys on day one | https://claude.ai/artifact/Tvg5h9mYyZRR6R6MaJv5ME |
+| [Orbit Functions](functions.html) | v0.2 | 25 Sep 2026 | Every principal function, module by module: exists, changes, new; on-chain and off-chain services | (recorded on first publish) |
+| [STV4](stv4.html) | v2.1 | 25 Sep 2026 | Hub: STV3 facets rebuilt on the uRWA Factory on Base, the four layers, gap register G1–G23, criteria at four levels, the master plan of eight phases | https://claude.ai/artifact/HGt7iTSE1dthwSGbhYZ2Tk |
+| [STV4 Identity](identity.html) | v0.3 | 25 Sep 2026 | One subject-keyed DID registry on Base; data map and GDPR; plug-in levels; trust scoping; privacy tech; regulatory table | https://claude.ai/artifact/KLne6f52aejwNPkNJNnoGz |
+| [STV4 Terms](terms.html) | v0.3 | 25 Sep 2026 | Rights register of 38 clauses; Terms model and anchoring; Factory bindings; clauses for the paper; events; gaps | https://claude.ai/artifact/1m7zrcLyeuH4mP23VGHQfn |
+| [STV4 Offering](offering.html) | v0.3 | 25 Sep 2026 | Regimes as presets; contract-to-law map; OfferingRegistry defects; role boundary; the STBX stack | https://claude.ai/artifact/TRMXB6NikN3naCAZuzhZpp |
+| [STV4 Intelligence](intelligence.html) | v0.3 | 25 Sep 2026 | Client intake into the record; oracle channels; agents and mandates; MCP planes; enterprise requirements; product frame | https://claude.ai/artifact/K8Eae3FwfSHXPrBGEHFD63 |

@@ -102,7 +102,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · STV4 layer 4 · v0.2 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 4 · v0.3 · 25 Sep 2026</div>
   <h1>STV4 Intelligence</h1>
   <p class="lede">The record is the source; the oracle attests facts from the record to the chain; the token carries eligibility and terms; agents act within mandates. Any client system plugs into the same intake as documents do, and every figure arrives with its source, tier and expiry. The gap that matters: <code>AgentAuthority.consume</code> is called by nothing in <code>src/</code>, so a mandate today is a promise, not a limit.</p>
   <div class="legend" aria-label="Status legend">
@@ -169,7 +169,7 @@ a{color:var(--accent)}
       
       <g class="n live"><rect x="35" y="84" width="210" height="58" rx="8"/><text class="t" x="47" y="108">ERP · cap table · bank</text><text class="s" x="47" y="127">Xero · Eqvista · Plaid · PMS</text><text class="st" x="235" y="100" text-anchor="end">LIVE</text></g>
       <g class="n live"><rect x="35" y="194" width="210" height="58" rx="8"/><text class="t" x="47" y="218">Documents</text><text class="s" x="47" y="237">160 types · one door</text><text class="st" x="235" y="210" text-anchor="end">LIVE</text></g>
-      <g class="n live"><rect x="35" y="304" width="210" height="58" rx="8"/><text class="t" x="47" y="328">Attestors</text><text class="s" x="47" y="347">auditor · valuer · custodian</text><text class="st" x="235" y="320" text-anchor="end">LIVE</text></g>
+      <g class="n pending"><rect x="35" y="304" width="210" height="58" rx="8"/><text class="t" x="47" y="328">Attestors</text><text class="s" x="47" y="347">reports exist · signers planned</text><text class="st" x="235" y="320" text-anchor="end">PLANNED</text></g>
 
       <g class="n pending"><rect x="315" y="84" width="270" height="58" rx="8"/><text class="t" x="327" y="108">Intake · connectors</text><text class="s" x="327" y="127">source_kind=integration · tier ≤ source</text><text class="st" x="575" y="100" text-anchor="end">PLANNED</text></g>
       <g class="n live"><rect x="315" y="194" width="270" height="58" rx="8"/><text class="t" x="327" y="218">Value candidates</text><text class="s" x="327" y="237">tier · confidence · as_of · locator</text><text class="st" x="575" y="210" text-anchor="end">LIVE</text></g>
@@ -375,8 +375,8 @@ function publish(Record r, bytes[] sigs) // valid only when threshold distinct s
     <tbody>
       <tr><td class="v">SME with a tokenised revenue share</td><td>Xero → <code>revenue.period</code> (T2, management basis) → oracle → <code>revenuePeriod()</code></td><td>payout agent: <code>check(m, SCOPE_DISTRIBUTE, token, 0, amount)</code> → <code>distributeFromTreasury(holder_i, share_i, 0)</code>; <code>maxPerEpoch</code> = the quarterly pool. If the CFO has not confirmed the period, the channel does not publish and the agent stays silent</td></tr>
       <tr><td class="v">Real-estate SPV</td><td>PMS → <code>occupancy</code>, <code>noi.ltm</code>; DSCR &lt; 1.2 → <code>covenant.status = breach</code></td><td>monitoring agent (<code>SCOPE_READ</code>) raises the alert; the treasury agent loses <code>SCOPE_SETTLE</code> through an opt-in rule on the channel</td></tr>
-      <tr><td class="v">Fund with a NAV token</td><td>the administrator signs NAV as attestor → <code>nav.perUnit</code></td><td>market-maker agent quotes within a band: <code>check(m, SCOPE_QUOTE, …)</code>; both sides <code>previewSettle</code>, then <code>settle(i, sigA, sigB)</code></td></tr>
-      <tr><td class="v">STBX on the Board</td><td><code>price.reference</code> = Eqvista RTV</td><td>company lot priced automatically; stale closes only the company lot; a buyer agent: <code>canTransfer(board, buyer)</code> → <code>buy(id, amount, maxCost)</code></td></tr>
+      <tr><td class="v">Fund with a NAV token</td><td>the administrator signs NAV as attestor → <code>nav.perUnit</code></td><td>a quoting agent lists within a band on the Board (no matching): <code>check(m, SCOPE_QUOTE, …)</code>; a bilateral DvP settles off the Board: both sides <code>previewSettle</code>, then <code>settle(i, sigA, sigB)</code></td></tr>
+      <tr><td class="v">STBX on the Board</td><td><code>price.reference</code> = Eqvista RTV</td><td>company lot priced automatically, in tranches, no order matching; stale closes only the company lot; a buyer agent: <code>canTransfer(board, buyer)</code> → <code>buy(id, amount, maxCost)</code></td></tr>
       <tr><td class="v">Credit instrument with an automatic coupon</td><td>Plaid → service-account balance → <code>corporate.action{code = COUPON, docHash}</code></td><td><code>SCOPE_DISTRIBUTE</code> pays the coupon in USDC through the Merkle payout; a miss flips <code>covenant.status</code>; <code>addLockup</code> only on its own distributions (<code>SCOPE_LOCKUP</code>)</td></tr>
     </tbody>
   </table>
@@ -450,8 +450,8 @@ function publish(Record r, bytes[] sigs) // valid only when threshold distinct s
       </ul>
       <h3>After STV4</h3>
       <ul>
-        <li>Phase 4: connectors (Eqvista as direct signer v2; Xero / QuickBooks → <code>revenue.period</code>; Plaid), instrument-specific channels (NAV, covenant, occupancy), the Merkle payout for dividends (own contract, own audit).</li>
-        <li>Phase 5: <code>AgentAuthority</code> with <code>principal = bytes32</code> DID subject, contracts that call <code>consume</code>, an agent SDK and a reference monitoring agent, the MCP "my deal" plane (<code>record.read</code>, <code>action.propose</code>), Attest phase 1 (KYA schema on EAS; deferred as K-129 today).</li>
+        <li>Phase 4: PayoutFacet and the Merkle payout (first caller of <code>consume</code>), schedule channels, instrument-specific channels (NAV, covenant, occupancy).</li>
+        <li>Phase 5: connectors (Eqvista as direct signer v2; Xero / QuickBooks → <code>revenue.period</code>; Plaid), <code>AgentAuthority</code> with <code>principal = bytes32</code> DID subject, an agent SDK and a reference monitoring agent, the MCP "my deal" plane (<code>record.read</code>, <code>action.propose</code>), Attest phase 1 (KYA schema on EAS; deferred as K-129 today).</li>
         <li>Phase 6: leash level 4 for agents, after a tamper-tested audit, as with Copilot.</li>
       </ul>
     </div>
@@ -478,6 +478,7 @@ function publish(Record r, bytes[] sigs) // valid only when threshold distinct s
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.3</td><td>25 Sep 2026</td><td>Sign-off applied: attestor node status corrected, connectors moved to Phase 5, Board examples state tranches and no matching.</td></tr>
       <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Gene's evening rulings: <code>corporate.action</code> carries structured, executable fields; attested figures are signed by the client and by Stobox, with signer roles for third parties per channel (new §4b, channel policy and AttestorRegistry moved to Phase 1).</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. BlackRock boxes mapped to Stobox components; the pipeline from client APIs to agent actions; intake tiers; ten oracle channels; agent identity, guardrails and five client cases; MCP planes; enterprise requirements; the product frame; roadmap and decisions.</td></tr>
     </tbody>

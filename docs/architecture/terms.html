@@ -106,7 +106,7 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · STV4 layer 2 · v0.2 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · STV4 layer 2 · v0.3 · 25 Sep 2026</div>
   <h1>STV4 Terms</h1>
   <p class="lede">Every right in the paper agreement represented as a typed, signed, hash-anchored term that the token enforces, executes, attests or discloses – so that an agent reads the substance, executes within a mandate, and an auditor rebuilds performance from logs. The gap that matters: the STBX holder is not a party to any signed document in the vault, so today there is nothing to anchor.</p>
   <div class="legend" aria-label="Term class legend">
@@ -195,15 +195,15 @@ a{color:var(--accent)}
       <tr><td>5</td><td>SPA 4.2</td><td>USD, wire or stablecoin, within 15 business days of declaration</td><td>Parent → STEL</td><td>manual</td><td><span class="tag exe">EXE</span> deadline in Terms; <code>PayoutDue</code>, <code>PayoutLate</code></td></tr>
       <tr><td>6</td><td>SPA 4.3</td><td>Option to pay in STBX within 5 BD at 10-BD VWAP, agreed in writing</td><td>STEL → Parent</td><td>letter</td><td><span class="tag att">ATT</span> + partial EXE (election on chain; VWAP by oracle – counsel)</td></tr>
       <tr><td>7</td><td>SPA 4.4; 6.1</td><td>Distribution report ≤30 days; annual report ≤60 days</td><td>STEL → Parent</td><td>letter</td><td><span class="tag att">ATT</span> passport disclosure schedule</td></tr>
-      <tr><td>8</td><td>SPA 5.1</td><td><b>Lock-up 24 months, to 01.04.2028</b>, unless both Founder Shareholders consent in writing</td><td>STEL</td><td>trust</td><td><span class="tag enf">ENF</span> <code>LockupFacet.addLockup(unlockAt = 1806451200)</code>; waiver = two signatures</td></tr>
+      <tr><td>8</td><td>SPA 5.1</td><td><b>Lock-up 24 months, to 01.04.2028</b>, unless both Founder Shareholders consent in writing</td><td>STEL</td><td>trust</td><td><span class="tag enf">ENF</span> <code>LockupFacet.addLockup(unlockAt = 1806451200)</code>; waiver = two signatures. <b>Counsel:</b> SPA 5.1 restricts STEL's Class C shares; whether it also restricts STEL's disposal of STBX economic interests is unanswered – until it is, no company lot is listed</td></tr>
       <tr><td>9</td><td>SPA 5.2; SHA 4.1–4.3</td><td>ROFR: sale notice, 7 BD corporation + 7 BD shareholders, then 60 days to close on no better terms; buyer signs adherence</td><td>all shareholders</td><td>letters</td><td><span class="tag enf">ENF</span> ROFR hook + <span class="tag exe">EXE</span> timers</td></tr>
       <tr><td>10</td><td>Bylaws 5.3(a)</td><td>Same ROFR, 30 + 30 days</td><td>–</td><td>conflicts with SHA</td><td><span class="tag conf">CONFLICT</span> one number needed</td></tr>
       <tr><td>11</td><td>SPA 5.3</td><td>Shares only in a wholly-owned subsidiary, else a Reserved Matter</td><td>STEL</td><td>–</td><td><span class="tag enf">ENF</span> <code>RequiresClaim(urwa.wholly-owned.&lt;parent&gt;)</code></td></tr>
       <tr><td>12</td><td>SHA 4.4; Bylaws 5.3(c)</td><td>Drag-along: Founder Majority &gt;50% (SHA) vs 70% Common A (Bylaws); ≥1.0× last round or FMV; valuer's report in 10 BD; close in 20 BD</td><td>founders → all</td><td>letters</td><td><span class="tag exe">EXE</span> partial via <code>forcedTransfer</code> · <span class="tag conf">CONFLICT</span> thresholds</td></tr>
       <tr><td>13</td><td>SHA 4.5; Bylaws 5.3(b)</td><td>Tag-along on a founder sale ≥10%; 10 BD</td><td>all</td><td>letters</td><td><span class="tag exe">EXE</span> tag window on the Board, pro rata from snapshot</td></tr>
       <tr><td>14</td><td>SHA 1.19, 4.7</td><td>Permitted transfer with board consent and adherence</td><td>all</td><td>letter</td><td><span class="tag enf">ENF</span> <code>RequiresClaim</code> + approval claim</td></tr>
-      <tr><td>15</td><td>Bylaws 5.3(d)</td><td>After lock-up: one 30-day transfer window a year, set by the board</td><td>all</td><td>never applied</td><td><span class="tag enf">ENF</span> <code>TransferWindow</code></td></tr>
-      <tr><td>16</td><td>Bylaws 5.3(e)</td><td>Annual transfer cap "twenty-five percent (50%)"</td><td>all</td><td>–</td><td><span class="tag enf">ENF</span> new <code>MaxTransferPerPeriod</code> · <span class="tag conf">CONFLICT</span> pick the number</td></tr>
+      <tr><td>15</td><td>Bylaws 5.3(d)</td><td>After lock-up: one 30-day transfer window a year, set by the board</td><td>all</td><td>never applied</td><td><span class="tag enf">ENF</span> <code>TransferWindow</code> – counsel: applies to shares or to STBX transfers? If to STBX, it conflicts with continuous holder lots on the Board</td></tr>
+      <tr><td>16</td><td>Bylaws 5.3(e)</td><td>Annual transfer cap "twenty-five percent (50%)"</td><td>all</td><td>–</td><td><span class="tag enf">ENF</span> new <code>MaxTransferPerPeriod</code> · <span class="tag conf">CONFLICT</span> pick the number, and settle whether it binds shares or STBX</td></tr>
       <tr><td>17</td><td>Bylaws 5.3(f); SHA 9.12</td><td>Securities-law compliance, AML/KYC, ≥20 BD for documents</td><td>all</td><td>KYC vendor</td><td><span class="tag enf">ENF</span> <code>HasValidIdentity</code>, <code>JurisdictionRule</code></td></tr>
       <tr><td>18</td><td>SHA 9.4; Res 006</td><td><b>No transfer registered without a Deed of Adherence</b>; register of executed deeds</td><td>all</td><td>Excel register</td><td><span class="tag enf">ENF</span> <code>RequiresClaim(urwa.adherence.&lt;instrument&gt;)</code></td></tr>
       <tr><td>19</td><td>SHA 2.4(a)</td><td>ISSUED-RESTRICTED: no vote, no distributions, no transfer until signed</td><td>–</td><td>cap-table status</td><td><span class="tag enf">ENF</span> same claim; without it, frozen</td></tr>
@@ -269,7 +269,7 @@ TermsFacet.termsRoot() view; TermsFacet.enforce(termId, params, proof) // a rule
   <table>
     <thead><tr><th>Term</th><th>Binding in the Factory</th><th>Exists</th></tr></thead>
     <tbody>
-      <tr><td class="v">lockup.primary</td><td><code>LockupFacet.addLockup(STEL, all, 1806451200, "SPA 5.1")</code>; waiver = <code>clearLockups</code> only under a mandate needing two founder signatures</td><td class="v yes">yes</td></tr>
+      <tr><td class="v">lockup.primary</td><td><code>LockupFacet.addLockup(STEL, all, 1806451200, "SPA 5.1")</code> if counsel confirms the lock-up reaches STBX; waiver = <code>clearLockups</code> only under a mandate needing two founder signatures</td><td class="v yes">yes</td></tr>
       <tr><td class="v">transfer.window.annual</td><td><code>TransferWindow</code></td><td class="v yes">yes</td></tr>
       <tr><td class="v">transfer.cap.annual</td><td>new rule <code>MaxTransferPerPeriod(pct, 365 d)</code> beside <code>MaxBalancePerHolder</code></td><td class="v no">no</td></tr>
       <tr><td class="v">transfer.rofr</td><td>new <code>ROFRHook</code>: a transfer outside Permitted needs a <code>saleNoticeId</code> in state <code>lapsed</code>; the hook runs the 7 + 7 BD timers and pro-rata <code>exercise()</code></td><td class="v no">no</td></tr>
@@ -430,6 +430,7 @@ TermsFacet.termsRoot() view; TermsFacet.enforce(termId, params, proof) // a rule
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.3</td><td>25 Sep 2026</td><td>Sign-off applied: SPA 5.1 scope (shares vs STBX interests) and the Bylaws window and cap marked for counsel; no company lot until answered.</td></tr>
       <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Gene's evening rulings recorded: economic interest through STEL stays; precedence term-by-term; oracle values under the multi-signer attestation model; payout before ROFR; Terms published as roots plus a public subset.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Rights register of 38 clauses from the April 2026 documents with enforceability classes; Terms model and anchoring; Factory bindings; agent reading and execution; seven clauses for the paper; events; gaps and order; decisions.</td></tr>
     </tbody>

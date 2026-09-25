@@ -17,6 +17,56 @@ An entry is written even when a session finds nothing — "audited, clean" is a 
 
 ---
 
+## 2026-09-25 · Session 12 — Orbit: the functions catalogue, the master plan, and four sign-off reviews
+
+**Shipped.** `docs/architecture/functions.html` v0.2, the complete function catalogue of Stobox Orbit
+(15 sections, every function tagged exists / change / new / drop, read from `src/` and STV3);
+`stv4.html` v2.1 with the master plan (§7, eight phases, each with builds / accepted when /
+delivered) and the gap register G1–G23; `orbit.html` v0.3, `identity.html`, `terms.html`,
+`offering.html`, `intelligence.html` v0.3; `docs/35-auditor-pack.md` (the specification the
+auditor pack is built to). Handoff row 13 corrected: the Safe topology is deferred by ruling, not
+a Phase 0 gate. Commits `7c3403f`, `c100968` and this one. Documentation only; no Solidity changed.
+
+**Audited.** Four independent sign-off reviewers (technical, regulatory, QA and criteria, plan),
+each told to refuse signature unless the set was implementable, lawful, testable and schedulable.
+All four refused the first pass: 22 blockers and about 40 remarks. Impeccable `audit` + `polish`
+on all seven pages: the detector's side-tab border and font findings are deliberate house-style
+exceptions; the one real defect, a phone-width grid overflow on `functions.html`, is fixed on all
+pages (`minmax(min(Npx, 100%), 1fr)`, scroll width equals viewport at 420 px). Both themes
+rendered, SVG overflow check clean, no em dash in the seven pages. `verify.py` and
+`--self-test` green; `forge test` unchanged.
+
+**Found and resolved.**
+1. **Counsel package sat after launch.** Holder Token Terms, the four paper conflicts, the PPM
+   amendment and the opinions (Reg S cat. 3, Rule 905, 902(f), tranches, 3(a)(9), Investment
+   Company Act, Board perimeter, SPA 5.1 scope) were Phase 4 deliverables. Moved to Phase 2,
+   before Phase 3. No company lot until counsel answers whether SPA 5.1 reaches STBX.
+2. **Phase 0 was not implementable as written.** EmergencyFacet now specifies both `forcedTransfer`
+   selectors, the `supportsInterface` rule, the event order, the recipient rule, lockup carry-over
+   and the cap, `forcedBurn` against `totalSupply`; the delay floor lives in `createToken` and
+   `setUpgradeDelay` with the constructor at 0 and the delay set last; delayed setters keyed by
+   `keccak256(abi.encode(selector, args))`; `accountedSubject` and the refusal stage settle the
+   re-bind question; `pendingSuccessor` storage, `PAUSER`, cancel and the admin set for the two-step
+   handover; a `permit(bytes)` overload in the immutable core. `recover` moved to Phase 4.
+3. **Phase 1 was two phases.** Split into 1a (identity and evidence, critical) and 1b (data and
+   operations, parallel). Institutional hooks are design-only in Phase 2 under A-05 and built in
+   Phase 4–5, which keeps the audited code at about 6k lines.
+4. **Team and calendar were implicit.** Both scenarios stated: the assumed team gives Q1 2027, one
+   engineer gives Q2–Q3 2027. The Reg D date corrected to the PPM termination of 30.06.2027 with the
+   Rule 152(b)(2) question for counsel. Audit booking made a task with owner, deadline and budget.
+5. **Statuses and claims.** Silicon Prairie is the BD of the 506(c) round, not a TA; no TA exists
+   today; attestors "reports exist, signers planned"; "immutable ledger / contract" wording removed;
+   coverage per doc 23 rather than a flat 80%; RFP threshold made reachable; sanctions claim
+   no older than 24 hours checked at bind and at buy.
+
+**Open.** Decisions only Gene can take before Phase 0 starts (listed in the handoff): the team and
+the start date; the A-05 exception for institutional hooks; the Board model if the perimeter opinion
+is late; the assurance owner, budget and booking; Merkle claim vs voucher for the migration; the
+lock-up in code pending counsel's SPA 5.1 answer; the operations owner. The seven pages are
+published as artifacts; `functions.html` on first publish.
+
+---
+
 ## 2026-09-25 · Session 11 — STV4: the architecture page, and the gap it names
 
 **Shipped.** `docs/architecture/stv4.html` v0.1 and its index `docs/architecture/README.md`: the
