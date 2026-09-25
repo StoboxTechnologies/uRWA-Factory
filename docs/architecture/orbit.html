@@ -116,9 +116,9 @@ a{color:var(--accent)}
 
 <main>
 <header>
-  <div class="eyebrow">Stobox · internal architecture · v0.1 · 25 Sep 2026</div>
+  <div class="eyebrow">Stobox · internal architecture · v0.2 · 25 Sep 2026</div>
   <h1>Stobox Orbit</h1>
-  <p class="lede">The whole Web3 product under one name – the open-source uRWA Factory a client can deploy, our hosted Factory, Intelligence, the signed oracle and the agents – reviewed from six institutional seats: custodian, auditor, compliance officer, enterprise buyer, infrastructure architect, asset-class specialist. The one gap that matters is not in Solidity: the Technical Safe that is to hold every STV4 role is a 1-of-1 on a hot key, read from the chain today.</p>
+  <p class="lede">The whole Web3 product under one name – the open-source uRWA Factory a client can deploy, our hosted Factory, Intelligence, the signed oracle and the agents – reviewed from six institutional seats: custodian, auditor, compliance officer, enterprise buyer, infrastructure architect, asset-class specialist. Gene's frame: one factory whose tokens meet every institutional requirement <b>by design</b>, so that when a custodian, a bank network or a commodity issuer arrives, nothing is rebuilt – only partners and attestations are added. The first client is Stobox itself, with STBX, operated by one person today.</p>
   <div class="legend" aria-label="Status legend">
     <span><i class="sw live"></i>Live on chain or in production</span>
     <span><i class="sw ready"></i>Code and tests ready, not deployed</span>
@@ -240,10 +240,57 @@ a{color:var(--accent)}
   </figure>
 </section>
 
+<!-- ============================================================ READY -->
+<section aria-labelledby="rd-h">
+  <div class="head">
+    <span class="kicker">3 · Ready by design</span>
+    <h2 id="rd-h">What the Factory carries from day one, so that nothing is rebuilt when they arrive</h2>
+    <p class="prose">Ruled 25.09.2026: there are no custodians, no Fireblocks, no bank partners today, and that is fine – the architecture must be ready for them. The test for every row: when this party appears tomorrow, does the token need a new contract, or only a new claim, a new signer and a new export? Everything in the second column is a hook that costs little now and everything later.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Tomorrow's party</th><th>Hook built into the Factory now</th><th>What is added when they arrive</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="v">Qualified custodian (Fireblocks, Anchorage, Copper, BNY)</td><td>A custodian wallet is a subject with claim <code>custodian.omnibus</code>; holder counts and caps read beneficiary attribution from a custodian-signed channel; <code>AgentAuthority</code> mandates with <code>principal = bytes32</code> subject give the "instructing party" model; ERC-1271 / 6492 so their MPC wallets sign <code>permit</code> and DvP</td><td>their key as ATTESTOR on the attribution channel; their wallet in the allow-list; a signed agreement</td><td><span class="tag pending">design now</span></td></tr>
+      <tr><td class="v">Transfer agent · registrar (Silicon Prairie, Apex-style on-chain TA)</td><td>REGULATED signer role on <code>captable.root</code> and <code>shares.outstanding</code>; the register reconstructible from logs; the "exclusive control" model of the SEC's 2026 proposal supported by giving the TA the register-writing role</td><td>their key in <code>AttestorRegistry</code>; the role transferred to them (§3b)</td><td><span class="tag pending">design now</span></td></tr>
+      <tr><td class="v">Fund administrator · paying agent · valuer · auditor</td><td>ATTESTOR role per channel with threshold; <code>PaymentAttested</code> leg; <code>nav.perUnit</code>, <code>reserve.attested</code>, <code>servicer.report</code> channels; evidence hashes</td><td>their key; an engagement letter; a channel policy update</td><td><span class="tag pending">design now</span></td></tr>
+      <tr><td class="v">Bank money (Kinexys / JPMD, EMT, tokenized deposits)</td><td><code>AtomicDvP</code> takes any ERC-20 cash asset plus a recipient allow-list pre-check; <code>ccy</code> on every channel; <code>settlement.confirmed</code> channel with REGULATED signer; Deposit-Token-Wrapper preset</td><td>the bank's token address and allow-list mirror; a REGULATED key</td><td><span class="tag pending">design now</span></td></tr>
+      <tr><td class="v">Commodity issuer (gold, metals – Pasha's case)</td><td>Commodity-Receipt preset: <code>custody.receipt</code> per lot, <code>reserve.attested</code> with a mandatory ATTESTOR, physical-redemption term, fee-debit term; benchmark price channel</td><td>the vault's and the auditor's keys; the benchmark administrator as ATTESTOR</td><td><span class="tag pending">design now</span></td></tr>
+      <tr><td class="v">Bank or market infrastructure on a permissioned chain (Kinexys, Canton-class)</td><td>The open-source Factory deploys on any EVM chain with the same presets; one register per issuance, never two live copies; the SCO60 position written</td><td>a deployment on their chain; their identity registry at L2</td><td><span class="tag pending">design now</span></td></tr>
+      <tr><td class="v">Custodian's asset-servicing stack (SWIFT, ISO 20022)</td><td>CAEV-aligned corporate-action codes; an off-chain export adapter (seev.031/036, sese, camt.054) reading only events; seev.033 import into <code>action.propose</code></td><td>a mapping file per custodian</td><td><span class="tag pending">design now</span></td></tr>
+      <tr><td class="v">Lender or exchange taking the token as collateral</td><td>DTI / ISIN / LEI readable on chain; a <code>latestRoundData</code>-style price view over the attested channel; claim <code>urwa.collateral-taker</code>; the sToken wrapper pattern</td><td>their subject admitted; a wrapper deployed</td><td><span class="tag pending">design now</span></td></tr>
+      <tr><td class="v">External auditor (SOC 1 / 2, fund audit)</td><td>Events on every mutation; the auditor pack from <code>eth_getLogs</code>; a cut-off sheet; signer keys with validity windows</td><td>an engagement; SOC scope when the client base needs it</td><td><span class="tag pending">design now</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>3b · Roles that move</h3>
+      <p>Ruled 25.09.2026: the technical role must be transferable – to a second Safe, to a partner, to a TA – without a redeploy. Design:</p>
+      <ul>
+        <li>Every role is held by an address, never by a person; <b>two-step handover</b>: the holder proposes a successor, the successor accepts, an event names both. No role can be left empty (already enforced in <code>RolesFacet._remove</code>).</li>
+        <li>The technical role is split from the issuer role: <code>UPGRADE_ADMIN</code> administers itself, <code>ISSUER_ADMIN</code> administers the business roles – closing G5 – so a second technical Safe or a partner can take one without the other.</li>
+        <li>A handover of <code>UPGRADE_ADMIN</code> runs under the upgrade delay; a handover of <code>COMPLIANCE_OFFICER</code> or <code>SUPPLY_OPERATOR</code> is immediate, because an issuer must be able to replace an operator the same day.</li>
+        <li>Delegation without transfer: a mandate (<code>AgentAuthority</code>) lets a partner act within bounds while the role stays home – the model for a custodian instructing on a client's behalf.</li>
+        <li>Today: Gene holds everything and operates alone; the mechanics let that change one role at a time, later.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Deferred by ruling – not on the critical path</h3>
+      <ul>
+        <li><b>The Safe topology (G19).</b> Gene: a separate technical Safe will be set up later; ignore it now. Recorded as deferred, not as a blocker. The role-handover mechanics above are what make "later" cheap.</li>
+        <li><b>Custodian, TA, administrator and bank partners.</b> None today; the hooks are built, the partners come with the first institutional client.</li>
+        <li><b>SOC 1 / SOC 2, insurance, escrow, SLA credits.</b> Contract-level items that follow the first enterprise contract, not precede STBX.</li>
+        <li><b>AML programme and MLRO.</b> Required before the first third-party issuer on the hosted Factory; STBX, operated by Stobox for its own instrument, runs on the existing Reg S / BVI procedures – counsel confirms.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <!-- ============================================================ REGISTER -->
 <section aria-labelledby="reg-h">
   <div class="head">
-    <span class="kicker">3 · The institutional requirements register</span>
+    <span class="kicker">4 · The institutional requirements register</span>
     <h2 id="reg-h">What each seat asks for, and where Orbit stands</h2>
     <p class="prose">Consolidated from the six reviews. "Source" names the seat that raised it. Statuses are read from the code, the chain and the vault, not from intent.</p>
   </div>
@@ -251,7 +298,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>#</th><th>Requirement</th><th>Source</th><th>Orbit today</th><th>Fix</th><th>Phase</th></tr></thead>
     <tbody>
-      <tr><td>O1</td><td>Every privileged role on a hardware-backed multisig with separated duties; no hot key, no single owner</td><td>infra · auditor · CCO</td><td><span class="tag gap">gap</span> Technical Safe 1-of-1, owner with EIP-7702; same key alone on the finance Safe; Admin Safe's delay module lets one EOA take everything in 28 days</td><td>Governance 3-of-5, Ops 2-of-4, Treasury 2-of-3 on hardware, different people; no STV4 role on <code>0xcAFA…</code> as it stands; watch <code>TransactionAdded</code> today</td><td class="v">0 · day 1</td></tr>
+      <tr><td>O1</td><td>Every privileged role on a hardware-backed multisig with separated duties; no hot key, no single owner</td><td>infra · auditor · CCO</td><td><span class="tag option">deferred</span> Technical Safe is 1-of-1 today (read from Base); Gene, 25.09: a separate technical Safe comes later, ignore now</td><td>Role-handover mechanics in Phase 0 (§3b) so the later move is one transaction per role; Safe topology when Gene sets it up</td><td class="v">later · ruled</td></tr>
       <tr><td>O2</td><td>External audit with a public report and the explorer tag</td><td>custodian · CCO · RFP</td><td><span class="tag gap">gap</span> none; internal only</td><td>Book the firm in October (queues 4–12 weeks); ChainSecurity, Trail of Bits or Spearbit; $60–150k</td><td class="v">3</td></tr>
       <tr><td>O3</td><td>Holder register, lockups, roles and oracle history reconstructible from <code>eth_getLogs</code> by the custodian itself</td><td>custodian · auditor</td><td><span class="tag pending">partial</span> principle stated; G12: <code>RuleFailed</code> never emitted, PolicySet and adapter mutations silent, cuts at delay 0 silent</td><td>Events on every mutation; <code>ComplianceDecision</code> off-chain log with nightly anchor; verify.py check "every declared event is emitted"</td><td class="v">1</td></tr>
       <tr><td>O4</td><td>Custodian as a first-class holder: omnibus wallet with beneficiary attribution, sub-accounts, holder counts by beneficiary</td><td>custodian · asset</td><td><span class="tag gap">gap</span> no concept</td><td>Claim <code>custodian.omnibus</code>; custodian signs a beneficiary-attribution channel as ATTESTOR; rules read attribution for caps</td><td class="v">2</td></tr>
@@ -288,7 +335,7 @@ a{color:var(--accent)}
 <!-- ============================================================ ANALYSIS -->
 <section aria-labelledby="an-h">
   <div class="head">
-    <span class="kicker">4 · Analysis</span>
+    <span class="kicker">5 · Analysis</span>
     <h2 id="an-h">Where Orbit sets the category, where it follows, what it missed</h2>
   </div>
   <div class="two">
@@ -363,7 +410,7 @@ a{color:var(--accent)}
 <!-- ============================================================ PRESETS -->
 <section aria-labelledby="pr-h">
   <div class="head">
-    <span class="kicker">5 · Instrument presets</span>
+    <span class="kicker">6 · Instrument presets</span>
     <h2 id="pr-h">Ten presets Orbit should ship, each with its channels, terms and signers</h2>
     <p class="prose">Asterisked channels do not exist today. The presets turn "we support any asset" into a catalogue a buyer can point at.</p>
   </div>
@@ -390,7 +437,7 @@ a{color:var(--accent)}
 <!-- ============================================================ CRITERIA -->
 <section aria-labelledby="c-h">
   <div class="head">
-    <span class="kicker">6 · Institutional-grade criteria</span>
+    <span class="kicker">7 · Institutional-grade criteria</span>
     <h2 id="c-h">Added to the four levels on the hub</h2>
   </div>
   <div class="four">
@@ -442,13 +489,13 @@ a{color:var(--accent)}
 <!-- ============================================================ ORDER -->
 <section aria-labelledby="o-h">
   <div class="head">
-    <span class="kicker">7 · Build order, revised</span>
+    <span class="kicker">8 · Build order, revised</span>
     <h2 id="o-h">Keys before code, assurance alongside features</h2>
-    <p class="prose">The STV4 hub's four phases stand; this page adds what the six seats require inside each, and an operations track that runs in parallel and is owned by people, not engineers.</p>
+    <p class="prose">The STV4 hub's four phases stand; this page adds the design hooks of §3 inside each, and an operations track that follows the first institutional client rather than preceding STBX. Sequence, as ruled: concept and know-how → the uRWA Factory → tokens; the first client is STBX, operated by Stobox alone.</p>
   </div>
   <div class="phases">
-    <div class="ph"><div class="when">Phase 0 · 3 weeks</div><div class="why">Foundation – and the keys first</div>
-      <ul><li><b>Day 1:</b> Governance, Ops and Treasury Safes on hardware signers, different people; watch the Admin Safe's delay module; no STV4 role on the 1-of-1</li><li>Money paths G2, G8–G10 plus <code>Treasury.refund</code></li><li>Root role split; setters and <code>setTreasury</code> under a 7-day minimum in code; deploy script refuses defaults</li><li>EmergencyFacet; <code>resyncSubject</code>; ERC-1271 / 6492</li><li>Pinned, signed, reproducible builds</li><li>Remove the bps row from the price list</li></ul></div>
+    <div class="ph"><div class="when">Phase 0 · 3 weeks</div><div class="why">Foundation – and roles that move</div>
+      <ul><li>Two-step role handover; technical role split from issuer role (§3b); Safe topology deferred by ruling</li><li>Money paths G2, G8–G10 plus <code>Treasury.refund</code></li><li>Root role split; setters and <code>setTreasury</code> under a 7-day minimum in code; deploy script refuses defaults</li><li>EmergencyFacet; <code>resyncSubject</code>; ERC-1271 / 6492</li><li>Pinned, signed, reproducible builds</li><li>Remove the bps row from the price list</li></ul></div>
     <div class="ph"><div class="when">Phase 1 · 5 weeks</div><div class="why">Identity, data, evidence</div>
       <ul><li>Identity registry; DID service; 305 DID migrated</li><li>Stobox Oracle with <b>AttestorRegistry</b>, signer sets, <code>ccy</code> and calendar; Intelligence facet</li><li>Events on every mutation; <code>RuleFailed</code>; decision log with nightly anchor; verify.py "declared events are emitted"</li><li>DTI, ISIN, LEI on the instrument</li><li>Invariant fuzzing in CI; Halmos; Certora scoped</li><li>Monitoring, on-call, pause via L1, RTO/RPO, DR drill</li><li>Base Sepolia from CI; auditor pack v1; SOC 2 Type I started; SCO60 position</li></ul></div>
     <div class="ph"><div class="when">Phase 2 · 5 weeks</div><div class="why">Market, migration, standards</div>
@@ -468,7 +515,7 @@ a{color:var(--accent)}
     <div class="card">
       <h3>Operations track · owned by people</h3>
       <ul>
-        <li><b>Now:</b> AML programme and MLRO; sanctions cadence; conflicts register (Eqvista, STBX); Vanta owner named; TA and custodian partner conversations opened; audit firm booked.</li>
+        <li><b>Now:</b> conflicts register (Eqvista, STBX); audit firm booked; Vanta owner named. AML programme and MLRO before the first third-party issuer; partner conversations when a client brings them.</li>
         <li><b>Phase 1:</b> DPIA; DORA addendum; incident and breach procedures; key ceremony documented; complaints process.</li>
         <li><b>Phase 2:</b> insider and blackout policy live; marketing approval workflow; Board terms of use; regulatory obligations register with quarterly review (TA rule comments due 03.11.2026; FCA gateway window 30.09.2026 – 28.02.2027).</li>
         <li><b>Phase 3:</b> insurance bound; escrow agreement; SLA document; investor letter; support FAQ.</li>
@@ -481,7 +528,7 @@ a{color:var(--accent)}
 <!-- ============================================================ DECISIONS -->
 <section aria-labelledby="dec-h">
   <div class="head">
-    <span class="kicker">8 · Decisions</span>
+    <span class="kicker">9 · Decisions</span>
     <h2 id="dec-h">Settled and open</h2>
   </div>
   <div class="two">
@@ -496,7 +543,7 @@ a{color:var(--accent)}
     <div class="card">
       <h3>Open – Gene</h3>
       <ol class="dec">
-        <li><b>Restructure the Safes now</b> – three Safes on hardware signers with different people, before any STV4 role is granted. Recommended: yes, this week.</li>
+        <li><b>Safe topology</b> – ruled: later, separately; not a blocker.</li>
         <li><b>Board perimeter:</b> a display-only board with bilateral settlement, or escrow execution under a written opinion, or a licensed partner as operator?</li>
         <li><b>First custodian partner</b> to approach (Fireblocks, Anchorage, Copper, Zodia) and first TA/administrator beyond Silicon Prairie.</li>
         <li><b>Cash leg:</b> pursue a deposit-token partner on Base (JPMD-class) in 2027, or USDC plus fiat-attested only for the first year?</li>
@@ -518,6 +565,7 @@ a{color:var(--accent)}
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
     <tbody>
+      <tr><td class="v">v0.2</td><td>25 Sep 2026</td><td>Gene's ruling: the Safe topology is deferred and off the critical path; the page reframed around readiness by design – a hook per tomorrow's party (§3), role handover mechanics (§3b), partners and assurance following the first institutional client; sequence concept → Factory → tokens, STBX first.</td></tr>
       <tr><td class="v">v0.1</td><td>25 Sep 2026</td><td>First page. Six institutional reviews consolidated into the requirements register O1–O28; the Technical Safe read from Base; BUIDL element mapping; ten instrument presets; institutional-grade criteria; the build order revised with keys on day one and an operations track.</td></tr>
     </tbody>
   </table>
