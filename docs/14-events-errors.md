@@ -178,6 +178,7 @@ event OfferingStatusChanged(uint256 indexed id, uint8 previous, uint8 current);
 event PurchaseRecorded(uint256 indexed id, uint256 indexed purchaseId, address indexed investor,
                        uint256 paid, uint256 tokens);
 event PurchaseRefunded(uint256 indexed purchaseId, address indexed investor, uint256 amount);
+event TokensDelivered(uint256 indexed id, uint256 indexed purchaseId, address indexed investor, uint256 tokens);
 event OfferingSettled(uint256 indexed id, uint256 raised);
 event OfferingRefundingBegan(uint256 indexed id, uint256 raised, uint256 softCap);
 ```
@@ -248,6 +249,8 @@ error PassportLocked();          // ERC-5192, transfer attempted
 
 ```solidity
 error OfferingNotActive(uint256 id, uint8 status);
+error TreasuryMismatch(address treasury, address token); // createOffering: the treasury holds another token or answers to another registry
+error OfferingStateFinal(uint256 id, uint8 status);   // forceStatus: cannot leave Settled, Refunding or Cancelled, nor enter Settled
 error BelowMinimum(uint256 amount, uint256 minimum);
 error AboveMaximum(uint256 amount, uint256 maximum);
 error HardCapExceeded(uint256 raised, uint256 hardCap);
@@ -302,7 +305,7 @@ From logs alone, without any off-chain service, a consumer can rebuild:
 | Frozen balances | `Frozen` + `LockupAdded` + current time |
 | Every compliance refusal | Revert errors + `RuleFailed` |
 | Every privileged action with justification | `ForcedOperation`, `Trusted`, `Distrusted`, role events |
-| Complete offering history | `OfferingCreated` → `OfferingStatusChanged` → `PurchaseRecorded` |
+| Complete offering history | `OfferingCreated` → `OfferingStatusChanged` → `PurchaseRecorded` → `OfferingSettled` → `TokensDelivered` (one per purchase, once) |
 | Passport provenance chain | `SnapshotAnchored` + `TokenLinkConfirmed` |
 
 ## Related documents

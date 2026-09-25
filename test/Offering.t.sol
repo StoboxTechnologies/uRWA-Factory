@@ -43,6 +43,17 @@ contract Cash {
 contract TokenStub {
     mapping(address => uint256) public delivered;
     address public registry;
+    /// @dev G2: the registry asks the token who may create offerings. The
+    ///      test contract is this stub's operator; nobody else is.
+    mapping(address => bool) public operator;
+
+    function setOperator(address who, bool yes) external {
+        operator[who] = yes;
+    }
+
+    function hasRole(bytes32, address who) external view returns (bool) {
+        return operator[who];
+    }
 
     function setRegistry(address r) external {
         registry = r;
@@ -60,6 +71,14 @@ contract TreasuryStub {
     mapping(address => uint256) public lockedPayments;
     mapping(uint256 => uint256) public lockedOf;
     mapping(uint256 => address) public assetOf;
+    /// @dev G2: creation checks the treasury belongs to the token and to the registry.
+    address public token;
+    address public offeringRegistry;
+
+    function wire(address token_, address registry_) external {
+        token = token_;
+        offeringRegistry = registry_;
+    }
 
     function lockPayment(uint256 offeringId, address asset, uint256 amount) external {
         lockedPayments[asset] += amount;
@@ -171,6 +190,8 @@ contract OfferingTest is Test {
         token = new TokenStub();
         token.setRegistry(address(registry));
         treasury = new TreasuryStub();
+        treasury.wire(address(token), address(registry));
+        token.setOperator(address(this), true);
 
         cash.mint(alice, 1_000_000e18);
         cash.mint(bob, 1_000_000e18);
@@ -298,6 +319,8 @@ contract OfferingTest is Test {
 
         assertEq(treasury.lockedPayments(address(cash)), 600e18, "payments should be held until settlement");
 
+        // G9: the raise must be over before anyone may settle it.
+        registry.close(id);
         vm.prank(stranger);
         registry.settle(id);
 
@@ -323,6 +346,7 @@ contract OfferingTest is Test {
         // `expectRevert` made the test depend on accumulated block time.
         vm.prank(alice);
         registry.purchase(id, 100e18, address(cash));
+        registry.close(id); // G9: settlement is only asked of a raise that is over
         vm.expectRevert(IErrors.SoftCapNotMet.selector);
         registry.settle(id);
 
@@ -569,7 +593,10 @@ contract OfferingTest is Test {
         vm.expectRevert();
         registry.purchase(id, 100e18, address(cash));
 
+        // G10: rules change only while the offering is not taking money.
+        registry.pause(id);
         registry.removeRule(id, address(refusing));
+        registry.unpause(id);
         vm.prank(alice);
         registry.purchase(id, 100e18, address(cash));
         assertEq(registry.raisedOf(id), 100e18, "admitting rules alone should admit");

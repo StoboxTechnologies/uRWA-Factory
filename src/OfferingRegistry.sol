@@ -28,6 +28,15 @@ interface ITreasuryCustody {
     function lockPayment(uint256 offeringId, address asset, uint256 amount) external;
     function unlockPayments(uint256 offeringId) external;
     function refund(uint256 offeringId, address asset, address investor, uint256 amount) external;
+    function token() external view returns (address);
+    function offeringRegistry() external view returns (address);
+}
+
+/// @dev The one question creation asks the token: does the caller hold an
+///      offering role on it. Asked of the token, never recorded here, so a
+///      revoked role stops working at once.
+interface ITokenRolesView {
+    function hasRole(bytes32 role, address account) external view returns (bool);
 }
 
 /// @title Primary issuance
@@ -91,7 +100,20 @@ contract OfferingRegistry is IErrors {
 
     // ── lifecycle ───────────────────────────────────────────────────────────
 
+    /// @dev **G2.** Creation is gated by the token, not by the registry: the
+    ///      caller must hold `OFFERING_OPERATOR` or `ISSUER_ADMIN` on
+    ///      `params.token`, and the treasury named must be that token's own,
+    ///      wired to this registry. Without this, any wallet could create an
+    ///      offering against another issuer's treasury and walk investor
+    ///      money out through the refund path, or unlock the issuer's raise
+    ///      through `settle` — the session 11 proof of concept.
     function createOffering(OfferingParams calldata params, address treasury) external returns (uint256 id) {
+        if (params.token == address(0) || treasury == address(0)) revert ZeroAddress();
+        _onlyTokenRole(params.token, Roles.OFFERING_OPERATOR, Roles.ISSUER_ADMIN);
+        ITreasuryCustody custody = ITreasuryCustody(treasury);
+        if (custody.token() != params.token || custody.offeringRegistry() != address(this)) {
+            revert TreasuryMismatch(treasury, params.token);
+        }
         id = nextId++;
         Offering storage o = _offerings[id];
         o.params = params;
@@ -337,12 +359,14 @@ contract OfferingRegistry is IErrors {
     /// @notice Release payment to the issuer once the soft cap is met
     /// @dev **Anyone may call it.** The soft cap was met or it was not; that is
     ///      already on chain, and an operator who is absent, unwilling or
-    ///      insolvent must not be able to sit on the answer.
+    ///      insolvent must not be able to sit on the answer. **G9:** the raise
+    ///      must be over — `Closed`, or `Active` past its end date. Settling
+    ///      mid-raise unlocked what was raised so far while later purchases
+    ///      kept landing against an offering already marked Settled.
     function settle(uint256 id) external {
         Offering storage o = _offerings[id];
-        if (o.status != Status.Closed && o.status != Status.Active) {
-            revert OfferingNotActive(id, uint8(o.status));
-        }
+        bool over = o.status == Status.Closed || (o.status == Status.Active && block.timestamp >= o.params.endAt);
+        if (!over) revert OfferingNotActive(id, uint8(o.status));
         if (o.raised < o.params.softCap) revert SoftCapNotMet();
 
         o.status = Status.Settled;
@@ -398,7 +422,9 @@ contract OfferingRegistry is IErrors {
 
         p.state = PURCHASE_SETTLED;
         ITokenSupply(o.params.token).distributeFromTreasury(p.investor, p.tokens, p.unlockAt);
-        emit IEvents.PurchaseRecorded(p.offeringId, purchaseId, p.investor, p.paid, p.tokens);
+        // G17: a delivery is a delivery. Emitting a second `PurchaseRecorded`
+        // here doubled every settled purchase in a replay of the logs.
+        emit IEvents.TokensDelivered(p.offeringId, purchaseId, p.investor, p.tokens);
     }
 
     // ── refunds, both paths ─────────────────────────────────────────────────
@@ -478,8 +504,13 @@ contract OfferingRegistry is IErrors {
         return _rules[id];
     }
 
+    /// @dev **G10.** Rules change while the offering is not taking money —
+    ///      Draft or Paused. Removing one between two purchases of an Active
+    ///      offering let a buyer the rule would have refused through the gap.
     function removeRule(uint256 id, address rule) external {
         _onlyOperator(id);
+        Status st = _offerings[id].status;
+        if (st != Status.Draft && st != Status.Paused) revert OfferingNotActive(id, uint8(st));
         address[] storage rules = _rules[id];
         for (uint256 i = 0; i < rules.length; i++) {
             if (rules[i] == rule) {
@@ -520,9 +551,17 @@ contract OfferingRegistry is IErrors {
     function forceStatus(uint256 id, uint8 status, string calldata reason) external {
         _onlyAdmin();
         if (bytes(reason).length == 0) revert ReasonRequired();
-        uint8 previous = uint8(_offerings[id].status);
-        _offerings[id].status = Status(status);
-        emit IEvents.OfferingStatusChanged(id, previous, status);
+        Status from = _offerings[id].status;
+        Status to = Status(status);
+        // G10: a final state is final. Forcing a Refunding offering back to
+        // Active trapped the refunds; forcing any offering into Settled skipped
+        // the soft-cap check that guards the issuer's withdrawal.
+        if (from == Status.Settled || from == Status.Refunding || from == Status.Cancelled) {
+            revert OfferingStateFinal(id, uint8(from));
+        }
+        if (to == Status.Settled) revert OfferingStateFinal(id, uint8(to));
+        _offerings[id].status = to;
+        emit IEvents.OfferingStatusChanged(id, uint8(from), status);
     }
 
     function _move(uint256 id, Status to) private {
@@ -544,6 +583,16 @@ contract OfferingRegistry is IErrors {
 
     function _onlyAdmin() private view {
         if (msg.sender != admin) revert NotAuthorized(msg.sender, Roles.REGISTRY_ADMIN);
+    }
+
+    /// @dev Either of two roles **on the token**, asked of the token at the
+    ///      moment of the call. The error names the operator role, the one an
+    ///      integrator is expected to hold.
+    function _onlyTokenRole(address token, bytes32 role, bytes32 orRole) private view {
+        ITokenRolesView roles = ITokenRolesView(token);
+        if (!roles.hasRole(role, msg.sender) && !roles.hasRole(orRole, msg.sender)) {
+            revert NotAuthorized(msg.sender, role);
+        }
     }
 
     /// @dev Whether an offering lists this payment currency. A short linear

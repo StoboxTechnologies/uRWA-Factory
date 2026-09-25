@@ -535,7 +535,7 @@ subject-keyed one rather than pretending to an answer it cannot compute.
 | `token() → address` | Which token this serves | Anyone | Provenance |
 | `deposit(asset, amount)` | Accepts tokens | Anyone | Funding the treasury |
 | `initialise(token, issuer, offeringRegistry)` | Stands in for a constructor on a clone | Anyone, once | Minimal proxies have no constructor. The factory clones and initialises in one transaction, so nobody can get between the two; a clone initialised by anyone else is an address the factory never registered and nothing was ever sent to |
-| `refund(offeringId, asset, investor, amount)` | Returns investor payment | **The offering registry**, even while payments are locked | Refunding is precisely what the lock exists for; the issuer cannot reach this money and the registry can only send it back to whoever paid. Reduces the locked total as it goes |
+| `refund(offeringId, asset, investor, amount)` | Returns investor payment | **The offering registry**, even while payments are locked | Refunding is precisely what the lock exists for; the issuer cannot reach this money and the registry can only send it back to whoever paid. Paid only from what that offering locked in that asset; more is refused (`InsufficientAvailable`) |
 | `withdrawPayments(asset, to, amount)` | Moves investor payment out | ISSUER_ADMIN | Refuses to move more than the asset's **free** balance — held minus locked. No offering id, because a lock is on an amount of an asset and no id a caller passes can release it |
 | `withdrawERC20(asset, to, amount)` | Takes payment tokens out | SUPPLY_OPERATOR | The issuer collecting proceeds |
 | `reserve(amount, offeringId)` | Commits supply to an offering | Offering registry | Buyers must be sure tokens exist |
@@ -667,18 +667,18 @@ path: `OfferingGovernanceFacet` (create, activate, pause, close, cancel), `Offer
 
 | Function | Does | Called by | Why |
 |---|---|---|---|
-| `createOffering(params) → id` | Defines a sale | Anyone — the caller becomes the offering's operator | Price, caps, dates, rules, regime. Creating one grants authority over that offering and no other |
+| `createOffering(params, treasury) → id` | Defines a sale | A holder of OFFERING_OPERATOR or ISSUER_ADMIN **on the token named**; the caller becomes the offering's operator | Price, caps, dates, rules, regime. The treasury named must be that token's own and wired to this registry (`TreasuryMismatch` otherwise). Creating one grants authority over that offering and no other |
 | `activate(id)` | Opens it | OFFERING_OPERATOR | Go live |
 | `pause(id)` / `unpause(id)` | Suspends and resumes | OFFERING_OPERATOR | Issues mid-raise |
 | `close(id)` | Ends purchasing | OFFERING_OPERATOR | End date or hard cap |
 | `cancel(id, reason)` | Aborts a **live** offering | OFFERING_OPERATOR | Raise abandoned; refunds follow. Refuses on a settled or refunding one, which is finished |
-| `settle(id)` | Releases proceeds; enables token claims | **Anyone**, once soft cap met | The issuer collects |
+| `settle(id)` | Releases proceeds; enables token claims | **Anyone**, once soft cap met and the raise is over (Closed, or Active past `endAt`) | The issuer collects; never mid-raise |
 | `claimTokens(purchaseId)` | Delivers the tokens a settled offering owes you | Investor | Delivery waits for settlement, so a failed offering delivered nothing to claw back |
 | `deliverBatch(id, limit)` | Delivers many settled purchases at once | OFFERING_OPERATOR | Good UX at scale |
 | `beginRefunding(id)` | Starts refunds | **Anyone**, once soft cap missed | Investors get their money back |
 | `refundBatch(id, limit)` | Refunds many at once | OFFERING_OPERATOR | Good UX at scale |
 | `claimRefund(purchaseId)` | Refunds yourself | Investor | The backstop that makes refunds a guarantee |
-| `addRule(id, rule)` / `removeRule(id, rule)` | Offering-level compliance — **evaluated at purchase**, all must pass, capped at 24, each under the 100k gas ceiling | OFFERING_OPERATOR | Accreditation, allocations, regime attestations; rule `bounds` tighten the offering's min/max, never loosen |
+| `addRule(id, rule)` / `removeRule(id, rule)` | Offering-level compliance — **evaluated at purchase**, all must pass, capped at 24, each under the 100k gas ceiling | OFFERING_OPERATOR; removal only in Draft or Paused | Accreditation, allocations, regime attestations; rule `bounds` tighten the offering's min/max, never loosen. A rule cannot vanish between two purchases of a live offering |
 | `offeringOf(id) → Offering` | Full terms | Anyone | An investor reads terms before buying |
 | `statusOf(id) → uint8` | Current state | Anyone | Can I still buy? |
 | `purchaseOf(purchaseId) → Purchase` | One purchase | Investor, audit | Receipts |
@@ -687,7 +687,7 @@ path: `OfferingGovernanceFacet` (create, activate, pause, close, cancel), `Offer
 | `previewPurchase(id, amount) → (cost, tokens, unlockAt)` | Calculates | Anyone, UI | See price and lockup before signing |
 
 | `setDefaultPaymentTokens(tokens[])` | Chain-wide payment token list | REGISTRY_ADMIN | One list, not one per offering |
-| `forceStatus(id, status, reason)` | Overrides a stuck offering | REGISTRY_ADMIN | Recovery of last resort; reason mandatory and evented |
+| `forceStatus(id, status, reason)` | Overrides a stuck offering | REGISTRY_ADMIN | Recovery of last resort; reason mandatory and evented. Never leaves Settled, Refunding or Cancelled, never enters Settled (`OfferingStateFinal`) |
 
 `REGISTRY_ADMIN` administers the registry contract itself and can neither move a token nor touch a
 balance. Its two powers are chain-wide configuration and the recovery override — which is why

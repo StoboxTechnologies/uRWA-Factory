@@ -52,6 +52,10 @@ interface IErrors {
     // ── offerings ───────────────────────────────────────────────────────────
 
     error OfferingNotActive(uint256 id, uint8 status);
+    /// @dev The treasury named at creation holds another token, or answers to another registry.
+    error TreasuryMismatch(address treasury, address token);
+    /// @dev A forced status change would leave a final state, or enter Settled without the soft-cap check.
+    error OfferingStateFinal(uint256 id, uint8 status);
     error BelowMinimum(uint256 requested, uint256 minimum);
     error AboveMaximum(uint256 requested, uint256 maximum);
     error AllocationExceeded(uint256 requested, uint256 remaining);

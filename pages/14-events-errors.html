@@ -511,6 +511,7 @@ event OfferingStatusChanged(uint256 indexed id, uint8 previous, uint8 current);
 event PurchaseRecorded(uint256 indexed id, uint256 indexed purchaseId, address indexed investor,
                        uint256 paid, uint256 tokens);
 event PurchaseRefunded(uint256 indexed purchaseId, address indexed investor, uint256 amount);
+event TokensDelivered(uint256 indexed id, uint256 indexed purchaseId, address indexed investor, uint256 tokens);
 event OfferingSettled(uint256 indexed id, uint256 raised);
 event OfferingRefundingBegan(uint256 indexed id, uint256 raised, uint256 softCap);</pre>
 <h3 id="14-treasury">Treasury</h3>
@@ -553,6 +554,8 @@ error InvalidProof();
 error PassportLocked();          // ERC-5192, transfer attempted</pre>
 <h4 id="14-offering">Offering</h4>
 <pre>error OfferingNotActive(uint256 id, uint8 status);
+error TreasuryMismatch(address treasury, address token); // createOffering: the treasury holds another token or answers to another registry
+error OfferingStateFinal(uint256 id, uint8 status);   // forceStatus: cannot leave Settled, Refunding or Cancelled, nor enter Settled
 error BelowMinimum(uint256 amount, uint256 minimum);
 error AboveMaximum(uint256 amount, uint256 maximum);
 error HardCapExceeded(uint256 raised, uint256 hardCap);
@@ -590,7 +593,7 @@ error OnlyOfferingRegistry();</pre>
 <hr class="soft">
 <h3 id="14-reconstruction-guarantees">Reconstruction guarantees</h3>
 <p>From logs alone, without any off-chain service, a consumer can rebuild:</p>
-<div class="tscroll"><table><thead><tr><th style="text-align:left">Artifact</th><th style="text-align:left">From</th></tr></thead><tbody><tr><td style="text-align:left">Full cap table at any block</td><td style="text-align:left"><code>Transfer</code></td></tr><tr><td style="text-align:left">Holder count over time</td><td style="text-align:left"><code>Transfer</code> crossing zero balances</td></tr><tr><td style="text-align:left">Subject-level holdings</td><td style="text-align:left"><code>Transfer</code> + <code>SubjectHolderCountChanged</code></td></tr><tr><td style="text-align:left">Frozen balances</td><td style="text-align:left"><code>Frozen</code> + <code>LockupAdded</code> + current time</td></tr><tr><td style="text-align:left">Every compliance refusal</td><td style="text-align:left">Revert errors + <code>RuleFailed</code></td></tr><tr><td style="text-align:left">Every privileged action with justification</td><td style="text-align:left"><code>ForcedOperation</code>, <code>Trusted</code>, <code>Distrusted</code>, role events</td></tr><tr><td style="text-align:left">Complete offering history</td><td style="text-align:left"><code>OfferingCreated</code> → <code>OfferingStatusChanged</code> → <code>PurchaseRecorded</code></td></tr><tr><td style="text-align:left">Passport provenance chain</td><td style="text-align:left"><code>SnapshotAnchored</code> + <code>TokenLinkConfirmed</code></td></tr></tbody></table></div>
+<div class="tscroll"><table><thead><tr><th style="text-align:left">Artifact</th><th style="text-align:left">From</th></tr></thead><tbody><tr><td style="text-align:left">Full cap table at any block</td><td style="text-align:left"><code>Transfer</code></td></tr><tr><td style="text-align:left">Holder count over time</td><td style="text-align:left"><code>Transfer</code> crossing zero balances</td></tr><tr><td style="text-align:left">Subject-level holdings</td><td style="text-align:left"><code>Transfer</code> + <code>SubjectHolderCountChanged</code></td></tr><tr><td style="text-align:left">Frozen balances</td><td style="text-align:left"><code>Frozen</code> + <code>LockupAdded</code> + current time</td></tr><tr><td style="text-align:left">Every compliance refusal</td><td style="text-align:left">Revert errors + <code>RuleFailed</code></td></tr><tr><td style="text-align:left">Every privileged action with justification</td><td style="text-align:left"><code>ForcedOperation</code>, <code>Trusted</code>, <code>Distrusted</code>, role events</td></tr><tr><td style="text-align:left">Complete offering history</td><td style="text-align:left"><code>OfferingCreated</code> → <code>OfferingStatusChanged</code> → <code>PurchaseRecorded</code> → <code>OfferingSettled</code> → <code>TokensDelivered</code> (one per purchase, once)</td></tr><tr><td style="text-align:left">Passport provenance chain</td><td style="text-align:left"><code>SnapshotAnchored</code> + <code>TokenLinkConfirmed</code></td></tr></tbody></table></div>
 <h3 id="14-related-documents">Related documents</h3>
 <ul>
 <li><a href="07-functions.html">07 — Function reference</a></li>
@@ -672,4 +675,4 @@ architecture and is not legal, financial or investment advice.</p>
   pick();
 })();
 </script>
-<!-- source-digest: d6de37926cd77680dbe5a90380455ed80440f7a44c1d8db7be8fa033c0f899d5 -->
+<!-- source-digest: 605b9e437ed3aaa3e4a97d940ae99dbda0862e5cd7b8bc89b4a54b7bb9239d66 -->

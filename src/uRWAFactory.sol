@@ -91,6 +91,10 @@ contract uRWAFactory is IErrors {
         //      central party can alter one token's live compliance.
         _applyPreset(token, params.preset, params.complianceOfficer);
 
+        // 4c · the cap, if the issuer asked for it locked at birth (G17: the
+        //      flag was read into the struct and never acted on).
+        if (params.lockCap) MonetaryFacet(token).lockCap();
+
         // 5 · the four roles, to the four addresses given
         _grantRoles(token, params);
 

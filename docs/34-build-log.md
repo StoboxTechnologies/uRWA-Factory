@@ -17,6 +17,38 @@ An entry is written even when a session finds nothing — "audited, clean" is a 
 
 ---
 
+## 2026-09-25 · Session 13 — Phase 0 begins: the money paths
+
+**Shipped.** The first Solidity of Phase 0, slice 1 of the master plan (hub §7): G2, G9, G10,
+G17 and G20 closed in `src/OfferingRegistry.sol`, `src/Treasury.sol` and `src/uRWAFactory.sol`.
+`createOffering` is no longer permissionless: the caller must hold `OFFERING_OPERATOR` or
+`ISSUER_ADMIN` on the token named, and the treasury named must be that token's own and wired to
+this registry (`TreasuryMismatch`). `settle` requires the raise to be over. `removeRule` works only
+in Draft or Paused. `forceStatus` never leaves Settled, Refunding or Cancelled and never enters
+Settled (`OfferingStateFinal`). `Treasury.refund` refuses any amount above what the offering locked
+in that asset. The factory honours `lockCap` at creation. Delivery emits `TokensDelivered` instead
+of a second `PurchaseRecorded`. Docs 07, 14 and 26 updated in the same commit. Gene's ruling before
+the session: start now, under his own repository; assurance on demand; the fee capability stays
+(slice 2).
+
+**Audited.** `test/Phase0Money.t.sol`: nine tests on the real stack (factory-made diamond, real
+treasury clone, real registry), including the session 11 treasury-drain proof of concept kept as a
+test. Full suite 229 passed. Three older tests and two harnesses updated because they relied on the
+defects (settling mid-raise, removing a rule from a live offering, creating an offering from an
+address with no role). `forge fmt --check` clean; `verify.py` and `--self-test` green.
+
+**Audit of the audit.** The three fixed source files were stashed and the slice re-run: 8 of 9 tests
+fail without the fixes (the ninth, "the operator still creates offerings", is the regression guard
+and passes either way); all 9 pass with them restored.
+
+**Open.** Slice 2 of Phase 0: role admin split and two-step handover, `MIN_UPGRADE_DELAY`, delayed
+setters, EmergencyFacet, `accountedSubject`, `permit(bytes)`, the configurable fee policy,
+`installEmergencyFacet` honoured, `paidBySubject` keyed by subject (G8). The GNDF repository under
+Gene's account could not be created from this session (the push to a new remote was refused by the
+session's guard); the commit is on the Stobox remote until Gene creates or allows it.
+
+---
+
 ## 2026-09-25 · Session 12 — Orbit: the functions catalogue, the master plan, and four sign-off reviews
 
 **Shipped.** `docs/architecture/functions.html` v0.2, the complete function catalogue of Stobox Orbit

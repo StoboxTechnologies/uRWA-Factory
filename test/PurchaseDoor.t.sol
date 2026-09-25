@@ -135,6 +135,7 @@ contract PurchaseDoorTest is Test {
         MonetaryFacet(token).issue(address(0), 1_000_000e18);
 
         offeringId = _offering(500e18, 1000e18);
+        vm.prank(issuer);
         registry.activate(offeringId);
     }
 
@@ -241,6 +242,8 @@ contract PurchaseDoorTest is Test {
             preMint: true,
             regime: keccak256("Open")
         });
+        // G2: only the issuer's operator may create an offering against its treasury.
+        vm.prank(issuer);
         return registry.createOffering(p, treasury);
     }
 

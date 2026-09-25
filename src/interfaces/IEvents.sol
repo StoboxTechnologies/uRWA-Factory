@@ -93,6 +93,7 @@ interface IEvents {
         uint256 indexed id, uint256 indexed purchaseId, address indexed investor, uint256 paid, uint256 tokens
     );
     event PurchaseRefunded(uint256 indexed purchaseId, address indexed investor, uint256 amount);
+    event TokensDelivered(uint256 indexed id, uint256 indexed purchaseId, address indexed investor, uint256 tokens);
     event OfferingSettled(uint256 indexed id, uint256 raised);
     event OfferingRefundingBegan(uint256 indexed id, uint256 raised, uint256 softCap);
 

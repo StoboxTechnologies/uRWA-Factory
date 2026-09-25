@@ -144,10 +144,14 @@ contract Treasury is IErrors {
     ///      free balance the invariant rests on stays correct.
     function refund(uint256 offeringId, address asset, address investor, uint256 amount) external {
         _onlyRegistry();
+        // G20: a refund is paid from what this offering locked and from
+        // nothing else. Capping only the accounting while transferring the
+        // full amount let a defective registry pay one investor out of
+        // another offering's money or the issuer's proceeds.
         uint256 locked = lockedOf[offeringId];
-        uint256 dec = amount > locked ? locked : amount;
-        lockedOf[offeringId] = locked - dec;
-        lockedPayments[asset] = lockedPayments[asset] > dec ? lockedPayments[asset] - dec : 0;
+        if (amount > locked || _offeringAsset[offeringId] != asset) revert InsufficientAvailable(amount, locked);
+        lockedOf[offeringId] = locked - amount;
+        lockedPayments[asset] -= amount;
         if (!IERC20Minimal(asset).transfer(investor, amount)) revert InsufficientAvailable(amount, 0);
         emit IEvents.Withdrawn(asset, investor, amount);
     }
